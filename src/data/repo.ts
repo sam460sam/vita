@@ -31,6 +31,17 @@ export async function getSettings(): Promise<Settings> {
   return s;
 }
 
+/** Read-only settings accessor safe to use inside Dexie liveQuery. */
+export async function readSettings(): Promise<Settings> {
+  return (await db.settings.get('app')) ?? defaultSettings();
+}
+
+/** Ensure singleton rows exist. Call once at app startup (outside liveQuery). */
+export async function ensureSeedRows(): Promise<void> {
+  if (!(await db.settings.get('app'))) await db.settings.put(defaultSettings());
+  if (!(await db.budgets.get('monthly'))) await db.budgets.put({ id: 'monthly', monthlyLimit: 0, updatedAt: now() });
+}
+
 export async function updateSettings(patch: Partial<Settings>): Promise<void> {
   const s = await getSettings();
   await db.settings.put({ ...s, ...patch, updatedAt: now() });
@@ -286,6 +297,11 @@ export async function getBudget(): Promise<Budget> {
     await db.budgets.put(b);
   }
   return b;
+}
+
+/** Read-only budget accessor safe to use inside Dexie liveQuery. */
+export async function readBudget(): Promise<Budget> {
+  return (await db.budgets.get('monthly')) ?? { id: 'monthly', monthlyLimit: 0, updatedAt: 0 };
 }
 
 export async function setBudget(monthlyLimit: number) {

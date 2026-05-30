@@ -2,7 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Link } from 'react-router-dom';
 import { CheckCircle2, ChevronRight, Dumbbell, Flame, ListTodo } from 'lucide-react';
 import { db } from '@/data/db';
-import { getSettings, toggleTaskDone, toggleHabitLog } from '@/data/repo';
+import { readSettings, toggleTaskDone, toggleHabitLog } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
@@ -14,7 +14,7 @@ import { startOfWeek } from 'date-fns';
 import { cn } from '@/lib/cn';
 
 export function TodayPage() {
-  const settings = useLiveQuery(() => getSettings(), [], undefined);
+  const settings = useLiveQuery(() => readSettings(), [], undefined);
   const tasks = useLiveQuery(() => db.tasks.toArray(), [], []);
   const habits = useLiveQuery(() => db.habits.orderBy('order').toArray(), [], []);
   const logs = useLiveQuery(() => db.habitLogs.toArray(), [], []);

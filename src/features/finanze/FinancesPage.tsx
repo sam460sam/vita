@@ -4,7 +4,7 @@ import { ArrowDownLeft, ArrowUpRight, Plus, Wallet, Pencil, Trash2 } from 'lucid
 import { format, parseISO } from 'date-fns';
 import { it } from 'date-fns/locale';
 import { db } from '@/data/db';
-import { createTransaction, deleteTransaction, getBudget, setBudget, getSettings } from '@/data/repo';
+import { createTransaction, deleteTransaction, readBudget, setBudget, readSettings } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
@@ -15,8 +15,8 @@ import type { TxType } from '@/data/types';
 
 export function FinancesPage() {
   const txs = useLiveQuery(() => db.transactions.orderBy('date').reverse().toArray(), [], []);
-  const budget = useLiveQuery(() => getBudget(), [], undefined);
-  const settings = useLiveQuery(() => getSettings(), [], undefined);
+  const budget = useLiveQuery(() => readBudget(), [], undefined);
+  const settings = useLiveQuery(() => readSettings(), [], undefined);
   const [formOpen, setFormOpen] = useState(false);
   const [budgetOpen, setBudgetOpen] = useState(false);
 

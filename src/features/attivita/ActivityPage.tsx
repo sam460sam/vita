@@ -4,7 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Play, Plus, Trash2 } from 'lucide-react';
 import { db } from '@/data/db';
 import { deleteWorkout } from '@/data/repo';
-import { getSettings } from '@/data/repo';
+import { readSettings } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import {
@@ -28,7 +28,7 @@ import { defaultSettings } from '@/data/defaults';
 
 export function ActivityPage() {
   const workouts = useLiveQuery(() => db.workouts.orderBy('startedAt').reverse().toArray(), [], []);
-  const settings = useLiveQuery(() => getSettings(), [], undefined);
+  const settings = useLiveQuery(() => readSettings(), [], undefined);
   const [params, setParams] = useSearchParams();
   const [pickerOpen, setPickerOpen] = useState(false);
   const [activeSport, setActiveSport] = useState<Sport | null>(null);

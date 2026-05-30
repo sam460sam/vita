@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Download, Upload, Trash2, Info, Sparkles } from 'lucide-react';
-import { getSettings, updateSettings, exportBackup, importBackup, clearAllData } from '@/data/repo';
+import { readSettings, updateSettings, exportBackup, importBackup, clearAllData } from '@/data/repo';
 import { seedDemoData } from '@/data/seed';
 import { defaultSettings } from '@/data/defaults';
 import { platform } from '@/platform/platform';
@@ -12,7 +12,7 @@ import { format } from 'date-fns';
 import type { VitaBackup } from '@/data/types';
 
 export function SettingsPage() {
-  const settings = useLiveQuery(() => getSettings(), [], undefined);
+  const settings = useLiveQuery(() => readSettings(), [], undefined);
   const s = settings ?? defaultSettings();
   const [name, setName] = useState('');
   const [move, setMove] = useState('600');
