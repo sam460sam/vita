@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Download, Upload, Trash2, Info } from 'lucide-react';
+import { Download, Upload, Trash2, Info, Sparkles } from 'lucide-react';
 import { getSettings, updateSettings, exportBackup, importBackup, clearAllData } from '@/data/repo';
+import { seedDemoData } from '@/data/seed';
 import { defaultSettings } from '@/data/defaults';
 import { platform } from '@/platform/platform';
 import { PageHeader } from '@/app/PageHeader';
@@ -62,6 +63,13 @@ export function SettingsPage() {
     }
   }
 
+  async function doDemo() {
+    if (confirm('Caricare i dati demo? Sostituiranno i dati attuali. Esporta prima un backup se vuoi conservarli.')) {
+      await seedDemoData();
+      toast.show('Dati demo caricati');
+    }
+  }
+
   async function doClear() {
     if (confirm('Eliminare TUTTI i dati di Vita? Questa azione non è reversibile. Esporta prima un backup se vuoi conservarli.')) {
       await clearAllData();
@@ -118,6 +126,9 @@ export function SettingsPage() {
             </Button>
             <Button variant="subtle" block icon={<Upload size={18} />} onClick={doImport}>
               Importa backup
+            </Button>
+            <Button variant="subtle" block icon={<Sparkles size={18} />} onClick={doDemo}>
+              Carica dati demo
             </Button>
             <Button variant="ghost" block className="text-danger" icon={<Trash2 size={18} />} onClick={doClear}>
               Elimina tutti i dati
