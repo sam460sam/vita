@@ -1,0 +1,111 @@
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { Pencil, Plus } from 'lucide-react';
+import { db } from '@/data/db';
+import { PageHeader } from '@/app/PageHeader';
+import { Screen } from '@/app/Screen';
+import { Card, Segmented, EmptyState, Button, IconButton, ProgressRing } from '@/ui';
+import { TaskForm } from './TaskForm';
+import { ProjectForm } from './ProjectForm';
+import { TaskRow } from './TaskRow';
+import { KanbanBoard } from './KanbanBoard';
+import { projectProgress, sortTasks } from './logic';
+import type { Task } from '@/data/types';
+import { useNavigate } from 'react-router-dom';
+
+export function ProjectDetailPage() {
+  const { id = '' } = useParams();
+  const navigate = useNavigate();
+  const project = useLiveQuery(() => db.projects.get(id), [id], undefined);
+  const tasks = useLiveQuery(() => db.tasks.where('projectId').equals(id).toArray(), [id], []);
+  const [mode, setMode] = useState<'list' | 'kanban'>('list');
+  const [taskForm, setTaskForm] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [projForm, setProjForm] = useState(false);
+
+  if (project === undefined) return null; // loading
+  if (!project) {
+    return (
+      <>
+        <PageHeader title="Progetto" back="/progetti" />
+        <Screen>
+          <EmptyState title="Progetto non trovato" />
+        </Screen>
+      </>
+    );
+  }
+
+  const list = tasks ?? [];
+  const prog = projectProgress(list, id);
+  const sorted = sortTasks(list);
+
+  function openTask(t: Task) {
+    setEditingTask(t);
+    setTaskForm(true);
+  }
+
+  return (
+    <>
+      <PageHeader
+        title={project.name}
+        back="/progetti"
+        action={
+          <IconButton label="Modifica progetto" onClick={() => setProjForm(true)}>
+            <Pencil size={18} />
+          </IconButton>
+        }
+      />
+      <Screen>
+        <Card className="flex items-center gap-4 mb-4">
+          <ProgressRing progress={prog} size={56} stroke={7} color={project.color}>
+            <span className="text-[12px] font-semibold tnum text-ink">{Math.round(prog * 100)}%</span>
+          </ProgressRing>
+          <div className="min-w-0 flex-1">
+            {project.description ? (
+              <p className="text-[14px] text-ink-2 leading-snug">{project.description}</p>
+            ) : (
+              <p className="text-[14px] text-ink-3">{list.length} task in totale</p>
+            )}
+          </div>
+        </Card>
+
+        <div className="flex items-center justify-between mb-3 gap-2">
+          <Segmented
+            value={mode}
+            onChange={setMode}
+            options={[
+              { value: 'list', label: 'Lista' },
+              { value: 'kanban', label: 'Kanban' },
+            ]}
+          />
+          <Button size="sm" icon={<Plus size={16} />} onClick={() => { setEditingTask(null); setTaskForm(true); }}>
+            Task
+          </Button>
+        </div>
+
+        {list.length === 0 ? (
+          <Card>
+            <EmptyState
+              icon={<Plus size={22} />}
+              title="Nessuna task"
+              description="Aggiungi la prima task a questo progetto."
+              action={<Button onClick={() => setTaskForm(true)}>Nuova task</Button>}
+            />
+          </Card>
+        ) : mode === 'list' ? (
+          <Card inset={false} className="px-4 divide-y divide-divider">
+            {sorted.map((t) => (
+              <TaskRow key={t.id} task={t} project={project} onOpen={openTask} />
+            ))}
+          </Card>
+        ) : (
+          <KanbanBoard tasks={list} project={project} onOpen={openTask} />
+        )}
+      </Screen>
+
+      <TaskForm open={taskForm} onClose={() => setTaskForm(false)} task={editingTask} defaultProjectId={id} />
+      <ProjectForm open={projForm} onClose={() => setProjForm(false)} project={project} onDeleted={() => navigate('/progetti')} />
+    </>
+  );
+}

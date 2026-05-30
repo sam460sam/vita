@@ -1,0 +1,177 @@
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { Play, Plus, Trash2 } from 'lucide-react';
+import { db } from '@/data/db';
+import { deleteWorkout } from '@/data/repo';
+import { getSettings } from '@/data/repo';
+import { PageHeader } from '@/app/PageHeader';
+import { Screen } from '@/app/Screen';
+import {
+  ActivityRings,
+  BarChart,
+  Button,
+  Card,
+  CardHeader,
+  EmptyState,
+  IconButton,
+  Segmented,
+} from '@/ui';
+import { formatDistance, formatDuration } from '@/lib/format';
+import { format } from 'date-fns';
+import { it } from 'date-fns/locale';
+import { todayRings, ringsToData, summarize } from './logic';
+import { getSport, type Sport } from './sports';
+import { SportPicker } from './SportPicker';
+import { WorkoutTracker } from './WorkoutTracker';
+import { defaultSettings } from '@/data/defaults';
+
+export function ActivityPage() {
+  const workouts = useLiveQuery(() => db.workouts.orderBy('startedAt').reverse().toArray(), [], []);
+  const settings = useLiveQuery(() => getSettings(), [], undefined);
+  const [params, setParams] = useSearchParams();
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [activeSport, setActiveSport] = useState<Sport | null>(null);
+  const [period, setPeriod] = useState<'week' | 'month'>('week');
+
+  // Quick-add deep link: /attivita?start=1 opens the sport picker.
+  useEffect(() => {
+    if (params.get('start') === '1') {
+      setPickerOpen(true);
+      params.delete('start');
+      setParams(params, { replace: true });
+    }
+  }, [params, setParams]);
+
+  const s = settings ?? defaultSettings();
+  const rings = todayRings(workouts ?? [], s);
+  const summary = summarize(workouts ?? [], period);
+
+  return (
+    <>
+      <PageHeader
+        title="Attività"
+        action={
+          <Button size="sm" icon={<Play size={16} />} onClick={() => setPickerOpen(true)}>
+            Avvia
+          </Button>
+        }
+      />
+      <Screen>
+        {/* Rings */}
+        <Card className="flex flex-col items-center pt-6 pb-5 mb-4">
+          <ActivityRings rings={ringsToData(rings)} />
+          <div className="grid grid-cols-3 gap-4 w-full mt-5">
+            <RingStat label="Movimento" value={rings.move.value} goal={rings.move.goal} unit="kcal" color="var(--c-activity)" />
+            <RingStat label="Allenamento" value={rings.exercise.value} goal={rings.exercise.goal} unit="min" color="var(--c-habit)" />
+            <RingStat label="In piedi" value={rings.stand.value} goal={rings.stand.goal} unit="ore" color="var(--c-project)" />
+          </div>
+        </Card>
+
+        {/* Summary */}
+        <Card className="mb-4">
+          <CardHeader
+            title="Riepilogo"
+            action={
+              <Segmented
+                value={period}
+                onChange={setPeriod}
+                options={[
+                  { value: 'week', label: 'Settimana' },
+                  { value: 'month', label: 'Mese' },
+                ]}
+              />
+            }
+          />
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <MiniStat label="Allenamenti" value={summary.count} />
+            <MiniStat label="Minuti" value={summary.totalMin} />
+            <MiniStat label="Kcal" value={summary.totalKcal} />
+          </div>
+          <BarChart data={summary.daily.map((d) => ({ label: d.label, value: d.min }))} color="var(--c-activity)" unit="min" />
+        </Card>
+
+        {/* History */}
+        <Card>
+          <CardHeader title="Storico" />
+          {workouts && workouts.length > 0 ? (
+            <div className="divide-y divide-divider">
+              {workouts.map((w) => {
+                const sport = getSport(w.sportId);
+                const Icon = sport.icon;
+                return (
+                  <div key={w.id} className="flex items-center gap-3 py-3 group">
+                    <span className="h-10 w-10 rounded-full bg-activity/10 flex items-center justify-center text-activity flex-shrink-0">
+                      <Icon size={18} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[15px] font-medium text-ink truncate">{sport.name}</div>
+                      <div className="text-[13px] text-ink-2">
+                        {format(new Date(w.startedAt), 'd MMM · HH:mm', { locale: it })}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[15px] font-semibold tnum text-ink">{formatDuration(w.durationSec)}</div>
+                      <div className="text-[12px] text-ink-2 tnum">
+                        {w.activeKcal} kcal{w.distanceM ? ` · ${formatDistance(w.distanceM)}` : ''}
+                      </div>
+                    </div>
+                    <IconButton label="Elimina" className="opacity-0 group-hover:opacity-100" onClick={() => deleteWorkout(w.id)}>
+                      <Trash2 size={16} />
+                    </IconButton>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <EmptyState
+              icon={<Plus size={22} />}
+              title="Nessun allenamento"
+              description="Avvia il tuo primo allenamento per riempire gli anelli."
+              action={<Button onClick={() => setPickerOpen(true)}>Avvia allenamento</Button>}
+            />
+          )}
+        </Card>
+      </Screen>
+
+      <SportPicker
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onPick={(sport) => {
+          setPickerOpen(false);
+          setActiveSport(sport);
+        }}
+      />
+      <WorkoutTracker
+        sport={activeSport}
+        open={!!activeSport}
+        onClose={() => setActiveSport(null)}
+        onSaved={() => setActiveSport(null)}
+      />
+    </>
+  );
+}
+
+function RingStat({ label, value, goal, unit, color }: { label: string; value: number; goal: number; unit: string; color: string }) {
+  return (
+    <div className="text-center">
+      <div className="metric-label" style={{ color }}>
+        {label}
+      </div>
+      <div className="text-lg font-semibold tnum text-ink mt-1">
+        {value}
+        <span className="text-ink-3 text-sm font-normal">/{goal}</span>
+      </div>
+      <div className="text-[11px] text-ink-3">{unit}</div>
+    </div>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="bg-section rounded-card p-3 text-center">
+      <div className="text-xl font-semibold tnum text-ink">{value}</div>
+      <div className="metric-label mt-0.5">{label}</div>
+    </div>
+  );
+}
