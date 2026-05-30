@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ===== Design tokens — single source of truth (Design System §3) ===== */
+  /* Surfaces */
+  --c-app: #ffffff;
+  --c-section: #f7f8fa;
+  --c-card: #ffffff;
+  /* Text */
+  --c-ink: #0a0a0c;
+  --c-ink-2: #6b7280;
+  --c-ink-3: #9ca3af;
+  /* Lines */
+  --c-line: #e5e7eb;
+  --c-divider: #f1f2f4;
+  /* Module accents (sober, one per module) */
+  --c-activity: #ff6b57;
+  --c-habit: #10b981;
+  --c-project: #4f46e5;
+  --c-journal: #f59e0b;
+  --c-finance: #7c3aed;
+  /* States */
+  --c-success: #10b981;
+  --c-warning: #f59e0b;
+  --c-danger: #ef4444;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--c-section);
+  color: var(--c-ink);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Prevent overscroll bounce revealing white outside app */
+  overscroll-behavior-y: none;
+}
+
+/* Tabular numbers everywhere metrics live */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+/* Small uppercase metric label */
+.metric-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-ink-3);
+}
+
+/* Focus visibility (WCAG AA) */
+:focus-visible {
+  outline: 2px solid var(--c-project);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Hide scrollbars on horizontal scrollers but keep functionality */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-sheet-in {
+  animation: sheet-in 250ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.animate-fade-in {
+  animation: fade-in 150ms ease-out;
+}
