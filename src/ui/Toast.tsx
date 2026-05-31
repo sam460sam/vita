@@ -27,7 +27,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {items.map((t) => (
           <div
             key={t.id}
-            className="animate-fade-in bg-ink text-white text-[14px] font-medium px-4 py-2.5 rounded-full shadow-card-hover max-w-sm"
+            className="animate-fade-in bg-primary text-on-primary border border-primary-border text-[14px] font-medium px-4 py-2.5 rounded-full shadow-card-hover max-w-sm"
           >
             {t.message}
           </div>

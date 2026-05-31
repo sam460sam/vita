@@ -17,7 +17,7 @@ export function Sidebar() {
 
       <button
         onClick={openMenu}
-        className="mb-5 mx-1 inline-flex items-center gap-2 h-11 px-4 rounded-btn bg-ink text-white font-semibold hover:opacity-90 transition-opacity"
+        className="mb-5 mx-1 inline-flex items-center gap-2 h-11 px-4 rounded-btn bg-primary text-on-primary border border-primary-border font-semibold hover:opacity-90 transition-opacity"
       >
         <Plus size={18} /> {t('common.add')}
       </button>

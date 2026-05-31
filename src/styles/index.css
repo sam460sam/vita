@@ -25,6 +25,10 @@
   --c-success: #10b981;
   --c-warning: #f59e0b;
   --c-danger: #ef4444;
+  /* Primary action (buttons / FAB) — stays a dark pill with white text */
+  --c-primary: #0a0a0c;
+  --c-on-primary: #ffffff;
+  --c-primary-border: transparent;
   color-scheme: light;
 }
 
@@ -50,6 +54,11 @@ html.dark {
   --c-success: #1fd093;
   --c-warning: #fbbf24;
   --c-danger: #f87171;
+  /* Primary action stays a dark/near-black pill with white text, but gets a
+     light border so it never disappears against the dark background. */
+  --c-primary: #18181c;
+  --c-on-primary: #ffffff;
+  --c-primary-border: #3a3a42;
   color-scheme: dark;
 }
 

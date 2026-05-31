@@ -33,7 +33,7 @@ function QuickAddButton() {
     <button
       onClick={openMenu}
       aria-label="Aggiungi"
-      className="h-[52px] w-[52px] -mt-5 rounded-full bg-ink text-white shadow-card-hover ring-4 ring-app flex items-center justify-center active:scale-90 transition-transform"
+      className="h-[52px] w-[52px] -mt-5 rounded-full bg-primary text-on-primary border border-primary-border shadow-card-hover ring-4 ring-app flex items-center justify-center active:scale-90 transition-transform"
     >
       <Plus size={26} strokeWidth={2.5} />
     </button>

@@ -24,7 +24,7 @@ export function ProPage() {
       <Screen>
         {/* Hero */}
         <div className="flex flex-col items-center text-center pt-2 pb-6">
-          <span className="h-16 w-16 rounded-2xl bg-ink flex items-center justify-center text-white mb-4">
+          <span className="h-16 w-16 rounded-2xl bg-primary border border-primary-border flex items-center justify-center text-on-primary mb-4">
             <Sparkles size={30} />
           </span>
           <h1 className="text-2xl font-bold text-ink">{t('pro.title')}</h1>

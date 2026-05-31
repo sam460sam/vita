@@ -134,7 +134,7 @@ export function HabitForm({
                 onClick={() => setDays((prev) => (prev.includes(i) ? prev.filter((x) => x !== i) : [...prev, i]))}
                 className={cn(
                   'flex-1 h-10 rounded-btn text-[12px] font-semibold transition-colors',
-                  days.includes(i) ? 'bg-ink text-white' : 'bg-section text-ink-2',
+                  days.includes(i) ? 'bg-ink text-app' : 'bg-section text-ink-2',
                 )}
               >
                 {d}

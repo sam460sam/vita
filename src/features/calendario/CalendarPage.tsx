@@ -109,10 +109,10 @@ export function CalendarPage() {
                   className={cn(
                     'aspect-square rounded-lg flex flex-col items-center justify-center gap-1 transition-colors',
                     !inMonth && 'opacity-30',
-                    isSel ? 'bg-ink text-white' : isToday(d) ? 'bg-section ring-1 ring-ink/15' : 'hover:bg-section',
+                    isSel ? 'bg-ink text-app' : isToday(d) ? 'bg-section ring-1 ring-ink/15' : 'hover:bg-section',
                   )}
                 >
-                  <span className={cn('text-[13px] tnum font-medium', isSel ? 'text-white' : 'text-ink')}>{format(d, 'd')}</span>
+                  <span className={cn('text-[13px] tnum font-medium', isSel ? 'text-app' : 'text-ink')}>{format(d, 'd')}</span>
                   <span className="flex gap-0.5 h-1.5">
                     {items.tasks > 0 && <Dot color="var(--c-project)" on={isSel} />}
                     {items.workouts > 0 && <Dot color="var(--c-activity)" on={isSel} />}
@@ -148,7 +148,7 @@ export function CalendarPage() {
 }
 
 function Dot({ color, on }: { color: string; on: boolean }) {
-  return <span className="h-1.5 w-1.5 rounded-full" style={{ background: on ? '#fff' : color }} />;
+  return <span className="h-1.5 w-1.5 rounded-full" style={{ background: on ? 'var(--c-app)' : color }} />;
 }
 
 function Row({ icon, color, title, sub, muted }: { icon: React.ReactNode; color: string; title: string; sub: string; muted?: boolean }) {

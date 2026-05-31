@@ -15,7 +15,7 @@ export function MorePage() {
         {/* Vita Pro banner */}
         <Link to="/pro">
           <Card className="flex items-center gap-3 mb-4 active:bg-section transition-colors">
-            <span className="h-10 w-10 rounded-full bg-ink flex items-center justify-center text-white flex-shrink-0">
+            <span className="h-10 w-10 rounded-full bg-primary border border-primary-border flex items-center justify-center text-on-primary flex-shrink-0">
               <Sparkles size={20} />
             </span>
             <div className="flex-1 min-w-0">

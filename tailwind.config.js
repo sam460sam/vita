@@ -26,6 +26,10 @@ export default {
         success: 'var(--c-success)',
         warning: 'var(--c-warning)',
         danger: 'var(--c-danger)',
+        // Primary action
+        primary: 'var(--c-primary)',
+        'on-primary': 'var(--c-on-primary)',
+        'primary-border': 'var(--c-primary-border)',
       },
       borderRadius: {
         card: '16px',

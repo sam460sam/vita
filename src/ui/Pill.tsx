@@ -17,7 +17,7 @@ export function Pill({ children, color, className, onClick, active }: PillProps)
       onClick={onClick}
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full px-2.5 h-7 text-[13px] font-medium transition-colors',
-        active ? 'bg-ink text-white' : 'bg-section text-ink-2',
+        active ? 'bg-ink text-app' : 'bg-section text-ink-2',
         onClick && !active && 'hover:bg-divider',
         className,
       )}
