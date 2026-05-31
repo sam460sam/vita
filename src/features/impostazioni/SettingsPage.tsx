@@ -10,10 +10,12 @@ import { Screen } from '@/app/Screen';
 import { Card, CardHeader, Field, Input, Button, Divider, Segmented, useToast } from '@/ui';
 import { format } from 'date-fns';
 import { useI18n, LANGS, type LangPref } from '@/i18n';
+import { useTheme, type ThemePref } from '@/theme/theme';
 import type { VitaBackup } from '@/data/types';
 
 export function SettingsPage() {
   const { t, pref, setPref } = useI18n();
+  const { pref: themePref, setPref: setThemePref } = useTheme();
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const s = settings ?? defaultSettings();
   const [name, setName] = useState('');
@@ -89,6 +91,12 @@ export function SettingsPage() {
     ...LANGS.map((l) => ({ value: l.code as LangPref, label: l.label })),
   ];
 
+  const themeOptions: { value: ThemePref; label: string }[] = [
+    { value: 'system', label: t('settings.theme.system') },
+    { value: 'light', label: t('settings.theme.light') },
+    { value: 'dark', label: t('settings.theme.dark') },
+  ];
+
   return (
     <>
       <PageHeader title={t('settings.title')} back="/altro" />
@@ -160,6 +168,23 @@ export function SettingsPage() {
                   style={{ borderColor: pref === o.value ? 'var(--c-ink)' : 'var(--c-line)' }}
                 >
                   {pref === o.value && <span className="h-2.5 w-2.5 rounded-full bg-ink" />}
+                </span>
+              </button>
+            ))}
+          </div>
+        </Card>
+
+        <Card className="mb-4">
+          <CardHeader title={t('settings.theme')} />
+          <div className="flex flex-col gap-2">
+            {themeOptions.map((o) => (
+              <button key={o.value} onClick={() => setThemePref(o.value)} className="flex items-center justify-between py-2.5">
+                <span className="text-[15px] text-ink">{o.label}</span>
+                <span
+                  className="h-5 w-5 rounded-full border-2 flex items-center justify-center"
+                  style={{ borderColor: themePref === o.value ? 'var(--c-ink)' : 'var(--c-line)' }}
+                >
+                  {themePref === o.value && <span className="h-2.5 w-2.5 rounded-full bg-ink" />}
                 </span>
               </button>
             ))}

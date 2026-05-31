@@ -25,6 +25,32 @@
   --c-success: #10b981;
   --c-warning: #f59e0b;
   --c-danger: #ef4444;
+  color-scheme: light;
+}
+
+/* ===== Dark theme ===== */
+html.dark {
+  /* Surfaces */
+  --c-app: #0a0a0c;
+  --c-section: #141417;
+  --c-card: #1c1c20;
+  /* Text */
+  --c-ink: #f4f4f5;
+  --c-ink-2: #a1a1aa;
+  --c-ink-3: #6b7280;
+  /* Lines */
+  --c-line: #2a2a30;
+  --c-divider: #232328;
+  /* Accents stay vivid on dark; slightly brighter for contrast */
+  --c-activity: #ff7a68;
+  --c-habit: #1fd093;
+  --c-project: #7c74ff;
+  --c-journal: #fbbf24;
+  --c-finance: #a78bfa;
+  --c-success: #1fd093;
+  --c-warning: #fbbf24;
+  --c-danger: #f87171;
+  color-scheme: dark;
 }
 
 * {

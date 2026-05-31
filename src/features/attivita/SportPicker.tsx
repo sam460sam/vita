@@ -27,7 +27,6 @@ export function SportPicker({
         <div className="relative">
           <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-3" />
           <Input
-            autoFocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={t('sport.search')}
