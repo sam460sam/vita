@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Sheet, Button, Field, Input, Segmented, useToast } from '@/ui';
 import { cn } from '@/lib/cn';
 import { createHabit, updateHabit, deleteHabit } from '@/data/repo';
+import { notifications } from '@/platform/notifications';
 import type { Habit, HabitFrequencyType } from '@/data/types';
 
 const COLORS = ['#10B981', '#FF6B57', '#4F46E5', '#F59E0B', '#7C3AED', '#0EA5E9', '#EC4899', '#0A0A0C'];
@@ -43,18 +44,25 @@ export function HabitForm({
       timesPerWeek: freqType === 'times_per_week' ? parseInt(timesPerWeek) || 3 : undefined,
       days: freqType === 'specific_days' ? days : undefined,
     };
+    let habitId: string;
     if (editing && habit) {
       await updateHabit(habit.id, { name: name.trim(), color, frequency, reminder: reminder || undefined });
+      habitId = habit.id;
       toast.show('Abitudine aggiornata');
     } else {
-      await createHabit({ name: name.trim(), color, frequency, reminder: reminder || undefined });
+      const created = await createHabit({ name: name.trim(), color, frequency, reminder: reminder || undefined });
+      habitId = created.id;
       toast.show('Abitudine creata');
     }
+    // Schedule/cancel the native reminder (no-op on web).
+    if (reminder && notifications.supported()) await notifications.requestPermission();
+    await notifications.scheduleHabitReminder(habitId, name.trim(), reminder || undefined);
     onClose();
   }
 
   async function remove() {
     if (habit) {
+      await notifications.cancelHabitReminder(habit.id);
       await deleteHabit(habit.id);
       toast.show('Abitudine eliminata');
       onClose();
