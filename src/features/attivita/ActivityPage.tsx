@@ -24,6 +24,7 @@ import { todayRings, ringsToData, summarize } from './logic';
 import { getSport, type Sport } from './sports';
 import { SportPicker } from './SportPicker';
 import { WorkoutTracker } from './WorkoutTracker';
+import { HealthCard } from './HealthCard';
 import { defaultSettings } from '@/data/defaults';
 import { useT } from '@/i18n';
 
@@ -69,6 +70,9 @@ export function ActivityPage() {
             <RingStat label={t('activity.ring.stand')} value={rings.stand.value} goal={rings.stand.goal} unit={t('activity.unit.hours')} color="var(--c-project)" />
           </div>
         </Card>
+
+        {/* Apple Health / Health Connect */}
+        <HealthCard />
 
         {/* Summary */}
         <Card className="mb-4">
