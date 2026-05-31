@@ -42,12 +42,12 @@ export function SportPicker({
             <button
               key={s.id}
               onClick={() => onPick(s)}
-              className="flex items-center gap-2.5 p-3 rounded-card bg-section hover:bg-divider transition-colors text-left"
+              className="flex items-center gap-2.5 p-3 rounded-card bg-section hover:bg-divider transition-colors text-left min-w-0"
             >
               <span className="h-9 w-9 rounded-full bg-card flex items-center justify-center flex-shrink-0 text-activity shadow-card">
                 <Icon size={18} />
               </span>
-              <span className="text-[13px] font-medium text-ink leading-tight">{s.name}</span>
+              <span className="text-[13px] font-medium text-ink leading-tight min-w-0 break-words hyphens-auto">{s.name}</span>
             </button>
           );
         })}

@@ -9,6 +9,7 @@ export function defaultSettings(): Settings {
     goals: { moveKcal: 600, exerciseMin: 30, standHours: 12 },
     modules: { goals: true, finances: true, calendar: true },
     currency: 'EUR',
+    water: { unit: 'glass', dailyGoal: 8 },
     createdAt: t,
     updatedAt: t,
   };

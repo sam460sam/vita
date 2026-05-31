@@ -224,7 +224,7 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
         />
       </Field>
       <Field label={t('txForm.amount')}>
-        <Input autoFocus type="number" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0,00" />
+        <Input type="number" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0,00" />
       </Field>
       <div className="grid grid-cols-2 gap-3">
         <Field label={t('txForm.category')}>
@@ -262,7 +262,7 @@ function BudgetForm({ open, onClose, current }: { open: boolean; onClose: () => 
   return (
     <Sheet open={open} onClose={onClose} title={t('budgetForm.title')} footer={<Button block size="lg" onClick={save}>{t('budgetForm.save')}</Button>}>
       <Field label={t('budgetForm.limit')}>
-        <Input autoFocus type="number" inputMode="decimal" value={value} onChange={(e) => setValue(e.target.value)} placeholder="0,00" />
+        <Input type="number" inputMode="decimal" value={value} onChange={(e) => setValue(e.target.value)} placeholder="0,00" />
       </Field>
       <p className="text-[13px] text-ink-2">{t('budgetForm.note')}</p>
     </Sheet>

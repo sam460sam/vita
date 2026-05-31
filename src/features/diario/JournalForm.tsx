@@ -106,7 +106,7 @@ export function JournalForm({
       </Field>
 
       <Field label={t('journalForm.notes')}>
-        <Textarea autoFocus value={text} onChange={(e) => setText(e.target.value)} placeholder={t('journalForm.notesPh')} className="min-h-[140px]" />
+        <Textarea value={text} onChange={(e) => setText(e.target.value)} placeholder={t('journalForm.notesPh')} className="min-h-[140px]" />
       </Field>
 
       <Field label={t('journalForm.tags')}>

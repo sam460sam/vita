@@ -282,6 +282,19 @@ export const it = {
   'calendar.item.task': 'Task',
   'calendar.item.journal': 'Diario',
 
+  // Water
+  'water.title': 'Acqua',
+  'water.today': 'Acqua oggi',
+  'water.glass': 'bicchiere',
+  'water.glasses': 'bicchieri',
+  'water.goalReached': 'Obiettivo raggiunto! 💧',
+  'water.add': 'Aggiungi',
+  'water.unit': 'Unità',
+  'water.unit.glass': 'Bicchieri',
+  'water.unit.liter': 'Litri',
+  'water.goal': 'Obiettivo giornaliero',
+  'water.of': 'di',
+
   // More
   'more.title': 'Altro',
   'more.tagline': 'Vita · il tuo life OS',

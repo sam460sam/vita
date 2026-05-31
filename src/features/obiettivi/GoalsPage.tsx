@@ -161,7 +161,7 @@ function GoalForm({ open, onClose, goal }: { open: boolean; onClose: () => void;
       }
     >
       <Field label={t('goalForm.title')}>
-        <Input autoFocus value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('goalForm.titlePh')} />
+        <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('goalForm.titlePh')} />
       </Field>
       <Field label={t('goalForm.desc')}>
         <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('goalForm.descPh')} />

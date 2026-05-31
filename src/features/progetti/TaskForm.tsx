@@ -95,7 +95,7 @@ export function TaskForm({
       }
     >
       <Field label={t('taskForm.title')}>
-        <Input autoFocus value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('taskForm.titlePh')} />
+        <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('taskForm.titlePh')} />
       </Field>
 
       <div className="grid grid-cols-2 gap-3">

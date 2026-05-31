@@ -10,6 +10,7 @@ import { ActivityRings, Card, CardHeader, Checkbox, EmptyState, StatTile } from 
 import { longDate, todayISO, dueLabel, isOverdue } from '@/lib/format';
 import { todayRings, ringsToData } from '@/features/attivita/logic';
 import { pendingToday, currentStreak } from '@/features/abitudini/logic';
+import { WaterCard } from '@/features/acqua/WaterCard';
 import { startOfWeek } from 'date-fns';
 import { cn } from '@/lib/cn';
 import { useT, type TKey } from '@/i18n';
@@ -71,6 +72,9 @@ export function TodayPage() {
           <StatTile label={t('today.stat.week')} value={workoutsThisWeek} unit={t('today.unit.workouts')} accent="var(--c-activity)" icon={<Dumbbell size={14} />} />
           <StatTile label={t('today.stat.closed')} value={tasksClosedToday} unit={t('today.unit.today')} accent="var(--c-project)" icon={<CheckCircle2 size={14} />} />
         </div>
+
+        {/* Water */}
+        <WaterCard settings={s} />
 
         {/* Da fare oggi */}
         <Card className="mb-4">

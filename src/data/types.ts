@@ -33,6 +33,11 @@ export interface Settings {
     calendar: boolean;
   };
   currency: string; // e.g. 'EUR'
+  // Water tracking preferences
+  water: {
+    unit: 'glass' | 'liter'; // how the user logs water
+    dailyGoal: number; // target per day (glasses or ml depending on unit)
+  };
   createdAt: number;
   updatedAt: number;
 }
@@ -95,6 +100,19 @@ export interface HabitLog {
   date: string; // ISO yyyy-MM-dd
   done: boolean;
   createdAt: number;
+}
+
+// ----------------------------------------------------------------------------
+// Water intake
+// ----------------------------------------------------------------------------
+/** One day's total water intake. amount is in the unit stored at log time:
+ *  glasses (count) or milliliters. `unit` makes each log self-describing. */
+export interface WaterLog {
+  id: ID; // = date (yyyy-MM-dd), one row per day
+  date: string;
+  amount: number; // glasses or ml
+  unit: 'glass' | 'liter';
+  updatedAt: number;
 }
 
 // ----------------------------------------------------------------------------
@@ -182,4 +200,5 @@ export interface VitaBackup {
   goals: Goal[];
   transactions: Transaction[];
   budgets: Budget[];
+  waterLogs?: WaterLog[];
 }

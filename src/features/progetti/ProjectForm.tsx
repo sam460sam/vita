@@ -73,7 +73,7 @@ export function ProjectForm({
       }
     >
       <Field label={t('projectForm.name')}>
-        <Input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder={t('projectForm.namePh')} />
+        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('projectForm.namePh')} />
       </Field>
       <Field label={t('projectForm.color')}>
         <div className="flex flex-wrap gap-2">

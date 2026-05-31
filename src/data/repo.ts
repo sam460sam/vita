@@ -16,6 +16,7 @@ import type {
   Task,
   Transaction,
   VitaBackup,
+  WaterLog,
   Workout,
 } from './types';
 
@@ -309,10 +310,28 @@ export async function setBudget(monthlyLimit: number) {
 }
 
 // ---------------------------------------------------------------------------
+// Water intake
+// ---------------------------------------------------------------------------
+export async function readWaterLog(date: string): Promise<WaterLog | undefined> {
+  return db.waterLogs.get(date);
+}
+
+/** Add (or subtract) to the day's water total; never goes below 0. */
+export async function addWater(date: string, delta: number, unit: 'glass' | 'liter') {
+  const existing = await db.waterLogs.get(date);
+  const amount = Math.max(0, (existing?.amount ?? 0) + delta);
+  await db.waterLogs.put({ id: date, date, amount, unit, updatedAt: now() });
+}
+
+export async function setWater(date: string, amount: number, unit: 'glass' | 'liter') {
+  await db.waterLogs.put({ id: date, date, amount: Math.max(0, amount), unit, updatedAt: now() });
+}
+
+// ---------------------------------------------------------------------------
 // Backup — export / import full state (BUILD-SPEC §5)
 // ---------------------------------------------------------------------------
 export async function exportBackup(): Promise<VitaBackup> {
-  const [settings, projects, tasks, habits, habitLogs, workouts, journalEntries, goals, transactions, budgets] =
+  const [settings, projects, tasks, habits, habitLogs, workouts, journalEntries, goals, transactions, budgets, waterLogs] =
     await Promise.all([
       db.settings.get('app'),
       db.projects.toArray(),
@@ -324,10 +343,11 @@ export async function exportBackup(): Promise<VitaBackup> {
       db.goals.toArray(),
       db.transactions.toArray(),
       db.budgets.toArray(),
+      db.waterLogs.toArray(),
     ]);
   return {
     schema: 'vita',
-    version: 1,
+    version: 2,
     exportedAt: now(),
     settings: settings ?? null,
     projects,
@@ -339,6 +359,7 @@ export async function exportBackup(): Promise<VitaBackup> {
     goals,
     transactions,
     budgets,
+    waterLogs,
   };
 }
 
@@ -346,7 +367,7 @@ export async function importBackup(backup: VitaBackup, mode: 'replace' | 'merge'
   if (backup.schema !== 'vita') throw new Error('File di backup non valido.');
   await db.transaction(
     'rw',
-    [db.settings, db.projects, db.tasks, db.habits, db.habitLogs, db.workouts, db.journalEntries, db.goals, db.transactions, db.budgets],
+    [db.settings, db.projects, db.tasks, db.habits, db.habitLogs, db.workouts, db.journalEntries, db.goals, db.transactions, db.budgets, db.waterLogs],
     async () => {
       if (mode === 'replace') {
         await Promise.all([
@@ -360,6 +381,7 @@ export async function importBackup(backup: VitaBackup, mode: 'replace' | 'merge'
           db.goals.clear(),
           db.transactions.clear(),
           db.budgets.clear(),
+          db.waterLogs.clear(),
         ]);
       }
       if (backup.settings) await db.settings.put(backup.settings);
@@ -372,6 +394,7 @@ export async function importBackup(backup: VitaBackup, mode: 'replace' | 'merge'
       await db.goals.bulkPut(backup.goals ?? []);
       await db.transactions.bulkPut(backup.transactions ?? []);
       await db.budgets.bulkPut(backup.budgets ?? []);
+      await db.waterLogs.bulkPut(backup.waterLogs ?? []);
     },
   );
 }
@@ -388,5 +411,6 @@ export async function clearAllData() {
     db.goals.clear(),
     db.transactions.clear(),
     db.budgets.clear(),
+    db.waterLogs.clear(),
   ]);
 }

@@ -90,7 +90,7 @@ export function HabitForm({
       }
     >
       <Field label={t('habitForm.name')}>
-        <Input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder={t('habitForm.namePh')} />
+        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('habitForm.namePh')} />
       </Field>
 
       <Field label={t('habitForm.color')}>

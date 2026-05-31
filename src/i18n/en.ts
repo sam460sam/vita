@@ -279,6 +279,19 @@ export const en: Record<TKey, string> = {
   'calendar.item.task': 'Task',
   'calendar.item.journal': 'Journal',
 
+  // Water
+  'water.title': 'Water',
+  'water.today': 'Water today',
+  'water.glass': 'glass',
+  'water.glasses': 'glasses',
+  'water.goalReached': 'Goal reached! 💧',
+  'water.add': 'Add',
+  'water.unit': 'Unit',
+  'water.unit.glass': 'Glasses',
+  'water.unit.liter': 'Liters',
+  'water.goal': 'Daily goal',
+  'water.of': 'of',
+
   // More
   'more.title': 'More',
   'more.tagline': 'Vita · your life OS',
