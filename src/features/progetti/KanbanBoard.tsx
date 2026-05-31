@@ -5,9 +5,18 @@ import { updateTask } from '@/data/repo';
 import { dueLabel, isOverdue } from '@/lib/format';
 import type { Project, Task, TaskStatus } from '@/data/types';
 import { STATUS_COLUMNS, subtaskProgress } from './logic';
+import { useT } from '@/i18n';
+import type { TKey } from '@/i18n';
+
+const COLUMN_LABEL_KEYS: Record<TaskStatus, TKey> = {
+  todo: 'kanban.todo',
+  doing: 'kanban.doing',
+  done: 'kanban.done',
+};
 
 /** Lightweight HTML5 drag & drop kanban (works on desktop; cards also tappable). */
 export function KanbanBoard({ tasks, project, onOpen }: { tasks: Task[]; project: Project; onOpen: (t: Task) => void }) {
+  const t = useT();
   const [dragId, setDragId] = useState<string | null>(null);
   const [overCol, setOverCol] = useState<TaskStatus | null>(null);
 
@@ -37,33 +46,33 @@ export function KanbanBoard({ tasks, project, onOpen }: { tasks: Task[]; project
             )}
           >
             <div className="flex items-center justify-between px-1.5 pb-2">
-              <span className="text-[13px] font-semibold text-ink">{col.label}</span>
+              <span className="text-[13px] font-semibold text-ink">{t(COLUMN_LABEL_KEYS[col.id])}</span>
               <span className="text-[12px] tnum text-ink-3">{colTasks.length}</span>
             </div>
             <div className="space-y-2 min-h-[40px]">
-              {colTasks.map((t) => {
-                const sub = subtaskProgress(t);
-                const overdue = t.status !== 'done' && isOverdue(t.dueDate);
+              {colTasks.map((task) => {
+                const sub = subtaskProgress(task);
+                const overdue = task.status !== 'done' && isOverdue(task.dueDate);
                 return (
                   <div
-                    key={t.id}
+                    key={task.id}
                     draggable
-                    onDragStart={() => setDragId(t.id)}
-                    onClick={() => onOpen(t)}
+                    onDragStart={() => setDragId(task.id)}
+                    onClick={() => onOpen(task)}
                     className="bg-card rounded-xl p-3 shadow-card border border-line/60 border-l-[3px] cursor-pointer active:scale-[0.98] transition-transform"
                     style={{ borderLeftColor: project.color }}
                   >
-                    <div className={cn('text-[14px] leading-snug', t.status === 'done' ? 'text-ink-3 line-through' : 'text-ink')}>
-                      {t.title}
+                    <div className={cn('text-[14px] leading-snug', task.status === 'done' ? 'text-ink-3 line-through' : 'text-ink')}>
+                      {task.title}
                     </div>
                     <div className="flex items-center gap-2 mt-1.5 text-[11px] text-ink-2">
-                      {t.dueDate && <span className={overdue ? 'text-danger font-medium' : ''}>{dueLabel(t.dueDate)}</span>}
+                      {task.dueDate && <span className={overdue ? 'text-danger font-medium' : ''}>{dueLabel(task.dueDate)}</span>}
                       {sub.total > 0 && (
                         <span className="inline-flex items-center gap-1">
                           <CheckSquare size={11} /> {sub.done}/{sub.total}
                         </span>
                       )}
-                      {t.priority === 'high' && <span className="text-danger font-medium">Alta</span>}
+                      {task.priority === 'high' && <span className="text-danger font-medium">{t('taskForm.priority.high')}</span>}
                     </div>
                   </div>
                 );

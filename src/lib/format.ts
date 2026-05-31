@@ -1,7 +1,26 @@
 import { format, parseISO, isToday, isTomorrow, isYesterday, differenceInCalendarDays } from 'date-fns';
-import { it } from 'date-fns/locale';
+import { it as dfnIt, enUS as dfnEn } from 'date-fns/locale';
+import type { Locale } from 'date-fns';
 
 export const ISO_DAY = 'yyyy-MM-dd';
+
+// ---------------------------------------------------------------------------
+// Active locale — kept in sync by the I18nProvider so plain (non-React) format
+// helpers below produce dates in the current UI language.
+// ---------------------------------------------------------------------------
+type LangCode = 'it' | 'en';
+let activeLang: LangCode = 'it';
+let activeLocale: Locale = dfnIt;
+
+const REL_LABELS: Record<LangCode, { today: string; tomorrow: string; yesterday: string }> = {
+  it: { today: 'Oggi', tomorrow: 'Domani', yesterday: 'Ieri' },
+  en: { today: 'Today', tomorrow: 'Tomorrow', yesterday: 'Yesterday' },
+};
+
+export function setActiveLang(lang: LangCode) {
+  activeLang = lang;
+  activeLocale = lang === 'it' ? dfnIt : dfnEn;
+}
 
 /** Today as ISO yyyy-MM-dd in local time. */
 export function todayISO(d: Date = new Date()): string {
@@ -12,21 +31,22 @@ export function fromISO(date: string): Date {
   return parseISO(date);
 }
 
-/** Long human date, e.g. "Sabato 30 maggio". */
+/** Long human date, e.g. "Sabato 30 maggio" / "Saturday 30 May". */
 export function longDate(d: Date = new Date()): string {
-  const s = format(d, 'EEEE d MMMM', { locale: it });
+  const s = format(d, 'EEEE d MMMM', { locale: activeLocale });
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/** Relative due-date label. */
+/** Relative due-date label in the active language. */
 export function dueLabel(dateISO: string): string {
   const d = fromISO(dateISO);
-  if (isToday(d)) return 'Oggi';
-  if (isTomorrow(d)) return 'Domani';
-  if (isYesterday(d)) return 'Ieri';
+  const rel = REL_LABELS[activeLang];
+  if (isToday(d)) return rel.today;
+  if (isTomorrow(d)) return rel.tomorrow;
+  if (isYesterday(d)) return rel.yesterday;
   const diff = differenceInCalendarDays(d, new Date());
-  if (diff > 0 && diff <= 7) return format(d, 'EEEE', { locale: it });
-  return format(d, 'd MMM', { locale: it });
+  if (diff > 0 && diff <= 7) return format(d, 'EEEE', { locale: activeLocale });
+  return format(d, 'd MMM', { locale: activeLocale });
 }
 
 export function isOverdue(dateISO?: string): boolean {
@@ -63,7 +83,8 @@ export function formatPace(secPerKm: number): string {
 }
 
 export function formatMoney(amount: number, currency = 'EUR'): string {
-  return new Intl.NumberFormat('it-IT', { style: 'currency', currency }).format(amount);
+  const loc = activeLang === 'it' ? 'it-IT' : 'en-US';
+  return new Intl.NumberFormat(loc, { style: 'currency', currency }).format(amount);
 }
 
 export function monthKey(dateISO: string): string {
@@ -72,4 +93,9 @@ export function monthKey(dateISO: string): string {
 
 export function currentMonthKey(d: Date = new Date()): string {
   return format(d, 'yyyy-MM');
+}
+
+/** date-fns Locale for the active language (for components formatting dates). */
+export function activeDfnLocale(): Locale {
+  return activeLocale;
 }

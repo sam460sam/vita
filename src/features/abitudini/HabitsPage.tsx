@@ -11,8 +11,10 @@ import { HabitForm } from './HabitForm';
 import { Heatmap } from './Heatmap';
 import { bestStreak, completionRate, currentStreak, frequencyLabel, heatmapData, isDone } from './logic';
 import type { Habit } from '@/data/types';
+import { useT } from '@/i18n';
 
 export function HabitsPage() {
+  const t = useT();
   const habits = useLiveQuery(() => db.habits.orderBy('order').toArray(), [], []);
   const logs = useLiveQuery(() => db.habitLogs.toArray(), [], []);
   const [formOpen, setFormOpen] = useState(false);
@@ -24,10 +26,10 @@ export function HabitsPage() {
   return (
     <>
       <PageHeader
-        title="Abitudini"
+        title={t('habits.title')}
         action={
           <Button size="sm" icon={<Plus size={16} />} onClick={() => { setEditing(null); setFormOpen(true); }}>
-            Nuova
+            {t('habits.new')}
           </Button>
         }
       />
@@ -36,9 +38,9 @@ export function HabitsPage() {
           <Card>
             <EmptyState
               icon={<Flame size={22} />}
-              title="Nessuna abitudine"
-              description="Crea la tua prima abitudine e inizia a costruire una streak."
-              action={<Button onClick={() => setFormOpen(true)}>Nuova abitudine</Button>}
+              title={t('habits.empty.title')}
+              description={t('habits.empty.desc')}
+              action={<Button onClick={() => setFormOpen(true)}>{t('habits.empty.cta')}</Button>}
             />
           </Card>
         ) : (
@@ -54,12 +56,12 @@ export function HabitsPage() {
                     <Checkbox checked={done} color={h.color} onChange={() => toggleHabitLog(h.id, today)} label={h.name} />
                     <div className="min-w-0 flex-1">
                       <div className="text-[15px] font-semibold text-ink truncate">{h.name}</div>
-                      <div className="text-[13px] text-ink-2">{frequencyLabel(h)}</div>
+                      <div className="text-[13px] text-ink-2">{frequencyLabel(h, t)}</div>
                     </div>
                     <div className="flex items-center gap-1 text-[13px] font-semibold tnum" style={{ color: h.color }}>
                       <Flame size={15} /> {streak}
                     </div>
-                    <IconButton label="Modifica" onClick={() => { setEditing(h); setFormOpen(true); }}>
+                    <IconButton label={t('common.edit')} onClick={() => { setEditing(h); setFormOpen(true); }}>
                       <Pencil size={15} />
                     </IconButton>
                   </div>
@@ -69,9 +71,9 @@ export function HabitsPage() {
                   </div>
 
                   <div className="flex gap-4 mt-3 pt-3 border-t border-divider">
-                    <Stat label="Streak" value={streak} />
-                    <Stat label="Record" value={best} />
-                    <Stat label="Ultimi 30g" value={`${rate}%`} />
+                    <Stat label={t('habits.stat.streak')} value={streak} />
+                    <Stat label={t('habits.stat.record')} value={best} />
+                    <Stat label={t('habits.stat.last30')} value={`${rate}%`} />
                   </div>
                 </Card>
               );

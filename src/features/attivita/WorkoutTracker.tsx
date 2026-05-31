@@ -5,6 +5,7 @@ import { formatDuration } from '@/lib/format';
 import { createWorkout } from '@/data/repo';
 import { estimateKcal, type Sport } from './sports';
 import { useToast } from '@/ui';
+import { useT } from '@/i18n';
 
 /** Live workout tracking: start/pause/stop timer + live metrics, then save. */
 export function WorkoutTracker({
@@ -22,6 +23,7 @@ export function WorkoutTracker({
   const [running, setRunning] = useState(true);
   const startRef = useRef<number>(Date.now());
   const toast = useToast();
+  const t = useT();
 
   useEffect(() => {
     if (!open) return;
@@ -50,7 +52,7 @@ export function WorkoutTracker({
       totalKcal: Math.round(kcal * 1.25),
       source: 'manual',
     });
-    toast.show('Allenamento salvato');
+    toast.show(t('workout.saved'));
     onSaved();
     onClose();
   }
@@ -62,29 +64,29 @@ export function WorkoutTracker({
           <Icon size={30} />
         </span>
         <div className="text-6xl font-semibold tnum text-ink tracking-tight">{formatDuration(elapsed)}</div>
-        <p className="metric-label mt-2">Durata</p>
+        <p className="metric-label mt-2">{t('workout.duration')}</p>
 
         <div className="grid grid-cols-2 gap-3 w-full mt-8">
           <div className="bg-section rounded-card p-4">
-            <div className="metric-label">Calorie attive</div>
+            <div className="metric-label">{t('workout.activeKcal')}</div>
             <div className="text-2xl font-semibold tnum text-activity mt-1">{kcal}</div>
           </div>
           <div className="bg-section rounded-card p-4">
-            <div className="metric-label">Stato</div>
-            <div className="text-2xl font-semibold mt-1 text-ink">{running ? 'In corso' : 'In pausa'}</div>
+            <div className="metric-label">{t('workout.state')}</div>
+            <div className="text-2xl font-semibold mt-1 text-ink">{running ? t('workout.running') : t('workout.paused')}</div>
           </div>
         </div>
 
         <div className="flex items-center gap-3 mt-10">
           <Button variant="subtle" size="lg" onClick={() => setRunning((r) => !r)} icon={running ? <Pause size={20} /> : <Play size={20} />}>
-            {running ? 'Pausa' : 'Riprendi'}
+            {running ? t('workout.pause') : t('workout.resume')}
           </Button>
           <Button variant="primary" size="lg" onClick={save} icon={<Square size={18} />}>
-            Termina e salva
+            {t('workout.finish')}
           </Button>
         </div>
         <p className="text-[12px] text-ink-3 mt-4 max-w-xs">
-          Calorie stimate dal MET dello sport. In futuro arriveranno da HealthKit / Health Connect.
+          {t('workout.kcalNote')}
         </p>
       </div>
     </Sheet>

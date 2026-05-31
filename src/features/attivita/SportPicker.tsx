@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
 import { Sheet, Input } from '@/ui';
 import { SPORTS, type Sport } from './sports';
+import { useT } from '@/i18n';
 
 export function SportPicker({
   open,
@@ -12,6 +13,7 @@ export function SportPicker({
   onClose: () => void;
   onPick: (sport: Sport) => void;
 }) {
+  const t = useT();
   const [q, setQ] = useState('');
   const filtered = useMemo(() => {
     const t = q.trim().toLowerCase();
@@ -20,7 +22,7 @@ export function SportPicker({
   }, [q]);
 
   return (
-    <Sheet open={open} onClose={onClose} title="Scegli sport" size="full">
+    <Sheet open={open} onClose={onClose} title={t('sport.choose')} size="full">
       <div className="sticky top-0 -mt-1 pb-2 bg-card z-10">
         <div className="relative">
           <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-3" />
@@ -28,7 +30,7 @@ export function SportPicker({
             autoFocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Cerca uno sport…"
+            placeholder={t('sport.search')}
             className="pl-10"
           />
         </div>
@@ -49,7 +51,7 @@ export function SportPicker({
             </button>
           );
         })}
-        {filtered.length === 0 && <p className="col-span-2 text-center text-ink-3 py-8 text-sm">Nessuno sport trovato.</p>}
+        {filtered.length === 0 && <p className="col-span-2 text-center text-ink-3 py-8 text-sm">{t('sport.none')}</p>}
       </div>
     </Sheet>
   );

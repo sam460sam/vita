@@ -11,8 +11,10 @@ import { ProjectForm } from './ProjectForm';
 import { TaskRow } from './TaskRow';
 import { filterByView, projectCounts, projectProgress, sortTasks, type QuickView } from './logic';
 import type { Task } from '@/data/types';
+import { useT } from '@/i18n';
 
 export function ProjectsPage() {
+  const t = useT();
   const projects = useLiveQuery(() => db.projects.filter((p) => !p.archived).toArray(), [], []);
   const tasks = useLiveQuery(() => db.tasks.toArray(), [], []);
   const [taskForm, setTaskForm] = useState(false);
@@ -24,10 +26,10 @@ export function ProjectsPage() {
   const projMap = new Map((projects ?? []).map((p) => [p.id, p]));
 
   const quickViews: { id: QuickView; label: string; icon: typeof Sun }[] = [
-    { id: 'today', label: 'Oggi', icon: Sun },
-    { id: 'week', label: 'Questa settimana', icon: CalendarClock },
-    { id: 'inbox', label: 'Inbox', icon: Inbox },
-    { id: 'completed', label: 'Completate', icon: ListChecks },
+    { id: 'today', label: t('projects.view.today'), icon: Sun },
+    { id: 'week', label: t('projects.view.week'), icon: CalendarClock },
+    { id: 'inbox', label: t('projects.view.inbox'), icon: Inbox },
+    { id: 'completed', label: t('projects.view.completed'), icon: ListChecks },
   ];
 
   function openTask(t: Task) {
@@ -40,10 +42,10 @@ export function ProjectsPage() {
   return (
     <>
       <PageHeader
-        title="Progetti"
+        title={t('projects.title')}
         action={
           <Button size="sm" icon={<Plus size={16} />} onClick={() => { setEditingTask(null); setTaskForm(true); }}>
-            Task
+            {t('projects.taskBtn')}
           </Button>
         }
       />
@@ -71,9 +73,9 @@ export function ProjectsPage() {
 
         {/* Projects */}
         <div className="flex items-center justify-between mb-2 px-1">
-          <h2 className="metric-label">Progetti</h2>
+          <h2 className="metric-label">{t('projects.label')}</h2>
           <button onClick={() => setProjForm(true)} className="text-[13px] font-semibold text-project flex items-center gap-1">
-            <Plus size={14} /> Nuovo
+            <Plus size={14} /> {t('projects.new')}
           </button>
         </div>
 
@@ -91,7 +93,7 @@ export function ProjectsPage() {
                     <div className="min-w-0 flex-1">
                       <div className="text-[15px] font-semibold text-ink truncate">{p.name}</div>
                       <div className="text-[13px] text-ink-2 truncate">
-                        {counts.open} aperte · {counts.total} totali
+                        {counts.open} {t('projects.open')} · {counts.total} {t('projects.total')}
                       </div>
                     </div>
                     <ChevronRight size={20} className="text-ink-3" />
@@ -104,9 +106,9 @@ export function ProjectsPage() {
           <Card>
             <EmptyState
               icon={<Plus size={22} />}
-              title="Nessun progetto"
-              description="Crea un progetto per organizzare le tue task in parallelo."
-              action={<Button onClick={() => setProjForm(true)}>Nuovo progetto</Button>}
+              title={t('projects.empty.title')}
+              description={t('projects.empty.desc')}
+              action={<Button onClick={() => setProjForm(true)}>{t('projects.empty.cta')}</Button>}
             />
           </Card>
         )}
@@ -129,14 +131,6 @@ export function ProjectsPage() {
   );
 }
 
-const VIEW_LABELS: Record<QuickView, string> = {
-  today: 'Oggi',
-  week: 'Questa settimana',
-  inbox: 'Inbox',
-  completed: 'Completate',
-  all: 'Tutte',
-};
-
 function QuickViewSheet({
   view,
   tasks,
@@ -150,10 +144,18 @@ function QuickViewSheet({
   onClose: () => void;
   onOpenTask: (t: Task) => void;
 }) {
+  const t = useT();
+  const viewLabels: Record<QuickView, string> = {
+    today: t('projects.view.today'),
+    week: t('projects.view.week'),
+    inbox: t('projects.view.inbox'),
+    completed: t('projects.view.completed'),
+    all: t('projects.view.all'),
+  };
   return (
-    <Sheet open onClose={onClose} title={VIEW_LABELS[view]} size="full">
+    <Sheet open onClose={onClose} title={viewLabels[view]} size="full">
       {tasks.length === 0 ? (
-        <EmptyState title="Niente qui" description="Nessuna task in questa vista." />
+        <EmptyState title={t('projects.view.empty.title')} description={t('projects.view.empty.desc')} />
       ) : (
         <div className="divide-y divide-divider">
           {tasks.map((t) => (

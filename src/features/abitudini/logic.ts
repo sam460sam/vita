@@ -85,12 +85,12 @@ export function heatmapData(habit: Habit, logs: HabitLog[], days = 119): { date:
   return out;
 }
 
-export function frequencyLabel(habit: Habit): string {
+export function frequencyLabel(habit: Habit, t: (k: any, v?: any) => string): string {
   const f = habit.frequency;
-  if (f.type === 'daily') return 'Ogni giorno';
-  if (f.type === 'times_per_week') return `${f.timesPerWeek ?? 3}× a settimana`;
+  if (f.type === 'daily') return t('habit.freq.daily');
+  if (f.type === 'times_per_week') return t('habit.freq.timesPerWeek', { n: f.timesPerWeek ?? 3 });
   const names = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
-  return (f.days ?? []).map((d) => names[d]).join(' ') || 'Giorni specifici';
+  return (f.days ?? []).map((d) => names[d]).join(' ') || t('habit.freq.specificDays');
 }
 
 /** Habits scheduled today that are not yet checked. */

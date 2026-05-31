@@ -5,6 +5,7 @@ import { Sheet, Button, Field, Input, Textarea, Select, Segmented, Checkbox, use
 import { db } from '@/data/db';
 import { createTask, updateTask, deleteTask, newSubtask } from '@/data/repo';
 import type { Priority, Subtask, Task } from '@/data/types';
+import { useT } from '@/i18n';
 
 export function TaskForm({
   open,
@@ -27,6 +28,7 @@ export function TaskForm({
   const [subtasks, setSubtasks] = useState<Subtask[]>([]);
   const [newSub, setNewSub] = useState('');
   const toast = useToast();
+  const t = useT();
 
   useEffect(() => {
     if (open) {
@@ -58,10 +60,10 @@ export function TaskForm({
     };
     if (editing && task) {
       await updateTask(task.id, data);
-      toast.show('Task aggiornata');
+      toast.show(t('taskForm.updated'));
     } else {
       await createTask(data);
-      toast.show('Task creata');
+      toast.show(t('taskForm.created'));
     }
     onClose();
   }
@@ -69,7 +71,7 @@ export function TaskForm({
   async function remove() {
     if (task) {
       await deleteTask(task.id);
-      toast.show('Task eliminata');
+      toast.show(t('taskForm.deleted'));
       onClose();
     }
   }
@@ -78,28 +80,28 @@ export function TaskForm({
     <Sheet
       open={open}
       onClose={onClose}
-      title={editing ? 'Modifica task' : 'Nuova task'}
+      title={editing ? t('taskForm.edit') : t('taskForm.new')}
       footer={
         <div className="flex gap-2">
           {editing && (
             <Button variant="ghost" className="text-danger" onClick={remove}>
-              Elimina
+              {t('common.delete')}
             </Button>
           )}
           <Button block size="lg" onClick={save} disabled={!title.trim()}>
-            {editing ? 'Salva' : 'Crea task'}
+            {editing ? t('common.save') : t('taskForm.create')}
           </Button>
         </div>
       }
     >
-      <Field label="Titolo">
-        <Input autoFocus value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Cosa c'è da fare?" />
+      <Field label={t('taskForm.title')}>
+        <Input autoFocus value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('taskForm.titlePh')} />
       </Field>
 
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Progetto">
+        <Field label={t('taskForm.project')}>
           <Select value={projectId} onChange={(e) => setProjectId(e.target.value)}>
-            <option value="">Inbox</option>
+            <option value="">{t('taskForm.inbox')}</option>
             {(projects ?? []).map((p) => (
               <option key={p.id} value={p.id}>
                 {p.name}
@@ -107,24 +109,24 @@ export function TaskForm({
             ))}
           </Select>
         </Field>
-        <Field label="Scadenza">
+        <Field label={t('taskForm.due')}>
           <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
         </Field>
       </div>
 
-      <Field label="Priorità">
+      <Field label={t('taskForm.priority')}>
         <Segmented
           value={priority}
           onChange={setPriority}
           options={[
-            { value: 'low', label: 'Bassa' },
-            { value: 'medium', label: 'Media' },
-            { value: 'high', label: 'Alta' },
+            { value: 'low', label: t('taskForm.priority.low') },
+            { value: 'medium', label: t('taskForm.priority.medium') },
+            { value: 'high', label: t('taskForm.priority.high') },
           ]}
         />
       </Field>
 
-      <Field label="Sottotask">
+      <Field label={t('taskForm.subtasks')}>
         <div className="space-y-1.5 mb-2">
           {subtasks.map((s) => (
             <div key={s.id} className="flex items-center gap-2">
@@ -145,14 +147,14 @@ export function TaskForm({
             value={newSub}
             onChange={(e) => setNewSub(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addSub())}
-            placeholder="Aggiungi sottotask"
+            placeholder={t('taskForm.subtaskPh')}
           />
-          <Button variant="subtle" onClick={addSub} icon={<Plus size={18} />} aria-label="Aggiungi sottotask" />
+          <Button variant="subtle" onClick={addSub} icon={<Plus size={18} />} aria-label={t('taskForm.subtaskPh')} />
         </div>
       </Field>
 
-      <Field label="Note">
-        <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Dettagli aggiuntivi…" />
+      <Field label={t('taskForm.notes')}>
+        <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t('taskForm.notesPh')} />
       </Field>
     </Sheet>
   );

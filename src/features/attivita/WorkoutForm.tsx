@@ -5,6 +5,7 @@ import { createWorkout } from '@/data/repo';
 import { SPORTS, getSport, estimateKcal } from './sports';
 import { SportPicker } from './SportPicker';
 import type { Sport } from './sports';
+import { useT } from '@/i18n';
 
 /** Manual workout entry (used by global quick-add). */
 export function WorkoutForm({ open, onClose, onSaved }: { open: boolean; onClose: () => void; onSaved?: () => void }) {
@@ -14,6 +15,7 @@ export function WorkoutForm({ open, onClose, onSaved }: { open: boolean; onClose
   const [kcal, setKcal] = useState('');
   const [distanceKm, setDistanceKm] = useState('');
   const toast = useToast();
+  const t = useT();
 
   async function save() {
     const durationSec = Math.max(0, Math.round(parseFloat(minutes || '0') * 60));
@@ -26,7 +28,7 @@ export function WorkoutForm({ open, onClose, onSaved }: { open: boolean; onClose
       distanceM: sport.hasDistance && distanceKm ? Math.round(parseFloat(distanceKm) * 1000) : undefined,
       source: 'manual',
     });
-    toast.show('Allenamento aggiunto');
+    toast.show(t('workout.added'));
     onSaved?.();
     reset();
     onClose();
@@ -45,14 +47,14 @@ export function WorkoutForm({ open, onClose, onSaved }: { open: boolean; onClose
       <Sheet
         open={open}
         onClose={onClose}
-        title="Nuovo allenamento"
+        title={t('workout.new')}
         footer={
           <Button block size="lg" onClick={save} disabled={!minutes}>
-            Salva allenamento
+            {t('workout.save')}
           </Button>
         }
       >
-        <Field label="Sport">
+        <Field label={t('workout.sport')}>
           <button
             onClick={() => setPickerOpen(true)}
             className="w-full h-11 px-3.5 rounded-btn bg-section border border-line flex items-center justify-between text-[15px] text-ink"
@@ -65,12 +67,12 @@ export function WorkoutForm({ open, onClose, onSaved }: { open: boolean; onClose
           </button>
         </Field>
 
-        <Field label="Durata (minuti)">
+        <Field label={t('workout.durationMin')}>
           <Input type="number" inputMode="numeric" value={minutes} onChange={(e) => setMinutes(e.target.value)} />
         </Field>
 
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Calorie attive">
+          <Field label={t('workout.activeKcal')}>
             <Input
               type="number"
               inputMode="numeric"
@@ -80,7 +82,7 @@ export function WorkoutForm({ open, onClose, onSaved }: { open: boolean; onClose
             />
           </Field>
           {sport.hasDistance && (
-            <Field label="Distanza (km)">
+            <Field label={t('workout.distanceKm')}>
               <Input type="number" inputMode="decimal" value={distanceKm} onChange={(e) => setDistanceKm(e.target.value)} placeholder="0" />
             </Field>
           )}

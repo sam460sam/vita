@@ -22,8 +22,10 @@ import { todayISO } from '@/lib/format';
 import { JournalForm } from './JournalForm';
 import { moodMeta } from './mood';
 import type { JournalEntry } from '@/data/types';
+import { useT, type TKey } from '@/i18n';
 
 export function JournalPage() {
+  const t = useT();
   const entries = useLiveQuery(() => db.journalEntries.orderBy('date').reverse().toArray(), [], []);
   const [cursor, setCursor] = useState(new Date());
   const [formOpen, setFormOpen] = useState(false);
@@ -68,10 +70,10 @@ export function JournalPage() {
   return (
     <>
       <PageHeader
-        title="Diario"
+        title={t('journal.title')}
         action={
           <Button size="sm" icon={<Plus size={16} />} onClick={() => { setEditing(null); setDefaultDate(todayISO()); setFormOpen(true); }}>
-            Voce
+            {t('journal.voice')}
           </Button>
         }
       />
@@ -118,16 +120,16 @@ export function JournalPage() {
 
         {/* Search + entries */}
         <Card>
-          <CardHeader title="Voci" />
+          <CardHeader title={t('journal.entries')} />
           <div className="relative mb-3">
             <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-3" />
-            <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Cerca nelle voci…" className="pl-10" />
+            <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('journal.searchPh')} className="pl-10" />
           </div>
 
           {filtered.length === 0 ? (
             <EmptyState
-              title={query ? 'Nessun risultato' : 'Nessuna voce'}
-              description={query ? 'Prova un altro termine.' : 'Scrivi la prima voce del tuo diario.'}
+              title={query ? t('journal.noResults.title') : t('journal.empty.title')}
+              description={query ? t('journal.noResults.desc') : t('journal.empty.desc')}
             />
           ) : (
             <div className="divide-y divide-divider">
@@ -139,7 +141,7 @@ export function JournalPage() {
                     onClick={() => { setEditing(e); setDefaultDate(e.date); setFormOpen(true); }}
                     className="w-full flex items-start gap-3 py-3 text-left active:bg-section -mx-1 px-1 rounded-lg"
                   >
-                    <span className="text-2xl leading-none mt-0.5" title={meta.label}>{meta.emoji}</span>
+                    <span className="text-2xl leading-none mt-0.5" title={t(`mood.${meta.value}` as TKey)}>{meta.emoji}</span>
                     <div className="min-w-0 flex-1">
                       <div className="text-[13px] text-ink-2 capitalize">{format(new Date(e.date), 'EEEE d MMMM', { locale: it })}</div>
                       {e.text && <div className="text-[15px] text-ink line-clamp-2 mt-0.5">{e.text}</div>}

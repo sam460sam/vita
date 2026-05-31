@@ -12,8 +12,10 @@ import { todayRings, ringsToData } from '@/features/attivita/logic';
 import { pendingToday, currentStreak } from '@/features/abitudini/logic';
 import { startOfWeek } from 'date-fns';
 import { cn } from '@/lib/cn';
+import { useT, type TKey } from '@/i18n';
 
 export function TodayPage() {
+  const t = useT();
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const tasks = useLiveQuery(() => db.tasks.toArray(), [], []);
   const habits = useLiveQuery(() => db.habits.orderBy('order').toArray(), [], []);
@@ -44,7 +46,7 @@ export function TodayPage() {
   const tasksClosedToday = allTasks.filter((t) => t.status === 'done' && t.completedAt && t.completedAt >= new Date().setHours(0, 0, 0, 0)).length;
   const bestStreak = Math.max(0, ...(habits ?? []).filter((h) => !h.archived).map((h) => currentStreak(h, logs ?? [])));
 
-  const greeting = greetByHour(s.name);
+  const greeting = greetByHour(s.name, t);
   const nothingTodo = dueTasks.length === 0 && pendingHabits.length === 0;
 
   return (
@@ -56,28 +58,28 @@ export function TodayPage() {
           <Card className="flex items-center gap-5 mb-4 active:bg-section transition-colors">
             <ActivityRings rings={ringsToData(rings)} size={104} stroke={11} />
             <div className="flex-1 space-y-2">
-              <RingLine label="Movimento" value={rings.move.value} goal={rings.move.goal} unit="kcal" color="var(--c-activity)" />
-              <RingLine label="Allenamento" value={rings.exercise.value} goal={rings.exercise.goal} unit="min" color="var(--c-habit)" />
-              <RingLine label="In piedi" value={rings.stand.value} goal={rings.stand.goal} unit="ore" color="var(--c-project)" />
+              <RingLine label={t('activity.ring.move')} value={rings.move.value} goal={rings.move.goal} unit={t('activity.unit.kcal')} color="var(--c-activity)" />
+              <RingLine label={t('activity.ring.exercise')} value={rings.exercise.value} goal={rings.exercise.goal} unit={t('activity.unit.min')} color="var(--c-habit)" />
+              <RingLine label={t('activity.ring.stand')} value={rings.stand.value} goal={rings.stand.goal} unit={t('activity.unit.hours')} color="var(--c-project)" />
             </div>
           </Card>
         </Link>
 
         {/* Quick stats */}
         <div className="grid grid-cols-3 gap-3 mb-4">
-          <StatTile label="Streak" value={bestStreak} unit="gg" accent="var(--c-habit)" icon={<Flame size={14} />} />
-          <StatTile label="Sett." value={workoutsThisWeek} unit="allen." accent="var(--c-activity)" icon={<Dumbbell size={14} />} />
-          <StatTile label="Chiuse" value={tasksClosedToday} unit="oggi" accent="var(--c-project)" icon={<CheckCircle2 size={14} />} />
+          <StatTile label={t('today.stat.streak')} value={bestStreak} unit={t('today.unit.days')} accent="var(--c-habit)" icon={<Flame size={14} />} />
+          <StatTile label={t('today.stat.week')} value={workoutsThisWeek} unit={t('today.unit.workouts')} accent="var(--c-activity)" icon={<Dumbbell size={14} />} />
+          <StatTile label={t('today.stat.closed')} value={tasksClosedToday} unit={t('today.unit.today')} accent="var(--c-project)" icon={<CheckCircle2 size={14} />} />
         </div>
 
         {/* Da fare oggi */}
         <Card className="mb-4">
-          <CardHeader title="Da fare oggi" />
+          <CardHeader title={t('today.todo')} />
           {nothingTodo ? (
             <EmptyState
               icon={<CheckCircle2 size={22} />}
-              title="Nessun impegno per oggi"
-              description="Goditi la giornata."
+              title={t('today.empty.title')}
+              description={t('today.empty.desc')}
             />
           ) : (
             <div className="divide-y divide-divider">
@@ -97,7 +99,7 @@ export function TodayPage() {
                   <Checkbox checked={false} color={h.color} onChange={() => toggleHabitLog(h.id, today)} label={h.name} />
                   <span className="flex-1 text-[15px] text-ink truncate">{h.name}</span>
                   <span className="text-[12px] font-medium" style={{ color: h.color }}>
-                    Abitudine
+                    {t('today.habit.badge')}
                   </span>
                 </div>
               ))}
@@ -109,10 +111,10 @@ export function TodayPage() {
         {upcoming.length > 0 && (
           <Card>
             <CardHeader
-              title="Prossimi impegni"
+              title={t('today.upcoming')}
               action={
                 <Link to="/progetti" className="text-[13px] font-semibold text-project flex items-center gap-0.5">
-                  Tutti <ChevronRight size={14} />
+                  {t('common.all')} <ChevronRight size={14} />
                 </Link>
               }
             />
@@ -147,8 +149,8 @@ function RingLine({ label, value, goal, unit, color }: { label: string; value: n
   );
 }
 
-function greetByHour(name: string): string {
+function greetByHour(name: string, t: (k: TKey) => string): string {
   const h = new Date().getHours();
-  const base = h < 12 ? 'Buongiorno' : h < 18 ? 'Buon pomeriggio' : 'Buonasera';
+  const base = t(h < 12 ? 'greet.morning' : h < 18 ? 'greet.afternoon' : 'greet.evening');
   return name ? `${base}, ${name}` : base;
 }

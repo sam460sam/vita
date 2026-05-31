@@ -3,6 +3,7 @@ import { Sheet, Button, Field, Input, Textarea, useToast } from '@/ui';
 import { cn } from '@/lib/cn';
 import { createProject, updateProject, deleteProject } from '@/data/repo';
 import type { Project } from '@/data/types';
+import { useT } from '@/i18n';
 
 const COLORS = ['#4F46E5', '#FF6B57', '#10B981', '#F59E0B', '#7C3AED', '#0EA5E9', '#EC4899', '#0A0A0C'];
 
@@ -22,6 +23,7 @@ export function ProjectForm({
   const [description, setDescription] = useState('');
   const [color, setColor] = useState(COLORS[0]);
   const toast = useToast();
+  const t = useT();
 
   useEffect(() => {
     if (open) {
@@ -35,10 +37,10 @@ export function ProjectForm({
     if (!name.trim()) return;
     if (editing && project) {
       await updateProject(project.id, { name: name.trim(), description: description.trim() || undefined, color });
-      toast.show('Progetto aggiornato');
+      toast.show(t('projectForm.updated'));
     } else {
       await createProject({ name: name.trim(), description: description.trim() || undefined, color });
-      toast.show('Progetto creato');
+      toast.show(t('projectForm.created'));
     }
     onClose();
   }
@@ -46,7 +48,7 @@ export function ProjectForm({
   async function remove() {
     if (project) {
       await deleteProject(project.id);
-      toast.show('Progetto eliminato · task spostate in Inbox');
+      toast.show(t('projectForm.deleted'));
       onClose();
       onDeleted?.();
     }
@@ -56,24 +58,24 @@ export function ProjectForm({
     <Sheet
       open={open}
       onClose={onClose}
-      title={editing ? 'Modifica progetto' : 'Nuovo progetto'}
+      title={editing ? t('projectForm.edit') : t('projectForm.new')}
       footer={
         <div className="flex gap-2">
           {editing && (
             <Button variant="ghost" className="text-danger" onClick={remove}>
-              Elimina
+              {t('common.delete')}
             </Button>
           )}
           <Button block size="lg" onClick={save} disabled={!name.trim()}>
-            {editing ? 'Salva' : 'Crea progetto'}
+            {editing ? t('common.save') : t('projectForm.create')}
           </Button>
         </div>
       }
     >
-      <Field label="Nome">
-        <Input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="es. Lancio sito web" />
+      <Field label={t('projectForm.name')}>
+        <Input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder={t('projectForm.namePh')} />
       </Field>
-      <Field label="Colore">
+      <Field label={t('projectForm.color')}>
         <div className="flex flex-wrap gap-2">
           {COLORS.map((c) => (
             <button
@@ -86,8 +88,8 @@ export function ProjectForm({
           ))}
         </div>
       </Field>
-      <Field label="Descrizione (opzionale)">
-        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Di cosa si tratta…" />
+      <Field label={t('projectForm.desc')}>
+        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('projectForm.descPh')} />
       </Field>
     </Sheet>
   );

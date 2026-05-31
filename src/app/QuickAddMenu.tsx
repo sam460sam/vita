@@ -1,18 +1,20 @@
 import { CheckSquare, Flame, Dumbbell, BookHeart } from 'lucide-react';
 import { Sheet } from '@/ui';
+import { useT, type TKey } from '@/i18n';
 import { useQuickAdd, type QuickAddTarget } from './QuickAdd';
 
-const ACTIONS: { target: QuickAddTarget; label: string; icon: typeof CheckSquare; accent: string }[] = [
-  { target: 'task', label: 'Nuova task', icon: CheckSquare, accent: 'var(--c-project)' },
-  { target: 'habit', label: 'Nuova abitudine', icon: Flame, accent: 'var(--c-habit)' },
-  { target: 'workout', label: 'Nuovo allenamento', icon: Dumbbell, accent: 'var(--c-activity)' },
-  { target: 'journal', label: 'Nota diario', icon: BookHeart, accent: 'var(--c-journal)' },
+const ACTIONS: { target: QuickAddTarget; labelKey: TKey; icon: typeof CheckSquare; accent: string }[] = [
+  { target: 'task', labelKey: 'quick.task', icon: CheckSquare, accent: 'var(--c-project)' },
+  { target: 'habit', labelKey: 'quick.habit', icon: Flame, accent: 'var(--c-habit)' },
+  { target: 'workout', labelKey: 'quick.workout', icon: Dumbbell, accent: 'var(--c-activity)' },
+  { target: 'journal', labelKey: 'quick.journal', icon: BookHeart, accent: 'var(--c-journal)' },
 ];
 
 export function QuickAddMenu() {
   const { menuOpen, closeMenu, open } = useQuickAdd();
+  const t = useT();
   return (
-    <Sheet open={menuOpen} onClose={closeMenu} title="Aggiungi">
+    <Sheet open={menuOpen} onClose={closeMenu} title={t('quick.title')}>
       <div className="grid grid-cols-2 gap-3 pb-2">
         {ACTIONS.map((a) => {
           const Icon = a.icon;
@@ -25,7 +27,7 @@ export function QuickAddMenu() {
               <span className="h-12 w-12 rounded-full bg-card shadow-card flex items-center justify-center" style={{ color: a.accent }}>
                 <Icon size={22} />
               </span>
-              <span className="text-[14px] font-medium text-ink">{a.label}</span>
+              <span className="text-[14px] font-medium text-ink">{t(a.labelKey)}</span>
             </button>
           );
         })}

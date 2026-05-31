@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { PRIMARY_NAV } from './nav';
 import { cn } from '@/lib/cn';
+import { useT } from '@/i18n';
 import { useQuickAdd } from './QuickAdd';
 
 /** Mobile bottom tab bar: 3 destinations · centered quick-add FAB · 3 destinations. */
@@ -39,7 +40,8 @@ function QuickAddButton() {
   );
 }
 
-function TabLink({ to, label, short, icon: Icon, accent }: (typeof PRIMARY_NAV)[number]) {
+function TabLink({ to, labelKey, shortKey, icon: Icon, accent }: (typeof PRIMARY_NAV)[number]) {
+  const t = useT();
   return (
     <NavLink to={to} className="flex-1 flex flex-col items-center justify-center gap-0.5 min-w-0">
       {({ isActive }) => (
@@ -50,7 +52,7 @@ function TabLink({ to, label, short, icon: Icon, accent }: (typeof PRIMARY_NAV)[
             style={{ color: isActive ? accent ?? 'var(--c-ink)' : 'var(--c-ink-3)' }}
           />
           <span className={cn('text-[10px] font-semibold truncate max-w-full px-0.5', isActive ? 'text-ink' : 'text-ink-3')}>
-            {short ?? label}
+            {t(shortKey ?? labelKey)}
           </span>
         </>
       )}

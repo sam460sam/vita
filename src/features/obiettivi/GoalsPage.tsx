@@ -10,9 +10,12 @@ import { Screen } from '@/app/Screen';
 import { Card, ProgressRing, EmptyState, Button, Sheet, Field, Input, Textarea, Select, Segmented, useToast } from '@/ui';
 import { projectProgress } from '@/features/progetti/logic';
 import { completionRate } from '@/features/abitudini/logic';
+import { useT } from '@/i18n';
+import type { TKey } from '@/i18n';
 import type { Goal, GoalLinkType } from '@/data/types';
 
 export function GoalsPage() {
+  const t = useT();
   const goals = useLiveQuery(() => db.goals.toArray(), [], []);
   const tasks = useLiveQuery(() => db.tasks.toArray(), [], []);
   const habits = useLiveQuery(() => db.habits.toArray(), [], []);
@@ -35,11 +38,11 @@ export function GoalsPage() {
   return (
     <>
       <PageHeader
-        title="Obiettivi"
+        title={t('goals.title')}
         back="/altro"
         action={
           <Button size="sm" icon={<Plus size={16} />} onClick={() => { setEditing(null); setFormOpen(true); }}>
-            Nuovo
+            {t('goals.new')}
           </Button>
         }
       />
@@ -48,9 +51,9 @@ export function GoalsPage() {
           <Card>
             <EmptyState
               icon={<Target size={22} />}
-              title="Nessun obiettivo"
-              description="Definisci un obiettivo e collegalo a un progetto o a un'abitudine per tracciarne il progresso."
-              action={<Button onClick={() => setFormOpen(true)}>Nuovo obiettivo</Button>}
+              title={t('goals.empty.title')}
+              description={t('goals.empty.desc')}
+              action={<Button onClick={() => setFormOpen(true)}>{t('goals.empty.cta')}</Button>}
             />
           </Card>
         ) : (
@@ -65,7 +68,7 @@ export function GoalsPage() {
                   <div className="min-w-0 flex-1 cursor-pointer">
                     <div className="text-[15px] font-semibold text-ink truncate">{g.title}</div>
                     <div className="text-[13px] text-ink-2">
-                      {g.link.type !== 'none' ? linkLabel(g.link.type) : 'Progresso manuale'}
+                      {g.link.type !== 'none' ? linkLabel(t, g.link.type) : t('goals.manual')}
                       {g.targetDate && ` · ${format(parseISO(g.targetDate), 'd MMM yyyy', { locale: it })}`}
                     </div>
                   </div>
@@ -81,8 +84,8 @@ export function GoalsPage() {
   );
 }
 
-function linkLabel(t: GoalLinkType): string {
-  return t === 'project' ? 'Collegato a un progetto' : t === 'habit' ? "Collegato a un'abitudine" : 'Manuale';
+function linkLabel(t: (key: TKey, vars?: Record<string, string | number>) => string, type: GoalLinkType): string {
+  return type === 'project' ? t('goals.linkedProject') : type === 'habit' ? t('goals.linkedHabit') : t('goals.manual');
 }
 
 function GoalForm({ open, onClose, goal }: { open: boolean; onClose: () => void; goal?: Goal | null }) {
@@ -97,6 +100,7 @@ function GoalForm({ open, onClose, goal }: { open: boolean; onClose: () => void;
   const [manual, setManual] = useState(0);
   const [done, setDone] = useState(false);
   const toast = useToast();
+  const t = useT();
 
   useEffect(() => {
     if (open) {
@@ -122,10 +126,10 @@ function GoalForm({ open, onClose, goal }: { open: boolean; onClose: () => void;
     };
     if (editing && goal) {
       await updateGoal(goal.id, data);
-      toast.show('Obiettivo aggiornato');
+      toast.show(t('goalForm.updated'));
     } else {
       await createGoal(data);
-      toast.show('Obiettivo creato');
+      toast.show(t('goalForm.created'));
     }
     onClose();
   }
@@ -133,7 +137,7 @@ function GoalForm({ open, onClose, goal }: { open: boolean; onClose: () => void;
   async function remove() {
     if (goal) {
       await deleteGoal(goal.id);
-      toast.show('Obiettivo eliminato');
+      toast.show(t('goalForm.deleted'));
       onClose();
     }
   }
@@ -142,45 +146,45 @@ function GoalForm({ open, onClose, goal }: { open: boolean; onClose: () => void;
     <Sheet
       open={open}
       onClose={onClose}
-      title={editing ? 'Modifica obiettivo' : 'Nuovo obiettivo'}
+      title={editing ? t('goalForm.edit') : t('goalForm.new')}
       footer={
         <div className="flex gap-2">
           {editing && (
             <Button variant="ghost" className="text-danger" onClick={remove}>
-              Elimina
+              {t('common.delete')}
             </Button>
           )}
           <Button block size="lg" onClick={save} disabled={!title.trim()}>
-            {editing ? 'Salva' : 'Crea obiettivo'}
+            {editing ? t('common.save') : t('goalForm.create')}
           </Button>
         </div>
       }
     >
-      <Field label="Titolo">
-        <Input autoFocus value={title} onChange={(e) => setTitle(e.target.value)} placeholder="es. Correre una 10k" />
+      <Field label={t('goalForm.title')}>
+        <Input autoFocus value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('goalForm.titlePh')} />
       </Field>
-      <Field label="Descrizione (opzionale)">
-        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Perché è importante…" />
+      <Field label={t('goalForm.desc')}>
+        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('goalForm.descPh')} />
       </Field>
-      <Field label="Data target (opzionale)">
+      <Field label={t('goalForm.targetDate')}>
         <Input type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
       </Field>
-      <Field label="Collegamento progresso">
+      <Field label={t('goalForm.link')}>
         <Segmented
           value={linkType}
           onChange={(v) => { setLinkType(v); setRefId(''); }}
           options={[
-            { value: 'none', label: 'Manuale' },
-            { value: 'project', label: 'Progetto' },
-            { value: 'habit', label: 'Abitudine' },
+            { value: 'none', label: t('goalForm.link.manual') },
+            { value: 'project', label: t('goalForm.link.project') },
+            { value: 'habit', label: t('goalForm.link.habit') },
           ]}
         />
       </Field>
 
       {linkType === 'project' && (
-        <Field label="Progetto">
+        <Field label={t('goalForm.link.project')}>
           <Select value={refId} onChange={(e) => setRefId(e.target.value)}>
-            <option value="">Seleziona…</option>
+            <option value="">{t('goalForm.select')}</option>
             {(projects ?? []).map((p) => (
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
@@ -188,9 +192,9 @@ function GoalForm({ open, onClose, goal }: { open: boolean; onClose: () => void;
         </Field>
       )}
       {linkType === 'habit' && (
-        <Field label="Abitudine">
+        <Field label={t('goalForm.link.habit')}>
           <Select value={refId} onChange={(e) => setRefId(e.target.value)}>
-            <option value="">Seleziona…</option>
+            <option value="">{t('goalForm.select')}</option>
             {(habits ?? []).map((h) => (
               <option key={h.id} value={h.id}>{h.name}</option>
             ))}
@@ -198,14 +202,14 @@ function GoalForm({ open, onClose, goal }: { open: boolean; onClose: () => void;
         </Field>
       )}
       {linkType === 'none' && (
-        <Field label={`Progresso manuale: ${Math.round(manual * 100)}%`}>
+        <Field label={t('goalForm.manualProgress', { pct: Math.round(manual * 100) })}>
           <input type="range" min={0} max={100} value={Math.round(manual * 100)} onChange={(e) => setManual(Number(e.target.value) / 100)} className="w-full accent-[var(--c-project)]" />
         </Field>
       )}
 
       <label className="flex items-center gap-2 mt-1 text-[15px] text-ink">
         <input type="checkbox" checked={done} onChange={(e) => setDone(e.target.checked)} className="h-5 w-5 accent-[var(--c-habit)]" />
-        Segna come completato
+        {t('goalForm.markDone')}
       </label>
     </Sheet>
   );

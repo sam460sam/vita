@@ -21,10 +21,12 @@ import { Card, Segmented, IconButton, EmptyState } from '@/ui';
 import { cn } from '@/lib/cn';
 import { getSport } from '@/features/attivita/sports';
 import { moodMeta } from '@/features/diario/mood';
+import { useT } from '@/i18n';
 
 type DayItems = { tasks: number; workouts: number; journal: boolean };
 
 export function CalendarPage() {
+  const t = useT();
   const tasks = useLiveQuery(() => db.tasks.toArray(), [], []);
   const workouts = useLiveQuery(() => db.workouts.toArray(), [], []);
   const journal = useLiveQuery(() => db.journalEntries.toArray(), [], []);
@@ -67,7 +69,7 @@ export function CalendarPage() {
 
   return (
     <>
-      <PageHeader title="Calendario" back="/altro" />
+      <PageHeader title={t('calendar.title')} back="/altro" />
       <Screen>
         <Card className="mb-4">
           <div className="flex items-center justify-between mb-3 gap-2">
@@ -85,8 +87,8 @@ export function CalendarPage() {
             value={mode}
             onChange={setMode}
             options={[
-              { value: 'month', label: 'Mese' },
-              { value: 'week', label: 'Settimana' },
+              { value: 'month', label: t('calendar.month') },
+              { value: 'week', label: t('calendar.week') },
             ]}
           />
 
@@ -125,17 +127,17 @@ export function CalendarPage() {
         <Card>
           <div className="text-[15px] font-semibold text-ink capitalize mb-3">{format(selected, 'EEEE d MMMM', { locale: it })}</div>
           {empty ? (
-            <EmptyState title="Niente in programma" description="Nessun impegno per questo giorno." />
+            <EmptyState title={t('calendar.empty.title')} description={t('calendar.empty.desc')} />
           ) : (
             <div className="space-y-3">
-              {selTasks.map((t) => (
-                <Row key={t.id} icon={<CheckSquare size={16} />} color="var(--c-project)" title={t.title} muted={t.status === 'done'} sub="Task" />
+              {selTasks.map((task) => (
+                <Row key={task.id} icon={<CheckSquare size={16} />} color="var(--c-project)" title={task.title} muted={task.status === 'done'} sub={t('calendar.item.task')} />
               ))}
               {selWorkouts.map((w) => (
                 <Row key={w.id} icon={<Dumbbell size={16} />} color="var(--c-activity)" title={getSport(w.sportId).name} sub={`${Math.round(w.durationSec / 60)} min · ${w.activeKcal} kcal`} />
               ))}
               {selJournal.map((j) => (
-                <Row key={j.id} icon={<BookHeart size={16} />} color="var(--c-journal)" title={`${moodMeta(j.mood).emoji} ${j.text || moodMeta(j.mood).label}`} sub="Diario" />
+                <Row key={j.id} icon={<BookHeart size={16} />} color="var(--c-journal)" title={`${moodMeta(j.mood).emoji} ${j.text || moodMeta(j.mood).label}`} sub={t('calendar.item.journal')} />
               ))}
             </div>
           )}

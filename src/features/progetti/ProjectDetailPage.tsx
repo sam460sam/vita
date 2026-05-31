@@ -13,8 +13,10 @@ import { KanbanBoard } from './KanbanBoard';
 import { projectProgress, sortTasks } from './logic';
 import type { Task } from '@/data/types';
 import { useNavigate } from 'react-router-dom';
+import { useT } from '@/i18n';
 
 export function ProjectDetailPage() {
+  const t = useT();
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const project = useLiveQuery(() => db.projects.get(id), [id], undefined);
@@ -30,7 +32,7 @@ export function ProjectDetailPage() {
       <>
         <PageHeader title="Progetto" back="/progetti" />
         <Screen>
-          <EmptyState title="Progetto non trovato" />
+          <EmptyState title={t('project.notFound')} />
         </Screen>
       </>
     );
@@ -51,7 +53,7 @@ export function ProjectDetailPage() {
         title={project.name}
         back="/progetti"
         action={
-          <IconButton label="Modifica progetto" onClick={() => setProjForm(true)}>
+          <IconButton label={t('projectForm.edit')} onClick={() => setProjForm(true)}>
             <Pencil size={18} />
           </IconButton>
         }
@@ -65,7 +67,7 @@ export function ProjectDetailPage() {
             {project.description ? (
               <p className="text-[14px] text-ink-2 leading-snug">{project.description}</p>
             ) : (
-              <p className="text-[14px] text-ink-3">{list.length} task in totale</p>
+              <p className="text-[14px] text-ink-3">{t('project.tasksTotal', { n: list.length })}</p>
             )}
           </div>
         </Card>
@@ -75,12 +77,12 @@ export function ProjectDetailPage() {
             value={mode}
             onChange={setMode}
             options={[
-              { value: 'list', label: 'Lista' },
-              { value: 'kanban', label: 'Kanban' },
+              { value: 'list', label: t('project.mode.list') },
+              { value: 'kanban', label: t('project.mode.kanban') },
             ]}
           />
           <Button size="sm" icon={<Plus size={16} />} onClick={() => { setEditingTask(null); setTaskForm(true); }}>
-            Task
+            {t('projects.taskBtn')}
           </Button>
         </div>
 
@@ -88,9 +90,9 @@ export function ProjectDetailPage() {
           <Card>
             <EmptyState
               icon={<Plus size={22} />}
-              title="Nessuna task"
-              description="Aggiungi la prima task a questo progetto."
-              action={<Button onClick={() => setTaskForm(true)}>Nuova task</Button>}
+              title={t('project.tasks.empty.title')}
+              description={t('project.tasks.empty.desc')}
+              action={<Button onClick={() => setTaskForm(true)}>{t('project.tasks.empty.cta')}</Button>}
             />
           </Card>
         ) : mode === 'list' ? (

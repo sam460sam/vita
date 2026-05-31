@@ -4,6 +4,7 @@ import { cn } from '@/lib/cn';
 import { createHabit, updateHabit, deleteHabit } from '@/data/repo';
 import { notifications } from '@/platform/notifications';
 import type { Habit, HabitFrequencyType } from '@/data/types';
+import { useT } from '@/i18n';
 
 const COLORS = ['#10B981', '#FF6B57', '#4F46E5', '#F59E0B', '#7C3AED', '#0EA5E9', '#EC4899', '#0A0A0C'];
 const DAYS = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
@@ -25,6 +26,7 @@ export function HabitForm({
   const [days, setDays] = useState<number[]>([1, 2, 3, 4, 5]);
   const [reminder, setReminder] = useState('');
   const toast = useToast();
+  const t = useT();
 
   useEffect(() => {
     if (open) {
@@ -48,11 +50,11 @@ export function HabitForm({
     if (editing && habit) {
       await updateHabit(habit.id, { name: name.trim(), color, frequency, reminder: reminder || undefined });
       habitId = habit.id;
-      toast.show('Abitudine aggiornata');
+      toast.show(t('habitForm.updated'));
     } else {
       const created = await createHabit({ name: name.trim(), color, frequency, reminder: reminder || undefined });
       habitId = created.id;
-      toast.show('Abitudine creata');
+      toast.show(t('habitForm.created'));
     }
     // Schedule/cancel the native reminder (no-op on web).
     if (reminder && notifications.supported()) await notifications.requestPermission();
@@ -64,7 +66,7 @@ export function HabitForm({
     if (habit) {
       await notifications.cancelHabitReminder(habit.id);
       await deleteHabit(habit.id);
-      toast.show('Abitudine eliminata');
+      toast.show(t('habitForm.deleted'));
       onClose();
     }
   }
@@ -73,25 +75,25 @@ export function HabitForm({
     <Sheet
       open={open}
       onClose={onClose}
-      title={editing ? 'Modifica abitudine' : 'Nuova abitudine'}
+      title={editing ? t('habitForm.edit') : t('habitForm.new')}
       footer={
         <div className="flex gap-2">
           {editing && (
             <Button variant="ghost" className="text-danger" onClick={remove}>
-              Elimina
+              {t('common.delete')}
             </Button>
           )}
           <Button block size="lg" onClick={save} disabled={!name.trim()}>
-            {editing ? 'Salva' : 'Crea abitudine'}
+            {editing ? t('common.save') : t('habitForm.create')}
           </Button>
         </div>
       }
     >
-      <Field label="Nome">
-        <Input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="es. Bere 2L d'acqua" />
+      <Field label={t('habitForm.name')}>
+        <Input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder={t('habitForm.namePh')} />
       </Field>
 
-      <Field label="Colore">
+      <Field label={t('habitForm.color')}>
         <div className="flex flex-wrap gap-2">
           {COLORS.map((c) => (
             <button
@@ -105,26 +107,26 @@ export function HabitForm({
         </div>
       </Field>
 
-      <Field label="Frequenza">
+      <Field label={t('habitForm.frequency')}>
         <Segmented
           value={freqType}
           onChange={setFreqType}
           options={[
-            { value: 'daily', label: 'Ogni giorno' },
-            { value: 'times_per_week', label: 'X / sett.' },
-            { value: 'specific_days', label: 'Giorni' },
+            { value: 'daily', label: t('habitForm.freq.daily') },
+            { value: 'times_per_week', label: t('habitForm.freq.timesPerWeek') },
+            { value: 'specific_days', label: t('habitForm.freq.days') },
           ]}
         />
       </Field>
 
       {freqType === 'times_per_week' && (
-        <Field label="Volte a settimana">
+        <Field label={t('habitForm.timesPerWeek')}>
           <Input type="number" inputMode="numeric" min={1} max={7} value={timesPerWeek} onChange={(e) => setTimesPerWeek(e.target.value)} />
         </Field>
       )}
 
       {freqType === 'specific_days' && (
-        <Field label="Giorni">
+        <Field label={t('habitForm.days')}>
           <div className="flex gap-1.5">
             {DAYS.map((d, i) => (
               <button
@@ -142,9 +144,9 @@ export function HabitForm({
         </Field>
       )}
 
-      <Field label="Promemoria (opzionale)">
+      <Field label={t('habitForm.reminder')}>
         <Input type="time" value={reminder} onChange={(e) => setReminder(e.target.value)} />
-        <p className="text-[12px] text-ink-3 mt-1.5">Solo indicativo per ora. Le notifiche arriveranno con l'app nativa.</p>
+        <p className="text-[12px] text-ink-3 mt-1.5">{t('habitForm.reminderNote')}</p>
       </Field>
     </Sheet>
   );

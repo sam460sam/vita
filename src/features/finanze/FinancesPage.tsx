@@ -11,9 +11,11 @@ import { Screen } from '@/app/Screen';
 import { Card, CardHeader, EmptyState, Button, Sheet, Field, Input, Select, Segmented, IconButton, useToast } from '@/ui';
 import { formatMoney, todayISO, currentMonthKey, monthKey } from '@/lib/format';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, categoryColor } from './categories';
+import { useT } from '@/i18n';
 import type { TxType } from '@/data/types';
 
 export function FinancesPage() {
+  const t = useT();
   const txs = useLiveQuery(() => db.transactions.orderBy('date').reverse().toArray(), [], []);
   const budget = useLiveQuery(() => readBudget(), [], undefined);
   const settings = useLiveQuery(() => readSettings(), [], undefined);
@@ -38,11 +40,11 @@ export function FinancesPage() {
   return (
     <>
       <PageHeader
-        title="Finanze"
+        title={t('finances.title')}
         back="/altro"
         action={
           <Button size="sm" icon={<Plus size={16} />} onClick={() => setFormOpen(true)}>
-            Movimento
+            {t('finances.movement')}
           </Button>
         }
       />
@@ -57,13 +59,13 @@ export function FinancesPage() {
             <div className="flex justify-center gap-6 mt-4">
               <div className="text-center">
                 <div className="flex items-center gap-1 text-habit text-[13px] font-semibold justify-center">
-                  <ArrowDownLeft size={14} /> Entrate
+                  <ArrowDownLeft size={14} /> {t('finances.income')}
                 </div>
                 <div className="text-[15px] font-semibold tnum text-ink mt-0.5">{formatMoney(income, currency)}</div>
               </div>
               <div className="text-center">
                 <div className="flex items-center gap-1 text-activity text-[13px] font-semibold justify-center">
-                  <ArrowUpRight size={14} /> Uscite
+                  <ArrowUpRight size={14} /> {t('finances.expense')}
                 </div>
                 <div className="text-[15px] font-semibold tnum text-ink mt-0.5">{formatMoney(expense, currency)}</div>
               </div>
@@ -78,9 +80,11 @@ export function FinancesPage() {
               <Wallet size={18} />
             </span>
             <div className="flex-1">
-              <div className="text-[15px] font-semibold text-ink">Budget mensile</div>
+              <div className="text-[15px] font-semibold text-ink">{t('finances.budget')}</div>
               <div className="text-[13px] text-ink-2">
-                {limit > 0 ? `${formatMoney(expense, currency)} di ${formatMoney(limit, currency)}` : 'Tocca per impostare'}
+                {limit > 0
+                  ? t('finances.budget.of', { spent: formatMoney(expense, currency), limit: formatMoney(limit, currency) })
+                  : t('finances.budget.tap')}
               </div>
             </div>
             <Pencil size={16} className="text-ink-3" />
@@ -101,7 +105,7 @@ export function FinancesPage() {
         {/* Spese per categoria */}
         {byCategory.length > 0 && (
           <Card className="mb-4">
-            <CardHeader title="Spese per categoria" />
+            <CardHeader title={t('finances.byCategory')} />
             <div className="space-y-2.5">
               {byCategory.map(([cat, amt]) => (
                 <div key={cat}>
@@ -120,36 +124,36 @@ export function FinancesPage() {
 
         {/* Movimenti */}
         <Card>
-          <CardHeader title="Movimenti" />
+          <CardHeader title={t('finances.movements')} />
           {(txs ?? []).length === 0 ? (
             <EmptyState
               icon={<Wallet size={22} />}
-              title="Nessun movimento"
-              description="Registra entrate e uscite per tenere sotto controllo il budget."
-              action={<Button onClick={() => setFormOpen(true)}>Aggiungi movimento</Button>}
+              title={t('finances.empty.title')}
+              description={t('finances.empty.desc')}
+              action={<Button onClick={() => setFormOpen(true)}>{t('finances.empty.cta')}</Button>}
             />
           ) : (
             <div className="divide-y divide-divider">
-              {(txs ?? []).slice(0, 50).map((t) => (
-                <div key={t.id} className="flex items-center gap-3 py-2.5 group">
+              {(txs ?? []).slice(0, 50).map((tx) => (
+                <div key={tx.id} className="flex items-center gap-3 py-2.5 group">
                   <span
                     className="h-9 w-9 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: `${categoryColor(t.category)}1a`, color: categoryColor(t.category) }}
+                    style={{ background: `${categoryColor(tx.category)}1a`, color: categoryColor(tx.category) }}
                   >
-                    {t.type === 'income' ? <ArrowDownLeft size={17} /> : <ArrowUpRight size={17} />}
+                    {tx.type === 'income' ? <ArrowDownLeft size={17} /> : <ArrowUpRight size={17} />}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[15px] text-ink truncate">{t.category}</div>
+                    <div className="text-[15px] text-ink truncate">{tx.category}</div>
                     <div className="text-[12px] text-ink-2 truncate">
-                      {format(parseISO(t.date), 'd MMM', { locale: it })}
-                      {t.note ? ` · ${t.note}` : ''}
+                      {format(parseISO(tx.date), 'd MMM', { locale: it })}
+                      {tx.note ? ` · ${tx.note}` : ''}
                     </div>
                   </div>
-                  <span className={t.type === 'income' ? 'text-habit font-semibold tnum' : 'text-ink font-semibold tnum'}>
-                    {t.type === 'income' ? '+' : '−'}
-                    {formatMoney(t.amount, currency)}
+                  <span className={tx.type === 'income' ? 'text-habit font-semibold tnum' : 'text-ink font-semibold tnum'}>
+                    {tx.type === 'income' ? '+' : '−'}
+                    {formatMoney(tx.amount, currency)}
                   </span>
-                  <IconButton label="Elimina" className="opacity-0 group-hover:opacity-100" onClick={() => deleteTransaction(t.id)}>
+                  <IconButton label={t('common.delete')} className="opacity-0 group-hover:opacity-100" onClick={() => deleteTransaction(tx.id)}>
                     <Trash2 size={15} />
                   </IconButton>
                 </div>
@@ -172,6 +176,7 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
   const [date, setDate] = useState(todayISO());
   const [note, setNote] = useState('');
   const toast = useToast();
+  const t = useT();
 
   const cats = type === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
 
@@ -193,7 +198,7 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
     const amt = parseFloat(amount);
     if (!amt || amt <= 0) return;
     await createTransaction({ type, amount: amt, category, date, note: note.trim() || undefined });
-    toast.show('Movimento salvato');
+    toast.show(t('txForm.saved'));
     onClose();
   }
 
@@ -201,40 +206,40 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
     <Sheet
       open={open}
       onClose={onClose}
-      title="Nuovo movimento"
+      title={t('txForm.new')}
       footer={
         <Button block size="lg" onClick={save} disabled={!amount}>
-          Salva movimento
+          {t('txForm.save')}
         </Button>
       }
     >
-      <Field label="Tipo">
+      <Field label={t('txForm.type')}>
         <Segmented
           value={type}
           onChange={setType}
           options={[
-            { value: 'expense', label: 'Uscita' },
-            { value: 'income', label: 'Entrata' },
+            { value: 'expense', label: t('txForm.expense') },
+            { value: 'income', label: t('txForm.income') },
           ]}
         />
       </Field>
-      <Field label="Importo">
+      <Field label={t('txForm.amount')}>
         <Input autoFocus type="number" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0,00" />
       </Field>
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Categoria">
+        <Field label={t('txForm.category')}>
           <Select value={category} onChange={(e) => setCategory(e.target.value)}>
             {cats.map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </Select>
         </Field>
-        <Field label="Data">
+        <Field label={t('txForm.date')}>
           <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
         </Field>
       </div>
-      <Field label="Nota (opzionale)">
-        <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Descrizione" />
+      <Field label={t('txForm.note')}>
+        <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder={t('txForm.notePh')} />
       </Field>
     </Sheet>
   );
@@ -243,22 +248,23 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
 function BudgetForm({ open, onClose, current }: { open: boolean; onClose: () => void; current: number }) {
   const [value, setValue] = useState('');
   const toast = useToast();
+  const t = useT();
   useEffect(() => {
     if (open) setValue(current ? String(current) : '');
   }, [open, current]);
 
   async function save() {
     await setBudget(parseFloat(value) || 0);
-    toast.show('Budget aggiornato');
+    toast.show(t('budgetForm.saved'));
     onClose();
   }
 
   return (
-    <Sheet open={open} onClose={onClose} title="Budget mensile" footer={<Button block size="lg" onClick={save}>Salva budget</Button>}>
-      <Field label="Limite di spesa mensile">
+    <Sheet open={open} onClose={onClose} title={t('budgetForm.title')} footer={<Button block size="lg" onClick={save}>{t('budgetForm.save')}</Button>}>
+      <Field label={t('budgetForm.limit')}>
         <Input autoFocus type="number" inputMode="decimal" value={value} onChange={(e) => setValue(e.target.value)} placeholder="0,00" />
       </Field>
-      <p className="text-[13px] text-ink-2">Imposta 0 per disattivare il budget.</p>
+      <p className="text-[13px] text-ink-2">{t('budgetForm.note')}</p>
     </Sheet>
   );
 }

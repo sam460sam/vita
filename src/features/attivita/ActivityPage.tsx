@@ -25,8 +25,10 @@ import { getSport, type Sport } from './sports';
 import { SportPicker } from './SportPicker';
 import { WorkoutTracker } from './WorkoutTracker';
 import { defaultSettings } from '@/data/defaults';
+import { useT } from '@/i18n';
 
 export function ActivityPage() {
+  const t = useT();
   const workouts = useLiveQuery(() => db.workouts.orderBy('startedAt').reverse().toArray(), [], []);
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const [params, setParams] = useSearchParams();
@@ -50,10 +52,10 @@ export function ActivityPage() {
   return (
     <>
       <PageHeader
-        title="Attività"
+        title={t('activity.title')}
         action={
           <Button size="sm" icon={<Play size={16} />} onClick={() => setPickerOpen(true)}>
-            Avvia
+            {t('activity.start')}
           </Button>
         }
       />
@@ -62,38 +64,38 @@ export function ActivityPage() {
         <Card className="flex flex-col items-center pt-6 pb-5 mb-4">
           <ActivityRings rings={ringsToData(rings)} />
           <div className="grid grid-cols-3 gap-4 w-full mt-5">
-            <RingStat label="Movimento" value={rings.move.value} goal={rings.move.goal} unit="kcal" color="var(--c-activity)" />
-            <RingStat label="Allenamento" value={rings.exercise.value} goal={rings.exercise.goal} unit="min" color="var(--c-habit)" />
-            <RingStat label="In piedi" value={rings.stand.value} goal={rings.stand.goal} unit="ore" color="var(--c-project)" />
+            <RingStat label={t('activity.ring.move')} value={rings.move.value} goal={rings.move.goal} unit={t('activity.unit.kcal')} color="var(--c-activity)" />
+            <RingStat label={t('activity.ring.exercise')} value={rings.exercise.value} goal={rings.exercise.goal} unit={t('activity.unit.min')} color="var(--c-habit)" />
+            <RingStat label={t('activity.ring.stand')} value={rings.stand.value} goal={rings.stand.goal} unit={t('activity.unit.hours')} color="var(--c-project)" />
           </div>
         </Card>
 
         {/* Summary */}
         <Card className="mb-4">
           <CardHeader
-            title="Riepilogo"
+            title={t('activity.summary')}
             action={
               <Segmented
                 value={period}
                 onChange={setPeriod}
                 options={[
-                  { value: 'week', label: 'Settimana' },
-                  { value: 'month', label: 'Mese' },
+                  { value: 'week', label: t('activity.period.week') },
+                  { value: 'month', label: t('activity.period.month') },
                 ]}
               />
             }
           />
           <div className="grid grid-cols-3 gap-3 mb-4">
-            <MiniStat label="Allenamenti" value={summary.count} />
-            <MiniStat label="Minuti" value={summary.totalMin} />
-            <MiniStat label="Kcal" value={summary.totalKcal} />
+            <MiniStat label={t('activity.summary.workouts')} value={summary.count} />
+            <MiniStat label={t('activity.summary.minutes')} value={summary.totalMin} />
+            <MiniStat label={t('activity.summary.kcal')} value={summary.totalKcal} />
           </div>
-          <BarChart data={summary.daily.map((d) => ({ label: d.label, value: d.min }))} color="var(--c-activity)" unit="min" />
+          <BarChart data={summary.daily.map((d) => ({ label: d.label, value: d.min }))} color="var(--c-activity)" unit={t('activity.unit.min')} />
         </Card>
 
         {/* History */}
         <Card>
-          <CardHeader title="Storico" />
+          <CardHeader title={t('activity.history')} />
           {workouts && workouts.length > 0 ? (
             <div className="divide-y divide-divider">
               {workouts.map((w) => {
@@ -113,10 +115,10 @@ export function ActivityPage() {
                     <div className="text-right">
                       <div className="text-[15px] font-semibold tnum text-ink">{formatDuration(w.durationSec)}</div>
                       <div className="text-[12px] text-ink-2 tnum">
-                        {w.activeKcal} kcal{w.distanceM ? ` · ${formatDistance(w.distanceM)}` : ''}
+                        {w.activeKcal} {t('activity.unit.kcal')}{w.distanceM ? ` · ${formatDistance(w.distanceM)}` : ''}
                       </div>
                     </div>
-                    <IconButton label="Elimina" className="opacity-0 group-hover:opacity-100" onClick={() => deleteWorkout(w.id)}>
+                    <IconButton label={t('common.delete')} className="opacity-0 group-hover:opacity-100" onClick={() => deleteWorkout(w.id)}>
                       <Trash2 size={16} />
                     </IconButton>
                   </div>
@@ -126,9 +128,9 @@ export function ActivityPage() {
           ) : (
             <EmptyState
               icon={<Plus size={22} />}
-              title="Nessun allenamento"
-              description="Avvia il tuo primo allenamento per riempire gli anelli."
-              action={<Button onClick={() => setPickerOpen(true)}>Avvia allenamento</Button>}
+              title={t('activity.empty.title')}
+              description={t('activity.empty.desc')}
+              action={<Button onClick={() => setPickerOpen(true)}>{t('activity.empty.cta')}</Button>}
             />
           )}
         </Card>

@@ -6,6 +6,7 @@ import { createJournalEntry, updateJournalEntry, deleteJournalEntry } from '@/da
 import { todayISO } from '@/lib/format';
 import type { JournalEntry, Mood } from '@/data/types';
 import { MOODS } from './mood';
+import { useT, type TKey } from '@/i18n';
 
 export function JournalForm({
   open,
@@ -25,6 +26,7 @@ export function JournalForm({
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
   const toast = useToast();
+  const t = useT();
 
   useEffect(() => {
     if (open) {
@@ -46,10 +48,10 @@ export function JournalForm({
     const data = { date, mood, text: text.trim(), tags };
     if (editing && entry) {
       await updateJournalEntry(entry.id, data);
-      toast.show('Voce aggiornata');
+      toast.show(t('journalForm.updated'));
     } else {
       await createJournalEntry(data);
-      toast.show('Voce salvata');
+      toast.show(t('journalForm.saved'));
     }
     onClose();
   }
@@ -57,7 +59,7 @@ export function JournalForm({
   async function remove() {
     if (entry) {
       await deleteJournalEntry(entry.id);
-      toast.show('Voce eliminata');
+      toast.show(t('journalForm.deleted'));
       onClose();
     }
   }
@@ -66,21 +68,21 @@ export function JournalForm({
     <Sheet
       open={open}
       onClose={onClose}
-      title={editing ? 'Modifica voce' : 'Nuova voce'}
+      title={editing ? t('journalForm.edit') : t('journalForm.new')}
       footer={
         <div className="flex gap-2">
           {editing && (
             <Button variant="ghost" className="text-danger" onClick={remove}>
-              Elimina
+              {t('common.delete')}
             </Button>
           )}
           <Button block size="lg" onClick={save}>
-            {editing ? 'Salva' : 'Salva voce'}
+            {editing ? t('common.save') : t('journalForm.save')}
           </Button>
         </div>
       }
     >
-      <Field label="Come ti senti?">
+      <Field label={t('journalForm.mood')}>
         <div className="flex justify-between gap-1.5">
           {MOODS.map((m) => (
             <button
@@ -93,21 +95,21 @@ export function JournalForm({
               style={mood === m.value ? ({ '--tw-ring-color': m.color } as React.CSSProperties) : undefined}
             >
               <span className="text-2xl">{m.emoji}</span>
-              <span className="text-[10px] font-semibold text-ink-2">{m.label}</span>
+              <span className="text-[10px] font-semibold text-ink-2">{t(`mood.${m.value}` as TKey)}</span>
             </button>
           ))}
         </div>
       </Field>
 
-      <Field label="Data">
+      <Field label={t('journalForm.date')}>
         <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} max={todayISO()} />
       </Field>
 
-      <Field label="Note">
-        <Textarea autoFocus value={text} onChange={(e) => setText(e.target.value)} placeholder="Com'è andata la giornata?" className="min-h-[140px]" />
+      <Field label={t('journalForm.notes')}>
+        <Textarea autoFocus value={text} onChange={(e) => setText(e.target.value)} placeholder={t('journalForm.notesPh')} className="min-h-[140px]" />
       </Field>
 
-      <Field label="Tag">
+      <Field label={t('journalForm.tags')}>
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-2">
             {tags.map((t) => (
@@ -124,7 +126,7 @@ export function JournalForm({
           value={newTag}
           onChange={(e) => setNewTag(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-          placeholder="Aggiungi un tag e premi Invio"
+          placeholder={t('journalForm.tagPh')}
         />
       </Field>
     </Sheet>
