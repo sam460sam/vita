@@ -1,14 +1,35 @@
 import { useState } from 'react';
-import { HeartPulse, Check, Info } from 'lucide-react';
+import { HeartPulse, Check, Info, Upload } from 'lucide-react';
 import { Card, Button, useToast } from '@/ui';
 import { useT } from '@/i18n';
 import { health } from '@/platform/health';
+import { platform } from '@/platform/platform';
+import { parseWorkoutFile } from './importWorkouts';
+import { createWorkout } from '@/data/repo';
 
 /** Apple Health / Health Connect connection card (native-ready, web shows note). */
 export function HealthCard() {
   const t = useT();
   const toast = useToast();
   const [status, setStatus] = useState(health.status());
+
+  async function importFromFile() {
+    const text = await platform.pickTextFile('.tcx,.gpx,.xml,application/xml,text/xml');
+    if (!text) return;
+    let parsed;
+    try {
+      parsed = parseWorkoutFile(text);
+    } catch {
+      toast.show(t('health.importError'));
+      return;
+    }
+    if (!parsed.length) {
+      toast.show(t('health.importNone'));
+      return;
+    }
+    for (const w of parsed) await createWorkout(w);
+    toast.show(`${parsed.length} ${t('health.imported')}`);
+  }
 
   async function connect() {
     const ok = await health.connect();
@@ -60,6 +81,14 @@ export function HealthCard() {
           {connectLabel}
         </Button>
       )}
+
+      {/* File import works everywhere (web + native): Strava/Garmin/Apple Health export */}
+      <div className="mt-3 pt-3 border-t border-divider">
+        <Button variant="subtle" block icon={<Upload size={17} />} onClick={importFromFile}>
+          {t('health.importFile')}
+        </Button>
+        <p className="text-[11px] text-ink-3 mt-1.5">{t('health.importFileNote')}</p>
+      </div>
     </Card>
   );
 }
