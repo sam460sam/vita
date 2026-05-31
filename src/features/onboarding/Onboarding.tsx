@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, ShieldCheck, Plus, Check, Languages } from 'lucide-react';
+import { Sparkles, ShieldCheck, Plus, Check, Languages, X } from 'lucide-react';
 import { Button, Input } from '@/ui';
 import { cn } from '@/lib/cn';
 import { useI18n, LANGS, type Lang } from '@/i18n';
@@ -33,6 +33,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const [stepIdx, setStepIdx] = useState(0);
   const [name, setName] = useState('');
   const [picked, setPicked] = useState<Set<string>>(new Set());
+  const [customHabits, setCustomHabits] = useState<string[]>([]);
 
   const step = STEPS[stepIdx];
   const isLast = stepIdx === STEPS.length - 1;
@@ -55,10 +56,16 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       const rec = RECOMMENDED_HABITS.find((r) => r.id === id);
       if (rec) await createHabit({ name: t(rec.labelKey), color: rec.color, frequency: rec.frequency });
     }
+    // Create any custom habits the user typed.
+    for (const name of customHabits) {
+      await createHabit({ name, frequency: { type: 'daily' } });
+    }
     if (name.trim()) await updateSettings({ name: name.trim() });
     markOnboarded();
     onDone();
   }
+
+  const totalPicked = picked.size + customHabits.length;
 
   function skip() {
     markOnboarded();
@@ -83,7 +90,9 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         {step === 'welcome2' && (
           <Slide icon={ShieldCheck} color="var(--c-habit)" title={t('onboard.2.title')} desc={t('onboard.2.desc')} />
         )}
-        {step === 'habits' && <HabitsStep picked={picked} onToggle={toggleHabit} />}
+        {step === 'habits' && (
+          <HabitsStep picked={picked} onToggle={toggleHabit} customHabits={customHabits} setCustomHabits={setCustomHabits} />
+        )}
         {step === 'name' && (
           <div className="flex flex-col items-center justify-center text-center min-h-full py-8">
             <span className="h-20 w-20 rounded-3xl flex items-center justify-center mb-6 bg-activity/15 text-activity">
@@ -115,7 +124,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
           {isLast
             ? t('onboard.start')
             : step === 'habits'
-              ? `${t('onboard.next')}${picked.size ? ` (${picked.size})` : ''}`
+              ? `${t('onboard.next')}${totalPicked ? ` (${totalPicked})` : ''}`
               : t('onboard.next')}
         </Button>
       </div>
@@ -176,8 +185,26 @@ function LanguageStep({ onPick }: { onPick: (l: Lang) => void }) {
   );
 }
 
-function HabitsStep({ picked, onToggle }: { picked: Set<string>; onToggle: (id: string) => void }) {
+function HabitsStep({
+  picked,
+  onToggle,
+  customHabits,
+  setCustomHabits,
+}: {
+  picked: Set<string>;
+  onToggle: (id: string) => void;
+  customHabits: string[];
+  setCustomHabits: (v: string[]) => void;
+}) {
   const { t } = useI18n();
+  const [draft, setDraft] = useState('');
+
+  function addCustom() {
+    const v = draft.trim();
+    if (v && !customHabits.includes(v)) setCustomHabits([...customHabits, v]);
+    setDraft('');
+  }
+
   return (
     <div className="pt-2">
       <div className="text-center mb-5">
@@ -207,6 +234,35 @@ function HabitsStep({ picked, onToggle }: { picked: Set<string>; onToggle: (id: 
             </button>
           );
         })}
+
+        {/* User-added custom habits */}
+        {customHabits.map((name) => (
+          <div key={name} className="w-full flex items-center gap-3 px-4 h-14 rounded-card border border-ink bg-section text-left">
+            <span className="h-3 w-3 rounded-full flex-shrink-0 bg-ink" />
+            <span className="flex-1 text-[15px] font-medium text-ink">{name}</span>
+            <button
+              onClick={() => setCustomHabits(customHabits.filter((h) => h !== name))}
+              aria-label="−"
+              className="h-6 w-6 rounded-full bg-ink text-app flex items-center justify-center flex-shrink-0"
+            >
+              <X size={14} strokeWidth={3} />
+            </button>
+          </div>
+        ))}
+
+        {/* Write your own */}
+        <div className="pt-2">
+          <label className="block text-[13px] font-semibold text-ink-2 mb-1.5">{t('onboard.habits.custom')}</label>
+          <div className="flex gap-2">
+            <Input
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCustom())}
+              placeholder={t('onboard.habits.customPh')}
+            />
+            <Button variant="subtle" onClick={addCustom} icon={<Plus size={18} />} aria-label={t('common.add')} />
+          </div>
+        </div>
       </div>
     </div>
   );

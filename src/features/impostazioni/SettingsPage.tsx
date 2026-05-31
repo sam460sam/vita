@@ -7,7 +7,7 @@ import { defaultSettings } from '@/data/defaults';
 import { platform } from '@/platform/platform';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
-import { Card, CardHeader, Field, Input, Button, Divider, Segmented, useToast } from '@/ui';
+import { Card, CardHeader, Field, Input, Button, Divider, useToast } from '@/ui';
 import { format } from 'date-fns';
 import { useI18n, LANGS, type LangPref } from '@/i18n';
 import { useTheme, type ThemePref } from '@/theme/theme';
@@ -23,8 +23,8 @@ export function SettingsPage() {
   const [exercise, setExercise] = useState('30');
   const [stand, setStand] = useState('12');
   const [currency, setCurrency] = useState('EUR');
-  const [waterUnit, setWaterUnit] = useState<'glass' | 'liter'>('glass');
-  const [waterGoal, setWaterGoal] = useState('8');
+  const [waterGoalL, setWaterGoalL] = useState('2');
+  const [glassMl, setGlassMl] = useState('200');
   const toast = useToast();
 
   useEffect(() => {
@@ -34,8 +34,8 @@ export function SettingsPage() {
       setExercise(String(settings.goals.exerciseMin));
       setStand(String(settings.goals.standHours));
       setCurrency(settings.currency);
-      setWaterUnit(settings.water.unit);
-      setWaterGoal(String(settings.water.dailyGoal));
+      setWaterGoalL(String(settings.water.dailyGoalMl / 1000));
+      setGlassMl(String(settings.water.glassMl));
     }
   }, [settings]);
 
@@ -44,7 +44,7 @@ export function SettingsPage() {
       name: name.trim(),
       goals: { moveKcal: +move || 600, exerciseMin: +exercise || 30, standHours: +stand || 12 },
       currency: currency.trim().toUpperCase() || 'EUR',
-      water: { unit: waterUnit, dailyGoal: +waterGoal || (waterUnit === 'glass' ? 8 : 2) },
+      water: { dailyGoalMl: Math.round((parseFloat(waterGoalL) || 2) * 1000), glassMl: parseInt(glassMl) || 200 },
     });
     toast.show(t('settings.saved'));
   }
@@ -127,27 +127,14 @@ export function SettingsPage() {
 
         <Card className="mb-4">
           <CardHeader title={t('water.title')} />
-          <Field label={t('water.unit')}>
-            <Segmented
-              value={waterUnit}
-              onChange={(v) => {
-                setWaterUnit(v);
-                setWaterGoal(v === 'glass' ? '8' : '2');
-              }}
-              options={[
-                { value: 'glass', label: t('water.unit.glass') },
-                { value: 'liter', label: t('water.unit.liter') },
-              ]}
-            />
-          </Field>
-          <Field label={t('water.goal')}>
-            <Input
-              type="number"
-              inputMode="decimal"
-              value={waterGoal}
-              onChange={(e) => setWaterGoal(e.target.value)}
-            />
-          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label={t('water.goal')}>
+              <Input type="number" inputMode="decimal" value={waterGoalL} onChange={(e) => setWaterGoalL(e.target.value)} />
+            </Field>
+            <Field label={t('water.glassSize')}>
+              <Input type="number" inputMode="numeric" value={glassMl} onChange={(e) => setGlassMl(e.target.value)} />
+            </Field>
+          </div>
           <Button block onClick={saveProfile}>
             {t('common.save')}
           </Button>

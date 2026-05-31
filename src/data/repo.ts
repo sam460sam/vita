@@ -59,6 +59,7 @@ export async function createProject(data: Pick<Project, 'name' | 'color'> & Part
     description: data.description,
     color: data.color,
     archived: false,
+    externalUrl: data.externalUrl,
     createdAt: t,
     updatedAt: t,
   };
@@ -316,15 +317,15 @@ export async function readWaterLog(date: string): Promise<WaterLog | undefined> 
   return db.waterLogs.get(date);
 }
 
-/** Add (or subtract) to the day's water total; never goes below 0. */
-export async function addWater(date: string, delta: number, unit: 'glass' | 'liter') {
+/** Add (or subtract) milliliters to the day's water total; never below 0. */
+export async function addWaterMl(date: string, deltaMl: number) {
   const existing = await db.waterLogs.get(date);
-  const amount = Math.max(0, (existing?.amount ?? 0) + delta);
-  await db.waterLogs.put({ id: date, date, amount, unit, updatedAt: now() });
+  const ml = Math.max(0, (existing?.ml ?? 0) + deltaMl);
+  await db.waterLogs.put({ id: date, date, ml, updatedAt: now() });
 }
 
-export async function setWater(date: string, amount: number, unit: 'glass' | 'liter') {
-  await db.waterLogs.put({ id: date, date, amount: Math.max(0, amount), unit, updatedAt: now() });
+export async function setWaterMl(date: string, ml: number) {
+  await db.waterLogs.put({ id: date, date, ml: Math.max(0, ml), updatedAt: now() });
 }
 
 // ---------------------------------------------------------------------------

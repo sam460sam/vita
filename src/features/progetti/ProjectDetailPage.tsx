@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Pencil, Plus } from 'lucide-react';
+import { Pencil, Plus, Link as LinkIcon } from 'lucide-react';
 import { db } from '@/data/db';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
@@ -68,6 +68,16 @@ export function ProjectDetailPage() {
               <p className="text-[14px] text-ink-2 leading-snug">{project.description}</p>
             ) : (
               <p className="text-[14px] text-ink-3">{t('project.tasksTotal', { n: list.length })}</p>
+            )}
+            {project.externalUrl && (
+              <a
+                href={project.externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 mt-1.5 text-[13px] font-semibold text-project"
+              >
+                <LinkIcon size={13} /> {t('project.openLink')}
+              </a>
             )}
           </div>
         </Card>

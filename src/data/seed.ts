@@ -14,7 +14,7 @@ import {
   createGoal,
   createTransaction,
   setBudget,
-  setWater,
+  setWaterMl,
   updateSettings,
 } from './repo';
 import { SPORTS, estimateKcal } from '@/features/attivita/sports';
@@ -145,6 +145,6 @@ export async function seedDemoData(name = 'Samuele') {
   await createTransaction({ type: 'expense', amount: 35, category: 'Svago', date: iso(2), note: 'Cinema' });
   await createTransaction({ type: 'expense', amount: 72, category: 'Spesa', date: iso(1) });
 
-  // -- Water (glasses) ------------------------------------------------------
-  for (let d = 0; d < 7; d++) await setWater(iso(d), rand(4, 8), 'glass');
+  // -- Water (ml; ~1L–1.8L per day) -----------------------------------------
+  for (let d = 0; d < 7; d++) await setWaterMl(iso(d), rand(5, 9) * 200);
 }

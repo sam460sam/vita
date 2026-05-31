@@ -22,6 +22,7 @@ export function ProjectForm({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [color, setColor] = useState(COLORS[0]);
+  const [externalUrl, setExternalUrl] = useState('');
   const toast = useToast();
   const t = useT();
 
@@ -30,16 +31,29 @@ export function ProjectForm({
       setName(project?.name ?? '');
       setDescription(project?.description ?? '');
       setColor(project?.color ?? COLORS[0]);
+      setExternalUrl(project?.externalUrl ?? '');
     }
   }, [open, project]);
 
+  function normalizeUrl(u: string): string | undefined {
+    const v = u.trim();
+    if (!v) return undefined;
+    return /^https?:\/\//i.test(v) ? v : `https://${v}`;
+  }
+
   async function save() {
     if (!name.trim()) return;
+    const data = {
+      name: name.trim(),
+      description: description.trim() || undefined,
+      color,
+      externalUrl: normalizeUrl(externalUrl),
+    };
     if (editing && project) {
-      await updateProject(project.id, { name: name.trim(), description: description.trim() || undefined, color });
+      await updateProject(project.id, data);
       toast.show(t('projectForm.updated'));
     } else {
-      await createProject({ name: name.trim(), description: description.trim() || undefined, color });
+      await createProject(data);
       toast.show(t('projectForm.created'));
     }
     onClose();
@@ -90,6 +104,9 @@ export function ProjectForm({
       </Field>
       <Field label={t('projectForm.desc')}>
         <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('projectForm.descPh')} />
+      </Field>
+      <Field label={t('projectForm.link')}>
+        <Input type="url" inputMode="url" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} placeholder={t('projectForm.linkPh')} />
       </Field>
     </Sheet>
   );

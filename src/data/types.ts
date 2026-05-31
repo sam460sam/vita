@@ -33,10 +33,10 @@ export interface Settings {
     calendar: boolean;
   };
   currency: string; // e.g. 'EUR'
-  // Water tracking preferences
+  // Water tracking preferences (all volumes in milliliters)
   water: {
-    unit: 'glass' | 'liter'; // how the user logs water
-    dailyGoal: number; // target per day (glasses or ml depending on unit)
+    dailyGoalMl: number; // daily target in ml (e.g. 2000)
+    glassMl: number; // size of one "glass" in ml (default 200)
   };
   createdAt: number;
   updatedAt: number;
@@ -50,6 +50,8 @@ export interface Project extends Timestamped {
   description?: string;
   color: string; // hex accent
   archived: boolean;
+  /** Optional external link (Notion, Google Docs, etc.) for deeper note-taking. */
+  externalUrl?: string;
 }
 
 export type TaskStatus = 'todo' | 'doing' | 'done';
@@ -105,13 +107,11 @@ export interface HabitLog {
 // ----------------------------------------------------------------------------
 // Water intake
 // ----------------------------------------------------------------------------
-/** One day's total water intake. amount is in the unit stored at log time:
- *  glasses (count) or milliliters. `unit` makes each log self-describing. */
+/** One day's total water intake, stored in milliliters. */
 export interface WaterLog {
   id: ID; // = date (yyyy-MM-dd), one row per day
   date: string;
-  amount: number; // glasses or ml
-  unit: 'glass' | 'liter';
+  ml: number; // total intake for the day in milliliters
   updatedAt: number;
 }
 
