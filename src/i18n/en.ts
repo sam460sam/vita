@@ -47,6 +47,19 @@ export const en: Record<TKey, string> = {
   'greet.evening': 'Good evening',
 
   // Today
+  // Momentum (cross-life daily score + Stella)
+  'momentum.title': 'Your momentum',
+  'momentum.streak': '{n}-day streak',
+  'momentum.msg.great': "You're shining today! ⭐",
+  'momentum.msg.good': 'Nice going, keep it up!',
+  'momentum.msg.start': "You've started — one step at a time.",
+  'momentum.msg.idle': 'Ready to begin? Even a little counts.',
+  'momentum.legend.habits': 'Habits',
+  'momentum.legend.water': 'Water',
+  'momentum.legend.tasks': 'Tasks',
+  'momentum.legend.move': 'Move',
+  'momentum.legend.mind': 'Mind',
+
   'today.todo': 'To do today',
   'today.upcoming': 'Upcoming',
   'today.empty.title': 'Nothing due today',

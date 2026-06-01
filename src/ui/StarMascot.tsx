@@ -11,10 +11,12 @@ export function StarMascot({
   size = 96,
   className,
   animated = false,
+  mood = 'happy',
 }: {
   size?: number;
   className?: string;
   animated?: boolean;
+  mood?: 'sleepy' | 'neutral' | 'happy' | 'starstruck';
 }) {
   const uid = useId().replace(/:/g, '');
   const body = roundedStarPath(100, 98, 78, 40, 5, 0.34);
@@ -58,22 +60,61 @@ export function StarMascot({
         <ellipse cx="78" cy="64" rx="46" ry="34" fill={`url(#gloss-${uid})`} opacity="0.7" />
       </g>
 
-      {/* rosy cheeks */}
-      <ellipse cx="68" cy="112" rx="11" ry="7" fill="#FF8FA3" opacity="0.55" />
-      <ellipse cx="128" cy="108" rx="11" ry="7" fill="#FF8FA3" opacity="0.55" />
+      {/* rosy cheeks (brighter when happy/starstruck) */}
+      <ellipse cx="68" cy="112" rx="11" ry="7" fill="#FF8FA3" opacity={mood === 'starstruck' || mood === 'happy' ? 0.7 : 0.4} />
+      <ellipse cx="128" cy="108" rx="11" ry="7" fill="#FF8FA3" opacity={mood === 'starstruck' || mood === 'happy' ? 0.7 : 0.4} />
 
-      {/* symmetric eyes */}
+      <Face uid={uid} mood={mood} />
+    </svg>
+  );
+}
+
+function Face({ uid, mood }: { uid: string; mood: 'sleepy' | 'neutral' | 'happy' | 'starstruck' }) {
+  if (mood === 'sleepy') {
+    // closed/calm eyes (gentle arcs) + small soft mouth — never sad, just resting
+    return (
+      <>
+        <path d="M73 96 Q82 102 91 96" stroke="#15152A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+        <path d="M109 96 Q118 102 127 96" stroke="#15152A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+        <path d="M94 115 Q100 119 106 115" stroke="#C2410C" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.5" />
+      </>
+    );
+  }
+  if (mood === 'starstruck') {
+    // sparkly star-shaped catchlights + big open smile
+    return (
+      <>
+        <ellipse cx="82" cy="96" rx="11" ry="12.5" fill={`url(#eye-${uid})`} />
+        <ellipse cx="118" cy="96" rx="11" ry="12.5" fill={`url(#eye-${uid})`} />
+        <Sparkle x={82} y={94} />
+        <Sparkle x={118} y={94} />
+        <path d="M90 114 Q100 126 110 114 Q100 120 90 114 Z" fill="#FF4D5E" />
+      </>
+    );
+  }
+  // neutral / happy
+  const smile =
+    mood === 'happy'
+      ? 'M90 115 Q100 125 110 115' // bigger smile
+      : 'M93 116 Q100 121 107 116'; // gentle
+  return (
+    <>
       <ellipse cx="82" cy="96" rx="11" ry="12.5" fill={`url(#eye-${uid})`} />
       <ellipse cx="118" cy="96" rx="11" ry="12.5" fill={`url(#eye-${uid})`} />
-      {/* big catchlights */}
       <circle cx="78.5" cy="91" r="3.6" fill="#fff" />
       <circle cx="114.5" cy="91" r="3.6" fill="#fff" />
-      {/* tiny secondary sparkle */}
       <circle cx="85" cy="99.5" r="1.7" fill="#fff" opacity="0.8" />
       <circle cx="121" cy="99.5" r="1.7" fill="#fff" opacity="0.8" />
+      <path d={smile} stroke="#C2410C" strokeWidth="3.2" strokeLinecap="round" fill="none" opacity="0.6" />
+    </>
+  );
+}
 
-      {/* smile */}
-      <path d="M92 116 Q100 124 108 116" stroke="#C2410C" strokeWidth="3.2" strokeLinecap="round" fill="none" opacity="0.55" />
-    </svg>
+function Sparkle({ x, y }: { x: number; y: number }) {
+  return (
+    <path
+      d={`M${x} ${y - 5} L${x + 1.4} ${y - 1.4} L${x + 5} ${y} L${x + 1.4} ${y + 1.4} L${x} ${y + 5} L${x - 1.4} ${y + 1.4} L${x - 5} ${y} L${x - 1.4} ${y - 1.4} Z`}
+      fill="#fff"
+    />
   );
 }

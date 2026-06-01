@@ -46,6 +46,19 @@ export const it = {
   'greet.evening': 'Buonasera',
 
   // Today
+  // Momentum (cross-life daily score + Stella)
+  'momentum.title': 'Il tuo momentum',
+  'momentum.streak': '{n} giorni di fila',
+  'momentum.msg.great': 'Stai brillando oggi! ⭐',
+  'momentum.msg.good': 'Bell’andamento, continua così!',
+  'momentum.msg.start': 'Hai iniziato — un passo alla volta.',
+  'momentum.msg.idle': 'Pronti a iniziare? Anche poco conta.',
+  'momentum.legend.habits': 'Abitudini',
+  'momentum.legend.water': 'Acqua',
+  'momentum.legend.tasks': 'Task',
+  'momentum.legend.move': 'Movimento',
+  'momentum.legend.mind': 'Mente',
+
   'today.todo': 'Da fare oggi',
   'today.upcoming': 'Prossimi impegni',
   'today.empty.title': 'Nessun impegno per oggi',

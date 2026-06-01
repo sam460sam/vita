@@ -14,6 +14,8 @@ import { WaterCard } from '@/features/acqua/WaterCard';
 import { startOfWeek } from 'date-fns';
 import { cn } from '@/lib/cn';
 import { useT, type TKey } from '@/i18n';
+import { MomentumCard } from './MomentumCard';
+import { computeMomentum } from './momentum';
 
 export function TodayPage() {
   const t = useT();
@@ -23,12 +25,15 @@ export function TodayPage() {
   const logs = useLiveQuery(() => db.habitLogs.toArray(), [], []);
   const workouts = useLiveQuery(() => db.workouts.toArray(), [], []);
   const lastWeight = useLiveQuery(() => db.weightLogs.orderBy('date').reverse().limit(1).toArray(), [], []);
+  const journals = useLiveQuery(() => db.journalEntries.toArray(), [], []);
+  const todayWater = useLiveQuery(() => db.waterLogs.get(todayISO()), [], undefined);
 
   const s = settings ?? defaultSettings();
   const today = todayISO();
   const allTasks = tasks ?? [];
 
   const rings = todayRings(workouts ?? [], s);
+  const momentum = computeMomentum(s, habits ?? [], logs ?? [], allTasks, workouts ?? [], todayWater, journals ?? []);
 
   // "Da fare oggi": tasks due today or overdue + pending habits
   const dueTasks = allTasks
@@ -55,6 +60,9 @@ export function TodayPage() {
     <>
       <PageHeader title={greeting} subtitle={longDate()} />
       <Screen>
+        {/* Cross-life momentum + Stella */}
+        <MomentumCard m={momentum} />
+
         {/* Activity rings */}
         <Link to="/attivita">
           <Card className="flex items-center gap-5 mb-4 active:bg-section transition-colors">
