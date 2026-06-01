@@ -1,8 +1,11 @@
+import { useId } from 'react';
 import { cn } from '@/lib/cn';
+import { roundedStarPath } from './starPath';
 
 /**
- * Stella — the friendly star mascot. Pure SVG so it scales crisply and can be
- * animated. Used as the app's brand character and the in-app helper.
+ * Stella — the friendly star mascot, Pixar-style: volumetric gradient body,
+ * glossy highlight, symmetric eyes with catchlights, rosy cheeks, soft shadow.
+ * Pure SVG so it stays crisp at any size.
  */
 export function StarMascot({
   size = 96,
@@ -13,33 +16,64 @@ export function StarMascot({
   className?: string;
   animated?: boolean;
 }) {
+  const uid = useId().replace(/:/g, '');
+  const body = roundedStarPath(100, 98, 78, 40, 5, 0.34);
+
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 120 120"
+      viewBox="0 0 200 200"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={cn(animated && 'animate-stella-float', className)}
       role="img"
       aria-label="Stella"
     >
-      {/* soft shadow */}
-      <ellipse cx="60" cy="104" rx="22" ry="5" fill="#FCE9A6" opacity="0.6" />
-      {/* rounded 5-point star body, slightly tilted */}
-      <g transform="rotate(-8 60 58)">
-        <path
-          d="M60 16c4.6 0 7.9 4.7 11.6 8.2 3.2 3 7.8 2.6 12.4 3.3 5.6.8 9 2.9 9.9 7.4.8 4-1.7 8-2 12.6-.3 4.2 2.4 8.2 2.2 12.3-.2 5-3.2 8.2-8.4 8.9-4.3.6-8.7-1.6-13-.7-4.4.9-7.9 5-11.8 7.6-4.6 3-8.6 2.7-11.6-1.2-2.6-3.4-3.2-8.4-6.2-11.6-2.9-3.1-7.9-4-11.4-6.8-4.2-3.3-5.3-7.4-2.8-11.7 2.1-3.7 6.7-5.8 8.6-9.7 1.8-3.6 1.6-8.6 3.9-12.2C53.4 19 56.2 16 60 16z"
-          fill="#FFC93C"
-        />
+      <defs>
+        <radialGradient id={`body-${uid}`} cx="42%" cy="34%" r="78%">
+          <stop offset="0%" stopColor="#FFE08A" />
+          <stop offset="48%" stopColor="#FFD23F" />
+          <stop offset="100%" stopColor="#F7B500" />
+        </radialGradient>
+        <radialGradient id={`gloss-${uid}`} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
+          <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id={`eye-${uid}`} cx="38%" cy="32%" r="75%">
+          <stop offset="0%" stopColor="#3A3A52" />
+          <stop offset="100%" stopColor="#15152A" />
+        </radialGradient>
+      </defs>
+
+      {/* soft ground shadow */}
+      <ellipse cx="100" cy="180" rx="40" ry="8" fill="#000000" opacity="0.06" />
+
+      <g transform="rotate(-6 100 98)">
+        {/* body */}
+        <path d={body} fill={`url(#body-${uid})`} />
+        {/* subtle inner depth at the bottom */}
+        <path d={body} fill="#E89E00" opacity="0.12" transform="translate(0 6) scale(0.98)" style={{ transformOrigin: '100px 98px' }} />
+        {/* top gloss highlight */}
+        <ellipse cx="78" cy="64" rx="46" ry="34" fill={`url(#gloss-${uid})`} opacity="0.7" />
       </g>
-      {/* eyes */}
-      <circle cx="49" cy="60" r="6.5" fill="#1B1B2F" />
-      <circle cx="51" cy="58" r="2" fill="#fff" />
-      <circle cx="73" cy="52" r="7" fill="#1B1B2F" />
-      <circle cx="75" cy="50" r="2.2" fill="#fff" />
-      {/* mouth */}
-      <ellipse cx="62" cy="66" rx="4.5" ry="3.2" transform="rotate(20 62 66)" fill="#FF4D5E" />
+
+      {/* rosy cheeks */}
+      <ellipse cx="68" cy="112" rx="11" ry="7" fill="#FF8FA3" opacity="0.55" />
+      <ellipse cx="128" cy="108" rx="11" ry="7" fill="#FF8FA3" opacity="0.55" />
+
+      {/* symmetric eyes */}
+      <ellipse cx="82" cy="96" rx="11" ry="12.5" fill={`url(#eye-${uid})`} />
+      <ellipse cx="118" cy="96" rx="11" ry="12.5" fill={`url(#eye-${uid})`} />
+      {/* big catchlights */}
+      <circle cx="78.5" cy="91" r="3.6" fill="#fff" />
+      <circle cx="114.5" cy="91" r="3.6" fill="#fff" />
+      {/* tiny secondary sparkle */}
+      <circle cx="85" cy="99.5" r="1.7" fill="#fff" opacity="0.8" />
+      <circle cx="121" cy="99.5" r="1.7" fill="#fff" opacity="0.8" />
+
+      {/* smile */}
+      <path d="M92 116 Q100 124 108 116" stroke="#C2410C" strokeWidth="3.2" strokeLinecap="round" fill="none" opacity="0.55" />
     </svg>
   );
 }
