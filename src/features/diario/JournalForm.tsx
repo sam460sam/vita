@@ -84,20 +84,25 @@ export function JournalForm({
     >
       <Field label={t('journalForm.mood')}>
         <div className="flex justify-between gap-1.5">
-          {MOODS.map((m) => (
-            <button
-              key={m.value}
-              onClick={() => setMood(m.value)}
-              className={cn(
-                'flex-1 flex flex-col items-center gap-1 py-2.5 rounded-card transition-all',
-                mood === m.value ? 'bg-section ring-2' : 'opacity-50 hover:opacity-100',
-              )}
-              style={mood === m.value ? ({ '--tw-ring-color': m.color } as React.CSSProperties) : undefined}
-            >
-              <span className="text-2xl">{m.emoji}</span>
-              <span className="text-[10px] font-semibold text-ink-2">{t(`mood.${m.value}` as TKey)}</span>
-            </button>
-          ))}
+          {MOODS.map((m) => {
+            const active = mood === m.value;
+            return (
+              <button
+                key={m.value}
+                onClick={() => setMood(m.value)}
+                className={cn(
+                  'flex-1 flex flex-col items-center gap-1 py-2.5 rounded-card transition-all',
+                  active ? 'scale-105' : 'opacity-45 hover:opacity-100',
+                )}
+                style={active ? { background: `${m.color}24` } : undefined}
+              >
+                <span className="text-2xl">{m.emoji}</span>
+                <span className="text-[10px] font-semibold" style={{ color: active ? m.color : 'var(--c-ink-2)' }}>
+                  {t(`mood.${m.value}` as TKey)}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </Field>
 

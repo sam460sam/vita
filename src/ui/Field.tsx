@@ -15,7 +15,7 @@ export function Field({ label, children }: { label?: string; children: ReactNode
 }
 
 const inputBase =
-  'w-full h-11 px-3.5 rounded-btn bg-section border border-line text-[15px] text-ink placeholder:text-ink-3 focus:border-ink/30 focus:bg-card outline-none transition-colors';
+  'w-full h-11 px-3.5 rounded-btn bg-section border border-line dark:border-transparent text-[15px] text-ink placeholder:text-ink-3 focus:border-ink/30 focus:bg-card outline-none transition-colors';
 
 export function Input({ className, ...rest }: InputHTMLAttributes<HTMLInputElement>) {
   return <input className={cn(inputBase, className)} {...rest} />;

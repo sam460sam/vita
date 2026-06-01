@@ -21,14 +21,26 @@ export function Sheet({ open, onClose, title, children, footer, size = 'auto' }:
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
     document.addEventListener('keydown', onKey);
-    document.body.style.overflow = 'hidden';
+    // Lock the background completely (iOS-safe): fix the body at its current
+    // scroll position so the page behind the sheet can't move.
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const prev = { position: body.style.position, top: body.style.top, width: body.style.width, overflow: body.style.overflow };
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
     // Always open scrolled to the top (title first), regardless of autofocus.
     requestAnimationFrame(() => {
       if (scrollRef.current) scrollRef.current.scrollTop = 0;
     });
     return () => {
       document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.width = prev.width;
+      body.style.overflow = prev.overflow;
+      window.scrollTo(0, scrollY);
     };
   }, [open, onClose]);
 

@@ -8,7 +8,7 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 export function Card({ inset = true, className, children, ...rest }: CardProps) {
   return (
     <div
-      className={cn('bg-card rounded-card shadow-card border border-line/60', inset && 'p-4', className)}
+      className={cn('bg-card rounded-card shadow-card border border-line/60 dark:border-transparent', inset && 'p-4', className)}
       {...rest}
     >
       {children}
@@ -43,7 +43,7 @@ interface StatTileProps {
 
 export function StatTile({ label, value, unit, accent, icon }: StatTileProps) {
   return (
-    <div className="bg-card rounded-card shadow-card border border-line/60 p-3.5 flex flex-col gap-1">
+    <div className="bg-card rounded-card shadow-card border border-line/60 dark:border-transparent p-3.5 flex flex-col gap-1">
       <div className="flex items-center gap-1.5">
         {icon && <span style={{ color: accent }}>{icon}</span>}
         <span className="metric-label">{label}</span>

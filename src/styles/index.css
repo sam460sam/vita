@@ -32,19 +32,19 @@
   color-scheme: light;
 }
 
-/* ===== Dark theme ===== */
+/* ===== Dark theme — true black, no visible contour borders ===== */
 html.dark {
-  /* Surfaces */
-  --c-app: #0a0a0c;
-  --c-section: #141417;
-  --c-card: #1c1c20;
+  /* Surfaces: distinguished by fill, not by borders */
+  --c-app: #000000;
+  --c-section: #0b0b0d;
+  --c-card: #161618;
   /* Text */
   --c-ink: #f4f4f5;
   --c-ink-2: #a1a1aa;
-  --c-ink-3: #6b7280;
-  /* Lines */
-  --c-line: #2a2a30;
-  --c-divider: #232328;
+  --c-ink-3: #71717a;
+  /* Lines: nearly invisible (no white contour look) */
+  --c-line: #1b1b1f;
+  --c-divider: #161619;
   /* Accents stay vivid on dark; slightly brighter for contrast */
   --c-activity: #ff7a68;
   --c-habit: #1fd093;
@@ -54,11 +54,11 @@ html.dark {
   --c-success: #1fd093;
   --c-warning: #fbbf24;
   --c-danger: #f87171;
-  /* Primary action stays a dark/near-black pill with white text, but gets a
-     light border so it never disappears against the dark background. */
-  --c-primary: #18181c;
+  /* Primary action: a lighter pill that stands out on black by its FILL,
+     so it needs no border. */
+  --c-primary: #2a2a30;
   --c-on-primary: #ffffff;
-  --c-primary-border: #3a3a42;
+  --c-primary-border: transparent;
   color-scheme: dark;
 }
 
