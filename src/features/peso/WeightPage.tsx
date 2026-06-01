@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ArrowRight, ArrowUpRight, ArrowDownRight, Scale } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, ArrowUpRight, ArrowDownRight, Scale, ChevronRight } from 'lucide-react';
 import { format, parseISO, subDays } from 'date-fns';
 import { it as itLocale, enUS } from 'date-fns/locale';
 import { db } from '@/data/db';
@@ -107,7 +108,7 @@ export function WeightPage() {
                   ) : undefined
                 }
               />
-              <LineChart points={chartPoints} goal={s.body.goalWeightKg != null ? toDisplay(s.body.goalWeightKg, unit) : undefined} color="var(--c-ink)" />
+              <LineChart points={chartPoints} goal={s.body.goalWeightKg != null ? toDisplay(s.body.goalWeightKg, unit) : undefined} color="var(--c-ink)" axis unit={unit} />
               <Segmented
                 className="w-full mt-3"
                 value={range}
@@ -121,24 +122,35 @@ export function WeightPage() {
               />
             </Card>
 
-            {/* BMI */}
+            {/* BMI — tappable, opens the detailed BMI page */}
             {b && (
-              <Card className="mb-4">
-                <CardHeader title={t('weight.bmi')} />
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold tnum text-ink">{b.value}</span>
-                  <span className="text-[14px] font-semibold" style={{ color: bmiColor(b.category) }}>{t(`weight.bmi.${b.category}` as never)}</span>
-                </div>
-                <div className="mt-3 flex h-2 rounded-full overflow-hidden">
-                  <div className="flex-1" style={{ background: '#60A5FA' }} />
-                  <div className="flex-1" style={{ background: '#10B981' }} />
-                  <div className="flex-1" style={{ background: '#F59E0B' }} />
-                  <div className="flex-1" style={{ background: '#EF4444' }} />
-                </div>
-                <div className="flex justify-between text-[10px] text-ink-3 mt-1">
-                  <span>18.5</span><span>25</span><span>30</span>
-                </div>
-              </Card>
+              <Link to="/bmi">
+                <Card className="mb-4 active:bg-section transition-colors">
+                  <div className="flex items-center justify-between">
+                    <CardHeader title={t('weight.bmi')} />
+                    <ChevronRight size={18} className="text-ink-3 -mt-2" />
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-bold tnum text-ink">{b.value}</span>
+                    <span className="text-[14px] font-semibold" style={{ color: bmiColor(b.category) }}>{t(`weight.bmi.${b.category}` as never)}</span>
+                  </div>
+                  <div className="relative mt-3">
+                    <div className="flex h-2 rounded-full overflow-hidden">
+                      <div className="flex-1" style={{ background: '#60A5FA' }} />
+                      <div className="flex-1" style={{ background: '#10B981' }} />
+                      <div className="flex-1" style={{ background: '#F59E0B' }} />
+                      <div className="flex-1" style={{ background: '#EF4444' }} />
+                    </div>
+                    <div
+                      className="absolute -top-1 w-1 h-4 bg-ink rounded-full"
+                      style={{ left: `${Math.max(0, Math.min(100, ((b.value - 15) / 25) * 100))}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-[10px] text-ink-3 mt-1.5">
+                    <span>18.5</span><span>25</span><span>30</span>
+                  </div>
+                </Card>
+              </Link>
             )}
 
             {/* Changes */}
