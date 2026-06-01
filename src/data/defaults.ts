@@ -10,6 +10,7 @@ export function defaultSettings(): Settings {
     modules: { goals: true, finances: true, calendar: true },
     currency: 'EUR',
     water: { dailyGoalMl: 2000, glassMl: 200 },
+    reminders: {},
     createdAt: t,
     updatedAt: t,
   };

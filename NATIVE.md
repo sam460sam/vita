@@ -48,3 +48,84 @@ Poi in Xcode:
 - Le notifiche locali (promemoria abitudini) chiedono il permesso al primo uso.
 - L'app gira 100% offline da asset locali (HashRouter + base relativa), nessun
   server richiesto.
+
+---
+
+# Attivare le funzioni native (checklist)
+
+Tutto il codice lato app è già pronto. Questi sono i passi finali da fare sul
+**Mac in Xcode** / Android Studio dopo `npm run build && npx cap sync`.
+
+## 🔔 Notifiche locali (promemoria abitudini + acqua/allenamento/diario)
+Già implementate in `src/platform/notifications.ts` e collegate a Impostazioni
+→ Promemoria e ai promemoria delle abitudini.
+
+**iOS (Xcode):**
+1. `npx cap open ios`
+2. Target **App** → **Signing & Capabilities** → **+ Capability** →
+   **Push Notifications** NON serve; per le locali basta che il plugin sia
+   installato (lo è: `@capacitor/local-notifications`).
+3. Al primo uso l'app chiede il permesso (gestito da `requestPermission()`).
+4. Opzionale: aggiungi un suono custom in `ios/App/App` e referenzialo.
+
+**Android (Android Studio):**
+1. Permessi già nel manifest (`POST_NOTIFICATIONS`, `*_EXACT_ALARM`).
+2. Su Android 13+ il permesso runtime viene chiesto automaticamente.
+3. Verifica l'icona di notifica `ic_stat_icon` (Capacitor ne genera una di
+   default; per una custom: `android/app/src/main/res/drawable/`).
+
+Niente server: sono **notifiche locali**, pianificate sul dispositivo.
+
+## ❤️ Apple Salute (HealthKit) / Health Connect
+Predisposto in `src/platform/health.ts` (funzioni `connect()` /
+`importRecentWorkouts()` già chiamate dalla UI in Attività → card Salute) e
+le usage-string sono già in `ios/App/App/Info.plist`.
+
+**iOS — passi:**
+1. Installa un plugin HealthKit, es.:
+   ```bash
+   npm i @perfood/capacitor-healthkit
+   npx cap sync
+   ```
+2. `npx cap open ios` → target **App** → **Signing & Capabilities** →
+   **+ Capability** → **HealthKit**.
+3. In `src/platform/health.ts` sostituisci i TODO con le chiamate reali del
+   plugin in `connect()` (requestAuthorization) e `importRecentWorkouts()`
+   (query HKWorkout → `createWorkout({ ..., source: 'healthkit' })`).
+   **La UI non cambia.**
+4. Build e prova su un **iPhone reale** (HealthKit non funziona nel simulatore).
+
+**Android (Health Connect):**
+1. `npm i <plugin Health Connect per Capacitor>` + `npx cap sync`
+2. Aggiungi i permessi Health Connect nel manifest e la dichiarazione privacy.
+3. Implementa le stesse funzioni con `source: 'healthconnect'`.
+
+Nel frattempo, da subito (anche sul web), funziona l'**import da file**
+(.tcx/.gpx/.xml) di Strava, Garmin e dell'export di Apple Salute.
+
+## 📊 Widget schermata Home (fase 2)
+I widget sono **codice nativo separato** (non riusano la WebView), quindi sono
+un mini-progetto a parte da fare dopo il primo lancio.
+
+**iOS (WidgetKit, SwiftUI):**
+1. In Xcode: **File → New → Target → Widget Extension** (es. "VitaWidget").
+2. Condividi i dati tra app e widget con un **App Group**
+   (`group.app.vita.lifeos`) + `UserDefaults(suiteName:)`.
+3. Quando l'app salva (es. acqua, anelli), scrivi i valori del giorno nell'App
+   Group; il widget li legge e disegna anelli/acqua/prossimo task.
+4. `WidgetCenter.shared.reloadAllTimelines()` per aggiornare.
+
+**Android (Glance / AppWidgetProvider):**
+1. Crea un `AppWidgetProvider` + layout nel progetto `android/`.
+2. Leggi i dati condivisi (SharedPreferences) scritti dall'app.
+
+Suggerimento: i dati sono già **per-giorno** (`waterLogs`, anelli derivati,
+task con scadenza), quindi esporli al widget è semplice. Si può aggiungere un
+piccolo "bridge" che scrive un riassunto giornaliero in un percorso condiviso.
+
+## Riepilogo stato
+| Funzione | Codice app | Da fare sul Mac |
+|---|---|---|
+| Notifiche locali | ✅ pronto | abilitare capability / permesso |
+| Apple Salute | ✅ predisposto | plugin + capability HealthKit, riempire i TODO |
+| Widget Home | ⚠️ da costruire | target nativo Widget (fase 2) |

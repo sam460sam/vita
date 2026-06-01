@@ -5,11 +5,12 @@ import { readSettings, updateSettings, exportBackup, importBackup, clearAllData 
 import { seedDemoData } from '@/data/seed';
 import { defaultSettings } from '@/data/defaults';
 import { platform } from '@/platform/platform';
+import { notifications } from '@/platform/notifications';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, CardHeader, Field, Input, Button, Divider, useToast } from '@/ui';
 import { format } from 'date-fns';
-import { useI18n, LANGS, type LangPref } from '@/i18n';
+import { useI18n, LANGS, type LangPref, type TKey } from '@/i18n';
 import { useTheme, type ThemePref } from '@/theme/theme';
 import type { VitaBackup } from '@/data/types';
 
@@ -51,6 +52,18 @@ export function SettingsPage() {
 
   async function toggleModule(key: keyof typeof s.modules) {
     await updateSettings({ modules: { ...s.modules, [key]: !s.modules[key] } });
+  }
+
+  async function setReminder(kind: 'water' | 'workout' | 'journal', time: string) {
+    const reminders = { ...s.reminders, [kind]: time || undefined };
+    await updateSettings({ reminders });
+    if (time && notifications.supported()) await notifications.requestPermission();
+    await notifications.setDailyReminder(
+      kind,
+      t(`reminder.${kind}.title` as TKey),
+      t(`reminder.${kind}.body` as TKey),
+      time || undefined,
+    );
   }
 
   async function doExport() {
@@ -179,6 +192,16 @@ export function SettingsPage() {
         </Card>
 
         <Card className="mb-4">
+          <CardHeader title={t('settings.reminders')} />
+          <ReminderRow label={t('settings.reminders.water')} value={s.reminders.water ?? ''} onChange={(v) => setReminder('water', v)} />
+          <Divider />
+          <ReminderRow label={t('settings.reminders.workout')} value={s.reminders.workout ?? ''} onChange={(v) => setReminder('workout', v)} />
+          <Divider />
+          <ReminderRow label={t('settings.reminders.journal')} value={s.reminders.journal ?? ''} onChange={(v) => setReminder('journal', v)} />
+          <p className="text-[12px] text-ink-3 mt-3">{t('settings.reminders.note')}</p>
+        </Card>
+
+        <Card className="mb-4">
           <CardHeader title={t('settings.modules')} />
           <ModuleToggle label={t('nav.goals')} on={s.modules.goals} onToggle={() => toggleModule('goals')} />
           <Divider />
@@ -212,6 +235,20 @@ export function SettingsPage() {
         <p className="text-center text-[12px] text-ink-3">{t('settings.version')}</p>
       </Screen>
     </>
+  );
+}
+
+function ReminderRow({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="flex items-center justify-between py-2.5 gap-3">
+      <span className="text-[15px] text-ink">{label}</span>
+      <input
+        type="time"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="h-9 px-3 rounded-btn bg-section border border-line dark:border-transparent text-[15px] text-ink outline-none"
+      />
+    </div>
   );
 }
 

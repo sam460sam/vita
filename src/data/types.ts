@@ -38,6 +38,13 @@ export interface Settings {
     dailyGoalMl: number; // daily target in ml (e.g. 2000)
     glassMl: number; // size of one "glass" in ml (default 200)
   };
+  // Daily reminder times (HH:mm) — empty string = off. Fire as local
+  // notifications on the native app; stored regardless on web.
+  reminders: {
+    water?: string;
+    workout?: string;
+    journal?: string;
+  };
   createdAt: number;
   updatedAt: number;
 }

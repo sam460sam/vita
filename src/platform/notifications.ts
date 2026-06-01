@@ -68,4 +68,24 @@ export const notifications = {
       /* noop */
     }
   },
+
+  /**
+   * Schedule (or cancel) a named daily reminder (water / workout / journal).
+   * Stable id per kind so re-scheduling replaces the previous one.
+   */
+  async setDailyReminder(kind: 'water' | 'workout' | 'journal', title: string, body: string, time?: string): Promise<void> {
+    if (!isNative) return;
+    try {
+      const { LocalNotifications } = await import('@capacitor/local-notifications');
+      const id = notifId(`reminder:${kind}`);
+      await LocalNotifications.cancel({ notifications: [{ id }] });
+      if (!time) return;
+      const [hh, mm] = time.split(':').map(Number);
+      await LocalNotifications.schedule({
+        notifications: [{ id, title, body, schedule: { on: { hour: hh, minute: mm }, repeats: true } }],
+      });
+    } catch {
+      /* notifications unavailable */
+    }
+  },
 };
