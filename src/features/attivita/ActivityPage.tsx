@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Play, Plus, Trash2 } from 'lucide-react';
+import { Play, Plus, Trash2, Pencil } from 'lucide-react';
 import { db } from '@/data/db';
-import { deleteWorkout } from '@/data/repo';
+import { deleteWorkout, updateSettings } from '@/data/repo';
 import { readSettings } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
@@ -16,6 +16,9 @@ import {
   EmptyState,
   IconButton,
   Segmented,
+  Sheet,
+  Field,
+  Input,
 } from '@/ui';
 import { formatDistance, formatDuration } from '@/lib/format';
 import { format } from 'date-fns';
@@ -36,6 +39,7 @@ export function ActivityPage() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [activeSport, setActiveSport] = useState<Sport | null>(null);
   const [period, setPeriod] = useState<'week' | 'month'>('week');
+  const [goalsOpen, setGoalsOpen] = useState(false);
 
   // Quick-add deep link: /attivita?start=1 opens the sport picker.
   useEffect(() => {
@@ -62,7 +66,10 @@ export function ActivityPage() {
       />
       <Screen>
         {/* Rings */}
-        <Card className="flex flex-col items-center pt-6 pb-5 mb-4">
+        <Card className="flex flex-col items-center pt-6 pb-5 mb-4 relative">
+          <IconButton label={t('common.edit')} className="absolute top-2 right-2" onClick={() => setGoalsOpen(true)}>
+            <Pencil size={16} />
+          </IconButton>
           <ActivityRings rings={ringsToData(rings)} />
           <div className="grid grid-cols-3 gap-4 w-full mt-5">
             <RingStat label={t('activity.ring.move')} value={rings.move.value} goal={rings.move.goal} unit={t('activity.unit.kcal')} color="var(--c-activity)" />
@@ -154,7 +161,52 @@ export function ActivityPage() {
         onClose={() => setActiveSport(null)}
         onSaved={() => setActiveSport(null)}
       />
+      <RingGoalsSheet open={goalsOpen} onClose={() => setGoalsOpen(false)} goals={s.goals} />
     </>
+  );
+}
+
+function RingGoalsSheet({
+  open,
+  onClose,
+  goals,
+}: {
+  open: boolean;
+  onClose: () => void;
+  goals: { moveKcal: number; exerciseMin: number; standHours: number };
+}) {
+  const t = useT();
+  const [move, setMove] = useState('600');
+  const [exercise, setExercise] = useState('30');
+  const [stand, setStand] = useState('12');
+
+  useEffect(() => {
+    if (open) {
+      setMove(String(goals.moveKcal));
+      setExercise(String(goals.exerciseMin));
+      setStand(String(goals.standHours));
+    }
+  }, [open, goals]);
+
+  async function save() {
+    await updateSettings({
+      goals: { moveKcal: +move || 600, exerciseMin: +exercise || 30, standHours: +stand || 12 },
+    });
+    onClose();
+  }
+
+  return (
+    <Sheet open={open} onClose={onClose} title={t('activity.summary')} footer={<Button block size="lg" onClick={save}>{t('common.save')}</Button>}>
+      <Field label={`${t('activity.ring.move')} (${t('activity.unit.kcal')})`}>
+        <Input type="number" inputMode="numeric" value={move} onChange={(e) => setMove(e.target.value)} />
+      </Field>
+      <Field label={`${t('activity.ring.exercise')} (${t('activity.unit.min')})`}>
+        <Input type="number" inputMode="numeric" value={exercise} onChange={(e) => setExercise(e.target.value)} />
+      </Field>
+      <Field label={`${t('activity.ring.stand')} (${t('activity.unit.hours')})`}>
+        <Input type="number" inputMode="numeric" value={stand} onChange={(e) => setStand(e.target.value)} />
+      </Field>
+    </Sheet>
   );
 }
 

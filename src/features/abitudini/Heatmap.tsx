@@ -22,8 +22,9 @@ export function Heatmap({
               title={c.date}
               className={cn('h-3 w-3 rounded-[3px]')}
               style={{
-                background: c.done ? color : c.scheduled ? 'var(--c-divider)' : 'var(--c-section)',
-                opacity: c.done ? 1 : 0.9,
+                // done = full habit color; scheduled-not-done = faint tint of it;
+                // not scheduled = neutral. Works in light AND dark.
+                background: c.done ? color : c.scheduled ? `${color}33` : 'var(--c-line)',
               }}
             />
           ))}
