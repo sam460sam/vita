@@ -11,5 +11,6 @@ export { ActivityRings, type RingData } from './ActivityRings';
 export { Checkbox } from './Checkbox';
 export { BarChart } from './BarChart';
 export { LineChart } from './LineChart';
+export { Sankey, type SankeyFlow } from './Sankey';
 export { StarMascot } from './StarMascot';
 export { Toast, useToast, ToastProvider } from './Toast';

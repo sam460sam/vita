@@ -324,6 +324,8 @@ export const it = {
   'finances.budget.tap': 'Tocca per impostare',
   'finances.budget.of': '{spent} di {limit}',
   'finances.byCategory': 'Spese per categoria',
+  'finances.flow': 'Dove vanno i soldi',
+  'finances.savings': 'Risparmi',
   'finances.movements': 'Movimenti',
   'finances.import': 'Importa estratto conto (CSV)',
   'finances.importNote': "Esporta il CSV dall'home banking e importalo qui. Riconosce automaticamente data, importo e descrizione.",

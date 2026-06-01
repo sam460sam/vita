@@ -163,6 +163,16 @@ export async function seedDemoData(name = 'Samuele') {
   await createTransaction({ type: 'expense', amount: 35, category: 'Svago', date: iso(2), note: 'Cinema' });
   await createTransaction({ type: 'expense', amount: 72, category: 'Spesa', date: iso(1) });
 
+  // Current-month set so the money-flow (Sankey) always has data to show.
+  const mDay = (d: number) => format(new Date(new Date().getFullYear(), new Date().getMonth(), d), 'yyyy-MM-dd');
+  await createTransaction({ type: 'income', amount: 2400, category: 'Stipendio', date: mDay(1) });
+  await createTransaction({ type: 'expense', amount: 860, category: 'Casa', date: mDay(1), note: 'Affitto' });
+  await createTransaction({ type: 'expense', amount: 220, category: 'Spesa', date: mDay(2) });
+  await createTransaction({ type: 'expense', amount: 95, category: 'Bollette', date: mDay(3) });
+  await createTransaction({ type: 'expense', amount: 60, category: 'Trasporti', date: mDay(4) });
+  await createTransaction({ type: 'expense', amount: 120, category: 'Shopping', date: mDay(5) });
+  await createTransaction({ type: 'expense', amount: 45, category: 'Ristoranti', date: mDay(6) });
+
   // -- Water (ml; ~1L–1.8L per day) -----------------------------------------
   for (let d = 0; d < 7; d++) await setWaterMl(iso(d), rand(5, 9) * 200);
 

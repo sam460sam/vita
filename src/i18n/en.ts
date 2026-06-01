@@ -321,6 +321,8 @@ export const en: Record<TKey, string> = {
   'finances.budget.tap': 'Tap to set',
   'finances.budget.of': '{spent} of {limit}',
   'finances.byCategory': 'Spending by category',
+  'finances.flow': 'Where money goes',
+  'finances.savings': 'Savings',
   'finances.movements': 'Transactions',
   'finances.import': 'Import bank statement (CSV)',
   'finances.importNote': 'Export the CSV from your online banking and import it here. Date, amount and description are detected automatically.',

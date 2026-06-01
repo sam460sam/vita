@@ -9,7 +9,7 @@ import { defaultSettings } from '@/data/defaults';
 import { platform } from '@/platform/platform';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
-import { Card, CardHeader, EmptyState, Button, Sheet, Field, Input, Select, Segmented, IconButton, useToast } from '@/ui';
+import { Card, CardHeader, EmptyState, Button, Sheet, Field, Input, Select, Segmented, IconButton, Sankey, useToast } from '@/ui';
 import { formatMoney, todayISO, currentMonthKey, monthKey } from '@/lib/format';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, categoryColor } from './categories';
 import { parseBankCsv } from './importCsv';
@@ -51,6 +51,14 @@ export function FinancesPage() {
     for (const t of monthTxs.filter((t) => t.type === 'expense')) m.set(t.category, (m.get(t.category) ?? 0) + t.amount);
     return [...m.entries()].sort((a, b) => b[1] - a[1]);
   }, [monthTxs]);
+
+  // Money-flow: income → each expense category (+ savings if income > expense)
+  const flows = useMemo(() => {
+    const f = byCategory.map(([cat, amt]) => ({ label: cat, value: amt, color: categoryColor(cat) }));
+    const saved = income - expense;
+    if (saved > 0) f.push({ label: t('finances.savings'), value: saved, color: '#22C55E' });
+    return f;
+  }, [byCategory, income, expense, t]);
 
   return (
     <>
@@ -116,6 +124,20 @@ export function FinancesPage() {
             </div>
           )}
         </Card>
+
+        {/* Money flow (Sankey) */}
+        {flows.length > 0 && income > 0 && (
+          <Card className="mb-4">
+            <CardHeader title={t('finances.flow')} />
+            <Sankey
+              sourceLabel={t('finances.income')}
+              sourceValue={income}
+              flows={flows}
+              height={Math.max(220, flows.length * 46)}
+              format={(n) => formatMoney(n, currency)}
+            />
+          </Card>
+        )}
 
         {/* Spese per categoria */}
         {byCategory.length > 0 && (
