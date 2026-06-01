@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Sparkles, ShieldCheck, Plus, Check, Languages, X } from 'lucide-react';
+import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star } from 'lucide-react';
 import { Button, Input } from '@/ui';
 import { StarMascot } from '@/ui/StarMascot';
 import { cn } from '@/lib/cn';
-import { useI18n, LANGS, type Lang } from '@/i18n';
+import { useI18n, LANGS, type Lang, type TKey } from '@/i18n';
 import { createHabit, updateSettings } from '@/data/repo';
 import { RECOMMENDED_HABITS } from '@/features/abitudini/recommended';
+
+type Focus = 'health' | 'productivity' | 'wellbeing' | 'all';
 
 const STORAGE_KEY = 'vita.onboarded';
 
@@ -25,21 +27,38 @@ function markOnboarded() {
   }
 }
 
-type Step = 'lang' | 'welcome1' | 'welcome2' | 'habits' | 'name';
-const STEPS: Step[] = ['lang', 'welcome1', 'welcome2', 'habits', 'name'];
+type Step = 'lang' | 'welcome1' | 'focus' | 'habits' | 'name' | 'aha';
+const STEPS: Step[] = ['lang', 'welcome1', 'focus', 'habits', 'name', 'aha'];
 
-/** Full-screen first-run onboarding: language → welcome → habits → name. */
+/** First-run onboarding: language → welcome → focus → habits → name → aha. */
 export function Onboarding({ onDone }: { onDone: () => void }) {
   const { t, setPref } = useI18n();
   const [stepIdx, setStepIdx] = useState(0);
   const [name, setName] = useState('');
+  const [focus, setFocus] = useState<Focus>('all');
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const [customHabits, setCustomHabits] = useState<string[]>([]);
 
   const step = STEPS[stepIdx];
   const isLast = stepIdx === STEPS.length - 1;
 
-  function next() {
+  const [committed, setCommitted] = useState(false);
+
+  async function commit() {
+    if (committed) return;
+    setCommitted(true);
+    for (const id of picked) {
+      const rec = RECOMMENDED_HABITS.find((r) => r.id === id);
+      if (rec) await createHabit({ name: t(rec.labelKey), color: rec.color, frequency: rec.frequency });
+    }
+    for (const n of customHabits) await createHabit({ name: n, frequency: { type: 'daily' } });
+    await updateSettings({ name: name.trim() || undefined, focus });
+  }
+
+  async function next() {
+    // Persist everything when leaving the "name" step, so the aha screen and
+    // the app behind it already reflect the user's choices.
+    if (step === 'name') await commit();
     setStepIdx((i) => Math.min(i + 1, STEPS.length - 1));
   }
 
@@ -52,16 +71,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   }
 
   async function finish() {
-    // Create the chosen starter habits.
-    for (const id of picked) {
-      const rec = RECOMMENDED_HABITS.find((r) => r.id === id);
-      if (rec) await createHabit({ name: t(rec.labelKey), color: rec.color, frequency: rec.frequency });
-    }
-    // Create any custom habits the user typed.
-    for (const name of customHabits) {
-      await createHabit({ name, frequency: { type: 'daily' } });
-    }
-    if (name.trim()) await updateSettings({ name: name.trim() });
+    await commit(); // safety: in case "name" was skipped
     markOnboarded();
     onDone();
   }
@@ -92,9 +102,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
             <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.1.desc')}</p>
           </div>
         )}
-        {step === 'welcome2' && (
-          <Slide icon={ShieldCheck} color="var(--c-habit)" title={t('onboard.2.title')} desc={t('onboard.2.desc')} />
-        )}
+        {step === 'focus' && <FocusStep value={focus} onPick={setFocus} />}
         {step === 'habits' && (
           <HabitsStep picked={picked} onToggle={toggleHabit} customHabits={customHabits} setCustomHabits={setCustomHabits} />
         )}
@@ -111,6 +119,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
             </div>
           </div>
         )}
+        {step === 'aha' && <AhaStep name={name} focus={focus} habitCount={totalPicked} />}
       </div>
 
       {/* Dots */}
@@ -137,24 +146,68 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   );
 }
 
-function Slide({
-  icon: Icon,
-  color,
-  title,
-  desc,
-}: {
-  icon: typeof Sparkles;
-  color: string;
-  title: string;
-  desc: string;
-}) {
+const FOCUS_OPTS: { value: Focus; icon: typeof HeartPulse; color: string; titleKey: TKey; descKey: TKey }[] = [
+  { value: 'health', icon: HeartPulse, color: 'var(--c-activity)', titleKey: 'onboard.focus.health', descKey: 'onboard.focus.healthDesc' },
+  { value: 'productivity', icon: ListChecks, color: 'var(--c-project)', titleKey: 'onboard.focus.productivity', descKey: 'onboard.focus.productivityDesc' },
+  { value: 'wellbeing', icon: Brain, color: 'var(--c-journal)', titleKey: 'onboard.focus.wellbeing', descKey: 'onboard.focus.wellbeingDesc' },
+  { value: 'all', icon: Star, color: 'var(--c-habit)', titleKey: 'onboard.focus.all', descKey: 'onboard.focus.allDesc' },
+];
+
+function FocusStep({ value, onPick }: { value: Focus; onPick: (f: Focus) => void }) {
+  const { t } = useI18n();
+  return (
+    <div className="pt-4">
+      <div className="text-center mb-5">
+        <h1 className="text-2xl font-bold text-ink">{t('onboard.focus.title')}</h1>
+        <p className="text-[15px] text-ink-2 mt-2 max-w-sm mx-auto leading-relaxed">{t('onboard.focus.desc')}</p>
+      </div>
+      <div className="space-y-2 max-w-md mx-auto">
+        {FOCUS_OPTS.map((o) => {
+          const Icon = o.icon;
+          const on = value === o.value;
+          return (
+            <button
+              key={o.value}
+              onClick={() => onPick(o.value)}
+              className={cn(
+                'w-full flex items-center gap-3 px-4 py-3 rounded-card border transition-colors text-left',
+                on ? 'border-ink bg-section' : 'border-line dark:border-transparent dark:bg-section',
+              )}
+            >
+              <span className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${o.color}1a`, color: o.color }}>
+                <Icon size={20} />
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="text-[15px] font-semibold text-ink">{t(o.titleKey)}</div>
+                <div className="text-[13px] text-ink-2">{t(o.descKey)}</div>
+              </div>
+              {on && <Check size={18} className="text-ink" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function AhaStep({ name, focus, habitCount }: { name: string; focus: Focus; habitCount: number }) {
+  const { t } = useI18n();
+  const focusLabel = t(`onboard.focus.${focus}` as TKey);
   return (
     <div className="flex flex-col items-center justify-center text-center min-h-full py-8">
-      <span className="h-20 w-20 rounded-3xl flex items-center justify-center mb-6" style={{ background: `${color}1a`, color }}>
-        <Icon size={40} />
-      </span>
-      <h1 className="text-2xl font-bold text-ink">{title}</h1>
-      <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{desc}</p>
+      <StarMascot size={120} mood="starstruck" animated />
+      <h1 className="text-2xl font-bold text-ink mt-4">
+        {name.trim() ? t('onboard.aha.title', { name: name.trim() }) : t('onboard.aha.titleNoName')}
+      </h1>
+      <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.aha.desc')}</p>
+      <div className="flex flex-col gap-2 mt-5 w-full max-w-xs">
+        <div className="flex items-center gap-2 bg-section rounded-card px-4 py-3 text-[14px] text-ink">
+          <Check size={16} className="text-habit" /> {t('onboard.aha.habits', { n: habitCount })}
+        </div>
+        <div className="flex items-center gap-2 bg-section rounded-card px-4 py-3 text-[14px] text-ink">
+          <Check size={16} className="text-habit" /> {t('onboard.aha.focus', { focus: focusLabel })}
+        </div>
+      </div>
     </div>
   );
 }

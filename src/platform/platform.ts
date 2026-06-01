@@ -93,6 +93,30 @@ export const platform = {
     return false;
   },
 
+  /** Share an image blob (recap). Web: Web Share API with files, else download. */
+  async shareImage(blob: Blob, filename: string, text?: string): Promise<boolean> {
+    const file = new File([blob], filename, { type: 'image/png' });
+    const nav = navigator as Navigator & { canShare?: (d: unknown) => boolean };
+    if (nav.share && nav.canShare && nav.canShare({ files: [file] })) {
+      try {
+        await nav.share({ files: [file], text });
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    // Fallback: download the image.
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    return true;
+  },
+
   /** Light haptic feedback. Native: @capacitor/haptics. Web: vibration API. */
   haptic() {
     if (isNative) {

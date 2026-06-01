@@ -45,6 +45,8 @@ export interface Settings {
     workout?: string;
     journal?: string;
     weight?: string;
+    /** evening momentum check-in (e.g. "close your day") */
+    evening?: string;
   };
   // Body / weight tracking
   body: {
@@ -53,6 +55,8 @@ export interface Settings {
     goalWeightKg?: number; // target weight
     unit: 'kg' | 'lb';
   };
+  /** What the user mainly wants from Vita (set in onboarding). Drives nudges. */
+  focus?: 'health' | 'productivity' | 'wellbeing' | 'all';
   createdAt: number;
   updatedAt: number;
 }

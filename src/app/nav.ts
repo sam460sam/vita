@@ -9,6 +9,7 @@ import {
   BookHeart,
   Activity,
   Settings,
+  Sparkles,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -39,5 +40,6 @@ export const SECONDARY_NAV: NavItem[] = [
   { to: '/diario', labelKey: 'nav.journal', icon: BookHeart, accent: 'var(--c-journal)' },
   { to: '/obiettivi', labelKey: 'nav.goals', icon: Target, accent: 'var(--c-project)' },
   { to: '/calendario', labelKey: 'nav.calendar', icon: CalendarDays },
+  { to: '/recap', labelKey: 'nav.recap', icon: Sparkles, accent: 'var(--c-habit)' },
   { to: '/impostazioni', labelKey: 'nav.settings', icon: Settings },
 ];

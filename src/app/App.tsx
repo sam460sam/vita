@@ -27,6 +27,7 @@ const SettingsPage = lazy(() => import('@/features/impostazioni/SettingsPage').t
 const ProPage = lazy(() => import('@/features/pro').then((m) => ({ default: m.ProPage })));
 const WeightPage = lazy(() => import('@/features/peso').then((m) => ({ default: m.WeightPage })));
 const BmiPage = lazy(() => import('@/features/peso').then((m) => ({ default: m.BmiPage })));
+const RecapPage = lazy(() => import('@/features/recap').then((m) => ({ default: m.RecapPage })));
 
 export function App() {
   const [onboarded, setOnboarded] = useState(hasOnboarded());
@@ -50,6 +51,7 @@ export function App() {
                       <Route path="/attivita" element={<ActivityPage />} />
                       <Route path="/peso" element={<WeightPage />} />
                       <Route path="/bmi" element={<BmiPage />} />
+                      <Route path="/recap" element={<RecapPage />} />
                       <Route path="/progetti" element={<ProjectsPage />} />
                       <Route path="/progetti/:id" element={<ProjectDetailPage />} />
                       <Route path="/abitudini" element={<HabitsPage />} />
