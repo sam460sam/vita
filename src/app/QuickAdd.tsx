@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 
-export type QuickAddTarget = 'task' | 'habit' | 'workout' | 'journal';
+export type QuickAddTarget = 'task' | 'habit' | 'workout' | 'journal' | 'weight';
 
 interface QuickAddCtx {
   /** which create sheet is open (null = none) */

@@ -73,7 +73,7 @@ export const notifications = {
    * Schedule (or cancel) a named daily reminder (water / workout / journal).
    * Stable id per kind so re-scheduling replaces the previous one.
    */
-  async setDailyReminder(kind: 'water' | 'workout' | 'journal', title: string, body: string, time?: string): Promise<void> {
+  async setDailyReminder(kind: 'water' | 'workout' | 'journal' | 'weight', title: string, body: string, time?: string): Promise<void> {
     if (!isNative) return;
     try {
       const { LocalNotifications } = await import('@capacitor/local-notifications');

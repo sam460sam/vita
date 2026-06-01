@@ -39,6 +39,7 @@ export const en: Record<TKey, string> = {
   'quick.habit': 'New habit',
   'quick.workout': 'New workout',
   'quick.journal': 'Journal note',
+  'quick.weight': 'Log weight',
 
   // Greetings
   'greet.morning': 'Good morning',
@@ -403,6 +404,9 @@ export const en: Record<TKey, string> = {
   'settings.reminders.water': 'Drink water',
   'settings.reminders.workout': 'Work out',
   'settings.reminders.journal': 'Write in journal',
+  'settings.reminders.weight': 'Weigh in',
+  'reminder.weight.title': '⚖️ Weigh in',
+  'reminder.weight.body': 'Log your weight in Vita to track your progress.',
   'reminder.water.title': '💧 Drink water',
   'reminder.water.body': 'Remember to hydrate. Add a glass in Vita.',
   'reminder.workout.title': '🏃 Time to move',

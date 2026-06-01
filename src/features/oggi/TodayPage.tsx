@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, ChevronRight, Dumbbell, Flame, ListTodo } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Dumbbell, Flame, ListTodo, Scale } from 'lucide-react';
 import { db } from '@/data/db';
 import { readSettings, toggleTaskDone, toggleHabitLog } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
@@ -22,6 +22,7 @@ export function TodayPage() {
   const habits = useLiveQuery(() => db.habits.orderBy('order').toArray(), [], []);
   const logs = useLiveQuery(() => db.habitLogs.toArray(), [], []);
   const workouts = useLiveQuery(() => db.workouts.toArray(), [], []);
+  const lastWeight = useLiveQuery(() => db.weightLogs.orderBy('date').reverse().limit(1).toArray(), [], []);
 
   const s = settings ?? defaultSettings();
   const today = todayISO();
@@ -75,6 +76,24 @@ export function TodayPage() {
 
         {/* Water */}
         <WaterCard settings={s} />
+
+        {/* Weight (shows once there's at least one weigh-in) */}
+        {lastWeight && lastWeight.length > 0 && (
+          <Link to="/peso">
+            <Card className="flex items-center gap-3 mb-4 active:bg-section transition-colors">
+              <span className="h-10 w-10 rounded-full bg-project/10 flex items-center justify-center text-project flex-shrink-0">
+                <Scale size={20} />
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="metric-label">{t('weight.current')}</div>
+                <div className="text-xl font-semibold tnum text-ink leading-tight mt-0.5">
+                  {Math.round((s.body.unit === 'lb' ? lastWeight[0].weightKg * 2.20462 : lastWeight[0].weightKg) * 10) / 10} {s.body.unit}
+                </div>
+              </div>
+              <ChevronRight size={18} className="text-ink-3" />
+            </Card>
+          </Link>
+        )}
 
         {/* Da fare oggi */}
         <Card className="mb-4">

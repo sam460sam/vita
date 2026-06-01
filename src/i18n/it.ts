@@ -38,6 +38,7 @@ export const it = {
   'quick.habit': 'Nuova abitudine',
   'quick.workout': 'Nuovo allenamento',
   'quick.journal': 'Nota diario',
+  'quick.weight': 'Registra peso',
 
   // Greetings
   'greet.morning': 'Buongiorno',
@@ -406,6 +407,9 @@ export const it = {
   'settings.reminders.water': 'Bevi acqua',
   'settings.reminders.workout': 'Allenati',
   'settings.reminders.journal': 'Scrivi nel diario',
+  'settings.reminders.weight': 'Pesati',
+  'reminder.weight.title': '⚖️ Pesati',
+  'reminder.weight.body': 'Registra il tuo peso in Vita per seguire i progressi.',
   'reminder.water.title': '💧 Bevi acqua',
   'reminder.water.body': 'Ricordati di idratarti. Aggiungi un bicchiere in Vita.',
   'reminder.workout.title': '🏃 Ora di muoversi',

@@ -44,6 +44,7 @@ export interface Settings {
     water?: string;
     workout?: string;
     journal?: string;
+    weight?: string;
   };
   // Body / weight tracking
   body: {

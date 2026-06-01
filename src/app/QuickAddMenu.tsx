@@ -1,4 +1,4 @@
-import { CheckSquare, Flame, Dumbbell, BookHeart } from 'lucide-react';
+import { CheckSquare, Flame, Dumbbell, BookHeart, Scale } from 'lucide-react';
 import { Sheet } from '@/ui';
 import { useT, type TKey } from '@/i18n';
 import { useQuickAdd, type QuickAddTarget } from './QuickAdd';
@@ -7,6 +7,7 @@ const ACTIONS: { target: QuickAddTarget; labelKey: TKey; icon: typeof CheckSquar
   { target: 'task', labelKey: 'quick.task', icon: CheckSquare, accent: 'var(--c-project)' },
   { target: 'habit', labelKey: 'quick.habit', icon: Flame, accent: 'var(--c-habit)' },
   { target: 'workout', labelKey: 'quick.workout', icon: Dumbbell, accent: 'var(--c-activity)' },
+  { target: 'weight', labelKey: 'quick.weight', icon: Scale, accent: 'var(--c-project)' },
   { target: 'journal', labelKey: 'quick.journal', icon: BookHeart, accent: 'var(--c-journal)' },
 ];
 
