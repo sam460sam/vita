@@ -11,7 +11,7 @@ export function TabBar() {
   const right = PRIMARY_NAV.slice(3);
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-card/85 backdrop-blur-xl border-t border-line/80 pb-safe-bottom">
+    <nav className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-card/85 backdrop-blur-xl border-t border-line/80 dark:border-transparent pb-safe-bottom">
       <div className="flex items-stretch h-[60px] max-w-md mx-auto px-1">
         {left.map((item) => (
           <TabLink key={item.to} {...item} />

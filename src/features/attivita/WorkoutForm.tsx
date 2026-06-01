@@ -57,7 +57,7 @@ export function WorkoutForm({ open, onClose, onSaved }: { open: boolean; onClose
         <Field label={t('workout.sport')}>
           <button
             onClick={() => setPickerOpen(true)}
-            className="w-full h-11 px-3.5 rounded-btn bg-section border border-line flex items-center justify-between text-[15px] text-ink"
+            className="w-full h-11 px-3.5 rounded-btn bg-section border border-line dark:border-transparent flex items-center justify-between text-[15px] text-ink"
           >
             <span className="flex items-center gap-2">
               <Icon size={18} className="text-activity" />

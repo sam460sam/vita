@@ -59,7 +59,7 @@ export function KanbanBoard({ tasks, project, onOpen }: { tasks: Task[]; project
                     draggable
                     onDragStart={() => setDragId(task.id)}
                     onClick={() => onOpen(task)}
-                    className="bg-card rounded-xl p-3 shadow-card border border-line/60 border-l-[3px] cursor-pointer active:scale-[0.98] transition-transform"
+                    className="bg-card rounded-xl p-3 shadow-card border border-line/60 dark:border-transparent border-l-[3px] cursor-pointer active:scale-[0.98] transition-transform"
                     style={{ borderLeftColor: project.color }}
                   >
                     <div className={cn('text-[14px] leading-snug', task.status === 'done' ? 'text-ink-3 line-through' : 'text-ink')}>
