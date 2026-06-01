@@ -321,6 +321,32 @@ export const it = {
   'water.glassSize': 'Dimensione bicchiere (ml)',
   'water.glassesCount': '{n} bicchieri',
 
+  // Stella — the helper mascot
+  'stella.name': 'Stella',
+  'stella.title': 'Ciao, sono Stella ⭐',
+  'stella.subtitle': 'La tua guida in Vita. Come posso aiutarti?',
+  'stella.placeholder': 'Scrivi una domanda…',
+  'stella.suggested': 'Domande frequenti',
+  'stella.goThere': 'Portami lì',
+  'stella.fallback':
+    'Non ho capito di preciso, ma posso aiutarti con: task e progetti, abitudini, acqua, allenamenti, finanze, obiettivi e backup. Prova a toccare una delle domande qui sotto!',
+  'stella.q.addTask': 'Come aggiungo un task?',
+  'stella.a.addTask': 'Tocca il pulsante + al centro in basso e scegli "Nuova task". Puoi assegnarle un progetto, una scadenza, una priorità e delle sottotask. Vedi tutto in Progetti.',
+  'stella.q.addHabit': 'Come funzionano le abitudini?',
+  'stella.a.addHabit': "Crea un'abitudine dal + e spuntala ogni giorno: Vita conta la tua streak, il record e la percentuale. Trovi tutto nella sezione Abitudini con la heatmap.",
+  'stella.q.water': "Come segno l'acqua?",
+  'stella.a.water': 'Nella schermata Oggi trovi la card Acqua: tocca "+ Bicchiere" (200ml) o "+ 1 Litro". Imposta obiettivo e dimensione del bicchiere in Impostazioni.',
+  'stella.q.workout': 'Come registro un allenamento?',
+  'stella.a.workout': 'In Attività tocca "Avvia" per il timer, oppure usa il + per inserirlo a mano. Puoi anche importare allenamenti da file di Strava, Garmin o Apple Salute.',
+  'stella.q.finance': 'Come tengo le finanze?',
+  'stella.a.finance': 'In Finanze aggiungi entrate/uscite, imposti un budget mensile e vedi le spese per categoria. Puoi importare il CSV del tuo estratto conto.',
+  'stella.q.goal': 'Come imposto un obiettivo?',
+  'stella.a.goal': 'In Obiettivi crei un traguardo, anche "a tappe" per i progetti futuri. Vedi sempre quanto manca al traguardo e puoi collegarlo a progetti o abitudini.',
+  'stella.q.backup': 'I miei dati sono al sicuro?',
+  'stella.a.backup': 'Sì: tutto è salvato automaticamente sul tuo dispositivo, anche offline. In Impostazioni puoi esportare un backup JSON e reimportarlo quando vuoi.',
+  'stella.q.language': 'Come cambio lingua o tema?',
+  'stella.a.language': 'In Impostazioni puoi scegliere la lingua (Italiano/English) e l\'aspetto (chiaro/scuro/automatico).',
+
   // More
   'more.title': 'Altro',
   'more.tagline': 'Vita · il tuo life OS',

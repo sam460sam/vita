@@ -136,3 +136,11 @@ body {
 .animate-fade-in {
   animation: fade-in 150ms ease-out;
 }
+
+@keyframes stella-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(2deg); }
+}
+.animate-stella-float {
+  animation: stella-float 3s ease-in-out infinite;
+}

@@ -5,6 +5,7 @@ import { I18nProvider } from '@/i18n';
 import { ThemeProvider } from '@/theme/theme';
 import { PremiumProvider } from '@/premium/premium';
 import { QuickAddProvider } from './QuickAdd';
+import { StellaProvider } from '@/features/stella';
 import { Sidebar } from './Sidebar';
 import { TabBar } from './TabBar';
 import { GlobalSheets } from './GlobalSheets';
@@ -36,6 +37,7 @@ export function App() {
           {/* HashRouter keeps deep-links working from static assets (Capacitor-ready). */}
           <HashRouter>
             <QuickAddProvider>
+            <StellaProvider>
               <div className="min-h-screen flex bg-section">
                 <Sidebar />
                 <main className="flex-1 min-w-0">
@@ -61,6 +63,7 @@ export function App() {
               </div>
               <TabBar />
               <GlobalSheets />
+            </StellaProvider>
             </QuickAddProvider>
           </HashRouter>
           {!onboarded && <Onboarding onDone={() => setOnboarded(true)} />}

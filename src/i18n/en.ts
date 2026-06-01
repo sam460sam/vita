@@ -318,6 +318,32 @@ export const en: Record<TKey, string> = {
   'water.glassSize': 'Glass size (ml)',
   'water.glassesCount': '{n} glasses',
 
+  // Stella — the helper mascot
+  'stella.name': 'Stella',
+  'stella.title': "Hi, I'm Stella ⭐",
+  'stella.subtitle': 'Your guide in Vita. How can I help?',
+  'stella.placeholder': 'Type a question…',
+  'stella.suggested': 'Frequent questions',
+  'stella.goThere': 'Take me there',
+  'stella.fallback':
+    "I didn't quite get that, but I can help with: tasks and projects, habits, water, workouts, finances, goals and backup. Try tapping one of the questions below!",
+  'stella.q.addTask': 'How do I add a task?',
+  'stella.a.addTask': 'Tap the + button in the bottom center and choose "New task". You can give it a project, a due date, a priority and subtasks. See everything under Projects.',
+  'stella.q.addHabit': 'How do habits work?',
+  'stella.a.addHabit': 'Create a habit from the + and check it off each day: Vita tracks your streak, record and completion rate. It\'s all in the Habits section with the heatmap.',
+  'stella.q.water': 'How do I log water?',
+  'stella.a.water': 'On the Today screen there\'s the Water card: tap "+ Glass" (200ml) or "+ 1 Liter". Set your goal and glass size in Settings.',
+  'stella.q.workout': 'How do I log a workout?',
+  'stella.a.workout': 'In Activity tap "Start" for the timer, or use the + to add one manually. You can also import workouts from Strava, Garmin or Apple Health files.',
+  'stella.q.finance': 'How do I track finances?',
+  'stella.a.finance': 'In Finances add income/expenses, set a monthly budget and see spending by category. You can import your bank statement CSV.',
+  'stella.q.goal': 'How do I set a goal?',
+  'stella.a.goal': 'In Goals create a target, even a "step-by-step" one for future projects. You always see how far you are from the goal, and can link it to projects or habits.',
+  'stella.q.backup': 'Is my data safe?',
+  'stella.a.backup': 'Yes: everything autosaves on your device, even offline. In Settings you can export a JSON backup and re-import it anytime.',
+  'stella.q.language': 'How do I change language or theme?',
+  'stella.a.language': 'In Settings you can pick the language (Italian/English) and the appearance (light/dark/automatic).',
+
   // More
   'more.title': 'More',
   'more.tagline': 'Vita · your life OS',

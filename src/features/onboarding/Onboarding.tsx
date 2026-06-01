@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Sparkles, ShieldCheck, Plus, Check, Languages, X } from 'lucide-react';
 import { Button, Input } from '@/ui';
+import { StarMascot } from '@/ui/StarMascot';
 import { cn } from '@/lib/cn';
 import { useI18n, LANGS, type Lang } from '@/i18n';
 import { createHabit, updateSettings } from '@/data/repo';
@@ -85,7 +86,11 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       <div className="flex-1 overflow-y-auto px-7">
         {step === 'lang' && <LanguageStep onPick={(l) => { setPref(l); }} />}
         {step === 'welcome1' && (
-          <Slide icon={Sparkles} color="var(--c-project)" title={t('onboard.1.title')} desc={t('onboard.1.desc')} />
+          <div className="flex flex-col items-center justify-center text-center min-h-full py-8">
+            <StarMascot size={120} animated />
+            <h1 className="text-2xl font-bold text-ink mt-4">{t('onboard.1.title')}</h1>
+            <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.1.desc')}</p>
+          </div>
         )}
         {step === 'welcome2' && (
           <Slide icon={ShieldCheck} color="var(--c-habit)" title={t('onboard.2.title')} desc={t('onboard.2.desc')} />
