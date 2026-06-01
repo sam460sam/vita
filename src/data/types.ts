@@ -45,6 +45,13 @@ export interface Settings {
     workout?: string;
     journal?: string;
   };
+  // Body / weight tracking
+  body: {
+    heightCm?: number; // for BMI
+    startWeightKg?: number; // baseline for progress
+    goalWeightKg?: number; // target weight
+    unit: 'kg' | 'lb';
+  };
   createdAt: number;
   updatedAt: number;
 }
@@ -120,6 +127,17 @@ export interface WaterLog {
   date: string;
   ml: number; // total intake for the day in milliliters
   updatedAt: number;
+}
+
+// ----------------------------------------------------------------------------
+// Body weight (Activity → Weight tracker)
+// ----------------------------------------------------------------------------
+export interface WeightLog extends Timestamped {
+  date: string; // ISO yyyy-MM-dd (one entry per day; latest wins)
+  weightKg: number; // always stored in kg internally
+  note?: string;
+  /** optional progress photo as a data URL (kept local, like all data) */
+  photo?: string;
 }
 
 // ----------------------------------------------------------------------------
@@ -217,4 +235,5 @@ export interface VitaBackup {
   transactions: Transaction[];
   budgets: Budget[];
   waterLogs?: WaterLog[];
+  weightLogs?: WeightLog[];
 }

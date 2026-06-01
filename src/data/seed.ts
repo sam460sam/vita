@@ -15,6 +15,7 @@ import {
   createTransaction,
   setBudget,
   setWaterMl,
+  logWeight,
   updateSettings,
 } from './repo';
 import { SPORTS, estimateKcal } from '@/features/attivita/sports';
@@ -31,7 +32,11 @@ const rand = (min: number, max: number) => Math.round(min + Math.random() * (max
 /** Replace all data with a curated demo dataset. */
 export async function seedDemoData(name = 'Samuele') {
   await clearAllData();
-  await updateSettings({ name, goals: { moveKcal: 600, exerciseMin: 30, standHours: 12 } });
+  await updateSettings({
+    name,
+    goals: { moveKcal: 600, exerciseMin: 30, standHours: 12 },
+    body: { unit: 'kg', heightCm: 178, startWeightKg: 80, goalWeightKg: 74 },
+  });
 
   // -- Projects -------------------------------------------------------------
   const web = await createProject({ name: 'Lancio sito web', color: '#4F46E5', description: 'Restyling e go-live del nuovo sito.' });
@@ -160,4 +165,10 @@ export async function seedDemoData(name = 'Samuele') {
 
   // -- Water (ml; ~1L–1.8L per day) -----------------------------------------
   for (let d = 0; d < 7; d++) await setWaterMl(iso(d), rand(5, 9) * 200);
+
+  // -- Weight (gentle downward trend 80 → 77.4 over 60 days) ----------------
+  for (let d = 60; d >= 0; d -= 3) {
+    const base = 80 - (60 - d) * 0.043; // ~2.6kg over 60 days
+    await logWeight({ date: iso(d), weightKg: Math.round((base + (Math.random() - 0.5) * 0.5) * 10) / 10 });
+  }
 }

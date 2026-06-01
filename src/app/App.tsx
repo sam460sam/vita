@@ -25,6 +25,7 @@ const FinancesPage = lazy(() => import('@/features/finanze').then((m) => ({ defa
 const CalendarPage = lazy(() => import('@/features/calendario').then((m) => ({ default: m.CalendarPage })));
 const SettingsPage = lazy(() => import('@/features/impostazioni/SettingsPage').then((m) => ({ default: m.SettingsPage })));
 const ProPage = lazy(() => import('@/features/pro').then((m) => ({ default: m.ProPage })));
+const WeightPage = lazy(() => import('@/features/peso').then((m) => ({ default: m.WeightPage })));
 
 export function App() {
   const [onboarded, setOnboarded] = useState(hasOnboarded());
@@ -46,6 +47,7 @@ export function App() {
                       <Route path="/" element={<Navigate to="/oggi" replace />} />
                       <Route path="/oggi" element={<TodayPage />} />
                       <Route path="/attivita" element={<ActivityPage />} />
+                      <Route path="/peso" element={<WeightPage />} />
                       <Route path="/progetti" element={<ProjectsPage />} />
                       <Route path="/progetti/:id" element={<ProjectDetailPage />} />
                       <Route path="/abitudini" element={<HabitsPage />} />

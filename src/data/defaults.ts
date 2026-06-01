@@ -11,6 +11,7 @@ export function defaultSettings(): Settings {
     currency: 'EUR',
     water: { dailyGoalMl: 2000, glassMl: 200 },
     reminders: {},
+    body: { unit: 'kg' },
     createdAt: t,
     updatedAt: t,
   };

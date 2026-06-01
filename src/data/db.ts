@@ -16,6 +16,7 @@ import type {
   Task,
   Transaction,
   WaterLog,
+  WeightLog,
   Workout,
 } from './types';
 
@@ -31,6 +32,7 @@ export class VitaDB extends Dexie {
   transactions!: Table<Transaction, string>;
   budgets!: Table<Budget, string>;
   waterLogs!: Table<WaterLog, string>;
+  weightLogs!: Table<WeightLog, string>;
 
   constructor() {
     super('vita');
@@ -49,6 +51,10 @@ export class VitaDB extends Dexie {
     // v2: water tracking
     this.version(2).stores({
       waterLogs: 'id, date',
+    });
+    // v3: body weight tracking
+    this.version(3).stores({
+      weightLogs: 'id, date',
     });
   }
 }

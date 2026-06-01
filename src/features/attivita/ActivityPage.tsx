@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Play, Plus, Trash2, Pencil } from 'lucide-react';
+import { Play, Plus, Trash2, Pencil, Scale, ChevronRight } from 'lucide-react';
 import { db } from '@/data/db';
 import { deleteWorkout, updateSettings } from '@/data/repo';
 import { readSettings } from '@/data/repo';
@@ -54,6 +54,12 @@ export function ActivityPage() {
   const rings = todayRings(workouts ?? [], s);
   const summary = summarize(workouts ?? [], period);
 
+  const weightLogs = useLiveQuery(() => db.weightLogs.orderBy('date').reverse().limit(1).toArray(), [], []);
+  const lastWeight = weightLogs?.[0];
+  const weightSubtitle = lastWeight
+    ? `${Math.round((s.body.unit === 'lb' ? lastWeight.weightKg * 2.20462 : lastWeight.weightKg) * 10) / 10} ${s.body.unit}`
+    : t('weight.empty.title');
+
   return (
     <>
       <PageHeader
@@ -77,6 +83,20 @@ export function ActivityPage() {
             <RingStat label={t('activity.ring.stand')} value={rings.stand.value} goal={rings.stand.goal} unit={t('activity.unit.hours')} color="var(--c-project)" />
           </div>
         </Card>
+
+        {/* Weight tracker entry */}
+        <Link to="/peso">
+          <Card className="flex items-center gap-3 mb-4 active:bg-section transition-colors">
+            <span className="h-10 w-10 rounded-full bg-project/10 flex items-center justify-center text-project flex-shrink-0">
+              <Scale size={20} />
+            </span>
+            <div className="flex-1 min-w-0">
+              <div className="text-[15px] font-semibold text-ink">{t('weight.title')}</div>
+              <div className="text-[13px] text-ink-2">{weightSubtitle}</div>
+            </div>
+            <ChevronRight size={18} className="text-ink-3" />
+          </Card>
+        </Link>
 
         {/* Apple Health / Health Connect */}
         <HealthCard />

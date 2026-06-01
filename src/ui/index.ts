@@ -10,4 +10,6 @@ export { ProgressRing } from './ProgressRing';
 export { ActivityRings, type RingData } from './ActivityRings';
 export { Checkbox } from './Checkbox';
 export { BarChart } from './BarChart';
+export { LineChart } from './LineChart';
+export { StarMascot } from './StarMascot';
 export { Toast, useToast, ToastProvider } from './Toast';
