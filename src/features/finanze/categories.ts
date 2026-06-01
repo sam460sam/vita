@@ -8,11 +8,14 @@ export const EXPENSE_CATEGORIES = [
   'Ristoranti',
   'Shopping',
   'Viaggi',
+  'Ferie',
+  'Regali',
+  'Investimenti',
   'Abbonamenti',
   'Altro',
 ];
 
-export const INCOME_CATEGORIES = ['Stipendio', 'Extra', 'Regali', 'Rimborsi', 'Investimenti', 'Altro'];
+export const INCOME_CATEGORIES = ['Stipendio', 'Extra', 'Regali', 'Rimborsi', 'Investimenti', 'Bonus', 'Altro'];
 
 const PALETTE = ['#7C3AED', '#FF6B57', '#4F46E5', '#10B981', '#F59E0B', '#0EA5E9', '#EC4899', '#6B7280', '#059669', '#D97706', '#9CA3AF'];
 

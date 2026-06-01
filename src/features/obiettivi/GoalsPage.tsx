@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Target, Plus, Check } from 'lucide-react';
+import { Target, Plus, Check, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { it } from 'date-fns/locale';
-import { db } from '@/data/db';
+import { db, uid } from '@/data/db';
 import { createGoal, updateGoal, deleteGoal } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
-import { Card, ProgressRing, EmptyState, Button, Sheet, Field, Input, Textarea, Select, Segmented, useToast } from '@/ui';
+import { Card, ProgressRing, EmptyState, Button, Sheet, Field, Input, Textarea, Select, Segmented, Checkbox, useToast } from '@/ui';
 import { projectProgress } from '@/features/progetti/logic';
 import { completionRate } from '@/features/abitudini/logic';
 import { useT } from '@/i18n';
 import type { TKey } from '@/i18n';
-import type { Goal, GoalLinkType } from '@/data/types';
+import type { Goal, GoalLinkType, Milestone } from '@/data/types';
 
 export function GoalsPage() {
   const t = useT();
@@ -30,7 +30,16 @@ export function GoalsPage() {
       const h = (habits ?? []).find((x) => x.id === g.link.refId);
       return h ? completionRate(h, logs ?? [], 30) : 0;
     }
+    if (g.link.type === 'milestones') {
+      const total = g.milestones.length;
+      return total ? g.milestones.filter((m) => m.done).length / total : 0;
+    }
     return g.manualProgress;
+  }
+
+  async function toggleMilestone(g: Goal, id: string) {
+    const milestones = g.milestones.map((m) => (m.id === id ? { ...m, done: !m.done } : m));
+    await updateGoal(g.id, { milestones });
   }
 
   const sorted = [...(goals ?? [])].sort((a, b) => Number(a.done) - Number(b.done) || (a.targetDate ?? '').localeCompare(b.targetDate ?? ''));
@@ -60,18 +69,39 @@ export function GoalsPage() {
           <div className="space-y-3">
             {sorted.map((g) => {
               const prog = progressOf(g);
+              const pctLeft = Math.max(0, Math.round((1 - prog) * 100));
+              const isMs = g.link.type === 'milestones';
               return (
-                <Card key={g.id} className="flex items-center gap-4" onClick={() => { setEditing(g); setFormOpen(true); }}>
-                  <ProgressRing progress={prog} size={52} stroke={6} color={g.done ? 'var(--c-habit)' : 'var(--c-project)'}>
-                    {g.done ? <Check size={20} className="text-habit" /> : <span className="text-[11px] font-semibold tnum text-ink">{Math.round(prog * 100)}%</span>}
-                  </ProgressRing>
-                  <div className="min-w-0 flex-1 cursor-pointer">
-                    <div className="text-[15px] font-semibold text-ink truncate">{g.title}</div>
-                    <div className="text-[13px] text-ink-2">
-                      {g.link.type !== 'none' ? linkLabel(t, g.link.type) : t('goals.manual')}
-                      {g.targetDate && ` · ${format(parseISO(g.targetDate), 'd MMM yyyy', { locale: it })}`}
+                <Card key={g.id}>
+                  <div className="flex items-center gap-4" onClick={() => { setEditing(g); setFormOpen(true); }}>
+                    <ProgressRing progress={prog} size={52} stroke={6} color={g.done ? 'var(--c-habit)' : 'var(--c-project)'}>
+                      {g.done ? <Check size={20} className="text-habit" /> : <span className="text-[11px] font-semibold tnum text-ink">{Math.round(prog * 100)}%</span>}
+                    </ProgressRing>
+                    <div className="min-w-0 flex-1 cursor-pointer">
+                      <div className="text-[15px] font-semibold text-ink truncate">{g.title}</div>
+                      <div className="text-[13px] text-ink-2">
+                        {isMs
+                          ? t('goals.stepsDone', { done: g.milestones.filter((m) => m.done).length, total: g.milestones.length })
+                          : g.link.type !== 'none'
+                            ? linkLabel(t, g.link.type)
+                            : t('goals.manual')}
+                        {g.targetDate && ` · ${format(parseISO(g.targetDate), 'd MMM yyyy', { locale: it })}`}
+                      </div>
+                      {!g.done && <div className="text-[12px] text-project font-medium mt-0.5">{t('goals.remaining', { pct: pctLeft })}</div>}
                     </div>
                   </div>
+
+                  {/* Inline milestones (steps) */}
+                  {isMs && g.milestones.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-divider space-y-1">
+                      {g.milestones.map((m) => (
+                        <div key={m.id} className="flex items-center gap-2.5">
+                          <Checkbox checked={m.done} size={20} color="var(--c-project)" onChange={() => toggleMilestone(g, m.id)} label={m.title} />
+                          <span className={m.done ? 'text-[14px] text-ink-3 line-through' : 'text-[14px] text-ink'}>{m.title}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </Card>
               );
             })}
@@ -85,7 +115,10 @@ export function GoalsPage() {
 }
 
 function linkLabel(t: (key: TKey, vars?: Record<string, string | number>) => string, type: GoalLinkType): string {
-  return type === 'project' ? t('goals.linkedProject') : type === 'habit' ? t('goals.linkedHabit') : t('goals.manual');
+  if (type === 'project') return t('goals.linkedProject');
+  if (type === 'habit') return t('goals.linkedHabit');
+  if (type === 'milestones') return t('goals.milestones');
+  return t('goals.manual');
 }
 
 function GoalForm({ open, onClose, goal }: { open: boolean; onClose: () => void; goal?: Goal | null }) {
@@ -98,6 +131,8 @@ function GoalForm({ open, onClose, goal }: { open: boolean; onClose: () => void;
   const [linkType, setLinkType] = useState<GoalLinkType>('none');
   const [refId, setRefId] = useState('');
   const [manual, setManual] = useState(0);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [newStep, setNewStep] = useState('');
   const [done, setDone] = useState(false);
   const toast = useToast();
   const t = useT();
@@ -110,9 +145,17 @@ function GoalForm({ open, onClose, goal }: { open: boolean; onClose: () => void;
       setLinkType(goal?.link.type ?? 'none');
       setRefId(goal?.link.refId ?? '');
       setManual(goal?.manualProgress ?? 0);
+      setMilestones(goal?.milestones ?? []);
+      setNewStep('');
       setDone(goal?.done ?? false);
     }
   }, [open, goal]);
+
+  function addStep() {
+    const v = newStep.trim();
+    if (v) setMilestones((p) => [...p, { id: uid('ms_'), title: v, done: false }]);
+    setNewStep('');
+  }
 
   async function save() {
     if (!title.trim()) return;
@@ -121,7 +164,8 @@ function GoalForm({ open, onClose, goal }: { open: boolean; onClose: () => void;
       description: description.trim() || undefined,
       targetDate: targetDate || undefined,
       manualProgress: manual,
-      link: { type: linkType, refId: linkType === 'none' ? undefined : refId || undefined },
+      link: { type: linkType, refId: linkType === 'none' || linkType === 'milestones' ? undefined : refId || undefined },
+      milestones: linkType === 'milestones' ? milestones : [],
       done,
     };
     if (editing && goal) {
@@ -174,12 +218,43 @@ function GoalForm({ open, onClose, goal }: { open: boolean; onClose: () => void;
           value={linkType}
           onChange={(v) => { setLinkType(v); setRefId(''); }}
           options={[
+            { value: 'milestones', label: t('goalForm.link.milestones') },
             { value: 'none', label: t('goalForm.link.manual') },
             { value: 'project', label: t('goalForm.link.project') },
             { value: 'habit', label: t('goalForm.link.habit') },
           ]}
         />
       </Field>
+
+      {linkType === 'milestones' && (
+        <Field label={t('goalForm.milestones')}>
+          <div className="space-y-1.5 mb-2">
+            {milestones.map((m) => (
+              <div key={m.id} className="flex items-center gap-2">
+                <Checkbox
+                  checked={m.done}
+                  size={20}
+                  color="var(--c-project)"
+                  onChange={() => setMilestones((p) => p.map((x) => (x.id === m.id ? { ...x, done: !x.done } : x)))}
+                />
+                <span className={m.done ? 'text-ink-3 line-through text-sm flex-1' : 'text-ink text-sm flex-1'}>{m.title}</span>
+                <button onClick={() => setMilestones((p) => p.filter((x) => x.id !== m.id))} className="text-ink-3 p-1" aria-label="−">
+                  <X size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <Input
+              value={newStep}
+              onChange={(e) => setNewStep(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addStep())}
+              placeholder={t('goalForm.milestonePh')}
+            />
+            <Button variant="subtle" onClick={addStep} icon={<Plus size={18} />} aria-label={t('common.add')} />
+          </div>
+        </Field>
+      )}
 
       {linkType === 'project' && (
         <Field label={t('goalForm.link.project')}>

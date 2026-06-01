@@ -251,6 +251,7 @@ export async function createGoal(data: Partial<Goal> & { title: string }) {
     targetDate: data.targetDate,
     manualProgress: data.manualProgress ?? 0,
     link: data.link ?? { type: 'none' },
+    milestones: data.milestones ?? [],
     done: false,
     createdAt: t,
     updatedAt: t,

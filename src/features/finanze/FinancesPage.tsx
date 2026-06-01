@@ -1,16 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ArrowDownLeft, ArrowUpRight, Plus, Wallet, Pencil, Trash2 } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Plus, Wallet, Pencil, Trash2, Upload } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { it } from 'date-fns/locale';
 import { db } from '@/data/db';
 import { createTransaction, deleteTransaction, readBudget, setBudget, readSettings } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
+import { platform } from '@/platform/platform';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, CardHeader, EmptyState, Button, Sheet, Field, Input, Select, Segmented, IconButton, useToast } from '@/ui';
 import { formatMoney, todayISO, currentMonthKey, monthKey } from '@/lib/format';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, categoryColor } from './categories';
+import { parseBankCsv } from './importCsv';
 import { useT } from '@/i18n';
 import type { TxType } from '@/data/types';
 
@@ -21,6 +23,19 @@ export function FinancesPage() {
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const [formOpen, setFormOpen] = useState(false);
   const [budgetOpen, setBudgetOpen] = useState(false);
+  const toast = useToast();
+
+  async function importCsv() {
+    const text = await platform.pickTextFile('.csv,text/csv,text/plain');
+    if (!text) return;
+    const parsed = parseBankCsv(text);
+    if (!parsed.length) {
+      toast.show(t('finances.importNone'));
+      return;
+    }
+    for (const tx of parsed) await createTransaction(tx);
+    toast.show(`${parsed.length} ${t('finances.imported')}`);
+  }
 
   const currency = (settings ?? defaultSettings()).currency;
   const month = currentMonthKey();
@@ -121,6 +136,14 @@ export function FinancesPage() {
             </div>
           </Card>
         )}
+
+        {/* Import bank statement */}
+        <Card className="mb-4">
+          <Button variant="subtle" block icon={<Upload size={17} />} onClick={importCsv}>
+            {t('finances.import')}
+          </Button>
+          <p className="text-[11px] text-ink-3 mt-1.5">{t('finances.importNote')}</p>
+        </Card>
 
         {/* Movimenti */}
         <Card>

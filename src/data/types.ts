@@ -149,7 +149,14 @@ export interface JournalEntry extends Timestamped {
 // ----------------------------------------------------------------------------
 // Goals
 // ----------------------------------------------------------------------------
-export type GoalLinkType = 'none' | 'project' | 'habit';
+export type GoalLinkType = 'none' | 'project' | 'habit' | 'milestones';
+
+/** A step/section of a future goal. */
+export interface Milestone {
+  id: ID;
+  title: string;
+  done: boolean;
+}
 
 export interface Goal extends Timestamped {
   title: string;
@@ -161,6 +168,8 @@ export interface Goal extends Timestamped {
     type: GoalLinkType;
     refId?: ID; // projectId or habitId
   };
+  // Steps/sections for a future project goal; progress = done/total
+  milestones: Milestone[];
   done: boolean;
 }
 

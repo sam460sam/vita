@@ -131,6 +131,19 @@ export async function seedDemoData(name = 'Samuele') {
   await createGoal({ title: 'Lanciare il nuovo sito', description: 'Online entro fine mese.', targetDate: iso(-20), link: { type: 'project', refId: web.id } });
   await createGoal({ title: 'Costanza nell’idratazione', link: { type: 'habit', refId: habits[0].id } });
   await createGoal({ title: 'Leggere 12 libri quest’anno', manualProgress: 0.42, link: { type: 'none' }, targetDate: iso(-200) });
+  await createGoal({
+    title: 'Comprare casa',
+    description: 'Progetto a lungo termine.',
+    targetDate: iso(-300),
+    link: { type: 'milestones' },
+    milestones: [
+      { id: 'm1', title: 'Risparmiare l’anticipo', done: true },
+      { id: 'm2', title: 'Trovare zona e agenzia', done: true },
+      { id: 'm3', title: 'Visitare 5 immobili', done: false },
+      { id: 'm4', title: 'Richiedere il mutuo', done: false },
+      { id: 'm5', title: 'Rogito', done: false },
+    ],
+  });
 
   // -- Finances -------------------------------------------------------------
   await setBudget(1500);
