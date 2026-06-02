@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star, ChevronLeft } from 'lucide-react';
+import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star, ChevronLeft, Sun, Moon } from 'lucide-react';
 import { Button, Input } from '@/ui';
 import { StarMascot } from '@/ui/StarMascot';
 import { cn } from '@/lib/cn';
 import { useI18n, LANGS, type Lang, type TKey } from '@/i18n';
+import { useTheme } from '@/theme/theme';
 import { createHabit, updateSettings } from '@/data/repo';
 import { RECOMMENDED_HABITS } from '@/features/abitudini/recommended';
 import { ALL_MODULES, type ModuleId } from '@/data/types';
@@ -44,6 +45,7 @@ const STEPS: Step[] = ['lang', 'welcome1', 'focus', 'modules', 'habits', 'name',
 /** First-run onboarding: language → welcome → focus → sections → habits → name → aha. */
 export function Onboarding({ onDone }: { onDone: () => void }) {
   const { t, setPref } = useI18n();
+  const { resolved, setPref: setThemePref } = useTheme();
   const [stepIdx, setStepIdx] = useState(0);
   const [name, setName] = useState('');
   const [focus, setFocus] = useState<Focus>('all');
@@ -119,11 +121,20 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         ) : (
           <span className="w-10" />
         )}
-        {step !== 'lang' && (
-          <button onClick={skip} className="text-[14px] font-semibold text-ink-3 px-3 py-2">
-            {t('onboard.skip')}
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setThemePref(resolved === 'dark' ? 'light' : 'dark')}
+            aria-label={t('theme.toggle')}
+            className="h-10 w-10 flex items-center justify-center rounded-full text-ink-2 active:bg-section"
+          >
+            {resolved === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </button>
-        )}
+          {step !== 'lang' && (
+            <button onClick={skip} className="text-[14px] font-semibold text-ink-3 px-3 py-2">
+              {t('onboard.skip')}
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-7">

@@ -720,4 +720,5 @@ export const en: Record<TKey, string> = {
   'personalize.moveDown': 'Move down',
   'personalize.editHome': 'Edit home widgets',
   'personalize.redo': 'Redo onboarding',
+  'theme.toggle': 'Toggle light/dark theme',
 };

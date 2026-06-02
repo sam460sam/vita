@@ -723,6 +723,7 @@ export const it = {
   'personalize.moveDown': 'Sposta giù',
   'personalize.editHome': 'Modifica widget della home',
   'personalize.redo': 'Rifai onboarding',
+  'theme.toggle': 'Cambia tema chiaro/scuro',
 } as const;
 
 export type TKey = keyof typeof it;
