@@ -47,6 +47,8 @@ export interface Settings {
     weight?: string;
     /** evening momentum check-in (e.g. "close your day") */
     evening?: string;
+    /** low-pressure motivational nudge / affirmation */
+    motivation?: string;
   };
   // Body / weight tracking
   body: {

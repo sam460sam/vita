@@ -6,6 +6,7 @@ import { useT, type TKey } from '@/i18n';
 import { useStella } from '@/features/stella';
 import type { Momentum } from './momentum';
 import { momentumMessageKey, stellaMood, updateStreak } from './momentum';
+import { pandaLine } from './coach';
 
 const LEGEND: { key: keyof Momentum['rings']; labelKey: TKey; color: string }[] = [
   { key: 'habits', labelKey: 'momentum.legend.habits', color: 'var(--c-habit)' },
@@ -76,6 +77,19 @@ export function MomentumCard({ m }: { m: Momentum }) {
           </div>
         ))}
       </Link>
+
+      {/* Panda coach speech bubble */}
+      <button onClick={stella.open} className="mt-3 flex items-start gap-2 w-full text-left">
+        <span className="flex-shrink-0">
+          <StarMascot size={32} mood={mood} />
+        </span>
+        <span className="relative flex-1 bg-section rounded-2xl rounded-tl-sm px-3 py-2 text-[13px] text-ink-2 leading-snug">
+          {(() => {
+            const line = pandaLine(m, streak);
+            return t(line.key as TKey, line.vars);
+          })()}
+        </span>
+      </button>
     </Card>
   );
 }

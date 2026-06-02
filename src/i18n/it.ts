@@ -558,6 +558,125 @@ export const it = {
   'pro.locked.title': 'Funzione Pro',
   'pro.locked.desc': 'Questa sezione fa parte di Vita Pro.',
   'pro.locked.cta': 'Scopri Vita Pro',
+
+  // Dashboard tagline
+  'today.tagline': 'Misura le tue abitudini per migliorare salute e benessere.',
+
+  // Navigation (rewards)
+  'nav.rewards': 'Premi & Sfide',
+
+  // Intermittent fasting
+  'fast.title': 'Digiuno intermittente',
+  'fast.idle': 'Avvia un digiuno e segui le ore in tempo reale.',
+  'fast.start': 'Inizia',
+  'fast.fasting': 'Stai digiunando',
+  'fast.goalReached': 'Obiettivo raggiunto! 🎉',
+  'fast.since': 'Iniziato alle {time} · obiettivo {goal}h',
+  'fast.stop': 'Termina',
+  'fast.choose': 'Scegli il protocollo',
+  'fast.protocol': 'Finestra di digiuno',
+  'fast.hours': '{n} ore',
+  'fast.note': 'Il timer continua anche se chiudi l’app. Consulta un medico prima di digiunare a lungo.',
+  'fast.ended': 'Digiuno completato: {h}h {m}m 💪',
+
+  // Panda coach (dashboard speech bubble)
+  'panda.hello': 'Ciao! Sono qui con te. Anche un piccolo passo conta oggi. 🐼',
+  'panda.start': 'Bene, hai iniziato! Continuiamo con calma. 🐼',
+  'panda.good': 'Stai andando alla grande, continua così! 🐼',
+  'panda.great': 'Wow, giornata da campione! Sono fiero di te. 🐼✨',
+  'panda.streak': 'Sei a {n} giorni di fila — non spezziamo la catena! 🔥',
+  'panda.streak.big': '{n} giorni di fila! Sei inarrestabile. 🐼🔥',
+
+  // Daily affirmations (rotating)
+  'affirm.1': 'Ogni piccolo passo costruisce la persona che vuoi diventare.',
+  'affirm.2': 'Il progresso conta più della perfezione.',
+  'affirm.3': 'Oggi ti prendi cura di te: è già una vittoria.',
+  'affirm.4': 'La costanza batte l’intensità. Vai al tuo ritmo.',
+  'affirm.5': 'Sei più forte di quanto pensi.',
+  'affirm.6': 'Un giorno alla volta, stai migliorando.',
+  'affirm.7': 'Le tue abitudini di oggi sono il tuo domani.',
+  'affirm.8': 'Respira. Sei esattamente dove devi essere.',
+  'affirm.9': 'I piccoli gesti ripetuti creano grandi cambiamenti.',
+  'affirm.10': 'Riconosci i tuoi progressi: te li sei guadagnati.',
+
+  // Daily Win celebration
+  'win.title': 'Ottimo lavoro!',
+  'win.subtitle': 'Hai chiuso una grande giornata.',
+  'win.streak': 'giorni di fila',
+  'win.points': 'punti oggi',
+  'win.better': '+{n} punti rispetto a ieri!',
+  'win.cta': 'Continua così',
+
+  // Rewards / gamification
+  'rewards.title': 'Premi & Sfide',
+  'rewards.cardSub': 'Livelli, badge e sfide settimanali',
+  'rewards.level': 'Livello',
+  'rewards.points': '{n} punti totali',
+  'rewards.toNext': '{n} punti al prossimo livello',
+  'rewards.pandaIntro': 'Completa le sfide della settimana e sblocca nuovi badge insieme a me! 🐼',
+  'rewards.challenges': 'Sfide della settimana',
+  'rewards.badges': 'Traguardi',
+
+  // Levels
+  'level.title.1': 'Principiante',
+  'level.title.2': 'Costante',
+  'level.title.3': 'Determinato',
+  'level.title.4': 'Esperto',
+  'level.title.5': 'Maestro',
+  'level.title.6': 'Campione',
+  'level.title.7': 'Leggenda',
+
+  // Badges
+  'badge.firstStep.title': 'Primo passo',
+  'badge.firstStep.desc': 'Primo giorno con Vita',
+  'badge.firstWeek.title': 'Prima settimana',
+  'badge.firstWeek.desc': '7 giorni attivi',
+  'badge.streak30.title': 'Streak 30',
+  'badge.streak30.desc': '30 giorni di fila',
+  'badge.morningMaster.title': 'Re del mattino',
+  'badge.morningMaster.desc': '5 allenamenti mattutini',
+  'badge.hydrated.title': 'Idratato',
+  'badge.hydrated.desc': '7 giorni a obiettivo acqua',
+  'badge.bookworm.title': 'Riflessivo',
+  'badge.bookworm.desc': '10 voci di diario',
+  'badge.athlete.title': 'Atleta',
+  'badge.athlete.desc': '20 allenamenti',
+  'badge.centurion.title': 'Centurione',
+  'badge.centurion.desc': '100 abitudini completate',
+  'badge.taskMaster.title': 'Produttivo',
+  'badge.taskMaster.desc': '50 task completate',
+
+  // Weekly challenges
+  'challenge.hydration': 'Bevi acqua per 7 giorni',
+  'challenge.consistency': 'Completa abitudini in 5 giorni',
+  'challenge.active': 'Allenati 3 volte',
+  'challenge.journaling': 'Scrivi 4 voci di diario',
+  'challenge.focus': 'Completa 10 task',
+
+  // Weekly insights
+  'recap.insights': 'I tuoi insight',
+  'insight.habits.up': 'Le tue abitudini sono migliorate del {n}% questa settimana. 🎯',
+  'insight.habits.down': 'Abitudini in calo del {n}% — nessun problema, si riparte. 💪',
+  'insight.habits.steady': 'Hai completato {n} abitudini questa settimana. Bella costanza!',
+  'insight.water.up': 'Hai bevuto il {n}% di acqua in più rispetto alla scorsa settimana. 💧',
+  'insight.water.total': 'Hai bevuto {l} L di acqua questa settimana.',
+  'insight.workouts.up': '{n} allenamenti questa settimana — più della scorsa! 🔥',
+  'insight.workouts.count': 'Hai fatto {n} allenamenti questa settimana.',
+  'insight.weekday': 'Sei più costante di {day}.',
+
+  // Weekdays (0 = domenica)
+  'weekday.0': 'domenica',
+  'weekday.1': 'lunedì',
+  'weekday.2': 'martedì',
+  'weekday.3': 'mercoledì',
+  'weekday.4': 'giovedì',
+  'weekday.5': 'venerdì',
+  'weekday.6': 'sabato',
+
+  // Motivational reminder
+  'settings.reminders.motivation': 'Motivazione',
+  'reminder.motivation.title': '🐼 Un pensiero per te',
+  'reminder.motivation.body': 'Apri Vita per la frase del giorno e un piccolo passo avanti.',
 } as const;
 
 export type TKey = keyof typeof it;

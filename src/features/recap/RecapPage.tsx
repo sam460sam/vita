@@ -1,14 +1,16 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Share2, Flame, Droplet, Dumbbell, CheckSquare, BookHeart } from 'lucide-react';
+import { Share2, Flame, Droplet, Dumbbell, CheckSquare, BookHeart, TrendingUp, TrendingDown, Sparkles } from 'lucide-react';
 import { db } from '@/data/db';
 import { readSettings } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
-import { Card, Button, EmptyState, StarMascot, useToast } from '@/ui';
-import { useT } from '@/i18n';
+import { Card, CardHeader, Button, EmptyState, StarMascot, useToast } from '@/ui';
+import { useT, type TKey } from '@/i18n';
 import { platform } from '@/platform/platform';
 import { weeklyRecap, hasAnyData } from './logic';
+import { weeklyInsights } from './insights';
+import type { LifeData } from '@/features/gamification/logic';
 import { buildRecapSVG, svgToPngBlob } from './shareImage';
 
 export function RecapPage() {
@@ -21,10 +23,23 @@ export function RecapPage() {
   const workouts = useLiveQuery(() => db.workouts.toArray(), [], []);
   const waters = useLiveQuery(() => db.waterLogs.toArray(), [], []);
   const journals = useLiveQuery(() => db.journalEntries.toArray(), [], []);
+  const weights = useLiveQuery(() => db.weightLogs.toArray(), [], []);
 
   const s = settings ?? defaultSettings();
   const r = weeklyRecap(habits ?? [], logs ?? [], tasks ?? [], workouts ?? [], waters ?? [], journals ?? []);
   const liters = `${(r.waterMl / 1000).toFixed(1)} L`;
+
+  const lifeData: LifeData = {
+    settings: s,
+    habits: habits ?? [],
+    logs: logs ?? [],
+    tasks: tasks ?? [],
+    workouts: workouts ?? [],
+    waters: waters ?? [],
+    journals: journals ?? [],
+    weights: weights ?? [],
+  };
+  const insights = weeklyInsights(lifeData);
 
   async function share() {
     const svg = buildRecapSVG(r, {
@@ -93,6 +108,29 @@ export function RecapPage() {
               })}
             </div>
             <p className="text-center text-[12px] text-ink-3 mt-5">{t('recap.tagline')}</p>
+          </Card>
+        )}
+
+        {/* Personalised weekly insights */}
+        {insights.length > 0 && (
+          <Card className="mt-4">
+            <CardHeader title={t('recap.insights')} />
+            <div className="space-y-3">
+              {insights.map((ins, i) => {
+                const vars = { ...ins.vars } as Record<string, string | number>;
+                if (typeof vars.day === 'string' && vars.day.startsWith('weekday.')) vars.day = t(vars.day as TKey);
+                const Icon = ins.tone === 'up' ? TrendingUp : ins.tone === 'down' ? TrendingDown : Sparkles;
+                const color = ins.tone === 'up' ? 'var(--c-habit)' : ins.tone === 'down' ? 'var(--c-warning)' : 'var(--c-project)';
+                return (
+                  <div key={i} className="flex items-start gap-3">
+                    <span className="h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: `${color}1a`, color }}>
+                      <Icon size={16} />
+                    </span>
+                    <p className="flex-1 text-[14px] text-ink leading-snug">{t(ins.key as TKey, vars)}</p>
+                  </div>
+                );
+              })}
+            </div>
           </Card>
         )}
       </Screen>

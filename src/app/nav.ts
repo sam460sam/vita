@@ -10,6 +10,7 @@ import {
   Activity,
   Settings,
   Sparkles,
+  Trophy,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -41,5 +42,6 @@ export const SECONDARY_NAV: NavItem[] = [
   { to: '/obiettivi', labelKey: 'nav.goals', icon: Target, accent: 'var(--c-project)' },
   { to: '/calendario', labelKey: 'nav.calendar', icon: CalendarDays },
   { to: '/recap', labelKey: 'nav.recap', icon: Sparkles, accent: 'var(--c-habit)' },
+  { to: '/premi', labelKey: 'nav.rewards', icon: Trophy, accent: 'var(--c-habit)' },
   { to: '/impostazioni', labelKey: 'nav.settings', icon: Settings },
 ];

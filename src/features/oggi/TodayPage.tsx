@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, ChevronRight, Dumbbell, Flame, ListTodo, Scale } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Dumbbell, Flame, ListTodo, Scale, Quote, Trophy } from 'lucide-react';
 import { db } from '@/data/db';
 import { readSettings, toggleTaskDone, toggleHabitLog } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
@@ -11,11 +12,18 @@ import { longDate, todayISO, dueLabel, isOverdue } from '@/lib/format';
 import { todayRings, ringsToData } from '@/features/attivita/logic';
 import { pendingToday, currentStreak } from '@/features/abitudini/logic';
 import { WaterCard } from '@/features/acqua/WaterCard';
-import { startOfWeek } from 'date-fns';
+import { FastingCard } from '@/features/digiuno';
+import { startOfWeek, subDays } from 'date-fns';
 import { cn } from '@/lib/cn';
 import { useT, type TKey } from '@/i18n';
 import { MomentumCard } from './MomentumCard';
 import { computeMomentum } from './momentum';
+import { getStreakState } from './momentum';
+import { dailyAffirmation } from './coach';
+import { DailyWin } from './DailyWin';
+import { dayPoints, type LifeData } from '@/features/gamification/logic';
+
+const WIN_KEY = 'vita.dailywin.shown';
 
 export function TodayPage() {
   const t = useT();
@@ -27,6 +35,8 @@ export function TodayPage() {
   const lastWeight = useLiveQuery(() => db.weightLogs.orderBy('date').reverse().limit(1).toArray(), [], []);
   const journals = useLiveQuery(() => db.journalEntries.toArray(), [], []);
   const todayWater = useLiveQuery(() => db.waterLogs.get(todayISO()), [], undefined);
+  const waters = useLiveQuery(() => db.waterLogs.toArray(), [], []);
+  const weights = useLiveQuery(() => db.weightLogs.toArray(), [], []);
 
   const s = settings ?? defaultSettings();
   const today = todayISO();
@@ -34,6 +44,40 @@ export function TodayPage() {
 
   const rings = todayRings(workouts ?? [], s);
   const momentum = computeMomentum(s, habits ?? [], logs ?? [], allTasks, workouts ?? [], todayWater, journals ?? []);
+
+  // Daily Win — celebrate once per day when the day is going great.
+  const [win, setWin] = useState<{ streak: number; today: number; yesterday: number } | null>(null);
+  useEffect(() => {
+    if (momentum.score < 70) return;
+    let shown = '';
+    try {
+      shown = localStorage.getItem(WIN_KEY) ?? '';
+    } catch {
+      /* ignore */
+    }
+    if (shown === today) return;
+    const d: LifeData = {
+      settings: s,
+      habits: habits ?? [],
+      logs: logs ?? [],
+      tasks: allTasks,
+      workouts: workouts ?? [],
+      waters: waters ?? [],
+      journals: journals ?? [],
+      weights: weights ?? [],
+    };
+    const yesterdayISO = todayISO(subDays(new Date(), 1));
+    setWin({ streak: getStreakState().count, today: dayPoints(d, today), yesterday: dayPoints(d, yesterdayISO) });
+  }, [momentum.score, today, s, habits, logs, allTasks, workouts, waters, journals, weights]);
+
+  function closeWin() {
+    try {
+      localStorage.setItem(WIN_KEY, today);
+    } catch {
+      /* ignore */
+    }
+    setWin(null);
+  }
 
   // "Da fare oggi": tasks due today or overdue + pending habits
   const dueTasks = allTasks
@@ -60,6 +104,9 @@ export function TodayPage() {
     <>
       <PageHeader title={greeting} subtitle={longDate()} />
       <Screen>
+        {/* Purpose tagline — makes Vita's intent clear at a glance */}
+        <p className="text-center text-[13px] text-ink-2 -mt-1 mb-3 px-2">{t('today.tagline')}</p>
+
         {/* Cross-life momentum + Stella */}
         <MomentumCard m={momentum} />
 
@@ -84,6 +131,9 @@ export function TodayPage() {
 
         {/* Water */}
         <WaterCard settings={s} />
+
+        {/* Intermittent fasting timer */}
+        <FastingCard />
 
         {/* Weight (shows once there's at least one weigh-in) */}
         {lastWeight && lastWeight.length > 0 && (
@@ -162,7 +212,31 @@ export function TodayPage() {
             </div>
           </Card>
         )}
+
+        {/* Rewards / gamification entry */}
+        <Link to="/premi">
+          <Card className="flex items-center gap-3 mt-4 active:bg-section transition-colors">
+            <span className="h-10 w-10 rounded-full bg-habit/10 flex items-center justify-center text-habit flex-shrink-0">
+              <Trophy size={20} />
+            </span>
+            <div className="flex-1 min-w-0">
+              <div className="text-[15px] font-semibold text-ink">{t('rewards.title')}</div>
+              <div className="text-[13px] text-ink-2 truncate">{t('rewards.cardSub')}</div>
+            </div>
+            <ChevronRight size={18} className="text-ink-3" />
+          </Card>
+        </Link>
+
+        {/* Daily affirmation — positive, low-pressure */}
+        <Card className="flex items-center gap-3 mt-4">
+          <span className="h-10 w-10 rounded-full bg-journal/10 flex items-center justify-center text-journal flex-shrink-0">
+            <Quote size={18} />
+          </span>
+          <p className="flex-1 text-[14px] text-ink-2 italic leading-snug">{t(dailyAffirmation() as TKey)}</p>
+        </Card>
       </Screen>
+
+      {win && <DailyWin streak={win.streak} pointsToday={win.today} pointsYesterday={win.yesterday} onClose={closeWin} />}
     </>
   );
 }

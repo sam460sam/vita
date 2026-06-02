@@ -1,0 +1,1 @@
+export { FastingCard } from './FastingCard';

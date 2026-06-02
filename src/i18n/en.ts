@@ -555,4 +555,123 @@ export const en: Record<TKey, string> = {
   'pro.locked.title': 'Pro feature',
   'pro.locked.desc': 'This section is part of Vita Pro.',
   'pro.locked.cta': 'Discover Vita Pro',
+
+  // Dashboard tagline
+  'today.tagline': 'Measure your habits to improve your health and wellbeing.',
+
+  // Navigation (rewards)
+  'nav.rewards': 'Rewards & Challenges',
+
+  // Intermittent fasting
+  'fast.title': 'Intermittent fasting',
+  'fast.idle': 'Start a fast and watch the hours in real time.',
+  'fast.start': 'Start',
+  'fast.fasting': 'You are fasting',
+  'fast.goalReached': 'Goal reached! 🎉',
+  'fast.since': 'Started at {time} · goal {goal}h',
+  'fast.stop': 'End',
+  'fast.choose': 'Choose a protocol',
+  'fast.protocol': 'Fasting window',
+  'fast.hours': '{n} hours',
+  'fast.note': 'The timer keeps running even if you close the app. Talk to a doctor before long fasts.',
+  'fast.ended': 'Fast complete: {h}h {m}m 💪',
+
+  // Panda coach (dashboard speech bubble)
+  'panda.hello': 'Hi! I’m here with you. Even a small step counts today. 🐼',
+  'panda.start': 'Nice, you’ve started! Let’s keep going, gently. 🐼',
+  'panda.good': 'You’re doing great, keep it up! 🐼',
+  'panda.great': 'Wow, what a day! I’m proud of you. 🐼✨',
+  'panda.streak': 'You’re on a {n}-day streak — let’s not break the chain! 🔥',
+  'panda.streak.big': '{n} days in a row! You’re unstoppable. 🐼🔥',
+
+  // Daily affirmations (rotating)
+  'affirm.1': 'Every small step builds the person you want to become.',
+  'affirm.2': 'Progress matters more than perfection.',
+  'affirm.3': 'Today you’re taking care of yourself — that’s already a win.',
+  'affirm.4': 'Consistency beats intensity. Go at your own pace.',
+  'affirm.5': 'You are stronger than you think.',
+  'affirm.6': 'One day at a time, you’re getting better.',
+  'affirm.7': 'Your habits today are your tomorrow.',
+  'affirm.8': 'Breathe. You’re exactly where you need to be.',
+  'affirm.9': 'Small actions repeated create big change.',
+  'affirm.10': 'Notice your progress — you’ve earned it.',
+
+  // Daily Win celebration
+  'win.title': 'Great job!',
+  'win.subtitle': 'You closed out a great day.',
+  'win.streak': 'day streak',
+  'win.points': 'points today',
+  'win.better': '+{n} points vs yesterday!',
+  'win.cta': 'Keep it up',
+
+  // Rewards / gamification
+  'rewards.title': 'Rewards & Challenges',
+  'rewards.cardSub': 'Levels, badges and weekly challenges',
+  'rewards.level': 'Level',
+  'rewards.points': '{n} total points',
+  'rewards.toNext': '{n} points to next level',
+  'rewards.pandaIntro': 'Complete this week’s challenges and unlock new badges with me! 🐼',
+  'rewards.challenges': 'This week’s challenges',
+  'rewards.badges': 'Achievements',
+
+  // Levels
+  'level.title.1': 'Beginner',
+  'level.title.2': 'Consistent',
+  'level.title.3': 'Committed',
+  'level.title.4': 'Expert',
+  'level.title.5': 'Master',
+  'level.title.6': 'Champion',
+  'level.title.7': 'Legend',
+
+  // Badges
+  'badge.firstStep.title': 'First step',
+  'badge.firstStep.desc': 'First day with Vita',
+  'badge.firstWeek.title': 'First week',
+  'badge.firstWeek.desc': '7 active days',
+  'badge.streak30.title': '30 streak',
+  'badge.streak30.desc': '30 days in a row',
+  'badge.morningMaster.title': 'Morning master',
+  'badge.morningMaster.desc': '5 morning workouts',
+  'badge.hydrated.title': 'Hydrated',
+  'badge.hydrated.desc': '7 days at water goal',
+  'badge.bookworm.title': 'Reflective',
+  'badge.bookworm.desc': '10 journal entries',
+  'badge.athlete.title': 'Athlete',
+  'badge.athlete.desc': '20 workouts',
+  'badge.centurion.title': 'Centurion',
+  'badge.centurion.desc': '100 habits completed',
+  'badge.taskMaster.title': 'Productive',
+  'badge.taskMaster.desc': '50 tasks completed',
+
+  // Weekly challenges
+  'challenge.hydration': 'Drink water for 7 days',
+  'challenge.consistency': 'Complete habits on 5 days',
+  'challenge.active': 'Work out 3 times',
+  'challenge.journaling': 'Write 4 journal entries',
+  'challenge.focus': 'Complete 10 tasks',
+
+  // Weekly insights
+  'recap.insights': 'Your insights',
+  'insight.habits.up': 'Your habits improved by {n}% this week. 🎯',
+  'insight.habits.down': 'Habits down {n}% — no worries, fresh start ahead. 💪',
+  'insight.habits.steady': 'You completed {n} habits this week. Nice consistency!',
+  'insight.water.up': 'You drank {n}% more water than last week. 💧',
+  'insight.water.total': 'You drank {l} L of water this week.',
+  'insight.workouts.up': '{n} workouts this week — more than last week! 🔥',
+  'insight.workouts.count': 'You did {n} workouts this week.',
+  'insight.weekday': 'You’re most consistent on {day}.',
+
+  // Weekdays (0 = Sunday)
+  'weekday.0': 'Sundays',
+  'weekday.1': 'Mondays',
+  'weekday.2': 'Tuesdays',
+  'weekday.3': 'Wednesdays',
+  'weekday.4': 'Thursdays',
+  'weekday.5': 'Fridays',
+  'weekday.6': 'Saturdays',
+
+  // Motivational reminder
+  'settings.reminders.motivation': 'Motivation',
+  'reminder.motivation.title': '🐼 A thought for you',
+  'reminder.motivation.body': 'Open Vita for today’s affirmation and one small step forward.',
 };

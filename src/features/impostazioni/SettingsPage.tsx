@@ -54,7 +54,7 @@ export function SettingsPage() {
     await updateSettings({ modules: { ...s.modules, [key]: !s.modules[key] } });
   }
 
-  async function setReminder(kind: 'water' | 'workout' | 'journal' | 'weight' | 'evening', time: string) {
+  async function setReminder(kind: 'water' | 'workout' | 'journal' | 'weight' | 'evening' | 'motivation', time: string) {
     const reminders = { ...s.reminders, [kind]: time || undefined };
     await updateSettings({ reminders });
     if (time && notifications.supported()) await notifications.requestPermission();
@@ -202,6 +202,7 @@ export function SettingsPage() {
           <ReminderRow label={t('settings.reminders.weight')} value={s.reminders.weight ?? ''} onChange={(v) => setReminder('weight', v)} />
           <Divider />
           <ReminderRow label={t('settings.reminders.evening')} value={s.reminders.evening ?? ''} onChange={(v) => setReminder('evening', v)} />
+          <ReminderRow label={t('settings.reminders.motivation')} value={s.reminders.motivation ?? ''} onChange={(v) => setReminder('motivation', v)} />
           <p className="text-[12px] text-ink-3 mt-3">{t('settings.reminders.note')}</p>
         </Card>
 
