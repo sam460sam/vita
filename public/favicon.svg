@@ -1,15 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
   <rect width="200" height="200" rx="44" fill="#ffffff"/>
-  <rect x="100" y="24" width="36" height="156" rx="18" fill="#B97A43" opacity="0.18"/>
-  <g font-family="Arial, sans-serif" font-weight="900" font-size="42" fill="#8B5A2B" text-anchor="middle">
-    <text x="118" y="56">V</text><text x="118" y="94">I</text><text x="118" y="132">T</text><text x="118" y="170">A</text>
-  </g>
-  <g transform="translate(78 104) scale(0.62)">
-    <circle cx="-34" cy="-30" r="26" fill="#AEB6BF"/><circle cx="34" cy="-30" r="26" fill="#AEB6BF"/>
-    <circle cx="-34" cy="-30" r="14" fill="#F4B8C4"/><circle cx="34" cy="-30" r="14" fill="#F4B8C4"/>
-    <ellipse cx="0" cy="0" rx="58" ry="52" fill="#B9C0C9"/>
-    <ellipse cx="-30" cy="18" rx="12" ry="7" fill="#FF8FA3" opacity="0.6"/><ellipse cx="30" cy="18" rx="12" ry="7" fill="#FF8FA3" opacity="0.6"/>
-    <circle cx="-22" cy="-6" r="8" fill="#2A2A33"/><circle cx="22" cy="-6" r="8" fill="#2A2A33"/>
-    <path d="M0 4 q22 4 22 18 q0 16 -22 18 q-22 -2 -22 -18 q0 -14 22 -18 Z" fill="#3A3A44"/>
+  <g transform="translate(0 4) scale(0.82)" transform-origin="100 100">
+    <text x="100" y="140" font-family="Arial, sans-serif" font-weight="800" font-size="96" fill="#3DBB3D" text-anchor="middle" letter-spacing="-2">Vita</text>
+    <g fill="#3DBB3D">
+      <path d="M82 64 C 55 64 45 44 57 32 C 72 39 79 54 82 64 Z"/>
+      <path d="M82 64 C 115 59 120 34 102 19 C 84 35 81 52 82 64 Z"/>
+    </g>
   </g>
 </svg>
