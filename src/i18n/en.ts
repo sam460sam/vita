@@ -721,4 +721,20 @@ export const en: Record<TKey, string> = {
   'personalize.editHome': 'Edit home widgets',
   'personalize.redo': 'Redo onboarding',
   'theme.toggle': 'Toggle light/dark theme',
+
+  // Backup & restore (local-first, no account)
+  'backup.title': 'Backup & restore',
+  'backup.done': 'Backup saved ✓',
+  'backup.restored': 'Data restored ✓',
+  'backup.restoreConfirm': 'Restore from a backup file? Your current data will be replaced.',
+  'backup.never': 'Never',
+  'backup.checking': 'Checking storage…',
+  'backup.persisted': 'Persistent storage is on: your data won’t be cleared automatically.',
+  'backup.notPersisted': 'Export a backup now and then: on the web, data may be cleared by the browser after long inactivity.',
+  'backup.note': 'Vita keeps everything on your device only. To avoid losing data on a new phone or after reinstalling, export a backup and save it to iCloud or Drive, then restore from the file.',
+  'backup.last': 'Last backup',
+  'backup.export': 'Export backup',
+  'backup.restore': 'Restore from file',
+  'backup.nudge.title': 'Protect your data',
+  'backup.nudge.desc': 'You haven’t backed up in a while. Export one and save it to iCloud/Drive so you don’t lose it.',
 };

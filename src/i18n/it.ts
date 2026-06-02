@@ -724,6 +724,22 @@ export const it = {
   'personalize.editHome': 'Modifica widget della home',
   'personalize.redo': 'Rifai onboarding',
   'theme.toggle': 'Cambia tema chiaro/scuro',
+
+  // Backup & restore (local-first, no account)
+  'backup.title': 'Backup & ripristino',
+  'backup.done': 'Backup salvato ✓',
+  'backup.restored': 'Dati ripristinati ✓',
+  'backup.restoreConfirm': 'Ripristinare da un file di backup? I dati attuali verranno sostituiti.',
+  'backup.never': 'Mai',
+  'backup.checking': 'Verifica archiviazione…',
+  'backup.persisted': 'Archiviazione persistente attiva: i tuoi dati non verranno cancellati automaticamente.',
+  'backup.notPersisted': 'Esporta un backup ogni tanto: su web i dati potrebbero essere rimossi dal browser dopo lunghi periodi di inattività.',
+  'backup.note': 'Vita salva tutto solo sul tuo dispositivo. Per non perdere i dati su un nuovo telefono o dopo una reinstallazione, esporta un backup e salvalo su iCloud o Drive; poi ripristinalo dal file.',
+  'backup.last': 'Ultimo backup',
+  'backup.export': 'Esporta backup',
+  'backup.restore': 'Ripristina da file',
+  'backup.nudge.title': 'Proteggi i tuoi dati',
+  'backup.nudge.desc': 'Non fai un backup da un po’. Esportane uno e salvalo su iCloud/Drive per non perderlo.',
 } as const;
 
 export type TKey = keyof typeof it;

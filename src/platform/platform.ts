@@ -117,6 +117,30 @@ export const platform = {
     return true;
   },
 
+  /**
+   * Ask the browser to make storage persistent so IndexedDB isn't evicted under
+   * storage pressure or after periods of inactivity (important for installed
+   * PWAs on iOS/Safari). Returns whether storage is now persisted.
+   */
+  async persistStorage(): Promise<boolean> {
+    try {
+      if (typeof navigator === 'undefined' || !navigator.storage?.persist) return false;
+      if (await navigator.storage.persisted()) return true;
+      return await navigator.storage.persist();
+    } catch {
+      return false;
+    }
+  },
+
+  /** Whether storage is currently marked persistent. */
+  async storagePersisted(): Promise<boolean> {
+    try {
+      return (await navigator.storage?.persisted?.()) ?? false;
+    } catch {
+      return false;
+    }
+  },
+
   /** Light haptic feedback. Native: @capacitor/haptics. Web: vibration API. */
   haptic() {
     if (isNative) {

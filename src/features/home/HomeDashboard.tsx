@@ -18,6 +18,7 @@ import { db } from '@/data/db';
 import { computeMomentum, getStreakState } from '@/features/oggi/momentum';
 import { dayPoints, type LifeData } from '@/features/gamification/logic';
 import { DailyWin } from '@/features/oggi/DailyWin';
+import { BackupNudge } from '@/features/backup';
 import { useHomeWidgets, useModules } from '@/features/personalizzazione/prefs';
 import { WIDGET_REGISTRY, ALL_WIDGET_TYPES } from './widgets/registry';
 
@@ -153,6 +154,13 @@ export function HomeDashboard() {
         }
       />
       <Screen>
+        {!editing && (
+          <BackupNudge
+            hasData={
+              (habits?.length ?? 0) + (tasks?.length ?? 0) + (workouts?.length ?? 0) + (journals?.length ?? 0) + (weights?.length ?? 0) > 0
+            }
+          />
+        )}
         {widgets.length === 0 ? (
           <button
             onClick={editing ? () => setGalleryOpen(true) : enterEdit}

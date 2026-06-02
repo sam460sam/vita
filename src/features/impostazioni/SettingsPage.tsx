@@ -1,19 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Download, Upload, Trash2, Info, Sparkles } from 'lucide-react';
-import { readSettings, updateSettings, exportBackup, importBackup, clearAllData } from '@/data/repo';
+import { Trash2, Sparkles } from 'lucide-react';
+import { readSettings, updateSettings, clearAllData } from '@/data/repo';
 import { seedDemoData } from '@/data/seed';
 import { defaultSettings } from '@/data/defaults';
-import { platform } from '@/platform/platform';
 import { notifications } from '@/platform/notifications';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, CardHeader, Field, Input, Button, Divider, useToast } from '@/ui';
-import { format } from 'date-fns';
 import { useI18n, LANGS, type LangPref, type TKey } from '@/i18n';
 import { useTheme, type ThemePref } from '@/theme/theme';
 import { PersonalizationSection } from '@/features/personalizzazione/PersonalizationSection';
-import type { VitaBackup } from '@/data/types';
+import { BackupCard } from '@/features/backup';
 
 export function SettingsPage() {
   const { t, pref, setPref } = useI18n();
@@ -61,25 +59,6 @@ export function SettingsPage() {
       t(`reminder.${kind}.body` as TKey),
       time || undefined,
     );
-  }
-
-  async function doExport() {
-    const backup = await exportBackup();
-    const json = JSON.stringify(backup, null, 2);
-    await platform.saveTextFile(`vita-backup-${format(new Date(), 'yyyy-MM-dd')}.json`, json);
-    toast.show(t('settings.exported'));
-  }
-
-  async function doImport() {
-    const text = await platform.pickTextFile();
-    if (!text) return;
-    try {
-      const data = JSON.parse(text) as VitaBackup;
-      await importBackup(data, 'replace');
-      toast.show(t('settings.imported'));
-    } catch {
-      toast.show(t('settings.invalidFile'));
-    }
   }
 
   async function doDemo() {
@@ -205,19 +184,11 @@ export function SettingsPage() {
 
         <PersonalizationSection />
 
+        <BackupCard />
+
         <Card className="mb-4">
           <CardHeader title={t('settings.data')} />
-          <p className="text-[13px] text-ink-2 mb-3 flex items-start gap-2">
-            <Info size={15} className="mt-0.5 flex-shrink-0" />
-            {t('settings.data.note')}
-          </p>
           <div className="flex flex-col gap-2">
-            <Button variant="subtle" block icon={<Download size={18} />} onClick={doExport}>
-              {t('settings.export')}
-            </Button>
-            <Button variant="subtle" block icon={<Upload size={18} />} onClick={doImport}>
-              {t('settings.import')}
-            </Button>
             <Button variant="subtle" block icon={<Sparkles size={18} />} onClick={doDemo}>
               {t('settings.demo')}
             </Button>
