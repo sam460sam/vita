@@ -1,33 +1,9 @@
-// Renders the Stella mascot SVG to crisp PNGs (incl. a 4K master) via headless
-// Chromium, so gradients/highlights are real. Outputs app/PWA icons, splash
-// sources and a 4096px master. Run: node scripts/gen-stella-icon.mjs
+// Renders the Vita app icon: "VITA" as a brown tree-trunk rising upward with a
+// koala climbing it. Headless Chromium → crisp PNGs (4K master + all sizes).
 import puppeteer from 'puppeteer';
 import { mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-// Inlined copy of src/ui/starPath.ts (Node can't import .ts directly).
-function roundedStarPath(cx, cy, outer, inner, points = 5, round = 0.32, rotation = -Math.PI / 2) {
-  const verts = [];
-  const step = Math.PI / points;
-  for (let i = 0; i < points * 2; i++) {
-    const r = i % 2 === 0 ? outer : inner;
-    const a = rotation + i * step;
-    verts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r });
-  }
-  const n = verts.length;
-  let d = '';
-  for (let i = 0; i < n; i++) {
-    const prev = verts[(i - 1 + n) % n];
-    const cur = verts[i];
-    const next = verts[(i + 1) % n];
-    const a = { x: cur.x + (prev.x - cur.x) * round, y: cur.y + (prev.y - cur.y) * round };
-    const bb = { x: cur.x + (next.x - cur.x) * round, y: cur.y + (next.y - cur.y) * round };
-    d += (i === 0 ? `M ${a.x.toFixed(2)} ${a.y.toFixed(2)} ` : `L ${a.x.toFixed(2)} ${a.y.toFixed(2)} `);
-    d += `Q ${cur.x.toFixed(2)} ${cur.y.toFixed(2)} ${bb.x.toFixed(2)} ${bb.y.toFixed(2)} `;
-  }
-  return d + 'Z';
-}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PUBLIC = resolve(__dirname, '../public');
@@ -35,36 +11,44 @@ const ASSETS = resolve(__dirname, '../assets');
 mkdirSync(resolve(PUBLIC, 'icons'), { recursive: true });
 mkdirSync(ASSETS, { recursive: true });
 
-const body = roundedStarPath(100, 100, 80, 41, 5, 0.34);
+// Koala head (compact, centered at given cx,cy with scale s)
+function koala(cx, cy, s) {
+  const t = (x, y) => `${(cx + x * s).toFixed(1)} ${(cy + y * s).toFixed(1)}`;
+  return `
+  <g>
+    <circle cx="${cx - 34 * s}" cy="${cy - 30 * s}" r="${26 * s}" fill="#AEB6BF"/>
+    <circle cx="${cx + 34 * s}" cy="${cy - 30 * s}" r="${26 * s}" fill="#AEB6BF"/>
+    <circle cx="${cx - 34 * s}" cy="${cy - 30 * s}" r="${14 * s}" fill="#F4B8C4"/>
+    <circle cx="${cx + 34 * s}" cy="${cy - 30 * s}" r="${14 * s}" fill="#F4B8C4"/>
+    <ellipse cx="${cx}" cy="${cy}" rx="${58 * s}" ry="${52 * s}" fill="#B9C0C9"/>
+    <ellipse cx="${cx - 52 * s}" cy="${cy + 12 * s}" rx="${13 * s}" ry="${16 * s}" fill="#C7CDD4"/>
+    <ellipse cx="${cx + 52 * s}" cy="${cy + 12 * s}" rx="${13 * s}" ry="${16 * s}" fill="#C7CDD4"/>
+    <ellipse cx="${cx - 30 * s}" cy="${cy + 18 * s}" rx="${12 * s}" ry="${7 * s}" fill="#FF8FA3" opacity="0.6"/>
+    <ellipse cx="${cx + 30 * s}" cy="${cy + 18 * s}" rx="${12 * s}" ry="${7 * s}" fill="#FF8FA3" opacity="0.6"/>
+    <circle cx="${cx - 22 * s}" cy="${cy - 6 * s}" r="${8 * s}" fill="#2A2A33"/>
+    <circle cx="${cx + 22 * s}" cy="${cy - 6 * s}" r="${8 * s}" fill="#2A2A33"/>
+    <circle cx="${cx - 24 * s}" cy="${cy - 9 * s}" r="${2.6 * s}" fill="#fff"/>
+    <circle cx="${cx + 20 * s}" cy="${cy - 9 * s}" r="${2.6 * s}" fill="#fff"/>
+    <path d="M${t(0, 4)} q${22 * s} ${4 * s} ${22 * s} ${18 * s} q0 ${16 * s} ${-22 * s} ${18 * s} q${-22 * s} ${-2 * s} ${-22 * s} ${-18 * s} q0 ${-14 * s} ${22 * s} ${-18 * s} Z" fill="#3A3A44"/>
+    <path d="M${t(-16, 48)} q${16 * s} ${12 * s} ${32 * s} 0" stroke="#3A3A44" stroke-width="${3 * s}" stroke-linecap="round" fill="none" opacity="0.75"/>
+  </g>`;
+}
 
-// Stella, centered, optional padding scale + background.
 function svg({ bg = '#ffffff', pad = 1 }) {
-  const t = (1 - pad) * 100; // translate to keep centered when scaling down
+  const tr = (1 - pad) * 100;
+  // "VITA" stacked vertically as a tree trunk (brown), rising upward.
+  const letters = ['V', 'I', 'T', 'A'];
+  const trunk = letters
+    .map((ch, i) => `<text x="118" y="${56 + i * 38}" font-family="Inter, Arial, sans-serif" font-weight="900" font-size="42" fill="#8B5A2B" text-anchor="middle">${ch}</text>`)
+    .join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-  <defs>
-    <radialGradient id="body" cx="42%" cy="34%" r="78%">
-      <stop offset="0%" stop-color="#FFE08A"/><stop offset="48%" stop-color="#FFD23F"/><stop offset="100%" stop-color="#F7B500"/>
-    </radialGradient>
-    <radialGradient id="gloss" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#fff" stop-opacity="0.85"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="eye" cx="38%" cy="32%" r="75%">
-      <stop offset="0%" stop-color="#3A3A52"/><stop offset="100%" stop-color="#15152A"/>
-    </radialGradient>
-  </defs>
-  ${bg === 'transparent' ? '' : `<rect width="200" height="200" fill="${bg}"/>`}
-  <g transform="translate(${t} ${t}) scale(${pad})">
-    <g transform="rotate(-6 100 100)">
-      <path d="${body}" fill="url(#body)"/>
-      <ellipse cx="78" cy="66" rx="48" ry="36" fill="url(#gloss)" opacity="0.7"/>
-    </g>
-    <ellipse cx="68" cy="114" rx="11" ry="7" fill="#FF8FA3" opacity="0.55"/>
-    <ellipse cx="128" cy="110" rx="11" ry="7" fill="#FF8FA3" opacity="0.55"/>
-    <ellipse cx="82" cy="98" rx="11" ry="12.5" fill="url(#eye)"/>
-    <ellipse cx="118" cy="98" rx="11" ry="12.5" fill="url(#eye)"/>
-    <circle cx="78.5" cy="93" r="3.6" fill="#fff"/><circle cx="114.5" cy="93" r="3.6" fill="#fff"/>
-    <circle cx="85" cy="101.5" r="1.7" fill="#fff" opacity="0.8"/><circle cx="121" cy="101.5" r="1.7" fill="#fff" opacity="0.8"/>
-    <path d="M92 118 Q100 126 108 118" stroke="#C2410C" stroke-width="3.2" stroke-linecap="round" fill="none" opacity="0.55"/>
+  ${bg === 'transparent' ? '' : `<rect width="200" height="200" rx="44" fill="${bg}"/>`}
+  <g transform="translate(${tr} ${tr}) scale(${pad})">
+    <!-- trunk shadow plank behind letters -->
+    <rect x="100" y="24" width="36" height="156" rx="18" fill="#B97A43" opacity="0.18"/>
+    ${trunk}
+    <!-- koala climbing the trunk, to the left -->
+    ${koala(78, 104, 0.62)}
   </g>
 </svg>`;
 }
@@ -74,7 +58,7 @@ async function render(page, markup, size, out) {
   await page.setViewport({ width: size, height: size, deviceScaleFactor: 1 });
   await page.setContent(html, { waitUntil: 'domcontentloaded' });
   const el = await page.$('svg');
-  await el.screenshot({ path: out, omitBackground: markup.includes('rect') ? false : true });
+  await el.screenshot({ path: out });
   console.log('→', out.split('/').slice(-1)[0], `${size}px`);
 }
 
@@ -82,20 +66,18 @@ const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
 const page = await b.newPage();
 
 const white = svg({ bg: '#ffffff' });
-const maskable = svg({ bg: '#ffffff', pad: 0.72 });
-const dark = svg({ bg: '#0a0a0c', pad: 0.18 });
-const lightSplash = svg({ bg: '#ffffff', pad: 0.18 });
+const maskable = svg({ bg: '#ffffff', pad: 0.78 });
+const dark = svg({ bg: '#0a0a0c', pad: 0.42 });
+const lightSplash = svg({ bg: '#ffffff', pad: 0.42 });
 
-// 4K master + app/PWA icons (white bg, full-bleed Stella)
-await render(page, white, 4096, resolve(ASSETS, 'stella-4k.png'));
+await render(page, white, 4096, resolve(ASSETS, 'vita-4k.png'));
 await render(page, white, 1024, resolve(ASSETS, 'icon.png'));
 await render(page, white, 512, resolve(PUBLIC, 'icons/icon-512.png'));
 await render(page, white, 192, resolve(PUBLIC, 'icons/icon-192.png'));
 await render(page, maskable, 512, resolve(PUBLIC, 'icons/icon-512-maskable.png'));
 await render(page, white, 180, resolve(PUBLIC, 'apple-touch-icon.png'));
-// Splash sources (small centered Stella on big canvas)
 await render(page, lightSplash, 2732, resolve(ASSETS, 'splash.png'));
 await render(page, dark, 2732, resolve(ASSETS, 'splash-dark.png'));
 
 await b.close();
-console.log('Stella icons rendered.');
+console.log('Vita koala-tree icons rendered.');

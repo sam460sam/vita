@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Flame } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Flame, ChevronRight } from 'lucide-react';
 import { Card, ProgressRing, StarMascot } from '@/ui';
 import { useT, type TKey } from '@/i18n';
 import { useStella } from '@/features/stella';
@@ -46,7 +47,7 @@ export function MomentumCard({ m }: { m: Momentum }) {
           </ProgressRing>
         </button>
 
-        <div className="min-w-0 flex-1">
+        <Link to="/recap" className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="metric-label">{t('momentum.title')}</span>
             {streak > 1 && (
@@ -54,14 +55,15 @@ export function MomentumCard({ m }: { m: Momentum }) {
                 <Flame size={12} /> {t('momentum.streak', { n: streak })}
               </span>
             )}
+            <ChevronRight size={16} className="text-ink-3 ml-auto" />
           </div>
           <div className="text-2xl font-bold tnum text-ink leading-tight mt-0.5">{m.score}<span className="text-ink-3 text-base font-semibold">/100</span></div>
           <p className="text-[13px] text-ink-2 leading-snug mt-0.5">{t(momentumMessageKey(m.score) as TKey)}</p>
-        </div>
+        </Link>
       </div>
 
-      {/* 5 cross-life progress bars */}
-      <div className="flex gap-1.5 mt-3">
+      {/* 5 cross-life progress bars — tap to see the full recap */}
+      <Link to="/recap" className="flex gap-1.5 mt-3">
         {LEGEND.map((l) => (
           <div key={l.key} className="flex-1">
             <div className="h-1.5 rounded-full bg-section overflow-hidden">
@@ -73,7 +75,7 @@ export function MomentumCard({ m }: { m: Momentum }) {
             <div className="text-[9px] text-ink-3 text-center mt-1 truncate">{t(l.labelKey)}</div>
           </div>
         ))}
-      </div>
+      </Link>
     </Card>
   );
 }

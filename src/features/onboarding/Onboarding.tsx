@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star } from 'lucide-react';
+import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star, ChevronLeft } from 'lucide-react';
 import { Button, Input } from '@/ui';
 import { StarMascot } from '@/ui/StarMascot';
 import { cn } from '@/lib/cn';
@@ -62,6 +62,10 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
     setStepIdx((i) => Math.min(i + 1, STEPS.length - 1));
   }
 
+  function back() {
+    setStepIdx((i) => Math.max(0, i - 1));
+  }
+
   function toggleHabit(id: string) {
     setPicked((prev) => {
       const n = new Set(prev);
@@ -85,7 +89,14 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="fixed inset-0 z-[70] bg-app flex flex-col pt-safe-top pb-safe-bottom animate-fade-in">
-      <div className="flex justify-end px-5 pt-3 h-12">
+      <div className="flex items-center justify-between px-4 pt-3 h-12">
+        {stepIdx > 0 ? (
+          <button onClick={back} aria-label={t('common.back')} className="h-10 w-10 flex items-center justify-center rounded-full text-ink-2 active:bg-section">
+            <ChevronLeft size={24} />
+          </button>
+        ) : (
+          <span className="w-10" />
+        )}
         {step !== 'lang' && (
           <button onClick={skip} className="text-[14px] font-semibold text-ink-3 px-3 py-2">
             {t('onboard.skip')}

@@ -1,11 +1,12 @@
 import { useId } from 'react';
 import { cn } from '@/lib/cn';
-import { roundedStarPath } from './starPath';
+
+type Mood = 'sleepy' | 'neutral' | 'happy' | 'starstruck';
 
 /**
- * Stella — the friendly star mascot, Pixar-style: volumetric gradient body,
- * glossy highlight, symmetric eyes with catchlights, rosy cheeks, soft shadow.
- * Pure SVG so it stays crisp at any size.
+ * Vita's mascot — a friendly koala (replaces the earlier star). Pure SVG so it
+ * stays crisp at any size. Keeps the StarMascot name + `mood` API so existing
+ * call sites don't change.
  */
 export function StarMascot({
   size = 96,
@@ -16,11 +17,9 @@ export function StarMascot({
   size?: number;
   className?: string;
   animated?: boolean;
-  mood?: 'sleepy' | 'neutral' | 'happy' | 'starstruck';
+  mood?: Mood;
 }) {
   const uid = useId().replace(/:/g, '');
-  const body = roundedStarPath(100, 98, 78, 40, 5, 0.34);
-
   return (
     <svg
       width={size}
@@ -30,82 +29,94 @@ export function StarMascot({
       xmlns="http://www.w3.org/2000/svg"
       className={cn(animated && 'animate-stella-float', className)}
       role="img"
-      aria-label="Stella"
+      aria-label="Koala"
     >
       <defs>
-        <radialGradient id={`body-${uid}`} cx="42%" cy="34%" r="78%">
-          <stop offset="0%" stopColor="#FFE08A" />
-          <stop offset="48%" stopColor="#FFD23F" />
-          <stop offset="100%" stopColor="#F7B500" />
+        <radialGradient id={`fur-${uid}`} cx="42%" cy="32%" r="75%">
+          <stop offset="0%" stopColor="#C7CDD4" />
+          <stop offset="60%" stopColor="#A8B0B9" />
+          <stop offset="100%" stopColor="#8C949E" />
         </radialGradient>
-        <radialGradient id={`gloss-${uid}`} cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
-          <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-        </radialGradient>
-        <radialGradient id={`eye-${uid}`} cx="38%" cy="32%" r="75%">
-          <stop offset="0%" stopColor="#3A3A52" />
-          <stop offset="100%" stopColor="#15152A" />
+        <radialGradient id={`ear-${uid}`} cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stopColor="#C7CDD4" />
+          <stop offset="100%" stopColor="#9AA2AC" />
         </radialGradient>
       </defs>
 
       {/* soft ground shadow */}
-      <ellipse cx="100" cy="180" rx="40" ry="8" fill="#000000" opacity="0.06" />
+      <ellipse cx="100" cy="182" rx="40" ry="7" fill="#000" opacity="0.06" />
 
-      <g transform="rotate(-6 100 98)">
-        {/* body */}
-        <path d={body} fill={`url(#body-${uid})`} />
-        {/* subtle inner depth at the bottom */}
-        <path d={body} fill="#E89E00" opacity="0.12" transform="translate(0 6) scale(0.98)" style={{ transformOrigin: '100px 98px' }} />
-        {/* top gloss highlight */}
-        <ellipse cx="78" cy="64" rx="46" ry="34" fill={`url(#gloss-${uid})`} opacity="0.7" />
-      </g>
+      {/* ears */}
+      <circle cx="55" cy="70" r="30" fill={`url(#ear-${uid})`} />
+      <circle cx="145" cy="70" r="30" fill={`url(#ear-${uid})`} />
+      <circle cx="55" cy="70" r="17" fill="#F4B8C4" opacity="0.8" />
+      <circle cx="145" cy="70" r="17" fill="#F4B8C4" opacity="0.8" />
+      {/* inner ear fur */}
+      <circle cx="55" cy="70" r="17" fill="none" stroke="#C7CDD4" strokeWidth="3" opacity="0.5" />
+      <circle cx="145" cy="70" r="17" fill="none" stroke="#C7CDD4" strokeWidth="3" opacity="0.5" />
 
-      {/* rosy cheeks (brighter when happy/starstruck) */}
-      <ellipse cx="68" cy="112" rx="11" ry="7" fill="#FF8FA3" opacity={mood === 'starstruck' || mood === 'happy' ? 0.7 : 0.4} />
-      <ellipse cx="128" cy="108" rx="11" ry="7" fill="#FF8FA3" opacity={mood === 'starstruck' || mood === 'happy' ? 0.7 : 0.4} />
+      {/* head */}
+      <ellipse cx="100" cy="106" rx="62" ry="56" fill={`url(#fur-${uid})`} />
+      {/* cheek fluff hint */}
+      <ellipse cx="46" cy="118" rx="14" ry="18" fill="#C7CDD4" opacity="0.5" />
+      <ellipse cx="154" cy="118" rx="14" ry="18" fill="#C7CDD4" opacity="0.5" />
+
+      {/* rosy cheeks */}
+      <ellipse cx="58" cy="124" rx="13" ry="8" fill="#FF8FA3" opacity={mood === 'happy' || mood === 'starstruck' ? 0.6 : 0.35} />
+      <ellipse cx="142" cy="124" rx="13" ry="8" fill="#FF8FA3" opacity={mood === 'happy' || mood === 'starstruck' ? 0.6 : 0.35} />
 
       <Face uid={uid} mood={mood} />
     </svg>
   );
 }
 
-function Face({ uid, mood }: { uid: string; mood: 'sleepy' | 'neutral' | 'happy' | 'starstruck' }) {
+function Face({ uid, mood }: { uid: string; mood: Mood }) {
+  void uid;
+  // big soft nose — the koala signature
+  const nose = (
+    <path d="M100 108 q22 4 22 18 q0 16 -22 18 q-22 -2 -22 -18 q0 -14 22 -18 Z" fill="#3A3A44" />
+  );
+  const noseGloss = <ellipse cx="92" cy="118" rx="5" ry="3.5" fill="#fff" opacity="0.25" />;
+
   if (mood === 'sleepy') {
-    // closed/calm eyes (gentle arcs) + small soft mouth — never sad, just resting
     return (
       <>
-        <path d="M73 96 Q82 102 91 96" stroke="#15152A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-        <path d="M109 96 Q118 102 127 96" stroke="#15152A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-        <path d="M94 115 Q100 119 106 115" stroke="#C2410C" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.5" />
+        <path d="M62 98 q12 8 24 0" stroke="#3A3A44" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+        <path d="M114 98 q12 8 24 0" stroke="#3A3A44" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+        {nose}
+        {noseGloss}
+        <path d="M88 150 q12 7 24 0" stroke="#3A3A44" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.7" />
       </>
     );
   }
-  if (mood === 'starstruck') {
-    // sparkly star-shaped catchlights + big open smile
-    return (
-      <>
-        <ellipse cx="82" cy="96" rx="11" ry="12.5" fill={`url(#eye-${uid})`} />
-        <ellipse cx="118" cy="96" rx="11" ry="12.5" fill={`url(#eye-${uid})`} />
-        <Sparkle x={82} y={94} />
-        <Sparkle x={118} y={94} />
-        <path d="M90 114 Q100 126 110 114 Q100 120 90 114 Z" fill="#FF4D5E" />
-      </>
-    );
-  }
-  // neutral / happy
-  const smile =
-    mood === 'happy'
-      ? 'M90 115 Q100 125 110 115' // bigger smile
-      : 'M93 116 Q100 121 107 116'; // gentle
+
+  const eyeR = mood === 'starstruck' ? 9 : 8;
   return (
     <>
-      <ellipse cx="82" cy="96" rx="11" ry="12.5" fill={`url(#eye-${uid})`} />
-      <ellipse cx="118" cy="96" rx="11" ry="12.5" fill={`url(#eye-${uid})`} />
-      <circle cx="78.5" cy="91" r="3.6" fill="#fff" />
-      <circle cx="114.5" cy="91" r="3.6" fill="#fff" />
-      <circle cx="85" cy="99.5" r="1.7" fill="#fff" opacity="0.8" />
-      <circle cx="121" cy="99.5" r="1.7" fill="#fff" opacity="0.8" />
-      <path d={smile} stroke="#C2410C" strokeWidth="3.2" strokeLinecap="round" fill="none" opacity="0.6" />
+      <circle cx="74" cy="98" r={eyeR} fill="#2A2A33" />
+      <circle cx="126" cy="98" r={eyeR} fill="#2A2A33" />
+      {mood === 'starstruck' ? (
+        <>
+          <Sparkle x={74} y={96} />
+          <Sparkle x={126} y={96} />
+        </>
+      ) : (
+        <>
+          <circle cx="71" cy="94.5" r="2.6" fill="#fff" />
+          <circle cx="123" cy="94.5" r="2.6" fill="#fff" />
+        </>
+      )}
+      {nose}
+      {noseGloss}
+      {/* smile under the nose */}
+      <path
+        d={mood === 'happy' || mood === 'starstruck' ? 'M84 150 q16 12 32 0' : 'M90 150 q10 6 20 0'}
+        stroke="#3A3A44"
+        strokeWidth="3"
+        strokeLinecap="round"
+        fill="none"
+        opacity="0.75"
+      />
     </>
   );
 }
@@ -113,7 +124,7 @@ function Face({ uid, mood }: { uid: string; mood: 'sleepy' | 'neutral' | 'happy'
 function Sparkle({ x, y }: { x: number; y: number }) {
   return (
     <path
-      d={`M${x} ${y - 5} L${x + 1.4} ${y - 1.4} L${x + 5} ${y} L${x + 1.4} ${y + 1.4} L${x} ${y + 5} L${x - 1.4} ${y + 1.4} L${x - 5} ${y} L${x - 1.4} ${y - 1.4} Z`}
+      d={`M${x} ${y - 6} L${x + 1.7} ${y - 1.7} L${x + 6} ${y} L${x + 1.7} ${y + 1.7} L${x} ${y + 6} L${x - 1.7} ${y + 1.7} L${x - 6} ${y} L${x - 1.7} ${y - 1.7} Z`}
       fill="#fff"
     />
   );
