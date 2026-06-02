@@ -37,11 +37,13 @@ export function StarMascot({
       <ellipse cx="100" cy="226" rx="46" ry="7" fill="#000" opacity="0.06" />
 
       {/* ===== BODY (drawn before head) ===== */}
-      {/* raised left arm waving (panda's right) */}
+      {/* raised left arm waving (panda's right) — banana curve like the reference */}
       <path
-        d="M70 150 Q40 120 36 96 Q34 84 46 84 Q58 86 64 104 Q72 128 84 146 Z"
+        d="M72 150 Q44 132 34 102 Q30 88 44 86 Q58 88 64 108 Q72 132 86 148 Z"
         fill={K} stroke={K} strokeWidth="3" strokeLinejoin="round"
       />
+      {/* little raised paw */}
+      <ellipse cx="38" cy="92" rx="11" ry="9" transform="rotate(-20 38 92)" fill={K} />
       {/* white belly torso */}
       <path
         d="M64 168 Q60 214 100 216 Q140 214 136 168 Q132 138 100 138 Q68 138 64 168 Z"
