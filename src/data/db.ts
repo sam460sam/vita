@@ -10,6 +10,7 @@ import type {
   Goal,
   Habit,
   HabitLog,
+  HomeLayout,
   JournalEntry,
   Project,
   Settings,
@@ -33,6 +34,7 @@ export class VitaDB extends Dexie {
   budgets!: Table<Budget, string>;
   waterLogs!: Table<WaterLog, string>;
   weightLogs!: Table<WeightLog, string>;
+  homeLayout!: Table<HomeLayout, string>;
 
   constructor() {
     super('vita');
@@ -55,6 +57,11 @@ export class VitaDB extends Dexie {
     // v3: body weight tracking
     this.version(3).stores({
       weightLogs: 'id, date',
+    });
+    // v4: personalisation — Apple-style widget home (singleton row).
+    // Additive only; all existing tables and data are preserved.
+    this.version(4).stores({
+      homeLayout: 'id',
     });
   }
 }

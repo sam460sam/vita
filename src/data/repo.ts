@@ -9,7 +9,9 @@ import type {
   Goal,
   Habit,
   HabitLog,
+  HomeLayout,
   JournalEntry,
+  ModuleId,
   Project,
   Settings,
   Subtask,
@@ -18,6 +20,7 @@ import type {
   VitaBackup,
   WaterLog,
   WeightLog,
+  WidgetInstance,
   Workout,
 } from './types';
 
@@ -47,6 +50,41 @@ export async function ensureSeedRows(): Promise<void> {
 export async function updateSettings(patch: Partial<Settings>): Promise<void> {
   const s = await getSettings();
   await db.settings.put({ ...s, ...patch, updatedAt: now() });
+}
+
+// ---------------------------------------------------------------------------
+// Personalisation — enabled modules / interests
+// ---------------------------------------------------------------------------
+export async function setEnabledModules(ids: ModuleId[]): Promise<void> {
+  const s = await getSettings();
+  // Preserve any existing custom order; append newly enabled, drop disabled.
+  const prevOrder = s.moduleOrder ?? ids;
+  const order = [...prevOrder.filter((m) => ids.includes(m)), ...ids.filter((m) => !prevOrder.includes(m))];
+  await db.settings.put({ ...s, enabledModules: ids, moduleOrder: order, updatedAt: now() });
+}
+
+export async function reorderModules(order: ModuleId[]): Promise<void> {
+  const s = await getSettings();
+  await db.settings.put({ ...s, moduleOrder: order, updatedAt: now() });
+}
+
+/** Completed at the end of onboarding: persists chosen interests + their order. */
+export async function completeOnboarding(selected: ModuleId[], extra?: Partial<Settings>): Promise<void> {
+  const s = await getSettings();
+  await db.settings.put({ ...s, ...extra, enabledModules: selected, moduleOrder: selected, updatedAt: now() });
+}
+
+// ---------------------------------------------------------------------------
+// Personalisation — Apple-style widget home (singleton row, id = 'home')
+// ---------------------------------------------------------------------------
+/** Read-only home layout accessor (safe inside liveQuery). */
+export async function readHomeLayout(): Promise<HomeLayout | undefined> {
+  return db.homeLayout.get('home');
+}
+
+export async function saveHomeLayout(widgets: WidgetInstance[]): Promise<void> {
+  const normalised = widgets.map((w, i) => ({ ...w, position: i }));
+  await db.homeLayout.put({ id: 'home', widgets: normalised, updatedAt: now() });
 }
 
 // ---------------------------------------------------------------------------

@@ -15,6 +15,66 @@ export interface Timestamped {
 export type DataSource = 'manual' | 'healthkit' | 'healthconnect';
 
 // ----------------------------------------------------------------------------
+// Personalisation — interests (modules) + Apple-style widget home
+// ----------------------------------------------------------------------------
+/** Toggleable "interest" sections (map 1:1 to navigable module routes). */
+export type ModuleId =
+  | 'attivita'
+  | 'peso'
+  | 'progetti'
+  | 'abitudini'
+  | 'finanze'
+  | 'diario'
+  | 'obiettivi'
+  | 'calendario';
+
+/** All known modules in canonical order — single source of truth. */
+export const ALL_MODULES: ModuleId[] = [
+  'abitudini',
+  'attivita',
+  'peso',
+  'progetti',
+  'obiettivi',
+  'diario',
+  'finanze',
+  'calendario',
+];
+
+export type WidgetType =
+  | 'momentum'
+  | 'activity-rings'
+  | 'water'
+  | 'fasting'
+  | 'weight-trend'
+  | 'habit-streak'
+  | 'consistency-heatmap'
+  | 'daily-todo'
+  | 'upcoming-tasks'
+  | 'finance-balance'
+  | 'journal-last'
+  | 'goals-progress'
+  | 'rewards'
+  | 'quick-actions'
+  | 'affirmation';
+
+export type WidgetSize = 'small' | 'medium' | 'large'; // 1x1 · 2x1 · 2x2 (Apple-style)
+
+export interface WidgetInstance {
+  id: string; // uuid generated on add
+  type: WidgetType;
+  size: WidgetSize;
+  position: number; // order in the home grid
+  config?: Record<string, unknown>;
+}
+
+/** Singleton row holding the user's composed home dashboard. */
+export interface HomeLayout {
+  id: 'home';
+  widgets: WidgetInstance[];
+  updatedAt: number;
+}
+
+// ----------------------------------------------------------------------------
 // Settings
 // ----------------------------------------------------------------------------
 export interface Settings {
@@ -59,6 +119,13 @@ export interface Settings {
   };
   /** What the user mainly wants from Vita (set in onboarding). Drives nudges. */
   focus?: 'health' | 'productivity' | 'wellbeing' | 'all';
+  /**
+   * Personalisation — the modules the user chose as interests, and their order
+   * in navigation. `undefined` means "not chosen yet" → treated as all enabled
+   * (keeps existing users with no regression).
+   */
+  enabledModules?: ModuleId[];
+  moduleOrder?: ModuleId[];
   createdAt: number;
   updatedAt: number;
 }

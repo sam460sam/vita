@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { Plus } from 'lucide-react';
-import { PRIMARY_NAV, SECONDARY_NAV } from './nav';
+import { useNavItems, EXTRA_NAV, type NavItem } from './nav';
 import { cn } from '@/lib/cn';
 import { useT } from '@/i18n';
 import { useQuickAdd } from './QuickAdd';
@@ -8,6 +8,7 @@ import { useQuickAdd } from './QuickAdd';
 /** Desktop sidebar (lg+). Same destinations as the mobile tab bar + secondary. */
 export function Sidebar() {
   const { openMenu } = useQuickAdd();
+  const { sidebarPrimary } = useNavItems();
   const t = useT();
   return (
     <aside className="hidden lg:flex flex-col w-64 flex-shrink-0 border-r border-line dark:border-transparent bg-card h-screen sticky top-0 px-3 py-5">
@@ -23,14 +24,14 @@ export function Sidebar() {
       </button>
 
       <nav className="flex flex-col gap-0.5">
-        {PRIMARY_NAV.filter((n) => n.to !== '/altro').map((item) => (
+        {sidebarPrimary.map((item) => (
           <SideLink key={item.to} {...item} />
         ))}
       </nav>
 
       <div className="mt-6 mb-2 px-3 metric-label">{t('nav.more')}</div>
       <nav className="flex flex-col gap-0.5">
-        {SECONDARY_NAV.map((item) => (
+        {EXTRA_NAV.map((item) => (
           <SideLink key={item.to} {...item} />
         ))}
       </nav>
@@ -38,7 +39,7 @@ export function Sidebar() {
   );
 }
 
-function SideLink({ to, labelKey, icon: Icon, accent }: (typeof PRIMARY_NAV)[number]) {
+function SideLink({ to, labelKey, icon: Icon, accent }: NavItem) {
   const t = useT();
   return (
     <NavLink

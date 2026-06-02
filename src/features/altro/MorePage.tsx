@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { ChevronRight, Sparkles } from 'lucide-react';
-import { SECONDARY_NAV } from '@/app/nav';
+import { ChevronRight, Sparkles, SlidersHorizontal } from 'lucide-react';
+import { useNavItems } from '@/app/nav';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, Divider } from '@/ui';
@@ -8,6 +8,7 @@ import { useT } from '@/i18n';
 
 export function MorePage() {
   const t = useT();
+  const { more } = useNavItems();
   return (
     <>
       <PageHeader title={t('more.title')} />
@@ -27,7 +28,7 @@ export function MorePage() {
         </Link>
 
         <Card inset={false} className="overflow-hidden">
-          {SECONDARY_NAV.map((item, i) => {
+          {more.map((item, i) => {
             const Icon = item.icon;
             return (
               <div key={item.to}>
@@ -42,6 +43,14 @@ export function MorePage() {
               </div>
             );
           })}
+          <Divider />
+          <Link to="/impostazioni#personalizzazione" className="flex items-center gap-3 px-4 py-3.5 active:bg-section transition-colors">
+            <span className="h-9 w-9 rounded-full bg-section flex items-center justify-center text-habit">
+              <SlidersHorizontal size={18} />
+            </span>
+            <span className="flex-1 text-[15px] text-ink font-medium">{t('personalize.title')}</span>
+            <ChevronRight size={18} className="text-ink-3" />
+          </Link>
         </Card>
         <p className="text-center text-[12px] text-ink-3 mt-6">{t('more.tagline')}</p>
       </Screen>

@@ -1,14 +1,16 @@
 import { NavLink } from 'react-router-dom';
 import { Plus } from 'lucide-react';
-import { PRIMARY_NAV } from './nav';
+import { useNavItems, type NavItem } from './nav';
 import { cn } from '@/lib/cn';
 import { useT } from '@/i18n';
 import { useQuickAdd } from './QuickAdd';
 
-/** Mobile bottom tab bar: 3 destinations · centered quick-add FAB · 3 destinations. */
+/** Mobile bottom tab bar: destinations · centered quick-add FAB · destinations. */
 export function TabBar() {
-  const left = PRIMARY_NAV.slice(0, 3);
-  const right = PRIMARY_NAV.slice(3);
+  const { tabs } = useNavItems();
+  const half = Math.ceil(tabs.length / 2);
+  const left = tabs.slice(0, half);
+  const right = tabs.slice(half);
 
   return (
     <nav className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-card/85 backdrop-blur-xl border-t border-line/80 dark:border-transparent pb-safe-bottom">
@@ -40,7 +42,7 @@ function QuickAddButton() {
   );
 }
 
-function TabLink({ to, labelKey, shortKey, icon: Icon, accent }: (typeof PRIMARY_NAV)[number]) {
+function TabLink({ to, labelKey, shortKey, icon: Icon, accent }: NavItem) {
   const t = useT();
   return (
     <NavLink to={to} className="flex-1 flex flex-col items-center justify-center gap-0.5 min-w-0">

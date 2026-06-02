@@ -677,6 +677,52 @@ export const it = {
   'settings.reminders.motivation': 'Motivazione',
   'reminder.motivation.title': '🐼 Un pensiero per te',
   'reminder.motivation.body': 'Apri Vita per la frase del giorno e un piccolo passo avanti.',
+
+  // Personalisation — module descriptions
+  'module.abitudini.desc': 'Costruisci routine e streak',
+  'module.attivita.desc': 'Allenamenti e anelli attività',
+  'module.peso.desc': 'Peso corporeo e BMI',
+  'module.progetti.desc': 'Progetti e attività',
+  'module.obiettivi.desc': 'Traguardi a lungo termine',
+  'module.diario.desc': 'Diario e umore',
+  'module.finanze.desc': 'Spese e budget',
+  'module.calendario.desc': 'Vista unificata',
+
+  // Onboarding — choose sections
+  'onboard.modules.title': 'Cosa vuoi seguire?',
+  'onboard.modules.desc': 'Scegli le sezioni che ti interessano. Potrai modificarle quando vuoi dalle Impostazioni.',
+
+  // Home / widgets
+  'home.editTitle': 'Modifica home',
+  'home.editHint': 'Trascina per riordinare · tocca ✕ per rimuovere',
+  'home.edit': 'Modifica',
+  'home.done': 'Fine',
+  'home.addWidget': 'Aggiungi widget',
+  'home.empty': 'La tua home è vuota',
+  'home.widgetUnavailable': 'Sezione disattivata',
+  'home.removeWidget': 'Rimuovi widget',
+  'home.gallery': 'Galleria widget',
+  'home.addThis': 'Aggiungi widget',
+  'home.size.label': 'Dimensione',
+  'home.size.small': 'Piccolo',
+  'home.size.medium': 'Medio',
+  'home.size.large': 'Grande',
+  'widget.quickActions': 'Azioni rapide',
+  'widget.affirmation': 'Affermazione',
+  'widget.consistency': 'Costanza',
+  'widget.goalsActive': 'obiettivi attivi',
+  'widget.goalsDone': '{n} completati',
+  'finances.balance': 'Saldo del mese',
+
+  // Personalizzazione (Impostazioni)
+  'personalize.title': 'Personalizzazione',
+  'personalize.note': 'Disattivare una sezione la nasconde dalla navigazione ma non cancella i dati: torneranno se la riattivi.',
+  'personalize.active': 'Sezioni attive',
+  'personalize.inactive': 'Sezioni disattivate',
+  'personalize.moveUp': 'Sposta su',
+  'personalize.moveDown': 'Sposta giù',
+  'personalize.editHome': 'Modifica widget della home',
+  'personalize.redo': 'Rifai onboarding',
 } as const;
 
 export type TKey = keyof typeof it;

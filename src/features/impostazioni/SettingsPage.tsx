@@ -12,6 +12,7 @@ import { Card, CardHeader, Field, Input, Button, Divider, useToast } from '@/ui'
 import { format } from 'date-fns';
 import { useI18n, LANGS, type LangPref, type TKey } from '@/i18n';
 import { useTheme, type ThemePref } from '@/theme/theme';
+import { PersonalizationSection } from '@/features/personalizzazione/PersonalizationSection';
 import type { VitaBackup } from '@/data/types';
 
 export function SettingsPage() {
@@ -48,10 +49,6 @@ export function SettingsPage() {
       water: { dailyGoalMl: Math.round((parseFloat(waterGoalL) || 2) * 1000), glassMl: parseInt(glassMl) || 200 },
     });
     toast.show(t('settings.saved'));
-  }
-
-  async function toggleModule(key: keyof typeof s.modules) {
-    await updateSettings({ modules: { ...s.modules, [key]: !s.modules[key] } });
   }
 
   async function setReminder(kind: 'water' | 'workout' | 'journal' | 'weight' | 'evening' | 'motivation', time: string) {
@@ -206,14 +203,7 @@ export function SettingsPage() {
           <p className="text-[12px] text-ink-3 mt-3">{t('settings.reminders.note')}</p>
         </Card>
 
-        <Card className="mb-4">
-          <CardHeader title={t('settings.modules')} />
-          <ModuleToggle label={t('nav.goals')} on={s.modules.goals} onToggle={() => toggleModule('goals')} />
-          <Divider />
-          <ModuleToggle label={t('nav.finances')} on={s.modules.finances} onToggle={() => toggleModule('finances')} />
-          <Divider />
-          <ModuleToggle label={t('nav.calendar')} on={s.modules.calendar} onToggle={() => toggleModule('calendar')} />
-        </Card>
+        <PersonalizationSection />
 
         <Card className="mb-4">
           <CardHeader title={t('settings.data')} />
@@ -253,27 +243,6 @@ function ReminderRow({ label, value, onChange }: { label: string; value: string;
         onChange={(e) => onChange(e.target.value)}
         className="h-9 px-3 rounded-btn bg-section border border-line dark:border-transparent text-[15px] text-ink outline-none"
       />
-    </div>
-  );
-}
-
-function ModuleToggle({ label, on, onToggle }: { label: string; on: boolean; onToggle: () => void }) {
-  return (
-    <div className="flex items-center justify-between py-2.5">
-      <span className="text-[15px] text-ink">{label}</span>
-      <button
-        role="switch"
-        aria-checked={on}
-        aria-label={label}
-        onClick={onToggle}
-        className="relative h-7 w-12 rounded-full transition-colors"
-        style={{ background: on ? 'var(--c-ink)' : 'var(--c-line)' }}
-      >
-        <span
-          className="absolute top-0.5 h-6 w-6 rounded-full bg-white shadow-card transition-transform"
-          style={{ transform: on ? 'translateX(20px)' : 'translateX(2px)' }}
-        />
-      </button>
     </div>
   );
 }

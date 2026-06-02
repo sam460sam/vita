@@ -12,11 +12,13 @@ import { GlobalSheets } from './GlobalSheets';
 import { Onboarding, hasOnboarded } from '@/features/onboarding/Onboarding';
 
 // Core modules — eager (part of the primary experience).
+import { HomeDashboard } from '@/features/home';
 import { TodayPage } from '@/features/oggi';
 import { ActivityPage } from '@/features/attivita';
 import { ProjectsPage, ProjectDetailPage } from '@/features/progetti';
 import { HabitsPage } from '@/features/abitudini';
 import { MorePage } from '@/features/altro';
+import { RequireModule } from '@/features/personalizzazione/RequireModule';
 
 // Secondary modules — lazy (loaded on demand, keeps initial bundle slim).
 const JournalPage = lazy(() => import('@/features/diario').then((m) => ({ default: m.JournalPage })));
@@ -48,19 +50,20 @@ export function App() {
                   <Suspense fallback={<div className="p-8 text-center text-ink-3" />}>
                     <Routes>
                       <Route path="/" element={<Navigate to="/oggi" replace />} />
-                      <Route path="/oggi" element={<TodayPage />} />
-                      <Route path="/attivita" element={<ActivityPage />} />
-                      <Route path="/peso" element={<WeightPage />} />
+                      <Route path="/oggi" element={<HomeDashboard />} />
+                      <Route path="/oggi-classic" element={<TodayPage />} />
+                      <Route path="/attivita" element={<RequireModule id="attivita"><ActivityPage /></RequireModule>} />
+                      <Route path="/peso" element={<RequireModule id="peso"><WeightPage /></RequireModule>} />
                       <Route path="/bmi" element={<BmiPage />} />
                       <Route path="/recap" element={<RecapPage />} />
                       <Route path="/premi" element={<GamificationPage />} />
-                      <Route path="/progetti" element={<ProjectsPage />} />
-                      <Route path="/progetti/:id" element={<ProjectDetailPage />} />
-                      <Route path="/abitudini" element={<HabitsPage />} />
-                      <Route path="/diario" element={<JournalPage />} />
-                      <Route path="/obiettivi" element={<GoalsPage />} />
-                      <Route path="/finanze" element={<FinancesPage />} />
-                      <Route path="/calendario" element={<CalendarPage />} />
+                      <Route path="/progetti" element={<RequireModule id="progetti"><ProjectsPage /></RequireModule>} />
+                      <Route path="/progetti/:id" element={<RequireModule id="progetti"><ProjectDetailPage /></RequireModule>} />
+                      <Route path="/abitudini" element={<RequireModule id="abitudini"><HabitsPage /></RequireModule>} />
+                      <Route path="/diario" element={<RequireModule id="diario"><JournalPage /></RequireModule>} />
+                      <Route path="/obiettivi" element={<RequireModule id="obiettivi"><GoalsPage /></RequireModule>} />
+                      <Route path="/finanze" element={<RequireModule id="finanze"><FinancesPage /></RequireModule>} />
+                      <Route path="/calendario" element={<RequireModule id="calendario"><CalendarPage /></RequireModule>} />
                       <Route path="/altro" element={<MorePage />} />
                       <Route path="/pro" element={<ProPage />} />
                       <Route path="/impostazioni" element={<SettingsPage />} />

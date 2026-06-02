@@ -6,6 +6,8 @@ import { cn } from '@/lib/cn';
 import { useI18n, LANGS, type Lang, type TKey } from '@/i18n';
 import { createHabit, updateSettings } from '@/data/repo';
 import { RECOMMENDED_HABITS } from '@/features/abitudini/recommended';
+import { ALL_MODULES, type ModuleId } from '@/data/types';
+import { MODULE_LIST } from '@/features/personalizzazione/modules';
 
 type Focus = 'health' | 'productivity' | 'wellbeing' | 'all';
 
@@ -27,15 +29,25 @@ function markOnboarded() {
   }
 }
 
-type Step = 'lang' | 'welcome1' | 'focus' | 'habits' | 'name' | 'aha';
-const STEPS: Step[] = ['lang', 'welcome1', 'focus', 'habits', 'name', 'aha'];
+/** Clear the onboarding flag so the flow runs again (Settings → "Redo"). */
+export function resetOnboarding() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
 
-/** First-run onboarding: language → welcome → focus → habits → name → aha. */
+type Step = 'lang' | 'welcome1' | 'focus' | 'modules' | 'habits' | 'name' | 'aha';
+const STEPS: Step[] = ['lang', 'welcome1', 'focus', 'modules', 'habits', 'name', 'aha'];
+
+/** First-run onboarding: language → welcome → focus → sections → habits → name → aha. */
 export function Onboarding({ onDone }: { onDone: () => void }) {
   const { t, setPref } = useI18n();
   const [stepIdx, setStepIdx] = useState(0);
   const [name, setName] = useState('');
   const [focus, setFocus] = useState<Focus>('all');
+  const [modules, setModules] = useState<Set<ModuleId>>(new Set(ALL_MODULES));
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const [customHabits, setCustomHabits] = useState<string[]>([]);
 
@@ -52,7 +64,9 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       if (rec) await createHabit({ name: t(rec.labelKey), color: rec.color, frequency: rec.frequency });
     }
     for (const n of customHabits) await createHabit({ name: n, frequency: { type: 'daily' } });
-    await updateSettings({ name: name.trim() || undefined, focus });
+    // Persist chosen interests (in canonical order) alongside name + focus.
+    const selected = ALL_MODULES.filter((m) => modules.has(m));
+    await updateSettings({ name: name.trim() || undefined, focus, enabledModules: selected, moduleOrder: selected });
   }
 
   async function next() {
@@ -68,6 +82,14 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
 
   function toggleHabit(id: string) {
     setPicked((prev) => {
+      const n = new Set(prev);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    });
+  }
+
+  function toggleModule(id: ModuleId) {
+    setModules((prev) => {
       const n = new Set(prev);
       n.has(id) ? n.delete(id) : n.add(id);
       return n;
@@ -114,6 +136,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
           </div>
         )}
         {step === 'focus' && <FocusStep value={focus} onPick={setFocus} />}
+        {step === 'modules' && <ModulesStep selected={modules} onToggle={toggleModule} />}
         {step === 'habits' && (
           <HabitsStep picked={picked} onToggle={toggleHabit} customHabits={customHabits} setCustomHabits={setCustomHabits} />
         )}
@@ -145,12 +168,14 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       </div>
 
       <div className="px-6 pb-6">
-        <Button block size="lg" onClick={() => (isLast ? finish() : next())}>
+        <Button block size="lg" disabled={step === 'modules' && modules.size === 0} onClick={() => (isLast ? finish() : next())}>
           {isLast
             ? t('onboard.start')
             : step === 'habits'
               ? `${t('onboard.next')}${totalPicked ? ` (${totalPicked})` : ''}`
-              : t('onboard.next')}
+              : step === 'modules'
+                ? `${t('onboard.next')}${modules.size ? ` (${modules.size})` : ''}`
+                : t('onboard.next')}
         </Button>
       </div>
     </div>
@@ -193,6 +218,45 @@ function FocusStep({ value, onPick }: { value: Focus; onPick: (f: Focus) => void
                 <div className="text-[13px] text-ink-2">{t(o.descKey)}</div>
               </div>
               {on && <Check size={18} className="text-ink" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ModulesStep({ selected, onToggle }: { selected: Set<ModuleId>; onToggle: (id: ModuleId) => void }) {
+  const { t } = useI18n();
+  return (
+    <div className="pt-4">
+      <div className="text-center mb-5">
+        <h1 className="text-2xl font-bold text-ink">{t('onboard.modules.title')}</h1>
+        <p className="text-[15px] text-ink-2 mt-2 max-w-sm mx-auto leading-relaxed">{t('onboard.modules.desc')}</p>
+      </div>
+      <div className="grid grid-cols-2 gap-2.5 max-w-md mx-auto">
+        {MODULE_LIST.map((m) => {
+          const Icon = m.icon;
+          const on = selected.has(m.id);
+          return (
+            <button
+              key={m.id}
+              onClick={() => onToggle(m.id)}
+              className={cn(
+                'flex flex-col items-start gap-2 p-3.5 rounded-card border transition-colors text-left relative',
+                on ? 'border-ink bg-section' : 'border-line dark:border-transparent dark:bg-section',
+              )}
+            >
+              <span className="h-10 w-10 rounded-full flex items-center justify-center" style={{ background: `${m.accent}1a`, color: m.accent }}>
+                <Icon size={20} />
+              </span>
+              <span className="text-[14px] font-semibold text-ink">{t(m.labelKey)}</span>
+              <span className="text-[12px] text-ink-2 leading-snug">{t(m.descKey)}</span>
+              {on && (
+                <span className="absolute top-2.5 right-2.5 h-5 w-5 rounded-full bg-ink flex items-center justify-center">
+                  <Check size={13} className="text-app" strokeWidth={3} />
+                </span>
+              )}
             </button>
           );
         })}

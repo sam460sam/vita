@@ -674,4 +674,50 @@ export const en: Record<TKey, string> = {
   'settings.reminders.motivation': 'Motivation',
   'reminder.motivation.title': '🐼 A thought for you',
   'reminder.motivation.body': 'Open Vita for today’s affirmation and one small step forward.',
+
+  // Personalisation — module descriptions
+  'module.abitudini.desc': 'Build routines and streaks',
+  'module.attivita.desc': 'Workouts and activity rings',
+  'module.peso.desc': 'Body weight and BMI',
+  'module.progetti.desc': 'Projects and tasks',
+  'module.obiettivi.desc': 'Long-term goals',
+  'module.diario.desc': 'Journal and mood',
+  'module.finanze.desc': 'Spending and budget',
+  'module.calendario.desc': 'Unified view',
+
+  // Onboarding — choose sections
+  'onboard.modules.title': 'What do you want to track?',
+  'onboard.modules.desc': 'Pick the sections you care about. You can change them anytime in Settings.',
+
+  // Home / widgets
+  'home.editTitle': 'Edit home',
+  'home.editHint': 'Drag to reorder · tap ✕ to remove',
+  'home.edit': 'Edit',
+  'home.done': 'Done',
+  'home.addWidget': 'Add widget',
+  'home.empty': 'Your home is empty',
+  'home.widgetUnavailable': 'Section disabled',
+  'home.removeWidget': 'Remove widget',
+  'home.gallery': 'Widget gallery',
+  'home.addThis': 'Add widget',
+  'home.size.label': 'Size',
+  'home.size.small': 'Small',
+  'home.size.medium': 'Medium',
+  'home.size.large': 'Large',
+  'widget.quickActions': 'Quick actions',
+  'widget.affirmation': 'Affirmation',
+  'widget.consistency': 'Consistency',
+  'widget.goalsActive': 'active goals',
+  'widget.goalsDone': '{n} completed',
+  'finances.balance': 'This month balance',
+
+  // Personalisation (Settings)
+  'personalize.title': 'Personalisation',
+  'personalize.note': 'Turning a section off hides it from navigation but does not delete its data — it comes back if you re-enable it.',
+  'personalize.active': 'Active sections',
+  'personalize.inactive': 'Disabled sections',
+  'personalize.moveUp': 'Move up',
+  'personalize.moveDown': 'Move down',
+  'personalize.editHome': 'Edit home widgets',
+  'personalize.redo': 'Redo onboarding',
 };

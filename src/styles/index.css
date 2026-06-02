@@ -158,3 +158,12 @@ body {
 .animate-pop {
   animation: pop 320ms cubic-bezier(0.32, 0.72, 0, 1);
 }
+
+/* Apple-style "jiggle" for home edit mode */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+.animate-wiggle {
+  animation: wiggle 0.28s ease-in-out infinite;
+}
