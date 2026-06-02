@@ -11,7 +11,7 @@ import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, CardHeader, EmptyState, Button, Sheet, Field, Input, Select, Segmented, IconButton, Sankey, useToast } from '@/ui';
 import { formatMoney, todayISO, currentMonthKey, monthKey } from '@/lib/format';
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, categoryColor } from './categories';
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, categoryColor, categoryLabelKey } from './categories';
 import { parseBankCsv } from './importCsv';
 import { useT } from '@/i18n';
 import type { TxType } from '@/data/types';
@@ -54,7 +54,7 @@ export function FinancesPage() {
 
   // Money-flow: income → each expense category (+ savings if income > expense)
   const flows = useMemo(() => {
-    const f = byCategory.map(([cat, amt]) => ({ label: cat, value: amt, color: categoryColor(cat) }));
+    const f = byCategory.map(([cat, amt]) => ({ label: t(categoryLabelKey(cat)), value: amt, color: categoryColor(cat) }));
     const saved = income - expense;
     if (saved > 0) f.push({ label: t('finances.savings'), value: saved, color: '#22C55E' });
     return f;
@@ -147,7 +147,7 @@ export function FinancesPage() {
               {byCategory.map(([cat, amt]) => (
                 <div key={cat}>
                   <div className="flex justify-between text-[13px] mb-1">
-                    <span className="text-ink font-medium">{cat}</span>
+                    <span className="text-ink font-medium">{t(categoryLabelKey(cat))}</span>
                     <span className="tnum text-ink-2">{formatMoney(amt, currency)}</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-section overflow-hidden">
@@ -188,7 +188,7 @@ export function FinancesPage() {
                     {tx.type === 'income' ? <ArrowDownLeft size={17} /> : <ArrowUpRight size={17} />}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[15px] text-ink truncate">{tx.category}</div>
+                    <div className="text-[15px] text-ink truncate">{t(categoryLabelKey(tx.category))}</div>
                     <div className="text-[12px] text-ink-2 truncate">
                       {format(parseISO(tx.date), 'd MMM', { locale: it })}
                       {tx.note ? ` · ${tx.note}` : ''}
@@ -217,7 +217,7 @@ export function FinancesPage() {
 function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [type, setType] = useState<TxType>('expense');
   const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState(EXPENSE_CATEGORIES[0]);
+  const [category, setCategory] = useState<string>(EXPENSE_CATEGORIES[0]);
   const [date, setDate] = useState(todayISO());
   const [note, setNote] = useState('');
   const toast = useToast();
@@ -275,7 +275,7 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
         <Field label={t('txForm.category')}>
           <Select value={category} onChange={(e) => setCategory(e.target.value)}>
             {cats.map((c) => (
-              <option key={c} value={c}>{c}</option>
+              <option key={c} value={c}>{t(categoryLabelKey(c))}</option>
             ))}
           </Select>
         </Field>

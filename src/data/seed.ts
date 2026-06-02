@@ -152,26 +152,26 @@ export async function seedDemoData(name = 'Samuele') {
 
   // -- Finances -------------------------------------------------------------
   await setBudget(1500);
-  await createTransaction({ type: 'income', amount: 2400, category: 'Stipendio', date: iso(25) });
-  await createTransaction({ type: 'expense', amount: 780, category: 'Casa', date: iso(22), note: 'Affitto' });
-  await createTransaction({ type: 'expense', amount: 210, category: 'Spesa', date: iso(18) });
-  await createTransaction({ type: 'expense', amount: 95, category: 'Bollette', date: iso(15), note: 'Luce e gas' });
-  await createTransaction({ type: 'expense', amount: 60, category: 'Trasporti', date: iso(12) });
-  await createTransaction({ type: 'expense', amount: 45, category: 'Ristoranti', date: iso(8) });
-  await createTransaction({ type: 'expense', amount: 120, category: 'Shopping', date: iso(5) });
-  await createTransaction({ type: 'income', amount: 150, category: 'Extra', date: iso(4), note: 'Lavoretto' });
-  await createTransaction({ type: 'expense', amount: 35, category: 'Svago', date: iso(2), note: 'Cinema' });
-  await createTransaction({ type: 'expense', amount: 72, category: 'Spesa', date: iso(1) });
+  await createTransaction({ type: 'income', amount: 2400, category: 'salary', date: iso(25) });
+  await createTransaction({ type: 'expense', amount: 780, category: 'home', date: iso(22), note: 'Affitto' });
+  await createTransaction({ type: 'expense', amount: 210, category: 'groceries', date: iso(18) });
+  await createTransaction({ type: 'expense', amount: 95, category: 'bills', date: iso(15), note: 'Luce e gas' });
+  await createTransaction({ type: 'expense', amount: 60, category: 'transport', date: iso(12) });
+  await createTransaction({ type: 'expense', amount: 45, category: 'restaurants', date: iso(8) });
+  await createTransaction({ type: 'expense', amount: 120, category: 'shopping', date: iso(5) });
+  await createTransaction({ type: 'income', amount: 150, category: 'extra', date: iso(4), note: 'Lavoretto' });
+  await createTransaction({ type: 'expense', amount: 35, category: 'leisure', date: iso(2), note: 'Cinema' });
+  await createTransaction({ type: 'expense', amount: 72, category: 'groceries', date: iso(1) });
 
   // Current-month set so the money-flow (Sankey) always has data to show.
   const mDay = (d: number) => format(new Date(new Date().getFullYear(), new Date().getMonth(), d), 'yyyy-MM-dd');
-  await createTransaction({ type: 'income', amount: 2400, category: 'Stipendio', date: mDay(1) });
-  await createTransaction({ type: 'expense', amount: 860, category: 'Casa', date: mDay(1), note: 'Affitto' });
-  await createTransaction({ type: 'expense', amount: 220, category: 'Spesa', date: mDay(2) });
-  await createTransaction({ type: 'expense', amount: 95, category: 'Bollette', date: mDay(3) });
-  await createTransaction({ type: 'expense', amount: 60, category: 'Trasporti', date: mDay(4) });
-  await createTransaction({ type: 'expense', amount: 120, category: 'Shopping', date: mDay(5) });
-  await createTransaction({ type: 'expense', amount: 45, category: 'Ristoranti', date: mDay(6) });
+  await createTransaction({ type: 'income', amount: 2400, category: 'salary', date: mDay(1) });
+  await createTransaction({ type: 'expense', amount: 860, category: 'home', date: mDay(1), note: 'Affitto' });
+  await createTransaction({ type: 'expense', amount: 220, category: 'groceries', date: mDay(2) });
+  await createTransaction({ type: 'expense', amount: 95, category: 'bills', date: mDay(3) });
+  await createTransaction({ type: 'expense', amount: 60, category: 'transport', date: mDay(4) });
+  await createTransaction({ type: 'expense', amount: 120, category: 'shopping', date: mDay(5) });
+  await createTransaction({ type: 'expense', amount: 45, category: 'restaurants', date: mDay(6) });
 
   // -- Water (ml; ~1L–1.8L per day) -----------------------------------------
   for (let d = 0; d < 7; d++) await setWaterMl(iso(d), rand(5, 9) * 200);

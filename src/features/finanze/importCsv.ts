@@ -141,7 +141,7 @@ export function parseBankCsv(text: string): ParsedTx[] {
 
     if (!Number.isFinite(amount) || amount === 0) continue;
     const note = descIdx >= 0 ? (cols[descIdx] ?? '').slice(0, 80) : undefined;
-    out.push({ type, amount, category: type === 'income' ? 'Altro' : 'Altro', note: note || undefined, date });
+    out.push({ type, amount, category: 'other', note: note || undefined, date });
   }
   return out;
 }
