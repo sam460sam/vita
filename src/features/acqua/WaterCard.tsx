@@ -77,13 +77,19 @@ export function WaterCard({ settings }: { settings: Settings }) {
         )}
       </div>
 
-      {/* Add buttons: glass or 1 liter */}
+      {/* Add buttons: glass, 500 ml or 1 liter */}
       <div className="flex gap-2 mt-3">
         <button
           onClick={() => add(glassMl)}
           className="flex-1 h-11 rounded-btn bg-section active:bg-divider flex items-center justify-center gap-2 text-[14px] font-semibold text-ink"
         >
           <GlassWater size={17} style={{ color: WATER_COLOR }} /> + {t('water.glass')}
+        </button>
+        <button
+          onClick={() => add(500)}
+          className="flex-1 h-11 rounded-btn bg-section active:bg-divider flex items-center justify-center gap-2 text-[14px] font-semibold text-ink"
+        >
+          <Droplet size={17} style={{ color: WATER_COLOR }} /> + {t('water.halfLiter')}
         </button>
         <button
           onClick={() => add(1000)}

@@ -397,6 +397,7 @@ export const it = {
   'water.title': 'Acqua',
   'water.today': 'Acqua oggi',
   'water.glass': 'Bicchiere',
+  'water.halfLiter': '500 ml',
   'water.liter': '1 Litro',
   'water.goalReached': 'Obiettivo raggiunto! 💧',
   'water.add': 'Aggiungi',

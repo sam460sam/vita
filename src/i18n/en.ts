@@ -394,6 +394,7 @@ export const en: Record<TKey, string> = {
   'water.title': 'Water',
   'water.today': 'Water today',
   'water.glass': 'Glass',
+  'water.halfLiter': '500 ml',
   'water.liter': '1 Liter',
   'water.goalReached': 'Goal reached! 💧',
   'water.add': 'Add',
