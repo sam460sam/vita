@@ -522,7 +522,7 @@ export const en: Record<TKey, string> = {
   'onboard.aha.focus': 'Focus: {focus}',
   // Recommended habits
   'rec.water': 'Drink 3 liters of water',
-  'rec.nosmoke': 'Quit smoking',
+  'rec.nosmoke': 'Smoke-free day',
   'rec.move': 'Walk 10,000 steps',
   'rec.read': 'Read 20 minutes',
   'rec.meditate': 'Meditate',

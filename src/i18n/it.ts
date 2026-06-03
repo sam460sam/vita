@@ -525,7 +525,7 @@ export const it = {
   'onboard.aha.focus': 'Focus: {focus}',
   // Recommended habits
   'rec.water': "Bere 3 litri d'acqua",
-  'rec.nosmoke': 'Smettere di fumare',
+  'rec.nosmoke': 'Giornata senza fumo',
   'rec.move': 'Camminare 10.000 passi',
   'rec.read': 'Leggere 20 minuti',
   'rec.meditate': 'Meditare',
