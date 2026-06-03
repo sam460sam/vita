@@ -7,9 +7,9 @@ import type { ModuleId, WidgetInstance, WidgetSize, WidgetType } from '@/data/ty
  */
 export function defaultWidgets(enabled: ModuleId[]): WidgetInstance[] {
   const plan: { type: WidgetType; size: WidgetSize }[] = [
-    { type: 'momentum', size: 'large' },
-    { type: 'quick-actions', size: 'medium' },
+    { type: 'momentum', size: 'medium' },
     { type: 'water', size: 'medium' },
+    { type: 'quick-actions', size: 'medium' },
   ];
   if (enabled.includes('attivita')) plan.push({ type: 'activity-rings', size: 'medium' });
   if (enabled.includes('abitudini')) plan.push({ type: 'habit-streak', size: 'small' });

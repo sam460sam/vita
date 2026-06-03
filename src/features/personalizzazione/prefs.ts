@@ -70,10 +70,11 @@ export function useHomeWidgets(): { loading: boolean; widgets: WidgetInstance[];
   // new React keys — on every render). Memoised on the enabled-modules set.
   const fallback = useMemo(() => defaultWidgets(enabledKey ? (enabledKey.split(',') as ModuleId[]) : []), [enabledKey]);
 
+  // `undefined` = still loading; `null` = loaded but no custom layout saved yet.
   if (layout === undefined || settings === undefined) {
     return { loading: true, widgets: [], isDefault: true };
   }
-  if (!layout) {
+  if (layout === null) {
     return { loading: false, widgets: fallback, isDefault: true };
   }
   return { loading: false, widgets: [...layout.widgets].sort((a, b) => a.position - b.position), isDefault: false };

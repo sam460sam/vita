@@ -77,9 +77,11 @@ export async function completeOnboarding(selected: ModuleId[], extra?: Partial<S
 // ---------------------------------------------------------------------------
 // Personalisation — Apple-style widget home (singleton row, id = 'home')
 // ---------------------------------------------------------------------------
-/** Read-only home layout accessor (safe inside liveQuery). */
-export async function readHomeLayout(): Promise<HomeLayout | undefined> {
-  return db.homeLayout.get('home');
+/** Read-only home layout accessor (safe inside liveQuery). Returns `null` (not
+ *  `undefined`) when no layout has been saved, so callers can tell "still
+ *  loading" (undefined) apart from "no custom layout yet" (null). */
+export async function readHomeLayout(): Promise<HomeLayout | null> {
+  return (await db.homeLayout.get('home')) ?? null;
 }
 
 export async function saveHomeLayout(widgets: WidgetInstance[]): Promise<void> {
