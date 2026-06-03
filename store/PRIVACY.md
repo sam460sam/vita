@@ -41,7 +41,7 @@ Vita is not directed at children under 13.
 If this policy changes, the date above will be updated.
 
 ### Contact
-For any question about privacy: **[your-email@example.com]**
+For any question about privacy: **gubertsamuele31@gmail.com**
 
 ---
 
@@ -84,4 +84,4 @@ Vita non è rivolta a minori di 13 anni.
 Se questa policy cambia, verrà aggiornata la data in alto.
 
 ### Contatti
-Per qualsiasi domanda sulla privacy: **[tua-email@esempio.com]**
+Per qualsiasi domanda sulla privacy: **gubertsamuele31@gmail.com**

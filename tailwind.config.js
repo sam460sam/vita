@@ -41,7 +41,7 @@ export default {
         sheet: '0 -8px 40px rgba(0,0,0,0.12)',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
       },
       fontVariantNumeric: {
         tabular: 'tabular-nums',

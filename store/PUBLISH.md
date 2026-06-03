@@ -9,6 +9,28 @@ Serve: un **Mac** con **Xcode** installato (gratis dal Mac App Store) e un
 
 ---
 
+## FASE 0 — Controllo diritti / copyright (leggi prima)
+Risultato dell'audit (giugno 2026):
+- **Codice e librerie:** tutte open-source con licenze permissive (React, Vite,
+  Tailwind MIT · Dexie Apache-2.0 · lucide-react ISC · Capacitor MIT). Uso
+  commerciale consentito. ✅
+- **Icone interfaccia:** lucide (ISC), libere. ✅
+- **Font:** rimosso il caricamento esterno da Google Fonts → ora usa i **font di
+  sistema** (San Francisco su iPhone). Nessun file di terzi incorporato, e la
+  promessa "niente lascia il dispositivo" diventa 100% vera. ✅
+- **Testi/dati demo:** originali. ✅
+- ⚠️ **Logo e panda (TUA responsabilità):** l'icona "V a foglie" e il panda li
+  hai forniti tu. Assicurati di **possederne i diritti** (creati da te, o
+  generati/licenziati con uso commerciale consentito). Se vengono da immagini
+  scaricate online senza licenza, vanno sostituiti. È l'unico punto che non
+  posso verificare io.
+- ⚠️ **Nome "Vita":** è una parola comune ma "Vita" da sola può confondersi con
+  marchi esistenti (es. Sony **PS Vita**). Consigliato pubblicare come
+  **"Vita — Life OS"** (o un nome più distintivo) e fare una ricerca veloce su
+  App Store + su un registro marchi. Basso rischio, ma meglio saperlo.
+
+---
+
 ## FASE 0 — Prepara il progetto (una volta)
 Sul Mac, nella cartella del progetto:
 ```bash
@@ -79,10 +101,10 @@ Nella pagina dell'app, sezione **1.0 Pronta per l'invio**:
 Apple chiede screenshot per iPhone 6.7" (1290×2796) e idealmente 6.5".
 Più semplice: usa il **simulatore iPhone 15 Pro Max** in Xcode (Cmd+S per
 salvare screenshot) sulle schermate migliori:
-1. Oggi (con Momentum + anelli)
-2. Abitudini (heatmap)
-3. Riepilogo settimanale
-4. Attività / Peso (BMI)
+1. Home a widget (la dashboard personalizzabile in stile Apple)
+2. Premi & Sfide (livelli, badge, panda) o la celebrazione "Daily Win"
+3. Abitudini (heatmap) o Riepilogo settimanale con insight
+4. Attività / Peso (BMI) o il digiuno intermittente
 5. Finanze (flusso "dove vanno i soldi")
 Carica 3–5 immagini. (Posso prepararti delle versioni "promo" se vuoi.)
 
