@@ -17,8 +17,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Vita — Life OS',
-        short_name: 'Vita',
+        name: 'Vyta — Life OS',
+        short_name: 'Vyta',
         description: 'Il tuo hub personale: salute, progetti, abitudini, diario e obiettivi.',
         theme_color: '#FFFFFF',
         background_color: '#FFFFFF',

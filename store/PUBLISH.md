@@ -1,4 +1,4 @@
-# Pubblicare Vita sull'App Store — guida passo passo
+# Pubblicare Vyta sull'App Store — guida passo passo
 
 Hai già l'**Apple Developer Program** pagato (99 €/anno) → ottimo, sei pronto.
 Questa è la tua prima pubblicazione: segui in ordine. Tempo realistico: mezza
@@ -24,10 +24,12 @@ Risultato dell'audit (giugno 2026):
   generati/licenziati con uso commerciale consentito). Se vengono da immagini
   scaricate online senza licenza, vanno sostituiti. È l'unico punto che non
   posso verificare io.
-- ⚠️ **Nome "Vita":** è una parola comune ma "Vita" da sola può confondersi con
-  marchi esistenti (es. Sony **PS Vita**). Consigliato pubblicare come
-  **"Vita — Life OS"** (o un nome più distintivo) e fare una ricerca veloce su
-  App Store + su un registro marchi. Basso rischio, ma meglio saperlo.
+- ⚠️ **Nome "Vyta — Life OS":** scelto perché "Vita" nella stessa categoria è
+  già usato da **"Vita +"** (VITAAPPS S.r.l.). "Vyta" è più distintivo. Nota:
+  esiste un'app fitness "Vyta" e un marchio "VYTA LIFE", quindi tieni un **nome
+  di riserva** (es. *Vytal — Life OS*). Il controllo **definitivo e gratuito**
+  del nome avviene su App Store Connect (FASE 3): se è occupato te lo dice subito.
+  La registrazione di un marchio è facoltativa e si può fare più avanti.
 
 ---
 
@@ -46,7 +48,7 @@ Questo apre **Xcode** sul progetto iOS.
 
 ## FASE 1 — Identità dell'app in Xcode
 1. In Xcode seleziona il progetto **App** (in alto a sinistra) → tab **General**.
-2. **Display Name:** `Vita`
+2. **Display Name:** `Vyta`
 3. **Bundle Identifier:** `app.vita.lifeos` (deve essere unico; se occupato usa
    `com.tuonome.vita`).
 4. **Version:** `1.0.0` · **Build:** `1`
@@ -68,7 +70,7 @@ Questo apre **Xcode** sul progetto iOS.
    **Nuova app**.
 2. Compila:
    - **Piattaforma:** iOS
-   - **Nome:** `Vita — Life OS` (se "Vita" da solo è occupato)
+   - **Nome:** `Vyta — Life OS` (se "Vyta" da solo è occupato)
    - **Lingua principale:** Italiano
    - **Bundle ID:** scegli `app.vita.lifeos` (lo stesso di Xcode)
    - **SKU:** `vita-001` (codice interno libero)

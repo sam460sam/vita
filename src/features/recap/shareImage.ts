@@ -38,7 +38,7 @@ export function buildRecapSVG(r: WeeklyRecap, s: RecapStrings): string {
     <rect width="600" height="600" rx="40" fill="url(#bg)"/>
     ${STAR}
     <text x="56" y="150" font-size="22" fill="#9CA3AF" font-family="Inter, sans-serif" letter-spacing="2">${title.toUpperCase()}</text>
-    <text x="56" y="190" font-size="40" font-weight="800" fill="#fff" font-family="Inter, sans-serif">Vita</text>
+    <text x="56" y="190" font-size="40" font-weight="800" fill="#fff" font-family="Inter, sans-serif">Vyta</text>
     ${row(270, s.habits, String(r.habitsCompleted), '#10B981')}
     ${row(320, s.water, liters, '#0EA5E9')}
     ${row(370, s.workouts, String(r.workouts), '#FF6B57')}

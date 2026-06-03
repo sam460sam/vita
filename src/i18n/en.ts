@@ -404,7 +404,7 @@ export const en: Record<TKey, string> = {
   // Stella — the helper mascot
   'stella.name': 'Stella',
   'stella.title': "Hi, I'm Stella ⭐",
-  'stella.subtitle': 'Your guide in Vita. How can I help?',
+  'stella.subtitle': 'Your guide in Vyta. How can I help?',
   'stella.placeholder': 'Type a question…',
   'stella.suggested': 'Frequent questions',
   'stella.goThere': 'Take me there',
@@ -413,7 +413,7 @@ export const en: Record<TKey, string> = {
   'stella.q.addTask': 'How do I add a task?',
   'stella.a.addTask': 'Tap the + button in the bottom center and choose "New task". You can give it a project, a due date, a priority and subtasks. See everything under Projects.',
   'stella.q.addHabit': 'How do habits work?',
-  'stella.a.addHabit': 'Create a habit from the + and check it off each day: Vita tracks your streak, record and completion rate. It\'s all in the Habits section with the heatmap.',
+  'stella.a.addHabit': 'Create a habit from the + and check it off each day: Vyta tracks your streak, record and completion rate. It\'s all in the Habits section with the heatmap.',
   'stella.q.water': 'How do I log water?',
   'stella.a.water': 'On the Today screen there\'s the Water card: tap "+ Glass" (200ml) or "+ 1 Liter". Set your goal and glass size in Settings.',
   'stella.q.workout': 'How do I log a workout?',
@@ -438,13 +438,13 @@ export const en: Record<TKey, string> = {
   'recap.journal': 'Journal entries',
   'recap.streak': 'Momentum streak',
   'recap.avgMomentum': 'Avg momentum',
-  'recap.tagline': 'Tracked with Vita ⭐',
-  'recap.empty': 'Use Vita for a few days and your recap will appear here.',
+  'recap.tagline': 'Tracked with Vyta ⭐',
+  'recap.empty': 'Use Vyta for a few days and your recap will appear here.',
   'recap.days': 'days',
 
   // More
   'more.title': 'More',
-  'more.tagline': 'Vita · your life OS',
+  'more.tagline': 'Vyta · your life OS',
 
   // Settings
   'settings.title': 'Settings',
@@ -469,12 +469,12 @@ export const en: Record<TKey, string> = {
   'settings.reminders.journal': 'Write in journal',
   'settings.reminders.weight': 'Weigh in',
   'reminder.weight.title': '⚖️ Weigh in',
-  'reminder.weight.body': 'Log your weight in Vita to track your progress.',
+  'reminder.weight.body': 'Log your weight in Vyta to track your progress.',
   'settings.reminders.evening': 'Close your day',
   'reminder.evening.title': '⭐ How was today?',
   'reminder.evening.body': 'Check your momentum and finish what’s left.',
   'reminder.water.title': '💧 Drink water',
-  'reminder.water.body': 'Remember to hydrate. Add a glass in Vita.',
+  'reminder.water.body': 'Remember to hydrate. Add a glass in Vyta.',
   'reminder.workout.title': '🏃 Time to move',
   'reminder.workout.body': 'Log a workout today and close your rings.',
   'reminder.journal.title': '📖 How was today?',
@@ -491,9 +491,9 @@ export const en: Record<TKey, string> = {
   'settings.invalidFile': 'Invalid file',
   'settings.demoConfirm': 'Load demo data? It will replace your current data. Export a backup first if you want to keep it.',
   'settings.demoLoaded': 'Demo data loaded',
-  'settings.clearConfirm': 'Delete ALL Vita data? This cannot be undone. Export a backup first if you want to keep it.',
+  'settings.clearConfirm': 'Delete ALL Vyta data? This cannot be undone. Export a backup first if you want to keep it.',
   'settings.cleared': 'All data deleted',
-  'settings.version': 'Vita v1.0 · offline-first · Capacitor-ready',
+  'settings.version': 'Vyta v1.0 · offline-first · Capacitor-ready',
 
   // Onboarding
   'onboard.skip': 'Skip',
@@ -506,7 +506,7 @@ export const en: Record<TKey, string> = {
   'onboard.habits.custom': 'Or write your own',
   'onboard.habits.customPh': 'e.g. Play the guitar',
   'onboard.focus.title': 'What matters most to you?',
-  'onboard.focus.desc': "We'll tailor Vita for you. You can always use everything.",
+  'onboard.focus.desc': "We'll tailor Vyta for you. You can always use everything.",
   'onboard.focus.health': 'Health & fitness',
   'onboard.focus.healthDesc': 'Workouts, weight, water, habits',
   'onboard.focus.productivity': 'Productivity',
@@ -529,7 +529,7 @@ export const en: Record<TKey, string> = {
   'rec.sleep': 'Sleep 8 hours',
   'rec.gym': 'Go to the gym',
   'rec.stretch': 'Stretch',
-  'onboard.1.title': 'Welcome to Vita',
+  'onboard.1.title': 'Welcome to Vyta',
   'onboard.1.desc': 'Your personal hub: health, projects, habits, journal and goals. All in one place.',
   'onboard.2.title': 'Offline, and yours',
   'onboard.2.desc': 'Your data stays on your device. No account, no forced cloud. Export a backup anytime.',
@@ -539,8 +539,8 @@ export const en: Record<TKey, string> = {
   'onboard.namePh': 'Your name',
 
   // Pro
-  'pro.title': 'Vita Pro',
-  'pro.subtitle': 'Unlock the full power of Vita',
+  'pro.title': 'Vyta Pro',
+  'pro.subtitle': 'Unlock the full power of Vyta',
   'pro.feature.finances': 'Finances and monthly budget',
   'pro.feature.goals': 'Advanced linked goals',
   'pro.feature.calendar': 'Unified calendar',
@@ -553,8 +553,8 @@ export const en: Record<TKey, string> = {
   'pro.soon': 'Subscriptions are coming soon. For now everything is unlocked!',
   'pro.restore': 'Restore purchases',
   'pro.locked.title': 'Pro feature',
-  'pro.locked.desc': 'This section is part of Vita Pro.',
-  'pro.locked.cta': 'Discover Vita Pro',
+  'pro.locked.desc': 'This section is part of Vyta Pro.',
+  'pro.locked.cta': 'Discover Vyta Pro',
 
   // Dashboard tagline
   'today.tagline': 'Measure your habits to improve your health and wellbeing.',
@@ -625,7 +625,7 @@ export const en: Record<TKey, string> = {
 
   // Badges
   'badge.firstStep.title': 'First step',
-  'badge.firstStep.desc': 'First day with Vita',
+  'badge.firstStep.desc': 'First day with Vyta',
   'badge.firstWeek.title': 'First week',
   'badge.firstWeek.desc': '7 active days',
   'badge.streak30.title': '30 streak',
@@ -673,7 +673,7 @@ export const en: Record<TKey, string> = {
   // Motivational reminder
   'settings.reminders.motivation': 'Motivation',
   'reminder.motivation.title': '🐼 A thought for you',
-  'reminder.motivation.body': 'Open Vita for today’s affirmation and one small step forward.',
+  'reminder.motivation.body': 'Open Vyta for today’s affirmation and one small step forward.',
 
   // Personalisation — module descriptions
   'module.abitudini.desc': 'Build routines and streaks',
@@ -731,7 +731,7 @@ export const en: Record<TKey, string> = {
   'backup.checking': 'Checking storage…',
   'backup.persisted': 'Persistent storage is on: your data won’t be cleared automatically.',
   'backup.notPersisted': 'Export a backup now and then: on the web, data may be cleared by the browser after long inactivity.',
-  'backup.note': 'Vita keeps everything on your device only. To avoid losing data on a new phone or after reinstalling, export a backup and save it to iCloud or Drive, then restore from the file.',
+  'backup.note': 'Vyta keeps everything on your device only. To avoid losing data on a new phone or after reinstalling, export a backup and save it to iCloud or Drive, then restore from the file.',
   'backup.last': 'Last backup',
   'backup.export': 'Export backup',
   'backup.restore': 'Restore from file',
@@ -743,8 +743,8 @@ export const en: Record<TKey, string> = {
   'error.desc': 'Don’t worry: your data is safe on your device. Reload to continue.',
   'error.reload': 'Reload app',
 
-  // Onboarding — what is Vita / why use it
-  'onboard.why.title': 'What is Vita?',
+  // Onboarding — what is Vyta / why use it
+  'onboard.why.title': 'What is Vyta?',
   'onboard.why.desc': 'Your "operating system" for life: everything that matters, in one app.',
   'onboard.why.1.title': 'All in one place',
   'onboard.why.1.desc': 'Health, habits, activity, finances, journal and goals together.',

@@ -13,7 +13,7 @@ export function Sidebar() {
   return (
     <aside className="hidden lg:flex flex-col w-64 flex-shrink-0 border-r border-line dark:border-transparent bg-card h-screen sticky top-0 px-3 py-5">
       <div className="px-3 mb-6">
-        <span className="text-2xl font-bold tracking-tight text-ink">Vita</span>
+        <span className="text-2xl font-bold tracking-tight text-ink">Vyta</span>
       </div>
 
       <button

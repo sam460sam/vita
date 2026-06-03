@@ -1,4 +1,4 @@
-# Vita — App Store listing copy
+# Vyta — App Store listing copy
 
 Copy-paste ready. Replace bracketed notes. Keep within Apple's limits.
 
@@ -7,7 +7,7 @@ Copy-paste ready. Replace bracketed notes. Keep within Apple's limits.
 ## 🇮🇹 Italiano
 
 **Nome app (max 30):**
-`Vita — Life OS`
+`Vyta — Life OS`
 
 **Sottotitolo (max 30):**
 `Abitudini, salute e progetti`
@@ -20,7 +20,7 @@ Copy-paste ready. Replace bracketed notes. Keep within Apple's limits.
 
 **Descrizione completa:**
 ```
-Vita riunisce in un'unica app tutto ciò che oggi tieni sparso in cinque app diverse: salute e attività, abitudini, progetti, diario, peso e finanze. Pulita, seria, privata.
+Vyta riunisce in un'unica app tutto ciò che oggi tieni sparso in cinque app diverse: salute e attività, abitudini, progetti, diario, peso e finanze. Pulita, seria, privata.
 
 ⭐ MOMENTUM & STELLA
 Ogni giorno Stella, la tua mascotte, riassume i progressi di tutta la tua vita in un unico punteggio. Gentile, mai punitiva: ti accompagna passo dopo passo.
@@ -51,7 +51,7 @@ Tutti i dati restano SOLO sul tuo dispositivo. Nessun account, nessun cloud obbl
 
 🌙 Tema chiaro/scuro · Italiano e Inglese · Riepilogo settimanale condivisibile.
 
-Vita è gratis. Vita Pro (opzionale) sblocca finanze avanzate, obiettivi e altro.
+Vyta è gratis. Vyta Pro (opzionale) sblocca finanze avanzate, obiettivi e altro.
 ```
 
 ---
@@ -59,7 +59,7 @@ Vita è gratis. Vita Pro (opzionale) sblocca finanze avanzate, obiettivi e altro
 ## 🇬🇧 English
 
 **App name (max 30):**
-`Vita — Life OS`
+`Vyta — Life OS`
 
 **Subtitle (max 30):**
 `Habits, health & projects`
@@ -72,7 +72,7 @@ Vita è gratis. Vita Pro (opzionale) sblocca finanze avanzate, obiettivi e altro
 
 **Full description:**
 ```
-Vita brings together everything you keep scattered across five different apps: health & activity, habits, projects, journal, weight and finances. Clean, serious, private.
+Vyta brings together everything you keep scattered across five different apps: health & activity, habits, projects, journal, weight and finances. Clean, serious, private.
 
 ⭐ MOMENTUM & STELLA
 Every day Stella, your star mascot, sums up your whole-life progress into a single score. Gentle, never punishing — she's with you step by step.
@@ -103,7 +103,7 @@ All your data stays ONLY on your device. No account, no forced cloud, works offl
 
 🌙 Light/dark theme · English and Italian · Shareable weekly recap.
 
-Vita is free. Vita Pro (optional) unlocks advanced finances, goals and more.
+Vyta is free. Vyta Pro (optional) unlocks advanced finances, goals and more.
 ```
 
 ---

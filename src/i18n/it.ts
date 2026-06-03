@@ -407,7 +407,7 @@ export const it = {
   // Stella — the helper mascot
   'stella.name': 'Stella',
   'stella.title': 'Ciao, sono Stella ⭐',
-  'stella.subtitle': 'La tua guida in Vita. Come posso aiutarti?',
+  'stella.subtitle': 'La tua guida in Vyta. Come posso aiutarti?',
   'stella.placeholder': 'Scrivi una domanda…',
   'stella.suggested': 'Domande frequenti',
   'stella.goThere': 'Portami lì',
@@ -416,7 +416,7 @@ export const it = {
   'stella.q.addTask': 'Come aggiungo un task?',
   'stella.a.addTask': 'Tocca il pulsante + al centro in basso e scegli "Nuova task". Puoi assegnarle un progetto, una scadenza, una priorità e delle sottotask. Vedi tutto in Progetti.',
   'stella.q.addHabit': 'Come funzionano le abitudini?',
-  'stella.a.addHabit': "Crea un'abitudine dal + e spuntala ogni giorno: Vita conta la tua streak, il record e la percentuale. Trovi tutto nella sezione Abitudini con la heatmap.",
+  'stella.a.addHabit': "Crea un'abitudine dal + e spuntala ogni giorno: Vyta conta la tua streak, il record e la percentuale. Trovi tutto nella sezione Abitudini con la heatmap.",
   'stella.q.water': "Come segno l'acqua?",
   'stella.a.water': 'Nella schermata Oggi trovi la card Acqua: tocca "+ Bicchiere" (200ml) o "+ 1 Litro". Imposta obiettivo e dimensione del bicchiere in Impostazioni.',
   'stella.q.workout': 'Come registro un allenamento?',
@@ -441,13 +441,13 @@ export const it = {
   'recap.journal': 'Voci di diario',
   'recap.streak': 'Streak momentum',
   'recap.avgMomentum': 'Momentum medio',
-  'recap.tagline': 'Tracciata con Vita ⭐',
-  'recap.empty': 'Usa Vita per qualche giorno e qui troverai il tuo riepilogo.',
+  'recap.tagline': 'Tracciata con Vyta ⭐',
+  'recap.empty': 'Usa Vyta per qualche giorno e qui troverai il tuo riepilogo.',
   'recap.days': 'giorni',
 
   // More
   'more.title': 'Altro',
-  'more.tagline': 'Vita · il tuo life OS',
+  'more.tagline': 'Vyta · il tuo life OS',
 
   // Settings
   'settings.title': 'Impostazioni',
@@ -472,12 +472,12 @@ export const it = {
   'settings.reminders.journal': 'Scrivi nel diario',
   'settings.reminders.weight': 'Pesati',
   'reminder.weight.title': '⚖️ Pesati',
-  'reminder.weight.body': 'Registra il tuo peso in Vita per seguire i progressi.',
+  'reminder.weight.body': 'Registra il tuo peso in Vyta per seguire i progressi.',
   'settings.reminders.evening': 'Chiudi la giornata',
   'reminder.evening.title': '⭐ Com’è andata oggi?',
   'reminder.evening.body': 'Controlla il tuo momentum e completa ciò che manca.',
   'reminder.water.title': '💧 Bevi acqua',
-  'reminder.water.body': 'Ricordati di idratarti. Aggiungi un bicchiere in Vita.',
+  'reminder.water.body': 'Ricordati di idratarti. Aggiungi un bicchiere in Vyta.',
   'reminder.workout.title': '🏃 Ora di muoversi',
   'reminder.workout.body': 'Registra un allenamento oggi e chiudi gli anelli.',
   'reminder.journal.title': '📖 Com’è andata oggi?',
@@ -494,9 +494,9 @@ export const it = {
   'settings.invalidFile': 'File non valido',
   'settings.demoConfirm': 'Caricare i dati demo? Sostituiranno i dati attuali. Esporta prima un backup se vuoi conservarli.',
   'settings.demoLoaded': 'Dati demo caricati',
-  'settings.clearConfirm': 'Eliminare TUTTI i dati di Vita? Questa azione non è reversibile. Esporta prima un backup se vuoi conservarli.',
+  'settings.clearConfirm': 'Eliminare TUTTI i dati di Vyta? Questa azione non è reversibile. Esporta prima un backup se vuoi conservarli.',
   'settings.cleared': 'Tutti i dati eliminati',
-  'settings.version': 'Vita v1.0 · offline-first · Capacitor-ready',
+  'settings.version': 'Vyta v1.0 · offline-first · Capacitor-ready',
 
   // Onboarding
   'onboard.skip': 'Salta',
@@ -509,7 +509,7 @@ export const it = {
   'onboard.habits.custom': 'Oppure scrivine una tua',
   'onboard.habits.customPh': 'es. Suonare la chitarra',
   'onboard.focus.title': 'Cosa ti interessa di più?',
-  'onboard.focus.desc': 'Personalizziamo Vita per te. Potrai sempre usare tutto.',
+  'onboard.focus.desc': 'Personalizziamo Vyta per te. Potrai sempre usare tutto.',
   'onboard.focus.health': 'Salute & forma fisica',
   'onboard.focus.healthDesc': 'Allenamenti, peso, acqua, abitudini',
   'onboard.focus.productivity': 'Produttività',
@@ -532,7 +532,7 @@ export const it = {
   'rec.sleep': 'Dormire 8 ore',
   'rec.gym': 'Andare in palestra',
   'rec.stretch': 'Fare stretching',
-  'onboard.1.title': 'Benvenuto in Vita',
+  'onboard.1.title': 'Benvenuto in Vyta',
   'onboard.1.desc': 'Il tuo hub personale: salute, progetti, abitudini, diario e obiettivi. Tutto in un posto solo.',
   'onboard.2.title': 'Tutto offline, tuo',
   'onboard.2.desc': 'I tuoi dati restano sul dispositivo. Nessun account, nessun cloud obbligatorio. Esporta un backup quando vuoi.',
@@ -542,8 +542,8 @@ export const it = {
   'onboard.namePh': 'Il tuo nome',
 
   // Pro
-  'pro.title': 'Vita Pro',
-  'pro.subtitle': 'Sblocca tutto il potenziale di Vita',
+  'pro.title': 'Vyta Pro',
+  'pro.subtitle': 'Sblocca tutto il potenziale di Vyta',
   'pro.feature.finances': 'Finanze e budget mensile',
   'pro.feature.goals': 'Obiettivi avanzati collegati',
   'pro.feature.calendar': 'Calendario unificato',
@@ -556,8 +556,8 @@ export const it = {
   'pro.soon': 'Gli abbonamenti arriveranno presto. Per ora tutto è sbloccato!',
   'pro.restore': 'Ripristina acquisti',
   'pro.locked.title': 'Funzione Pro',
-  'pro.locked.desc': 'Questa sezione fa parte di Vita Pro.',
-  'pro.locked.cta': 'Scopri Vita Pro',
+  'pro.locked.desc': 'Questa sezione fa parte di Vyta Pro.',
+  'pro.locked.cta': 'Scopri Vyta Pro',
 
   // Dashboard tagline
   'today.tagline': 'Misura le tue abitudini per migliorare salute e benessere.',
@@ -628,7 +628,7 @@ export const it = {
 
   // Badges
   'badge.firstStep.title': 'Primo passo',
-  'badge.firstStep.desc': 'Primo giorno con Vita',
+  'badge.firstStep.desc': 'Primo giorno con Vyta',
   'badge.firstWeek.title': 'Prima settimana',
   'badge.firstWeek.desc': '7 giorni attivi',
   'badge.streak30.title': 'Streak 30',
@@ -676,7 +676,7 @@ export const it = {
   // Motivational reminder
   'settings.reminders.motivation': 'Motivazione',
   'reminder.motivation.title': '🐼 Un pensiero per te',
-  'reminder.motivation.body': 'Apri Vita per la frase del giorno e un piccolo passo avanti.',
+  'reminder.motivation.body': 'Apri Vyta per la frase del giorno e un piccolo passo avanti.',
 
   // Personalisation — module descriptions
   'module.abitudini.desc': 'Costruisci routine e streak',
@@ -734,7 +734,7 @@ export const it = {
   'backup.checking': 'Verifica archiviazione…',
   'backup.persisted': 'Archiviazione persistente attiva: i tuoi dati non verranno cancellati automaticamente.',
   'backup.notPersisted': 'Esporta un backup ogni tanto: su web i dati potrebbero essere rimossi dal browser dopo lunghi periodi di inattività.',
-  'backup.note': 'Vita salva tutto solo sul tuo dispositivo. Per non perdere i dati su un nuovo telefono o dopo una reinstallazione, esporta un backup e salvalo su iCloud o Drive; poi ripristinalo dal file.',
+  'backup.note': 'Vyta salva tutto solo sul tuo dispositivo. Per non perdere i dati su un nuovo telefono o dopo una reinstallazione, esporta un backup e salvalo su iCloud o Drive; poi ripristinalo dal file.',
   'backup.last': 'Ultimo backup',
   'backup.export': 'Esporta backup',
   'backup.restore': 'Ripristina da file',
@@ -746,8 +746,8 @@ export const it = {
   'error.desc': 'Niente panico: i tuoi dati sono al sicuro sul dispositivo. Ricarica per continuare.',
   'error.reload': 'Ricarica app',
 
-  // Onboarding — what is Vita / why use it
-  'onboard.why.title': 'Cos’è Vita?',
+  // Onboarding — what is Vyta / why use it
+  'onboard.why.title': 'Cos’è Vyta?',
   'onboard.why.desc': 'Il tuo "sistema operativo" per la vita: tutto ciò che conta, in un’unica app.',
   'onboard.why.1.title': 'Tutto in un posto',
   'onboard.why.1.desc': 'Salute, abitudini, attività, finanze, diario e obiettivi insieme.',

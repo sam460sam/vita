@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'app.vita.lifeos',
-  appName: 'Vita',
+  appName: 'Vyta',
   // Vite builds the web app into dist/. `npx cap sync` copies it into the
   // native iOS/Android projects.
   webDir: 'dist',

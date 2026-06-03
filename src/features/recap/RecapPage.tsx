@@ -91,7 +91,7 @@ export function RecapPage() {
             <div className="flex flex-col items-center text-center pt-2 pb-4">
               <StarMascot size={72} mood="starstruck" animated />
               <div className="metric-label mt-3">{s.name ? `${s.name} · ${t('recap.week')}` : t('recap.week')}</div>
-              <div className="text-2xl font-bold text-ink">Vita</div>
+              <div className="text-2xl font-bold text-ink">Vyta</div>
             </div>
             <div className="space-y-3">
               {rows.map((row) => {
