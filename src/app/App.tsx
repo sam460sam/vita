@@ -9,6 +9,7 @@ import { StellaProvider } from '@/features/stella';
 import { Sidebar } from './Sidebar';
 import { TabBar } from './TabBar';
 import { GlobalSheets } from './GlobalSheets';
+import { RouteErrorBoundary } from './ErrorBoundary';
 import { Onboarding, hasOnboarded } from '@/features/onboarding/Onboarding';
 
 // Core modules — eager (part of the primary experience).
@@ -47,8 +48,9 @@ export function App() {
               <div className="min-h-screen flex bg-section">
                 <Sidebar />
                 <main className="flex-1 min-w-0">
-                  <Suspense fallback={<div className="p-8 text-center text-ink-3" />}>
-                    <Routes>
+                  <RouteErrorBoundary>
+                    <Suspense fallback={<div className="p-8 text-center text-ink-3" />}>
+                      <Routes>
                       <Route path="/" element={<Navigate to="/oggi" replace />} />
                       <Route path="/oggi" element={<HomeDashboard />} />
                       <Route path="/oggi-classic" element={<TodayPage />} />
@@ -68,8 +70,9 @@ export function App() {
                       <Route path="/pro" element={<ProPage />} />
                       <Route path="/impostazioni" element={<SettingsPage />} />
                       <Route path="*" element={<Navigate to="/oggi" replace />} />
-                    </Routes>
-                  </Suspense>
+                      </Routes>
+                    </Suspense>
+                  </RouteErrorBoundary>
                 </main>
               </div>
               <TabBar />

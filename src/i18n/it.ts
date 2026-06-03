@@ -740,6 +740,23 @@ export const it = {
   'backup.restore': 'Ripristina da file',
   'backup.nudge.title': 'Proteggi i tuoi dati',
   'backup.nudge.desc': 'Non fai un backup da un po’. Esportane uno e salvalo su iCloud/Drive per non perderlo.',
+
+  // Error recovery (instead of a blank screen)
+  'error.title': 'Ops, qualcosa è andato storto',
+  'error.desc': 'Niente panico: i tuoi dati sono al sicuro sul dispositivo. Ricarica per continuare.',
+  'error.reload': 'Ricarica app',
+
+  // Onboarding — what is Vita / why use it
+  'onboard.why.title': 'Cos’è Vita?',
+  'onboard.why.desc': 'Il tuo "sistema operativo" per la vita: tutto ciò che conta, in un’unica app.',
+  'onboard.why.1.title': 'Tutto in un posto',
+  'onboard.why.1.desc': 'Salute, abitudini, attività, finanze, diario e obiettivi insieme.',
+  'onboard.why.2.title': 'Progressi e motivazione',
+  'onboard.why.2.desc': 'Vedi come migliori giorno dopo giorno, con livelli e traguardi.',
+  'onboard.why.3.title': 'Privato e offline',
+  'onboard.why.3.desc': 'I tuoi dati restano sul tuo dispositivo. Nessun account richiesto.',
+  'onboard.why.4.title': 'Un panda al tuo fianco',
+  'onboard.why.4.desc': 'Ti incoraggia, ti dà consigli e festeggia i tuoi successi.',
 } as const;
 
 export type TKey = keyof typeof it;

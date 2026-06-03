@@ -737,4 +737,21 @@ export const en: Record<TKey, string> = {
   'backup.restore': 'Restore from file',
   'backup.nudge.title': 'Protect your data',
   'backup.nudge.desc': 'You haven’t backed up in a while. Export one and save it to iCloud/Drive so you don’t lose it.',
+
+  // Error recovery (instead of a blank screen)
+  'error.title': 'Oops, something went wrong',
+  'error.desc': 'Don’t worry: your data is safe on your device. Reload to continue.',
+  'error.reload': 'Reload app',
+
+  // Onboarding — what is Vita / why use it
+  'onboard.why.title': 'What is Vita?',
+  'onboard.why.desc': 'Your "operating system" for life: everything that matters, in one app.',
+  'onboard.why.1.title': 'All in one place',
+  'onboard.why.1.desc': 'Health, habits, activity, finances, journal and goals together.',
+  'onboard.why.2.title': 'Progress and motivation',
+  'onboard.why.2.desc': 'See yourself improve day by day, with levels and milestones.',
+  'onboard.why.3.title': 'Private and offline',
+  'onboard.why.3.desc': 'Your data stays on your device. No account required.',
+  'onboard.why.4.title': 'A panda by your side',
+  'onboard.why.4.desc': 'It cheers you on, gives tips and celebrates your wins.',
 };

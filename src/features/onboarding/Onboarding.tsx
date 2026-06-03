@@ -39,8 +39,8 @@ export function resetOnboarding() {
   }
 }
 
-type Step = 'lang' | 'welcome1' | 'focus' | 'modules' | 'habits' | 'name' | 'aha';
-const STEPS: Step[] = ['lang', 'welcome1', 'focus', 'modules', 'habits', 'name', 'aha'];
+type Step = 'lang' | 'welcome1' | 'intro' | 'focus' | 'modules' | 'habits' | 'name' | 'aha';
+const STEPS: Step[] = ['lang', 'welcome1', 'intro', 'focus', 'modules', 'habits', 'name', 'aha'];
 
 /** First-run onboarding: language → welcome → focus → sections → habits → name → aha. */
 export function Onboarding({ onDone }: { onDone: () => void }) {
@@ -146,6 +146,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
             <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.1.desc')}</p>
           </div>
         )}
+        {step === 'intro' && <IntroStep />}
         {step === 'focus' && <FocusStep value={focus} onPick={setFocus} />}
         {step === 'modules' && <ModulesStep selected={modules} onToggle={toggleModule} />}
         {step === 'habits' && (
@@ -232,6 +233,35 @@ function FocusStep({ value, onPick }: { value: Focus; onPick: (f: Focus) => void
             </button>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+function IntroStep() {
+  const { t } = useI18n();
+  const rows: { emoji: string; titleKey: TKey; descKey: TKey }[] = [
+    { emoji: '🎯', titleKey: 'onboard.why.1.title', descKey: 'onboard.why.1.desc' },
+    { emoji: '📈', titleKey: 'onboard.why.2.title', descKey: 'onboard.why.2.desc' },
+    { emoji: '🔒', titleKey: 'onboard.why.3.title', descKey: 'onboard.why.3.desc' },
+    { emoji: '🐼', titleKey: 'onboard.why.4.title', descKey: 'onboard.why.4.desc' },
+  ];
+  return (
+    <div className="pt-4">
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-bold text-ink">{t('onboard.why.title')}</h1>
+        <p className="text-[15px] text-ink-2 mt-2 max-w-sm mx-auto leading-relaxed">{t('onboard.why.desc')}</p>
+      </div>
+      <div className="space-y-3 max-w-md mx-auto">
+        {rows.map((r) => (
+          <div key={r.titleKey} className="flex items-start gap-3 px-4 py-3 rounded-card border border-line dark:border-transparent dark:bg-section">
+            <span className="text-2xl leading-none mt-0.5">{r.emoji}</span>
+            <div className="min-w-0">
+              <div className="text-[15px] font-semibold text-ink">{t(r.titleKey)}</div>
+              <div className="text-[13px] text-ink-2 leading-snug">{t(r.descKey)}</div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
