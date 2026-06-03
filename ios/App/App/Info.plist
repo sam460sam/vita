@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>it</string>
 	<key>CFBundleDisplayName</key>
-        <string>Vita</string>
+        <string>Vyta</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -47,10 +47,14 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<!-- App uses only standard encryption (HTTPS); avoids the export-compliance
+	     question on every upload. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<!-- HealthKit usage strings (required when the HealthKit capability is added in Xcode) -->
 	<key>NSHealthShareUsageDescription</key>
-	<string>Vita usa i tuoi dati di Salute per mostrare allenamenti, passi e frequenza cardiaca.</string>
+	<string>Vyta usa i tuoi dati di Salute per mostrare allenamenti, passi e frequenza cardiaca.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>Vita può salvare i tuoi allenamenti in Salute.</string>
+	<string>Vyta può salvare i tuoi allenamenti in Salute.</string>
 </dict>
 </plist>
