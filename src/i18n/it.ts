@@ -542,23 +542,6 @@ export const it = {
   'onboard.name': 'Come ti chiami? (opzionale)',
   'onboard.namePh': 'Il tuo nome',
 
-  // Pro
-  'pro.title': 'Vyta Pro',
-  'pro.subtitle': 'Sblocca tutto il potenziale di Vyta',
-  'pro.feature.finances': 'Finanze e budget mensile',
-  'pro.feature.goals': 'Obiettivi avanzati collegati',
-  'pro.feature.calendar': 'Calendario unificato',
-  'pro.feature.stats': 'Statistiche estese',
-  'pro.feature.future': 'Tutte le funzioni future',
-  'pro.monthly': '3€ / mese',
-  'pro.yearly': '30€ / anno',
-  'pro.yearly.badge': '2 mesi gratis',
-  'pro.cta': 'Diventa Pro',
-  'pro.soon': 'Gli abbonamenti arriveranno presto. Per ora tutto è sbloccato!',
-  'pro.restore': 'Ripristina acquisti',
-  'pro.locked.title': 'Funzione Pro',
-  'pro.locked.desc': 'Questa sezione fa parte di Vyta Pro.',
-  'pro.locked.cta': 'Scopri Vyta Pro',
 
   // Dashboard tagline
   'today.tagline': 'Misura le tue abitudini per migliorare salute e benessere.',

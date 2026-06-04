@@ -3,7 +3,6 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from '@/ui';
 import { I18nProvider } from '@/i18n';
 import { ThemeProvider } from '@/theme/theme';
-import { PremiumProvider } from '@/premium/premium';
 import { QuickAddProvider } from './QuickAdd';
 import { StellaProvider } from '@/features/stella';
 import { Sidebar } from './Sidebar';
@@ -38,7 +37,6 @@ export function App() {
   return (
     <I18nProvider>
       <ThemeProvider>
-      <PremiumProvider>
         <ToastProvider>
           {/* HashRouter keeps deep-links working from static assets (Capacitor-ready). */}
           <HashRouter>
@@ -80,7 +78,6 @@ export function App() {
           </HashRouter>
           {!onboarded && <Onboarding onDone={() => setOnboarded(true)} />}
         </ToastProvider>
-      </PremiumProvider>
       </ThemeProvider>
     </I18nProvider>
   );
