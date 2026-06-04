@@ -27,7 +27,6 @@ const GoalsPage = lazy(() => import('@/features/obiettivi').then((m) => ({ defau
 const FinancesPage = lazy(() => import('@/features/finanze').then((m) => ({ default: m.FinancesPage })));
 const CalendarPage = lazy(() => import('@/features/calendario').then((m) => ({ default: m.CalendarPage })));
 const SettingsPage = lazy(() => import('@/features/impostazioni/SettingsPage').then((m) => ({ default: m.SettingsPage })));
-const ProPage = lazy(() => import('@/features/pro').then((m) => ({ default: m.ProPage })));
 const WeightPage = lazy(() => import('@/features/peso').then((m) => ({ default: m.WeightPage })));
 const BmiPage = lazy(() => import('@/features/peso').then((m) => ({ default: m.BmiPage })));
 const RecapPage = lazy(() => import('@/features/recap').then((m) => ({ default: m.RecapPage })));
@@ -67,7 +66,6 @@ export function App() {
                       <Route path="/finanze" element={<RequireModule id="finanze"><FinancesPage /></RequireModule>} />
                       <Route path="/calendario" element={<RequireModule id="calendario"><CalendarPage /></RequireModule>} />
                       <Route path="/altro" element={<MorePage />} />
-                      <Route path="/pro" element={<ProPage />} />
                       <Route path="/impostazioni" element={<SettingsPage />} />
                       <Route path="*" element={<Navigate to="/oggi" replace />} />
                       </Routes>
