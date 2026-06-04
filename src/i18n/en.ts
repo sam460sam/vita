@@ -394,6 +394,7 @@ export const en: Record<TKey, string> = {
   'water.title': 'Water',
   'water.today': 'Water today',
   'water.glass': 'Glass',
+  'water.halfLiter': '500 ml',
   'water.liter': '1 Liter',
   'water.goalReached': 'Goal reached! 💧',
   'water.add': 'Add',
@@ -522,7 +523,7 @@ export const en: Record<TKey, string> = {
   'onboard.aha.focus': 'Focus: {focus}',
   // Recommended habits
   'rec.water': 'Drink 3 liters of water',
-  'rec.nosmoke': 'Quit smoking',
+  'rec.nosmoke': 'Smoke-free day',
   'rec.move': 'Walk 10,000 steps',
   'rec.read': 'Read 20 minutes',
   'rec.meditate': 'Meditate',
@@ -538,23 +539,6 @@ export const en: Record<TKey, string> = {
   'onboard.name': "What's your name? (optional)",
   'onboard.namePh': 'Your name',
 
-  // Pro
-  'pro.title': 'Vyta Pro',
-  'pro.subtitle': 'Unlock the full power of Vyta',
-  'pro.feature.finances': 'Finances and monthly budget',
-  'pro.feature.goals': 'Advanced linked goals',
-  'pro.feature.calendar': 'Unified calendar',
-  'pro.feature.stats': 'Extended statistics',
-  'pro.feature.future': 'All future features',
-  'pro.monthly': '€3 / month',
-  'pro.yearly': '€30 / year',
-  'pro.yearly.badge': '2 months free',
-  'pro.cta': 'Go Pro',
-  'pro.soon': 'Subscriptions are coming soon. For now everything is unlocked!',
-  'pro.restore': 'Restore purchases',
-  'pro.locked.title': 'Pro feature',
-  'pro.locked.desc': 'This section is part of Vyta Pro.',
-  'pro.locked.cta': 'Discover Vyta Pro',
 
   // Dashboard tagline
   'today.tagline': 'Measure your habits to improve your health and wellbeing.',

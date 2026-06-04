@@ -51,7 +51,7 @@ Tutti i dati restano SOLO sul tuo dispositivo. Nessun account, nessun cloud obbl
 
 🌙 Tema chiaro/scuro · Italiano e Inglese · Riepilogo settimanale condivisibile.
 
-Vyta è gratis. Vyta Pro (opzionale) sblocca finanze avanzate, obiettivi e altro.
+Vyta è completamente gratis: tutte le funzioni sono incluse.
 ```
 
 ---
@@ -103,7 +103,7 @@ All your data stays ONLY on your device. No account, no forced cloud, works offl
 
 🌙 Light/dark theme · English and Italian · Shareable weekly recap.
 
-Vyta is free. Vyta Pro (optional) unlocks advanced finances, goals and more.
+Vyta is completely free: every feature is included.
 ```
 
 ---
@@ -114,6 +114,6 @@ Vyta is free. Vyta Pro (optional) unlocks advanced finances, goals and more.
   (Dati non raccolti) — è vero, niente esce dal dispositivo. Se attivi HealthKit
   in futuro, dichiara l'uso di Salute ma sempre senza raccolta lato server.
 - **Età:** 4+ (nessun contenuto sensibile)
-- **Prezzo:** Gratis (con eventuale acquisto in-app Pro più avanti)
+- **Prezzo:** Gratis (nessun acquisto in-app)
 - **URL privacy:** https://vita-peach.vercel.app/privacy.html
 - **URL supporto:** la stessa pagina, o un'email di contatto.
