@@ -136,6 +136,37 @@ Nessun cambiamento di privacy dichiarata finché **niente esce dal telefono**.
 
 ---
 
+## 1.2 (o 1.3) — Integrazione Apple Salute (HealthKit)
+
+> Funzione desiderata. Va fatta **dopo** che la 1.0 è approvata: richiede una
+> funzionalità Salute **reale e visibile**, altrimenti Apple rifiuta per la
+> Guideline **2.5.1** (è esattamente il motivo del rifiuto del 5 giu 2026,
+> quando il progetto dichiarava HealthKit senza usarlo). Le chiavi
+> `NSHealthShareUsageDescription` / `NSHealthUpdateUsageDescription` vanno
+> **rimesse solo quando la funzione esiste davvero**.
+
+### Cosa serve (app / Xcode)
+1. **Plugin Capacitor nativo** per HealthKit (plugin community o codice Swift
+   custom) — i plugin attuali non lo includono.
+2. Attivare la **capability HealthKit** in Xcode (rigenera `App.entitlements`).
+3. Rimettere le chiavi `NSHealthShareUsageDescription` /
+   `NSHealthUpdateUsageDescription` nel `Info.plist`.
+4. **UI visibile**: schermata "Connetti Apple Salute" che mostra dati importati
+   (passi, battiti, allenamenti) e/o esporta gli allenamenti in Salute. Questa
+   parte è obbligatoria perché Apple deve "vedere" l'integrazione.
+
+### Cosa cambia su App Store Connect / privacy
+| Aspetto | Cambia? |
+|---|---|
+| **Privacy policy** (URL) | **Obbligatoria** |
+| **App Privacy** | **Sì**: dichiarare dati "Health & Fitness" usati |
+| Permesso/prompt all'utente | **Sì** (accesso a Salute) |
+| Uso dei dati per pubblicità/vendita | **Vietato** dalle linee guida |
+| Descrizione app | Deve **menzionare** l'integrazione Salute |
+| Build da ricaricare | **Sì** |
+
+---
+
 ## Riepilogo privacy / App Store Connect per feature
 
 | Feature | Dati locali? | Permesso nuovo | App Privacy | Note |
@@ -145,6 +176,7 @@ Nessun cambiamento di privacy dichiarata finché **niente esce dal telefono**.
 | Recap "Wrapped" | Sì | No | Invariata | Solo grafica |
 | Note interne (Diario & Umore) | Sì | No | Invariata | Solo codice |
 | Share Extension (import da Note) | Sì | No | Invariata | Serve target + App Group + nuovo build |
+| Apple Salute (HealthKit) | Sì | **Sì** (accesso Salute) | **Da rivedere** (Health & Fitness + privacy policy) | Serve UI visibile + capability + nuovo build |
 | (Eventuale) Reminders/EventKit | Sì | **Sì** (`NSRemindersFullAccessUsageDescription`) | Invariata se locale | Mostra prompt |
 | (Eventuale) sync su server/cloud | **No** | Dipende | **Da rivedere** | Non previsto ora |
 
@@ -157,3 +189,6 @@ Nessun cambiamento di privacy dichiarata finché **niente esce dal telefono**.
    + Note interne in Diario & Umore. *(zero impatto privacy)*
 3. **1.2** — Share Extension per importare da Apple Notes. *(serve target +
    App Group + nuovo build; privacy invariata)*
+4. **1.2 / 1.3** — Integrazione **Apple Salute (HealthKit)** come funzione
+   completa e visibile. *(serve plugin nativo + capability + privacy policy +
+   App Privacy aggiornata + nuovo build)*
