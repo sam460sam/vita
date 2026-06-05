@@ -7,7 +7,7 @@ import type { FC } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Flame, Droplet, GlassWater, Timer, Trophy, Quote, Scale, Wallet, BookHeart, Target,
+  Flame, Droplet, Timer, Trophy, Quote, Scale, Wallet, BookHeart, Target,
   CheckCircle2, ListTodo, Plus, ChevronRight, Activity, type LucideIcon,
 } from 'lucide-react';
 import { db } from '@/data/db';
@@ -24,6 +24,7 @@ import { computeMomentum, stellaMood, momentumMessageKey } from '@/features/oggi
 import { dailyAffirmation } from '@/features/oggi/coach';
 import { lifetimePoints, computeLevel } from '@/features/gamification/logic';
 import { FastingCard } from '@/features/digiuno';
+import { quickAddAmounts, formatWaterAmount } from '@/features/acqua/WaterCard';
 import { useQuickAdd } from '@/app/QuickAdd';
 import { subDays, startOfDay } from 'date-fns';
 
@@ -40,7 +41,7 @@ function Frame({ to, accent, className, children, onClick }: {
   const inner = (
     <div
       className={cn(
-        'h-full w-full bg-card rounded-card shadow-card border border-line/60 dark:border-transparent p-3.5 overflow-hidden flex flex-col',
+        'h-full w-full bg-card rounded-card shadow-card border border-line/60 dark:border-transparent p-3 overflow-hidden flex flex-col',
         (to || onClick) && 'active:bg-section transition-colors',
         className,
       )}
@@ -163,7 +164,7 @@ function WaterWidget() {
   const log = useLiveQuery(() => db.waterLogs.get(todayISO()), [], undefined);
   const s = settings ?? defaultSettings();
   const goalMl = s.water.dailyGoalMl || 2000;
-  const glassMl = s.water.glassMl || 200;
+  const amounts = quickAddAmounts(s);
   const ml = log?.ml ?? 0;
   const progress = Math.min(1, ml / goalMl);
   return (
@@ -176,24 +177,15 @@ function WaterWidget() {
         <div className="min-w-0 flex-1">
           <div className="text-lg font-bold tnum text-ink leading-tight">{(ml / 1000).toFixed(1)}<span className="text-ink-3 text-xs font-semibold"> / {(goalMl / 1000).toFixed(1)} L</span></div>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
-            <button
-              onClick={() => addWaterMl(todayISO(), glassMl)}
-              className="h-8 px-2.5 rounded-btn bg-section active:bg-divider inline-flex items-center gap-1 text-[12px] font-semibold text-ink"
-            >
-              <GlassWater size={14} style={{ color: '#0EA5E9' }} /> +{t('water.glass')}
-            </button>
-            <button
-              onClick={() => addWaterMl(todayISO(), 500)}
-              className="h-8 px-2.5 rounded-btn bg-section active:bg-divider inline-flex items-center gap-1 text-[12px] font-semibold text-ink"
-            >
-              <Droplet size={14} style={{ color: '#0EA5E9' }} /> +{t('water.halfLiter')}
-            </button>
-            <button
-              onClick={() => addWaterMl(todayISO(), 1000)}
-              className="h-8 px-2.5 rounded-btn bg-section active:bg-divider inline-flex items-center gap-1 text-[12px] font-semibold text-ink"
-            >
-              <Droplet size={14} style={{ color: '#0EA5E9' }} /> +{t('water.liter')}
-            </button>
+            {amounts.map((amt, i) => (
+              <button
+                key={i}
+                onClick={() => addWaterMl(todayISO(), amt)}
+                className="h-8 px-2.5 rounded-btn bg-section active:bg-divider inline-flex items-center gap-1 text-[12px] font-semibold text-ink"
+              >
+                <Droplet size={14} style={{ color: '#0EA5E9' }} /> +{formatWaterAmount(amt)}
+              </button>
+            ))}
           </div>
         </div>
       </div>

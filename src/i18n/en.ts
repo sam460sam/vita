@@ -392,6 +392,8 @@ export const en: Record<TKey, string> = {
   'water.add': 'Add',
   'water.goal': 'Daily goal (liters)',
   'water.glassSize': 'Glass size (ml)',
+  'water.quickAdds': 'Quick adds',
+  'water.addAmount': 'Add amount',
   'water.glassesCount': '{n} glasses',
 
   // Stella — the helper mascot

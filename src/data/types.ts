@@ -97,6 +97,9 @@ export interface Settings {
   water: {
     dailyGoalMl: number; // daily target in ml (e.g. 2000)
     glassMl: number; // size of one "glass" in ml (default 200)
+    /** Custom quick-add amounts in ml shown as buttons. Falls back to
+     *  [glassMl, 500, 1000] when unset. */
+    quickAddMl?: number[];
   };
   // Daily reminder times (HH:mm) — empty string = off. Fire as local
   // notifications on the native app; stored regardless on web.
