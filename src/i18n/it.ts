@@ -135,15 +135,7 @@ export const it = {
   'weightForm.goalWeight': 'Peso obiettivo',
   'weightForm.saved': 'Peso registrato',
   'weight.unit': 'Unità peso',
-  // Health integration
-  'health.title': 'Salute',
-  'health.connect': 'Collega Apple Salute',
-  'health.connectAndroid': 'Collega Health Connect',
-  'health.connected': 'Collegato',
-  'health.connectedDesc': 'Allenamenti, passi e battito vengono importati automaticamente.',
-  'health.desc': 'Sincronizza allenamenti, passi e frequenza cardiaca da iPhone e Apple Watch.',
-  'health.webNote': 'Disponibile nella app per iPhone. Sul web i dati di Apple Salute non sono accessibili.',
-  'health.disconnect': 'Scollega',
+  // Workout import (no live HealthKit integration yet)
   'health.import': 'Importa allenamenti',
   'health.imported': 'allenamenti importati',
   'health.importFile': 'Importa da file (Strava, Garmin, Salute)',

@@ -136,15 +136,7 @@ export const en: Record<TKey, string> = {
   'weightForm.goalWeight': 'Goal weight',
   'weightForm.saved': 'Weight logged',
   'weight.unit': 'Weight unit',
-  // Health integration
-  'health.title': 'Health',
-  'health.connect': 'Connect Apple Health',
-  'health.connectAndroid': 'Connect Health Connect',
-  'health.connected': 'Connected',
-  'health.connectedDesc': 'Workouts, steps and heart rate are imported automatically.',
-  'health.desc': 'Sync workouts, steps and heart rate from iPhone and Apple Watch.',
-  'health.webNote': 'Available in the iPhone app. Apple Health data is not accessible on the web.',
-  'health.disconnect': 'Disconnect',
+  // Workout import (no live HealthKit integration yet)
   'health.import': 'Import workouts',
   'health.imported': 'workouts imported',
   'health.importFile': 'Import from file (Strava, Garmin, Health)',
