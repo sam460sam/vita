@@ -428,6 +428,7 @@ export const en: Record<TKey, string> = {
   'recap.title': 'Recap',
   'recap.week': 'Your week',
   'recap.share': 'Share',
+  'recap.wrapped': 'Your week',
   'recap.habits': 'Habits completed',
   'recap.water': 'Water drunk',
   'recap.workouts': 'Workouts',

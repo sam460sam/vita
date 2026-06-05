@@ -431,6 +431,7 @@ export const it = {
   'recap.title': 'Riepilogo',
   'recap.week': 'La tua settimana',
   'recap.share': 'Condividi',
+  'recap.wrapped': 'La tua settimana',
   'recap.habits': 'Abitudini completate',
   'recap.water': 'Acqua bevuta',
   'recap.workouts': 'Allenamenti',

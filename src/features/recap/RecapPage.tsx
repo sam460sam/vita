@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Share2, Flame, Droplet, Dumbbell, CheckSquare, BookHeart, TrendingUp, TrendingDown, Sparkles } from 'lucide-react';
+import { Share2, Flame, Droplet, Dumbbell, CheckSquare, BookHeart, TrendingUp, TrendingDown, Sparkles, Play } from 'lucide-react';
 import { db } from '@/data/db';
 import { readSettings } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
@@ -12,10 +13,12 @@ import { weeklyRecap, hasAnyData } from './logic';
 import { weeklyInsights } from './insights';
 import type { LifeData } from '@/features/gamification/logic';
 import { buildRecapSVG, svgToPngBlob } from './shareImage';
+import { WrappedStories } from './WrappedStories';
 
 export function RecapPage() {
   const t = useT();
   const toast = useToast();
+  const [storiesOpen, setStoriesOpen] = useState(false);
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const habits = useLiveQuery(() => db.habits.toArray(), [], []);
   const logs = useLiveQuery(() => db.habitLogs.toArray(), [], []);
@@ -111,6 +114,12 @@ export function RecapPage() {
           </Card>
         )}
 
+        {hasAnyData(r) && (
+          <Button block className="mt-4" icon={<Play size={17} />} onClick={() => setStoriesOpen(true)}>
+            {t('recap.wrapped')}
+          </Button>
+        )}
+
         {/* Personalised weekly insights */}
         {insights.length > 0 && (
           <Card className="mt-4">
@@ -134,6 +143,10 @@ export function RecapPage() {
           </Card>
         )}
       </Screen>
+
+      {storiesOpen && (
+        <WrappedStories recap={r} name={s.name || undefined} onClose={() => setStoriesOpen(false)} onShare={share} />
+      )}
     </>
   );
 }
