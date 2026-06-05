@@ -397,6 +397,8 @@ export const it = {
   'water.glassSize': 'Dimensione bicchiere (ml)',
   'water.quickAdds': 'Aggiunte rapide',
   'water.addAmount': 'Aggiungi importo',
+  'personality.title': 'Test della personalità',
+  'personality.subtitle': 'Scopri come tenerti motivato',
   'water.glassesCount': '{n} bicchieri',
 
   // Stella — the helper mascot
