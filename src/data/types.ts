@@ -319,6 +319,10 @@ export interface Cantiere extends Timestamped {
   dataPagamento?: string;
   classeCemento?: string;
   additivi: string[];
+  // Verbale legal metadata
+  verbaleTimestamp?: string;        // ISO datetime when client signed
+  verbaleClienteNome?: string;      // client name confirmed at signing
+  verbaleDisclaimerAccettato?: boolean;
 }
 
 export interface Operaio extends Timestamped {
