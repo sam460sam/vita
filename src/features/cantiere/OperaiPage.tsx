@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Plus, Phone, Star } from 'lucide-react';
-import { PageHeader } from '@/app/PageHeader';
+import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, Button, EmptyState } from '@/ui';
 import { db } from '@/data/db';
@@ -26,7 +26,7 @@ export function OperaiPage() {
 
   return (
     <>
-      <PageHeader title="Operai" back="/cantiere" hideStella />
+      <PageHeader title="Operai" back="/cantiere" />
       <Screen>
         {(operai ?? []).length === 0 ? (
           <EmptyState

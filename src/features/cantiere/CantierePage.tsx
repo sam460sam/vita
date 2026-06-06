@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Plus, Users, HardHat } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { PageHeader } from '@/app/PageHeader';
+import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, Button, EmptyState, Segmented } from '@/ui';
 import { db } from '@/data/db';
@@ -33,7 +33,7 @@ export function CantierePage() {
     <>
       <PageHeader
         title="Cantieri"
-        hideStella
+       
         action={
           <button
             onClick={() => navigate('/cantiere/operai')}

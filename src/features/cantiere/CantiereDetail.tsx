@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useParams } from 'react-router-dom';
 import { Phone, MapPin, Calendar, Edit3, Camera, PenTool } from 'lucide-react';
-import { PageHeader } from '@/app/PageHeader';
+import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, CardHeader, Button } from '@/ui';
 import { db } from '@/data/db';
@@ -39,7 +39,7 @@ export function CantiereDetail() {
       <PageHeader
         title={cantiere.cliente}
         back
-        hideStella
+       
         action={
           <button
             onClick={() => setEditOpen(true)}

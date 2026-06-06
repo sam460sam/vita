@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, HardHat, Shield, FileText, Mail } from 'lucide-react';
-import { PageHeader } from '@/app/PageHeader';
+import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, Divider } from '@/ui';
 
@@ -11,7 +11,7 @@ export function InfoPage() {
 
   return (
     <>
-      <PageHeader title="Info" hideStella />
+      <PageHeader title="Info" />
       <Screen>
         {/* App identity */}
         <div className="flex flex-col items-center py-8 mb-2">
