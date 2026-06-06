@@ -90,7 +90,11 @@ export function OperaiPage() {
   const [assegnaOperaio, setAssegnaOperaio] = useState<Operaio | undefined>();
   const [filterProv, setFilterProv] = useState<string>(defaultProvincia);
 
-  const operai = useLiveQuery(() => db.operai.orderBy('nome').toArray(), [], []);
+  const operai = useLiveQuery(
+    () => db.operai.toArray().then((arr) => arr.sort((a, b) => a.nome.localeCompare(b.nome))),
+    [],
+    [],
+  );
 
   function openEdit(o: Operaio) {
     setEditing(o);

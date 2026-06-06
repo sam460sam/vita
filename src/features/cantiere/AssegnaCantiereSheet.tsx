@@ -19,7 +19,7 @@ function fmtDate(iso: string) {
 
 export function AssegnaCantiereSheet({ open, onClose, operaio }: Props) {
   const cantieri = useLiveQuery<Cantiere[], Cantiere[]>(
-    () => db.cantieri.orderBy('cliente').toArray(),
+    () => db.cantieri.toArray().then((arr) => arr.sort((a, b) => a.cliente.localeCompare(b.cliente))),
     [],
     [],
   );

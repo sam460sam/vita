@@ -92,7 +92,7 @@ export function BetonieroSheet({ open, onClose }: Props) {
       {/* Mascot header */}
       <div className="flex flex-col items-center py-5 mb-4">
         <img
-          src="./betoniera.svg"
+          src="./betoniera.png"
           alt="Betoniero"
           className="w-20 h-20 rounded-[20px] shadow-md mb-3"
         />
