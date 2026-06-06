@@ -126,8 +126,8 @@ export function PrivacyPage() {
             <h2 className="text-[16px] font-bold mb-2">9. Sviluppatore dell'applicazione</h2>
             <p className="text-[14px] text-ink-2 leading-relaxed">
               L'applicazione <strong>Cantieri</strong> è sviluppata e distribuita da{' '}
-              <strong>[NOME / RAGIONE SOCIALE SVILUPPATORE]</strong>. Per informazioni:{' '}
-              <strong>[EMAIL DI CONTATTO]</strong>. Lo sviluppatore agisce come responsabile del
+              <strong>Samuele Gubert</strong>, Castelfranco Veneto (TV). Per informazioni:{' '}
+              <strong>gubertsamuele31@gmail.com</strong>. Lo sviluppatore agisce come responsabile del
               trattamento limitatamente ai dati tecnici necessari per il funzionamento dell'app sul
               dispositivo.
             </p>

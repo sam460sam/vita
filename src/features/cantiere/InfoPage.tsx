@@ -20,7 +20,7 @@ export function InfoPage() {
           </div>
           <h1 className="text-[22px] font-bold text-ink">Cantieri</h1>
           <p className="text-[13px] text-ink-2 mt-1">Versione {VERSION}</p>
-          <p className="text-[12px] text-ink-3 mt-0.5">© 2025 [Nome Sviluppatore]</p>
+          <p className="text-[12px] text-ink-3 mt-0.5">© 2025 Samuele Gubert</p>
         </div>
 
         <p className="text-[14px] text-ink-2 text-center mb-6 leading-relaxed px-4">
@@ -55,13 +55,13 @@ export function InfoPage() {
           </button>
           <Divider />
           <a
-            href="mailto:[EMAIL DI CONTATTO]"
+            href="mailto:gubertsamuele31@gmail.com"
             className="w-full flex items-center gap-3 px-4 py-4 active:bg-section transition-colors"
           >
             <Mail size={20} className="text-slate-500 flex-shrink-0" />
             <div className="flex-1 text-left">
               <div className="text-[15px] font-medium text-ink">Contattaci</div>
-              <div className="text-[12px] text-ink-3">[EMAIL DI CONTATTO]</div>
+              <div className="text-[12px] text-ink-3">gubertsamuele31@gmail.com</div>
             </div>
             <ChevronRight size={18} className="text-ink-3" />
           </a>

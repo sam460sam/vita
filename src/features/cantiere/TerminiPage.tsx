@@ -100,7 +100,7 @@ export function TerminiPage() {
               L'applicazione <strong>Cantieri</strong>, il suo design, il codice sorgente, il logo e tutti
               i contenuti originali sono protetti dalle leggi sul diritto d'autore (L. 633/1941 e
               successive modifiche) e sono di proprietà esclusiva dello sviluppatore.{' '}
-              <strong>© 2025 [NOME / RAGIONE SOCIALE SVILUPPATORE]. Tutti i diritti riservati.</strong>{' '}
+              <strong>© 2025 Samuele Gubert. Tutti i diritti riservati.</strong>{' '}
               È vietata qualsiasi riproduzione, distribuzione, modifica o utilizzo commerciale senza
               autorizzazione scritta.
             </p>
@@ -122,7 +122,7 @@ export function TerminiPage() {
               I presenti Termini sono regolati dalla <strong>legge italiana</strong>. Per qualsiasi
               controversia relativa all'interpretazione, validità o esecuzione dei presenti Termini è
               competente in via esclusiva il{' '}
-              <strong>Tribunale di [CITTÀ SEDE LEGALE SVILUPPATORE]</strong>. L'utente consumatore ha
+              <strong>Tribunale di Treviso</strong>. L'utente consumatore ha
               diritto di adire il tribunale del proprio luogo di residenza ai sensi del Codice del
               Consumo (D.Lgs. 206/2005).
             </p>
@@ -132,7 +132,7 @@ export function TerminiPage() {
             <h2 className="text-[16px] font-bold mb-2">9. Contatti</h2>
             <p className="text-[14px] text-ink-2 leading-relaxed">
               Per qualsiasi richiesta relativa ai presenti Termini o all'applicazione:{' '}
-              <strong>[EMAIL DI CONTATTO]</strong>
+              <strong>gubertsamuele31@gmail.com</strong>
             </p>
           </section>
 
