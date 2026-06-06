@@ -1,0 +1,185 @@
+import { useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { useParams } from 'react-router-dom';
+import { Phone, MapPin, Calendar, Edit3, Camera, PenTool } from 'lucide-react';
+import { PageHeader } from '@/app/PageHeader';
+import { Screen } from '@/app/Screen';
+import { Card, CardHeader, Button } from '@/ui';
+import { db } from '@/data/db';
+import { formatEuro, statoInfo, pagamentoInfo } from './logic';
+import { CantiereForm } from './CantiereForm';
+import { CementoCalc } from './CementoCalc';
+import { VerbaleSheet } from './VerbaleSheet';
+
+export function CantiereDetail() {
+  const { id } = useParams<{ id: string }>();
+  const [editOpen, setEditOpen] = useState(false);
+  const [verbaleOpen, setVerbaleOpen] = useState(false);
+
+  const cantiere = useLiveQuery(() => db.cantieri.get(id!), [id]);
+  const operai = useLiveQuery(
+    () =>
+      cantiere?.operaiIds.length
+        ? db.operai.where('id').anyOf(cantiere.operaiIds).toArray()
+        : Promise.resolve([]),
+    [cantiere],
+    [],
+  );
+
+  if (cantiere === undefined) return null;
+  if (cantiere === null) return null;
+
+  const sInfo = statoInfo(cantiere.stato);
+  const pInfo = pagamentoInfo(cantiere.pagamento);
+  const restante = cantiere.importo - (cantiere.acconto ?? 0);
+
+  return (
+    <>
+      <PageHeader
+        title={cantiere.cliente}
+        back
+        hideStella
+        action={
+          <button
+            onClick={() => setEditOpen(true)}
+            className="h-10 w-10 flex items-center justify-center rounded-full text-ink-2 hover:bg-section"
+            aria-label="Modifica"
+          >
+            <Edit3 size={20} />
+          </button>
+        }
+      />
+      <Screen>
+        {/* Status badges */}
+        <div className="flex gap-2 mb-4 flex-wrap">
+          <span className={`text-[13px] font-semibold px-3 py-1 rounded-full ${sInfo.color}`}>
+            {sInfo.label}
+          </span>
+          <span className={`text-[13px] font-semibold px-3 py-1 rounded-full ${pInfo.color}`}>
+            {pInfo.label}
+          </span>
+        </div>
+
+        {/* Info card */}
+        <Card className="mb-4">
+          <CardHeader title="Cantiere" />
+          <div className="space-y-2 text-[14px]">
+            {cantiere.telefono && (
+              <a href={`tel:${cantiere.telefono}`} className="flex items-center gap-2 text-ink-2">
+                <Phone size={15} className="text-amber-500 flex-shrink-0" />
+                {cantiere.telefono}
+              </a>
+            )}
+            {cantiere.indirizzo && (
+              <div className="flex items-center gap-2 text-ink-2">
+                <MapPin size={15} className="text-amber-500 flex-shrink-0" />
+                {cantiere.indirizzo}
+              </div>
+            )}
+            {cantiere.dataPrevista && (
+              <div className="flex items-center gap-2 text-ink-2">
+                <Calendar size={15} className="text-amber-500 flex-shrink-0" />
+                {cantiere.dataPrevista}
+              </div>
+            )}
+
+            <div className="pt-2 border-t border-line/50 grid grid-cols-3 gap-3 mt-2">
+              <div>
+                <div className="text-[11px] text-ink-3 uppercase tracking-wide">m²</div>
+                <div className="font-bold text-[16px]">{cantiere.mq}</div>
+              </div>
+              <div>
+                <div className="text-[11px] text-ink-3 uppercase tracking-wide">Spessore</div>
+                <div className="font-bold text-[16px]">{cantiere.spessore} cm</div>
+              </div>
+              <div>
+                <div className="text-[11px] text-ink-3 uppercase tracking-wide">Importo</div>
+                <div className="font-bold text-[16px]">{formatEuro(cantiere.importo)}</div>
+              </div>
+            </div>
+
+            {cantiere.acconto != null && cantiere.acconto > 0 && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <div className="text-[11px] text-ink-3 uppercase tracking-wide">Acconto</div>
+                  <div className="font-semibold text-green-600">{formatEuro(cantiere.acconto)}</div>
+                </div>
+                <div>
+                  <div className="text-[11px] text-ink-3 uppercase tracking-wide">Restante</div>
+                  <div className="font-semibold text-red-600">{formatEuro(restante)}</div>
+                </div>
+              </div>
+            )}
+
+            {cantiere.note && (
+              <p className="text-ink-2 text-[13px] pt-1 italic border-t border-line/50">{cantiere.note}</p>
+            )}
+          </div>
+        </Card>
+
+        {/* Cement calculator */}
+        <CementoCalc cantiere={cantiere} />
+
+        {/* Verbale */}
+        <Card className="mb-4">
+          <CardHeader title="Verbale di consegna" />
+          {cantiere.firmaCliente ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-green-600 font-medium text-[14px]">
+                <PenTool size={16} />
+                Cliente ha firmato
+              </div>
+              <img
+                src={cantiere.firmaCliente}
+                alt="Firma cliente"
+                className="h-16 object-contain border border-line rounded-lg bg-white"
+              />
+              {cantiere.foto.length > 0 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {cantiere.foto.map((f, i) => (
+                    <img key={i} src={f} alt="Foto cantiere" className="rounded-lg aspect-square object-cover" />
+                  ))}
+                </div>
+              )}
+              <Button variant="ghost" onClick={() => setVerbaleOpen(true)}>
+                Modifica verbale
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-[13px] text-ink-2">
+                Nessun verbale. Fai firmare il cliente alla consegna per proteggerti da contestazioni.
+              </p>
+              <Button onClick={() => setVerbaleOpen(true)}>
+                <Camera size={16} className="mr-2" />
+                Apri verbale
+              </Button>
+            </div>
+          )}
+        </Card>
+
+        {/* Operai */}
+        {operai && operai.length > 0 && (
+          <Card className="mb-4">
+            <CardHeader title="Operai" />
+            <div className="space-y-2">
+              {operai.map((o) => (
+                <div key={o.id} className="flex items-center justify-between text-[14px]">
+                  <span className="font-medium">{o.nome}</span>
+                  {o.telefono && (
+                    <a href={`tel:${o.telefono}`} className="text-amber-500 text-[13px]">
+                      {o.telefono}
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
+      </Screen>
+
+      <CantiereForm open={editOpen} cantiere={cantiere} onClose={() => setEditOpen(false)} />
+      <VerbaleSheet open={verbaleOpen} cantiere={cantiere} onClose={() => setVerbaleOpen(false)} />
+    </>
+  );
+}

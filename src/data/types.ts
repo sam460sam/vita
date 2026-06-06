@@ -292,6 +292,45 @@ export interface Budget {
 }
 
 // ----------------------------------------------------------------------------
+// Cantiere — cement flooring contractor
+// ----------------------------------------------------------------------------
+export type CantiereStato = 'preventivo' | 'confermato' | 'in_corso' | 'completato' | 'contestato';
+export type PagamentoStato = 'da_pagare' | 'parziale' | 'saldato';
+export type TipoUso = 'industriale' | 'residenziale' | 'esterno' | 'garage' | 'altro';
+
+export interface Cantiere extends Timestamped {
+  cliente: string;
+  telefono?: string;
+  indirizzo?: string;
+  mq: number;
+  spessore: number;          // cm
+  tipoUso: TipoUso;
+  stato: CantiereStato;
+  importo: number;           // €
+  acconto?: number;
+  dataPrevista?: string;     // ISO yyyy-MM-dd
+  dataCompletamento?: string;
+  note?: string;
+  foto: string[];            // base64 data URLs
+  firmaCliente?: string;     // base64 canvas image
+  operaiIds: string[];
+  pagamento: PagamentoStato;
+  scadenzaPagamento?: string;
+  dataPagamento?: string;
+  classeCemento?: string;
+  additivi: string[];
+}
+
+export interface Operaio extends Timestamped {
+  nome: string;
+  telefono?: string;
+  specializzazioni: string[];
+  valutazione?: 1 | 2 | 3 | 4 | 5;
+  notePrivate?: string;
+  attivo: boolean;
+}
+
+// ----------------------------------------------------------------------------
 // Full export shape (backup)
 // ----------------------------------------------------------------------------
 export interface VitaBackup {

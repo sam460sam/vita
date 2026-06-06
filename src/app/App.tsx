@@ -32,6 +32,9 @@ const WeightPage = lazy(() => import('@/features/peso').then((m) => ({ default: 
 const BmiPage = lazy(() => import('@/features/peso').then((m) => ({ default: m.BmiPage })));
 const RecapPage = lazy(() => import('@/features/recap').then((m) => ({ default: m.RecapPage })));
 const GamificationPage = lazy(() => import('@/features/gamification').then((m) => ({ default: m.GamificationPage })));
+const CantierePage = lazy(() => import('@/features/cantiere').then((m) => ({ default: m.CantierePage })));
+const CantiereDetail = lazy(() => import('@/features/cantiere').then((m) => ({ default: m.CantiereDetail })));
+const OperaiPage = lazy(() => import('@/features/cantiere').then((m) => ({ default: m.OperaiPage })));
 
 export function App() {
   const [onboarded, setOnboarded] = useState(hasOnboarded());
@@ -66,6 +69,9 @@ export function App() {
                       <Route path="/obiettivi" element={<RequireModule id="obiettivi"><GoalsPage /></RequireModule>} />
                       <Route path="/finanze" element={<RequireModule id="finanze"><FinancesPage /></RequireModule>} />
                       <Route path="/calendario" element={<RequireModule id="calendario"><CalendarPage /></RequireModule>} />
+                      <Route path="/cantiere" element={<CantierePage />} />
+                      <Route path="/cantiere/operai" element={<OperaiPage />} />
+                      <Route path="/cantiere/:id" element={<CantiereDetail />} />
                       <Route path="/altro" element={<MorePage />} />
                       <Route path="/pro" element={<ProPage />} />
                       <Route path="/impostazioni" element={<SettingsPage />} />

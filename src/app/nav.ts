@@ -2,6 +2,7 @@ import {
   CalendarDays,
   CheckSquare,
   Flame,
+  HardHat,
   Home,
   MoreHorizontal,
   Target,
@@ -48,6 +49,13 @@ export const SECONDARY_NAV: NavItem[] = [
   { to: '/impostazioni', labelKey: 'nav.settings', icon: Settings },
 ];
 
+export const CANTIERE_NAV: NavItem = {
+  to: '/cantiere',
+  labelKey: 'nav.cantiere',
+  icon: HardHat,
+  accent: '#D97706',
+};
+
 // ---------------------------------------------------------------------------
 // Dynamic navigation — built from the user's enabled modules + their order.
 // Home, More and Settings/Recap/Rewards are always present (not "interests").
@@ -57,6 +65,7 @@ export const MORE_ITEM: NavItem = { to: '/altro', labelKey: 'nav.more', icon: Mo
 
 /** Always-available destinations that are not toggleable interests. */
 export const EXTRA_NAV: NavItem[] = [
+  { to: '/cantiere', labelKey: 'nav.cantiere', icon: HardHat, accent: '#D97706' },
   { to: '/recap', labelKey: 'nav.recap', icon: Sparkles, accent: 'var(--c-habit)' },
   { to: '/premi', labelKey: 'nav.rewards', icon: Trophy, accent: 'var(--c-habit)' },
   { to: '/impostazioni', labelKey: 'nav.settings', icon: Settings },
