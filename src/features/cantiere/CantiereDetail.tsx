@@ -6,6 +6,7 @@ import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, CardHeader, Button } from '@/ui';
 import { db } from '@/data/db';
+import type { Operaio } from '@/data/types';
 import { formatEuro, statoInfo, pagamentoInfo } from './logic';
 import { CantiereForm } from './CantiereForm';
 import { CementoCalc } from './CementoCalc';
@@ -17,7 +18,7 @@ export function CantiereDetail() {
   const [verbaleOpen, setVerbaleOpen] = useState(false);
 
   const cantiere = useLiveQuery(() => db.cantieri.get(id!), [id]);
-  const operai = useLiveQuery(
+  const operai = useLiveQuery<Operaio[], Operaio[]>(
     () =>
       cantiere?.operaiIds.length
         ? db.operai.where('id').anyOf(cantiere.operaiIds).toArray()
