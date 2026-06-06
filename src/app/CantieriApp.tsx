@@ -1,10 +1,11 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from '@/ui';
 import { I18nProvider } from '@/i18n';
 import { ThemeProvider } from '@/theme/theme';
 import { RouteErrorBoundary } from './ErrorBoundary';
 import { CantieriTabBar } from './CantieriTabBar';
+import { OnboardingScreen } from '@/features/cantiere/OnboardingScreen';
 
 // Eager
 import { CantierePage, CantiereDetail, OperaiPage } from '@/features/cantiere';
@@ -15,11 +16,19 @@ const TerminiPage = lazy(() => import('@/features/cantiere/TerminiPage').then((m
 const InfoPage = lazy(() => import('@/features/cantiere/InfoPage').then((m) => ({ default: m.InfoPage })));
 
 export function CantieriApp() {
+  const [onboarded, setOnboarded] = useState(() => !!localStorage.getItem('cantieri.onboarded'));
+
+  function completeOnboarding() {
+    localStorage.setItem('cantieri.onboarded', '1');
+    setOnboarded(true);
+  }
+
   return (
     <I18nProvider>
       <ThemeProvider>
         <ToastProvider>
           <HashRouter>
+            {!onboarded && <OnboardingScreen onDone={completeOnboarding} />}
             <div className="min-h-screen flex flex-col bg-section">
               <main className="flex-1 min-w-0">
                 <RouteErrorBoundary>
