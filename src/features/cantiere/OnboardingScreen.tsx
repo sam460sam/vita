@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HardHat, Calculator, PenTool, Users } from 'lucide-react';
+import { HardHat, Calculator, PenTool, Users, Building2 } from 'lucide-react';
 import type { MioProfilo } from './profiloRepo';
 import { saveMioProfilo } from './profiloRepo';
 
@@ -155,7 +155,6 @@ export function OnboardingScreen({ onDone }: Props) {
   const [step, setStep] = useState<1 | 2>(1);
   const [nome, setNome] = useState('');
   const [provincia, setProvincia] = useState('');
-  const [ruolo, setRuolo] = useState<'posatore' | 'operaio' | ''>('');
 
   const canProceed = nome.trim().length > 0 && provincia !== '';
 
@@ -163,7 +162,7 @@ export function OnboardingScreen({ onDone }: Props) {
     const profilo: MioProfilo = {
       nome: nome.trim(),
       provincia,
-      ruolo: ruolo === 'operaio' ? 'operaio' : 'posatore',
+      ruolo: 'posatore',
       profiloPubblico: false,
       createdAt: new Date().toISOString(),
     };
@@ -274,36 +273,14 @@ export function OnboardingScreen({ onDone }: Props) {
           </select>
         </div>
 
-        {/* Ruolo */}
-        <div>
-          <label className="block text-[13px] font-semibold text-slate-600 dark:text-slate-400 mb-3">
-            Il tuo ruolo
-          </label>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => setRuolo('posatore')}
-              className={`py-4 px-3 rounded-2xl border-2 text-center transition-all active:scale-95 ${
-                ruolo === 'posatore'
-                  ? 'border-slate-700 bg-slate-700 text-white'
-                  : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
-              }`}
-            >
-              <div className="text-2xl mb-1">🧱</div>
-              <div className="font-semibold text-[14px]">Posatore / Impresa</div>
-              <div className="text-[11px] mt-0.5 opacity-70">Gestisci cantieri e squadre</div>
-            </button>
-            <button
-              onClick={() => setRuolo('operaio')}
-              className={`py-4 px-3 rounded-2xl border-2 text-center transition-all active:scale-95 ${
-                ruolo === 'operaio'
-                  ? 'border-slate-700 bg-slate-700 text-white'
-                  : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
-              }`}
-            >
-              <div className="text-2xl mb-1">⚒️</div>
-              <div className="font-semibold text-[14px]">Operaio / Artigiano</div>
-              <div className="text-[11px] mt-0.5 opacity-70">Lavora su cantieri altrui</div>
-            </button>
+        {/* Ruolo — solo Impresa */}
+        <div className="flex items-center gap-4 p-4 rounded-2xl border-2 border-slate-700 bg-slate-700 text-white">
+          <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
+            <Building2 size={26} className="text-white" />
+          </div>
+          <div>
+            <div className="font-semibold text-[16px]">Posatore / Impresa</div>
+            <div className="text-[12px] mt-0.5 text-slate-300">Gestisci cantieri, operai e verbali</div>
           </div>
         </div>
       </div>

@@ -2,7 +2,11 @@ import { Component, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useT } from '@/i18n';
 
-const RELOAD_GUARD = 'vita.chunkReloaded';
+// Stored in localStorage as a timestamp; reload is allowed if the last attempt
+// was more than 30 s ago, preventing rapid infinite loops while still allowing
+// recovery from real crashes after the first stale-cache reload.
+const RELOAD_GUARD = 'vita.lastCrashReload';
+const RELOAD_COOLDOWN_MS = 30_000;
 
 interface Labels {
   title: string;
@@ -30,8 +34,10 @@ class Inner extends Component<Props, State> {
     // A stale service-worker cache after a deploy is a common crash cause.
     // Reload once to pick up fresh assets; guard against infinite loops.
     try {
-      if (!sessionStorage.getItem(RELOAD_GUARD)) {
-        sessionStorage.setItem(RELOAD_GUARD, '1');
+      const lastReload = localStorage.getItem(RELOAD_GUARD);
+      const recentlyReloaded = lastReload && Date.now() - Number(lastReload) < RELOAD_COOLDOWN_MS;
+      if (!recentlyReloaded) {
+        localStorage.setItem(RELOAD_GUARD, String(Date.now()));
         // Clear all service-worker caches so the next load gets fresh JS.
         if ('caches' in window) {
           caches.keys().then((names) => names.forEach((n) => caches.delete(n)));
@@ -60,7 +66,7 @@ class Inner extends Component<Props, State> {
         <p className="text-[15px] text-ink-2 mt-2 max-w-xs leading-relaxed">{desc}</p>
         <button
           onClick={() => {
-            try { sessionStorage.removeItem(RELOAD_GUARD); } catch { /* ignore */ }
+            try { localStorage.removeItem(RELOAD_GUARD); } catch { /* ignore */ }
             window.location.reload();
           }}
           className="mt-6 h-12 px-6 rounded-btn bg-primary text-on-primary border border-primary-border font-semibold active:opacity-80"
