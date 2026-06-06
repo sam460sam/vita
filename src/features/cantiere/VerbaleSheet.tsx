@@ -1,25 +1,28 @@
 import { useRef, useState, useEffect } from 'react';
-import { Camera, X, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Camera, X, CheckCircle2, AlertTriangle, Scale } from 'lucide-react';
 import { Sheet, Button, Field, Input } from '@/ui';
 import { useToast } from '@/ui';
 import { saveCantiere } from '@/data/cantiere-repo';
 import type { Cantiere } from '@/data/types';
+import { formatEuro } from './logic';
 
-const CHECKLIST = [
-  'Spessore conforme al contratto',
-  'Planarità entro tolleranza (3mm/3m — UNI 10966)',
-  'Superficie priva di crepe o distacchi visibili',
+export const CHECKLIST_ITEMS = [
+  'Spessore del getto conforme al contratto',
+  'Planarità entro tolleranza (3 mm/3 m — UNI 10966)',
+  'Superficie priva di crepe, distacchi o irregolarità visibili',
   'Stagionatura completata correttamente',
-  'Cantiere pulito e sgombrato',
+  'Assenza di ristagni d\'acqua o pendenze non concordate',
+  'Giunti di dilatazione realizzati come da progetto',
+  'Cantiere pulito e materiali di risulta rimossi',
 ];
 
-const DISCLAIMER =
-  'Firmando il presente verbale, il sottoscritto dichiara di aver ispezionato il lavoro eseguito e ' +
-  'di accettarlo come conforme alle condizioni contrattuali concordate. ' +
-  'La presente firma elettronica semplice ha valore probatorio ai sensi del Regolamento UE 910/2014 (eIDAS) ' +
-  'e del D.Lgs. 82/2005 (CAD). Eventuali vizi occulti potranno essere segnalati entro 60 giorni ' +
-  'ai sensi dell\'art. 1667 c.c. È esclusa qualsiasi contestazione relativa a difetti visibili ' +
-  'al momento della presente accettazione.';
+// Shown to client in-app; full legal text goes in PDF
+const RIEPILOGO_VERBALE =
+  'Il presente documento costituisce verbale di collaudo e accettazione definitiva ' +
+  "dell'opera ai sensi dell'art. 1665 c.c. Con la firma, il committente dichiara che i " +
+  'lavori sono stati eseguiti a regola d\'arte e accetta il saldo dovuto alle condizioni ' +
+  'indicate. Le clausole relative ai vizi apparenti, agli interessi di mora e al foro ' +
+  'competente richiedono approvazione separata (art. 1341 c.c.).';
 
 interface Props {
   open: boolean;
@@ -27,25 +30,32 @@ interface Props {
   onClose: () => void;
 }
 
-type Step = 'disclaimer' | 'firma';
+type Step = 'dati' | 'firma';
 
 export function VerbaleSheet({ open, cantiere, onClose }: Props) {
   const { show } = useToast();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawing = useRef(false);
 
-  const [step, setStep] = useState<Step>('disclaimer');
+  const [step, setStep] = useState<Step>('dati');
   const [clienteNome, setClienteNome] = useState('');
-  const [disclaimerAccettato, setDisclaimerAccettato] = useState(false);
+  const [scadenzaPagamento, setScadenzaPagamento] = useState('');
   const [foto, setFoto] = useState<string[]>([]);
   const [checklist, setChecklist] = useState<string[]>([]);
   const [firmaPresente, setFirmaPresente] = useState(false);
 
+  // Art. 1341 c.c. — clausole che richiedono specifica approvazione
+  const [art1341Approvato, setArt1341Approvato] = useState(false);
+  // General acceptance
+  const [accettazioneGenerale, setAccettazioneGenerale] = useState(false);
+
   useEffect(() => {
     if (open) {
-      setStep('disclaimer');
+      setStep('dati');
       setClienteNome(cantiere.verbaleClienteNome ?? cantiere.cliente);
-      setDisclaimerAccettato(false);
+      setScadenzaPagamento(cantiere.scadenzaPagamento ?? '');
+      setAccettazioneGenerale(false);
+      setArt1341Approvato(false);
       setFoto(cantiere.foto ?? []);
       setChecklist([]);
       setFirmaPresente(!!cantiere.firmaCliente);
@@ -111,7 +121,6 @@ export function VerbaleSheet({ open, cantiere, onClose }: Props) {
     setFirmaPresente(false);
   }
 
-  // --- Photos ---
   function addFoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -127,7 +136,6 @@ export function VerbaleSheet({ open, cantiere, onClose }: Props) {
     setChecklist((prev) => prev.includes(item) ? prev.filter((x) => x !== item) : [...prev, item]);
   }
 
-  // --- Save ---
   async function salva() {
     const firma = firmaPresente ? canvasRef.current?.toDataURL() : undefined;
     const timestamp = new Date().toISOString();
@@ -137,63 +145,128 @@ export function VerbaleSheet({ open, cantiere, onClose }: Props) {
       firmaCliente: firma,
       verbaleTimestamp: firma ? timestamp : cantiere.verbaleTimestamp,
       verbaleClienteNome: clienteNome.trim() || cantiere.cliente,
-      verbaleDisclaimerAccettato: disclaimerAccettato,
+      verbaleDisclaimerAccettato: accettazioneGenerale && art1341Approvato,
+      scadenzaPagamento: scadenzaPagamento || cantiere.scadenzaPagamento,
     });
     show('Verbale salvato');
     onClose();
   }
 
-  // ---- Step 1: disclaimer + client name ----
-  if (step === 'disclaimer') {
+  const saldo = cantiere.importo - (cantiere.acconto ?? 0);
+  const canProceed = accettazioneGenerale && art1341Approvato && clienteNome.trim().length > 0;
+
+  // ---- Step 1: dati + consensi ----
+  if (step === 'dati') {
     return (
       <Sheet
         open={open}
         onClose={onClose}
         title="Verbale di consegna"
         footer={
-          <Button
-            onClick={() => setStep('firma')}
-            block
-            disabled={!disclaimerAccettato || !clienteNome.trim()}
-          >
+          <Button onClick={() => setStep('firma')} block disabled={!canProceed}>
             Procedi alla firma →
           </Button>
         }
       >
+        {/* Saldo in evidenza */}
+        {saldo > 0 && (
+          <div className="bg-slate-800 text-white rounded-xl p-4 mb-4 text-center">
+            <div className="text-[12px] text-slate-300 mb-0.5">Saldo da pagare alla firma</div>
+            <div className="text-3xl font-bold">{formatEuro(saldo)}</div>
+            {cantiere.acconto != null && cantiere.acconto > 0 && (
+              <div className="text-[11px] text-slate-400 mt-0.5">
+                Totale {formatEuro(cantiere.importo)} · Acconto {formatEuro(cantiere.acconto)} già ricevuto
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Descrizione documento */}
         <div className="bg-slate-50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-700 rounded-xl p-4 mb-4">
           <div className="flex items-start gap-2 mb-2">
-            <AlertTriangle size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
-            <span className="text-[13px] font-semibold text-ink">Documento legale</span>
+            <AlertTriangle size={15} className="text-amber-500 flex-shrink-0 mt-0.5" />
+            <span className="text-[13px] font-semibold text-ink">Documento legale vincolante</span>
           </div>
-          <p className="text-[13px] text-ink-2 leading-relaxed">{DISCLAIMER}</p>
+          <p className="text-[12.5px] text-ink-2 leading-relaxed">{RIEPILOGO_VERBALE}</p>
         </div>
 
-        <Field label="Nome e cognome del cliente che firma *">
+        {/* Nome cliente */}
+        <Field label="Nome e cognome del firmatario *">
           <Input
             value={clienteNome}
             onChange={(e) => setClienteNome(e.target.value)}
             placeholder="Mario Rossi"
-            autoFocus
           />
           <p className="text-[11px] text-ink-3 mt-1">
-            Verifica l'identità del cliente prima di procedere.
+            Verificare l'identità del cliente prima di procedere (documento d'identità).
           </p>
         </Field>
 
-        <label className="flex items-start gap-3 cursor-pointer mt-2 p-3 rounded-xl border border-line">
-          <input
-            type="checkbox"
-            checked={disclaimerAccettato}
-            onChange={(e) => setDisclaimerAccettato(e.target.checked)}
-            className="w-5 h-5 mt-0.5 rounded accent-slate-600 flex-shrink-0"
+        {/* Scadenza pagamento */}
+        <Field label="Scadenza pagamento">
+          <Input
+            type="date"
+            value={scadenzaPagamento}
+            onChange={(e) => setScadenzaPagamento(e.target.value)}
           />
-          <span className="text-[14px] leading-snug">
-            Il cliente ha letto e accetta il presente verbale di consegna
-          </span>
-        </label>
+          <p className="text-[11px] text-ink-3 mt-1">
+            Indicare la data entro cui il saldo deve essere versato.
+          </p>
+        </Field>
 
-        <p className="text-[11px] text-ink-3 mt-3 text-center">
-          Firma elettronica semplice (FES) · Reg. UE 910/2014 · D.Lgs. 82/2005
+        {/* Accettazione generale */}
+        <div className="mt-3 space-y-3">
+          <label className="flex items-start gap-3 cursor-pointer p-3 rounded-xl border border-line bg-section">
+            <input
+              type="checkbox"
+              checked={accettazioneGenerale}
+              onChange={(e) => setAccettazioneGenerale(e.target.checked)}
+              className="w-5 h-5 mt-0.5 rounded accent-slate-700 flex-shrink-0"
+            />
+            <span className="text-[13px] leading-snug text-ink">
+              Il committente dichiara di aver verificato i lavori e di accettarli
+              come conformi alle condizioni pattuite (art. 1665 c.c.), impegnandosi
+              al pagamento del saldo indicato alle scadenze concordate.
+            </span>
+          </label>
+
+          {/* Art. 1341 — clausole vessatorie: specifica approvazione */}
+          <div className="p-3 rounded-xl border-2 border-slate-400 dark:border-slate-500 bg-slate-50 dark:bg-slate-900/30">
+            <div className="flex items-center gap-2 mb-2">
+              <Scale size={14} className="text-slate-600 dark:text-slate-400 flex-shrink-0" />
+              <span className="text-[12px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
+                Approvazione specifica — art. 1341 c.c.
+              </span>
+            </div>
+            <p className="text-[11.5px] text-ink-3 mb-3 leading-relaxed">
+              Le seguenti clausole limitano diritti del committente e richiedono
+              approvazione separata per essere valide (art. 1341 comma 2 c.c.):
+            </p>
+            <ul className="text-[12px] text-ink-2 space-y-1.5 mb-3 pl-1">
+              <li>• <strong>Esclusione vizi apparenti</strong> — i difetti visibili al momento
+                dell'accettazione non potranno essere contestati successivamente (art. 1667 c.c.)</li>
+              <li>• <strong>Interessi di mora automatici</strong> — in caso di ritardo nel pagamento
+                decorrono automaticamente gli interessi senza necessità di messa in mora
+                (D.Lgs. 231/2002 per rapporti commerciali; art. 1224 c.c. per rapporti civili)</li>
+              <li>• <strong>Foro esclusivo di Treviso</strong> — per qualsiasi controversia è
+                competente il Tribunale di Treviso</li>
+            </ul>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={art1341Approvato}
+                onChange={(e) => setArt1341Approvato(e.target.checked)}
+                className="w-5 h-5 mt-0.5 rounded accent-slate-700 flex-shrink-0"
+              />
+              <span className="text-[13px] font-semibold leading-snug text-ink">
+                Il committente approva specificamente le clausole sopra elencate
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <p className="text-[10.5px] text-ink-3 mt-3 text-center leading-relaxed">
+          Firma Elettronica Semplice (FES) · Reg. UE 910/2014 (eIDAS) · D.Lgs. 82/2005 (CAD)
         </p>
       </Sheet>
     );
@@ -211,12 +284,12 @@ export function VerbaleSheet({ open, cantiere, onClose }: Props) {
       <div className="flex items-center gap-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl px-3 py-2 mb-4">
         <CheckCircle2 size={16} className="text-green-600 flex-shrink-0" />
         <span className="text-[13px] text-green-700 dark:text-green-300">
-          <strong>{clienteNome}</strong> ha accettato il verbale
+          <strong>{clienteNome}</strong> · clausole approvate · in attesa di firma
         </span>
       </div>
 
       {/* Photos */}
-      <Field label="Foto del lavoro">
+      <Field label="Foto del lavoro (documentazione probatoria)">
         <div className="flex flex-wrap gap-2 mb-1">
           {foto.map((f, i) => (
             <div key={i} className="relative">
@@ -237,9 +310,9 @@ export function VerbaleSheet({ open, cantiere, onClose }: Props) {
       </Field>
 
       {/* Checklist */}
-      <Field label="Conformità lavoro (UNI 10966)">
+      <Field label="Conformità lavoro — spuntare le voci verificate">
         <div className="space-y-2.5">
-          {CHECKLIST.map((item) => (
+          {CHECKLIST_ITEMS.map((item) => (
             <label key={item} className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
@@ -254,9 +327,9 @@ export function VerbaleSheet({ open, cantiere, onClose }: Props) {
       </Field>
 
       {/* Signature canvas */}
-      <Field label="Firma del cliente">
+      <Field label="Firma autografa del committente">
         <p className="text-[12px] text-ink-3 mb-2">
-          Il cliente firma qui con il dito — {new Date().toLocaleString('it-IT')}
+          {clienteNome} — {new Date().toLocaleString('it-IT')}
         </p>
         <div className="border-2 border-slate-300 dark:border-slate-600 rounded-xl overflow-hidden bg-white">
           <canvas
