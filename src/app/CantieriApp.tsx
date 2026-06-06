@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/theme/theme';
 import { RouteErrorBoundary } from './ErrorBoundary';
 import { CantieriTabBar } from './CantieriTabBar';
 import { OnboardingScreen } from '@/features/cantiere/OnboardingScreen';
+import type { MioProfilo } from '@/features/cantiere/profiloRepo';
 
 // Eager
 import { CantierePage, CantiereDetail, OperaiPage } from '@/features/cantiere';
@@ -18,7 +19,7 @@ const InfoPage = lazy(() => import('@/features/cantiere/InfoPage').then((m) => (
 export function CantieriApp() {
   const [onboarded, setOnboarded] = useState(() => !!localStorage.getItem('cantieri.onboarded'));
 
-  function completeOnboarding() {
+  function completeOnboarding(_profilo: MioProfilo) {
     localStorage.setItem('cantieri.onboarded', '1');
     setOnboarded(true);
   }
