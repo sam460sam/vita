@@ -48,7 +48,7 @@ export function CantierePageHeader({ title, subtitle, action, back }: Props) {
             aria-label="Guida"
             className="h-10 w-10 -mr-1 flex items-center justify-center rounded-full hover:bg-section active:scale-90 transition-transform"
           >
-            <img src="./betoniera.svg" alt="" className="w-7 h-7 rounded-lg" />
+            <img src="./betoniera.png" alt="" className="w-7 h-7 rounded-lg object-cover" />
           </button>
         </div>
       </header>

@@ -73,7 +73,7 @@ export function Sheet({ open, onClose, title, children, footer, size = 'auto' }:
             <X size={20} />
           </button>
         </div>
-        <div ref={scrollRef} className="px-4 pb-4 overflow-y-auto flex-1 overscroll-contain">
+        <div ref={scrollRef} className="px-4 pb-4 overflow-y-auto overflow-x-hidden flex-1 overscroll-contain">
           {children}
         </div>
         {footer && <div className="px-4 pt-3 pb-4 border-t border-divider flex-shrink-0">{footer}</div>}

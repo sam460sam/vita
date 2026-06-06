@@ -177,9 +177,9 @@ export function OnboardingScreen({ onDone }: Props) {
         {/* Hero */}
         <div className="flex flex-col items-center pt-16 pb-8 px-6 bg-gradient-to-b from-slate-700 to-slate-900">
           <img
-            src="./betoniera.svg"
+            src="./betoniera.png"
             alt="Cantieri"
-            className="w-28 h-28 rounded-[28px] shadow-2xl mb-6"
+            className="w-28 h-28 rounded-[28px] shadow-2xl mb-6 object-cover"
           />
           <h1 className="text-[30px] font-bold text-white tracking-tight">Cantieri</h1>
           <p className="text-[15px] text-slate-300 mt-2 text-center leading-relaxed max-w-xs">

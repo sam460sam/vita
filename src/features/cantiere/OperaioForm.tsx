@@ -1,10 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Star } from 'lucide-react';
+import { Star, BookUser } from 'lucide-react';
 import { Sheet, Field, Input, Textarea, Button } from '@/ui';
 import { useToast } from '@/ui';
 import { saveOperaio, deleteOperaio } from '@/data/cantiere-repo';
 import type { Operaio } from '@/data/types';
 import { SPECIALIZZAZIONI } from './logic';
+
+declare global {
+  interface Navigator {
+    contacts?: {
+      select: (props: string[], opts?: { multiple?: boolean }) => Promise<Array<{ name?: string[]; tel?: string[] }>>;
+    };
+  }
+}
 
 interface Props {
   open: boolean;
@@ -41,6 +49,18 @@ export function OperaioForm({ open, onClose, operaio }: Props) {
     setSpecializzazioni((prev) =>
       prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s],
     );
+  }
+
+  async function importContact() {
+    if (!navigator.contacts) return;
+    try {
+      const results = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+      if (results.length > 0) {
+        const c = results[0];
+        if (c.name?.[0]) setNome(c.name[0]);
+        if (c.tel?.[0]) setTelefono(c.tel[0]);
+      }
+    } catch { /* user cancelled */ }
   }
 
   async function save() {
@@ -94,12 +114,25 @@ export function OperaioForm({ open, onClose, operaio }: Props) {
       </Field>
 
       <Field label="Telefono">
-        <Input
-          type="tel"
-          value={telefono}
-          onChange={(e) => setTelefono(e.target.value)}
-          placeholder="+39 333 000 0000"
-        />
+        <div className="flex gap-2">
+          <Input
+            type="tel"
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value)}
+            placeholder="+39 333 000 0000"
+            className="flex-1"
+          />
+          {navigator.contacts && (
+            <button
+              type="button"
+              onClick={importContact}
+              className="flex-shrink-0 h-11 px-3 rounded-xl bg-section border border-line text-ink-2 flex items-center gap-1.5 text-[13px] font-medium active:bg-divider"
+            >
+              <BookUser size={16} />
+              Contatti
+            </button>
+          )}
+        </div>
       </Field>
 
       <div className="mb-4">

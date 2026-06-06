@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Plus, Phone, Star } from 'lucide-react';
+import { Plus, Phone, Star, ClipboardList } from 'lucide-react';
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, Button, EmptyState, Segmented } from '@/ui';
 import { db } from '@/data/db';
 import type { Operaio } from '@/data/types';
 import { OperaioForm } from './OperaioForm';
+import { AssegnaCantiereSheet } from './AssegnaCantiereSheet';
 import { DIRECTORY_VENETO } from './directory';
 import type { ArtigianoDirectory } from './directory';
 import { getMioProfilo } from './profiloRepo';
@@ -85,6 +86,8 @@ export function OperaiPage() {
   const [tab, setTab] = useState<TabValue>('miei');
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Operaio | undefined>();
+  const [assegnaOpen, setAssegnaOpen] = useState(false);
+  const [assegnaOperaio, setAssegnaOperaio] = useState<Operaio | undefined>();
   const [filterProv, setFilterProv] = useState<string>(defaultProvincia);
 
   const operai = useLiveQuery(() => db.operai.orderBy('nome').toArray(), [], []);
@@ -97,6 +100,12 @@ export function OperaiPage() {
   function openNew() {
     setEditing(undefined);
     setFormOpen(true);
+  }
+
+  function openAssegna(o: Operaio, e: React.MouseEvent) {
+    e.stopPropagation();
+    setAssegnaOperaio(o);
+    setAssegnaOpen(true);
   }
 
   const filteredDirectory = filterProv
@@ -177,6 +186,13 @@ export function OperaiPage() {
                               Chiama
                             </a>
                           )}
+                          <button
+                            onClick={(e) => openAssegna(o, e)}
+                            className="flex items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400 font-medium"
+                          >
+                            <ClipboardList size={13} />
+                            Assegna
+                          </button>
                         </div>
                       </div>
                     </Card>
@@ -238,6 +254,11 @@ export function OperaiPage() {
       )}
 
       <OperaioForm open={formOpen} operaio={editing} onClose={() => setFormOpen(false)} />
+      <AssegnaCantiereSheet
+        open={assegnaOpen}
+        operaio={assegnaOperaio}
+        onClose={() => setAssegnaOpen(false)}
+      />
     </>
   );
 }
