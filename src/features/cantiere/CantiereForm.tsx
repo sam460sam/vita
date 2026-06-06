@@ -1,10 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BookUser } from 'lucide-react';
 import { Sheet, Field, Input, Select, Textarea, Button } from '@/ui';
 import { useToast } from '@/ui';
 import { saveCantiere, deleteCantiere } from '@/data/cantiere-repo';
 import type { Cantiere } from '@/data/types';
 import { STATI, PAGAMENTI, TIPO_USO } from './logic';
+
+declare global {
+  interface Navigator {
+    contacts?: {
+      select: (
+        props: string[],
+        opts?: { multiple?: boolean },
+      ) => Promise<Array<{ name?: string[]; tel?: Array<{ value: string }> }>>;
+    };
+  }
+}
 
 interface Props {
   open: boolean;
@@ -74,6 +86,16 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
     if (!cantiere) navigate(`/cantiere/${id}`);
   }
 
+  async function importContact() {
+    if (!navigator.contacts) return;
+    try {
+      const [contact] = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+      if (!contact) return;
+      if (contact.name?.[0]) set('cliente', contact.name[0]);
+      if (contact.tel?.[0]?.value) set('telefono', contact.tel[0].value.replace(/\s/g, ''));
+    } catch { /* user cancelled */ }
+  }
+
   async function destroy() {
     if (!cantiere) return;
     if (!confirm('Eliminare il cantiere?')) return;
@@ -102,11 +124,24 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
       }
     >
       <Field label="Cliente *">
-        <Input
-          value={form.cliente}
-          onChange={(e) => set('cliente', e.target.value)}
-          placeholder="Nome cliente o azienda"
-        />
+        <div className="flex gap-2">
+          <Input
+            value={form.cliente}
+            onChange={(e) => set('cliente', e.target.value)}
+            placeholder="Nome cliente o azienda"
+            className="flex-1"
+          />
+          {navigator.contacts && (
+            <button
+              type="button"
+              onClick={importContact}
+              className="h-11 w-11 flex items-center justify-center rounded-btn bg-section border border-line text-amber-500 flex-shrink-0"
+              title="Importa contatto"
+            >
+              <BookUser size={18} />
+            </button>
+          )}
+        </div>
       </Field>
 
       <Field label="Telefono">
@@ -134,6 +169,7 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
             value={form.mq || ''}
             onChange={(e) => set('mq', Number(e.target.value))}
             placeholder="100"
+            className="text-center"
           />
         </Field>
         <Field label="Spessore (cm)">
@@ -143,6 +179,7 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
             value={form.spessore || ''}
             onChange={(e) => set('spessore', Number(e.target.value))}
             placeholder="15"
+            className="text-center"
           />
         </Field>
       </div>
@@ -163,6 +200,7 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
             value={form.importo || ''}
             onChange={(e) => set('importo', Number(e.target.value))}
             placeholder="0"
+            className="text-center"
           />
         </Field>
         <Field label="Acconto (€)">
@@ -172,6 +210,7 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
             value={form.acconto ?? ''}
             onChange={(e) => set('acconto', e.target.value ? Number(e.target.value) : undefined)}
             placeholder="0"
+            className="text-center"
           />
         </Field>
       </div>
