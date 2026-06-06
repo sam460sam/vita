@@ -13,7 +13,7 @@ const TABS: Tab[] = [
     to: '/cantiere',
     label: 'Cantieri',
     icon: HardHat,
-    match: (p) => p.startsWith('/cantiere') && !p.startsWith('/cantiere/operai'),
+    match: (p) => p.startsWith('/cantiere') && !p.startsWith('/cantiere/operai') && !p.startsWith('/cantiere/impianti'),
   },
   {
     to: '/cantiere/operai',

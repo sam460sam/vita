@@ -72,16 +72,20 @@ function ArtigianoCard({ a }: { a: ArtigianoDirectory }) {
   );
 }
 
+function defaultProvincia(): string {
+  try {
+    const profilo = getMioProfilo();
+    return profilo?.provincia && VENETO_PROVINCE.includes(profilo.provincia)
+      ? profilo.provincia
+      : '';
+  } catch { return ''; }
+}
+
 export function OperaiPage() {
   const [tab, setTab] = useState<TabValue>('miei');
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Operaio | undefined>();
-
-  const profilo = getMioProfilo();
-  const defaultProv = profilo?.provincia && VENETO_PROVINCE.includes(profilo.provincia)
-    ? profilo.provincia
-    : '';
-  const [filterProv, setFilterProv] = useState<string>(defaultProv);
+  const [filterProv, setFilterProv] = useState<string>(defaultProvincia);
 
   const operai = useLiveQuery(() => db.operai.orderBy('nome').toArray(), [], []);
 
@@ -131,9 +135,9 @@ export function OperaiPage() {
                       <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0">
                           <div className="font-semibold text-[16px]">{o.nome}</div>
-                          {o.specializzazioni.length > 0 && (
+                          {(o.specializzazioni ?? []).length > 0 && (
                             <div className="flex flex-wrap gap-1.5 mt-1.5">
-                              {o.specializzazioni.map((s) => (
+                              {(o.specializzazioni ?? []).map((s) => (
                                 <span
                                   key={s}
                                   className="text-[11px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full font-medium"
