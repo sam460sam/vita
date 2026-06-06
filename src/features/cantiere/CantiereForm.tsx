@@ -7,17 +7,6 @@ import { saveCantiere, deleteCantiere } from '@/data/cantiere-repo';
 import type { Cantiere } from '@/data/types';
 import { STATI, PAGAMENTI, TIPO_USO } from './logic';
 
-declare global {
-  interface Navigator {
-    contacts?: {
-      select: (
-        props: string[],
-        opts?: { multiple?: boolean },
-      ) => Promise<Array<{ name?: string[]; tel?: Array<{ value: string }> }>>;
-    };
-  }
-}
-
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -92,7 +81,7 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
       const [contact] = await navigator.contacts.select(['name', 'tel'], { multiple: false });
       if (!contact) return;
       if (contact.name?.[0]) set('cliente', contact.name[0]);
-      if (contact.tel?.[0]?.value) set('telefono', contact.tel[0].value.replace(/\s/g, ''));
+      if (contact.tel?.[0]) set('telefono', (contact.tel[0] as string).replace(/\s/g, ''));
     } catch { /* user cancelled */ }
   }
 
