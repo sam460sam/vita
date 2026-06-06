@@ -83,6 +83,13 @@ export function CantierePage() {
               <button key={c.id} className="w-full text-left" onClick={() => navigate(`/cantiere/${c.id}`)}>
                 <Card>
                   <div className="flex items-start gap-3">
+                    {c.foto.length > 0 && (
+                      <img
+                        src={c.foto[0]}
+                        alt="Foto cantiere"
+                        className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
+                      />
+                    )}
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-[16px] truncate">{c.cliente}</div>
                       {c.indirizzo && <div className="text-[13px] text-ink-2 truncate mt-0.5">{c.indirizzo}</div>}

@@ -12,12 +12,16 @@ import { CantiereForm } from './CantiereForm';
 import { CementoCalc } from './CementoCalc';
 import { VerbaleSheet } from './VerbaleSheet';
 import { condividiVerbale } from './generateVerbale';
+import { GiornaledCantiere } from './GiornaledCantiere';
+import { PhotoAnnotator } from './PhotoAnnotator';
+import { saveCantiere } from '@/data/cantiere-repo';
 
 export function CantiereDetail() {
   const { id } = useParams<{ id: string }>();
   const [editOpen, setEditOpen] = useState(false);
   const [verbaleOpen, setVerbaleOpen] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [annotatePhoto, setAnnotatePhoto] = useState<{ index: number; src: string } | null>(null);
 
   const cantiere = useLiveQuery(() => db.cantieri.get(id!), [id]);
   const operai = useLiveQuery<Operaio[], Operaio[]>(
@@ -147,7 +151,15 @@ export function CantiereDetail() {
               {cantiere.foto.length > 0 && (
                 <div className="grid grid-cols-3 gap-2">
                   {cantiere.foto.map((f, i) => (
-                    <img key={i} src={f} alt="Foto cantiere" className="rounded-lg aspect-square object-cover" />
+                    <div key={i} className="relative">
+                      <img src={f} alt="Foto cantiere" className="rounded-lg aspect-square object-cover w-full" />
+                      <button
+                        onClick={() => setAnnotatePhoto({ index: i, src: f })}
+                        className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] font-medium px-1.5 py-0.5 rounded-md"
+                      >
+                        Annota
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}
@@ -204,10 +216,27 @@ export function CantiereDetail() {
             </div>
           </Card>
         )}
+
+        {/* Giornale di cantiere */}
+        <GiornaledCantiere cantiereId={cantiere.id} />
       </Screen>
 
       <CantiereForm open={editOpen} cantiere={cantiere} onClose={() => setEditOpen(false)} />
       <VerbaleSheet open={verbaleOpen} cantiere={cantiere} onClose={() => setVerbaleOpen(false)} />
+
+      {annotatePhoto && (
+        <PhotoAnnotator
+          src={annotatePhoto.src}
+          onSave={async (dataUrl) => {
+            const newFoto = cantiere.foto.map((f, i) =>
+              i === annotatePhoto.index ? dataUrl : f,
+            );
+            await saveCantiere({ ...cantiere, foto: newFoto });
+            setAnnotatePhoto(null);
+          }}
+          onCancel={() => setAnnotatePhoto(null)}
+        />
+      )}
     </>
   );
 }
