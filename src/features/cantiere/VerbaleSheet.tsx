@@ -5,16 +5,9 @@ import { useToast } from '@/ui';
 import { saveCantiere } from '@/data/cantiere-repo';
 import type { Cantiere } from '@/data/types';
 import { formatEuro } from './logic';
+import { CHECKLIST_ITEMS } from './verbale-data';
 
-export const CHECKLIST_ITEMS = [
-  'Spessore del getto conforme al contratto',
-  'Planarità entro tolleranza (3 mm/3 m — UNI 10966)',
-  'Superficie priva di crepe, distacchi o irregolarità visibili',
-  'Stagionatura completata correttamente',
-  'Assenza di ristagni d\'acqua o pendenze non concordate',
-  'Giunti di dilatazione realizzati come da progetto',
-  'Cantiere pulito e materiali di risulta rimossi',
-];
+export { CHECKLIST_ITEMS };
 
 // Shown to client in-app; full legal text goes in PDF
 const RIEPILOGO_VERBALE =

@@ -2,7 +2,7 @@ import { jsPDF } from 'jspdf';
 import type { Cantiere } from '@/data/types';
 import { getMioProfilo } from './profiloRepo';
 import { calcolaCemento, formatEuro } from './logic';
-import { CHECKLIST_ITEMS } from './VerbaleSheet';
+import { CHECKLIST_ITEMS } from './verbale-data';
 
 // ── Legal texts ──────────────────────────────────────────────────────────────
 
