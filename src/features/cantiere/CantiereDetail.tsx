@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useParams } from 'react-router-dom';
-import { Phone, MapPin, Calendar, Edit3, Camera, PenTool } from 'lucide-react';
+import { Phone, MapPin, Calendar, Edit3, Camera, PenTool, FileText, Share2 } from 'lucide-react';
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, CardHeader, Button } from '@/ui';
@@ -11,11 +11,13 @@ import { formatEuro, statoInfo, pagamentoInfo } from './logic';
 import { CantiereForm } from './CantiereForm';
 import { CementoCalc } from './CementoCalc';
 import { VerbaleSheet } from './VerbaleSheet';
+import { condividiVerbale } from './generateVerbale';
 
 export function CantiereDetail() {
   const { id } = useParams<{ id: string }>();
   const [editOpen, setEditOpen] = useState(false);
   const [verbaleOpen, setVerbaleOpen] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   const cantiere = useLiveQuery(() => db.cantieri.get(id!), [id]);
   const operai = useLiveQuery<Operaio[], Operaio[]>(
@@ -29,6 +31,13 @@ export function CantiereDetail() {
 
   if (cantiere === undefined) return null;
   if (cantiere === null) return null;
+
+  async function scaricaPdf() {
+    if (!cantiere) return;
+    setPdfLoading(true);
+    try { await condividiVerbale(cantiere); }
+    finally { setPdfLoading(false); }
+  }
 
   const sInfo = statoInfo(cantiere.stato);
   const pInfo = pagamentoInfo(cantiere.pagamento);
@@ -142,9 +151,27 @@ export function CantiereDetail() {
                   ))}
                 </div>
               )}
-              <Button variant="ghost" onClick={() => setVerbaleOpen(true)}>
-                Modifica verbale
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={scaricaPdf}
+                  disabled={pdfLoading}
+                  variant="primary"
+                  className="flex-1"
+                >
+                  {pdfLoading ? (
+                    'Generazione...'
+                  ) : (
+                    <>
+                      <Share2 size={15} className="mr-1.5" />
+                      {typeof navigator !== 'undefined' && 'canShare' in navigator ? 'Condividi PDF' : 'Scarica PDF'}
+                    </>
+                  )}
+                </Button>
+                <Button variant="ghost" onClick={() => setVerbaleOpen(true)}>
+                  <FileText size={15} className="mr-1.5" />
+                  Modifica
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="space-y-3">
