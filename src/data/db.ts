@@ -7,11 +7,13 @@
 import Dexie, { type Table } from 'dexie';
 import type {
   Budget,
+  Cantiere,
   Goal,
   Habit,
   HabitLog,
   HomeLayout,
   JournalEntry,
+  Operaio,
   Project,
   Settings,
   Task,
@@ -35,6 +37,8 @@ export class VitaDB extends Dexie {
   waterLogs!: Table<WaterLog, string>;
   weightLogs!: Table<WeightLog, string>;
   homeLayout!: Table<HomeLayout, string>;
+  cantieri!: Table<Cantiere, string>;
+  operai!: Table<Operaio, string>;
 
   constructor() {
     super('vita');
@@ -62,6 +66,11 @@ export class VitaDB extends Dexie {
     // Additive only; all existing tables and data are preserved.
     this.version(4).stores({
       homeLayout: 'id',
+    });
+    // v5: cantiere — cement flooring contractor module.
+    this.version(5).stores({
+      cantieri: 'id, stato, pagamento, dataPrevista, updatedAt',
+      operai: 'id, attivo, updatedAt',
     });
   }
 }

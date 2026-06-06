@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { App } from './app/App';
+import { CantieriApp as App } from './app/CantieriApp';
 import { ensureSeedRows } from './data/repo';
 import { initNative } from './platform/native';
 import { platform } from './platform/platform';
