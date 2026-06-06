@@ -362,6 +362,8 @@ export interface GiornaleEntry extends Timestamped {
   attrezzature: AttrezzaturaVoce[];
   materiali: MaterialeVoce[];
   meteo?: string;
+  temperatura?: number; // °C from Open-Meteo
+  vento?: number;       // km/h
   condTerrenoViabilita?: string;
   note?: string;
   foto: string[]; // base64 data URLs

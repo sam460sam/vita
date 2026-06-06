@@ -150,12 +150,18 @@ export function GiornaledCantiere({ cantiereId }: Props) {
 
         {/* Selected day summary */}
         {selectedEntry && (
-          <div className="mt-3 pt-3 border-t border-line/50 flex items-start gap-2 text-[13px] text-ink-2">
+          <div className="mt-3 pt-3 border-t border-line/50 flex items-center gap-2 text-[13px] text-ink-2 flex-wrap">
             {selectedEntry.meteo && (
               <span className="text-[18px] leading-none">{METEO_EMOJI[selectedEntry.meteo] ?? ''}</span>
             )}
+            {selectedEntry.temperatura != null && (
+              <span className="font-bold text-ink">{selectedEntry.temperatura}°C</span>
+            )}
+            {selectedEntry.vento != null && selectedEntry.vento > 15 && (
+              <span className="text-ink-3">💨 {selectedEntry.vento} km/h</span>
+            )}
             {selectedEntry.manodopera.length > 0 && (
-              <span className="font-medium text-ink">{selectedEntry.manodopera.length} operai</span>
+              <span className="font-medium text-ink">· {selectedEntry.manodopera.length} operai</span>
             )}
             {selectedEntry.note && (
               <span className="flex-1 truncate italic">{selectedEntry.note}</span>
