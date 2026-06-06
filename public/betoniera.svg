@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background gradient: slate blue top-left to dark slate bottom-right -->
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#637a93"/>
+      <stop offset="100%" stop-color="#1a2535"/>
+    </linearGradient>
+    <!-- Drum body gradient: bright white top to light grey bottom -->
+    <linearGradient id="drumBody" x1="0" y1="-60" x2="0" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#d0dce8"/>
+    </linearGradient>
+    <!-- Subtle drum side shadow -->
+    <linearGradient id="drumSide" x1="-110" y1="0" x2="110" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#b8cad8"/>
+      <stop offset="30%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e8f0f6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- ── Support structure (behind drum) ── -->
+  <!-- Center vertical pole from drum pivot down -->
+  <line x1="240" y1="300" x2="240" y2="375"
+        stroke="white" stroke-width="26" stroke-linecap="round"/>
+  <!-- Left leg -->
+  <line x1="240" y1="375" x2="118" y2="452"
+        stroke="white" stroke-width="26" stroke-linecap="round"/>
+  <!-- Right leg -->
+  <line x1="240" y1="375" x2="362" y2="452"
+        stroke="white" stroke-width="26" stroke-linecap="round"/>
+  <!-- Horizontal crossbar -->
+  <line x1="155" y1="422" x2="325" y2="422"
+        stroke="white" stroke-width="18" stroke-linecap="round"/>
+
+  <!-- ── Drum (mounted above, tilted -38°) ── -->
+  <g transform="translate(248, 206) rotate(-38)">
+
+    <!-- Main barrel body -->
+    <rect x="-112" y="-60" width="224" height="120" rx="60"
+          fill="url(#drumBody)"/>
+
+    <!-- Rear end cap (darker, in shadow) -->
+    <ellipse cx="-112" cy="0" rx="50" ry="60" fill="#b8cad8"/>
+    <ellipse cx="-112" cy="0" rx="50" ry="60"
+             fill="none" stroke="#a0b8cc" stroke-width="4"/>
+
+    <!-- Drum ring bands (typical on concrete mixers) -->
+    <rect x="-60" y="-60" width="12" height="120" rx="0"
+          fill="#c4d4e0" opacity="0.6"/>
+    <rect x="30" y="-60" width="12" height="120" rx="0"
+          fill="#c4d4e0" opacity="0.6"/>
+
+    <!-- Mixing blades visible through opening (inside shadow) -->
+    <clipPath id="mouth">
+      <ellipse cx="112" cy="0" rx="48" ry="60"/>
+    </clipPath>
+    <g clip-path="url(#mouth)">
+      <line x1="60" y1="-50" x2="90" y2="50"
+            stroke="#3a5068" stroke-width="14" stroke-linecap="round" opacity="0.7"/>
+      <line x1="85" y1="-50" x2="115" y2="50"
+            stroke="#3a5068" stroke-width="14" stroke-linecap="round" opacity="0.7"/>
+      <line x1="35" y1="-45" x2="65" y2="45"
+            stroke="#3a5068" stroke-width="14" stroke-linecap="round" opacity="0.5"/>
+    </g>
+
+    <!-- Front opening (mouth) - dark hole -->
+    <ellipse cx="112" cy="0" rx="48" ry="60" fill="#1a2535"/>
+
+    <!-- Opening rim highlight -->
+    <ellipse cx="112" cy="0" rx="48" ry="60"
+             fill="none" stroke="white" stroke-width="10" opacity="0.9"/>
+
+    <!-- Small specular highlight on drum top -->
+    <ellipse cx="-20" cy="-50" rx="40" ry="8"
+             fill="white" opacity="0.35"/>
+  </g>
+
+  <!-- ── Pivot bolt (drum mount) ── -->
+  <circle cx="240" cy="302" r="14" fill="white" opacity="0.85"/>
+  <circle cx="240" cy="302" r="7" fill="#2d3d50"/>
+
+  <!-- ── Wheels at base ── -->
+  <!-- Left wheel -->
+  <circle cx="136" cy="460" r="24" fill="none" stroke="white" stroke-width="16"/>
+  <circle cx="136" cy="460" r="6" fill="white" opacity="0.6"/>
+  <!-- Right wheel -->
+  <circle cx="344" cy="460" r="24" fill="none" stroke="white" stroke-width="16"/>
+  <circle cx="344" cy="460" r="6" fill="white" opacity="0.6"/>
+</svg>
