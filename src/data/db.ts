@@ -8,6 +8,7 @@ import Dexie, { type Table } from 'dexie';
 import type {
   Budget,
   Cantiere,
+  GiornaleEntry,
   Goal,
   Habit,
   HabitLog,
@@ -39,6 +40,7 @@ export class VitaDB extends Dexie {
   homeLayout!: Table<HomeLayout, string>;
   cantieri!: Table<Cantiere, string>;
   operai!: Table<Operaio, string>;
+  giornaleEntries!: Table<GiornaleEntry, string>;
 
   constructor() {
     super('vita');
@@ -71,6 +73,10 @@ export class VitaDB extends Dexie {
     this.version(5).stores({
       cantieri: 'id, stato, pagamento, dataPrevista, updatedAt',
       operai: 'id, attivo, updatedAt',
+    });
+    // v6: giornale di cantiere — daily construction log.
+    this.version(6).stores({
+      giornaleEntries: 'id, cantiereId, data, updatedAt',
     });
   }
 }

@@ -334,6 +334,39 @@ export interface Operaio extends Timestamped {
   attivo: boolean;
 }
 
+// Giornale di cantiere — daily construction log
+export interface ManodoporaVoce {
+  id: string;
+  nome: string;
+  ore: number;
+  attivita?: string;
+}
+
+export interface AttrezzaturaVoce {
+  id: string;
+  nome: string;
+  quantita: number;
+}
+
+export interface MaterialeVoce {
+  id: string;
+  nome: string;
+  quantita: number;
+  unita: string;
+}
+
+export interface GiornaleEntry extends Timestamped {
+  cantiereId: string;
+  data: string; // ISO yyyy-MM-dd
+  manodopera: ManodoporaVoce[];
+  attrezzature: AttrezzaturaVoce[];
+  materiali: MaterialeVoce[];
+  meteo?: string;
+  condTerrenoViabilita?: string;
+  note?: string;
+  foto: string[]; // base64 data URLs
+}
+
 // ----------------------------------------------------------------------------
 // Full export shape (backup)
 // ----------------------------------------------------------------------------
