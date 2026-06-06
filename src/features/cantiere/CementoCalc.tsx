@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, GraduationCap } from 'lucide-react';
 import { Card, CardHeader, Button, Field, Input, Select } from '@/ui';
 import { saveCantiere } from '@/data/cantiere-repo';
 import type { Cantiere } from '@/data/types';
 import { calcolaCemento, generaMessaggioCemento, CLASSI_CEMENTO, ADDITIVI } from './logic';
+import { CementoTutor } from './CementoTutor';
 
 export function CementoCalc({ cantiere }: { cantiere: Cantiere }) {
+  const [tutorOpen, setTutorOpen] = useState(false);
   const m3 = calcolaCemento(cantiere.mq, cantiere.spessore);
   const [classe, setClasse] = useState(cantiere.classeCemento ?? 'C30/37');
   const [additivi, setAdditivi] = useState<string[]>(cantiere.additivi);
@@ -33,8 +35,20 @@ export function CementoCalc({ cantiere }: { cantiere: Cantiere }) {
   }
 
   return (
+    <>
     <Card className="mb-4">
-      <CardHeader title="Calcola cemento" />
+      <CardHeader
+        title="Calcola cemento"
+        action={
+          <button
+            onClick={() => setTutorOpen(true)}
+            className="flex items-center gap-1.5 text-[12px] text-amber-600 font-medium"
+          >
+            <GraduationCap size={15} />
+            Tutor
+          </button>
+        }
+      />
 
       <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 mb-4 text-center">
         <div className="text-[13px] text-amber-700 dark:text-amber-300 mb-1">m³ stimati</div>
@@ -94,5 +108,7 @@ export function CementoCalc({ cantiere }: { cantiere: Cantiere }) {
         )}
       </Button>
     </Card>
+    <CementoTutor open={tutorOpen} onClose={() => setTutorOpen(false)} />
+    </>
   );
 }
