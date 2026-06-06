@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { HardHat, Users, Info, type LucideIcon } from 'lucide-react';
+import { HardHat, Users, Factory, Info, type LucideIcon } from 'lucide-react';
 
 interface Tab {
   to: string;
@@ -20,6 +20,12 @@ const TABS: Tab[] = [
     label: 'Operai',
     icon: Users,
     match: (p) => p.startsWith('/cantiere/operai'),
+  },
+  {
+    to: '/cantiere/impianti',
+    label: 'Impianti',
+    icon: Factory,
+    match: (p) => p.startsWith('/cantiere/impianti'),
   },
   {
     to: '/info',

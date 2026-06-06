@@ -9,7 +9,7 @@ import { OnboardingScreen } from '@/features/cantiere/OnboardingScreen';
 import type { MioProfilo } from '@/features/cantiere/profiloRepo';
 
 // Eager
-import { CantierePage, CantiereDetail, OperaiPage } from '@/features/cantiere';
+import { CantierePage, CantiereDetail, OperaiPage, ImpiantiPage } from '@/features/cantiere';
 
 // Lazy
 const PrivacyPage = lazy(() => import('@/features/cantiere/PrivacyPage').then((m) => ({ default: m.PrivacyPage })));
@@ -38,6 +38,7 @@ export function CantieriApp() {
                       <Route path="/" element={<Navigate to="/cantiere" replace />} />
                       <Route path="/cantiere" element={<CantierePage />} />
                       <Route path="/cantiere/operai" element={<OperaiPage />} />
+                      <Route path="/cantiere/impianti" element={<ImpiantiPage />} />
                       <Route path="/cantiere/:id" element={<CantiereDetail />} />
                       <Route path="/info" element={<InfoPage />} />
                       <Route path="/privacy" element={<PrivacyPage />} />
