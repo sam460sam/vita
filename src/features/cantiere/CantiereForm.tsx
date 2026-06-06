@@ -106,7 +106,6 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
           value={form.cliente}
           onChange={(e) => set('cliente', e.target.value)}
           placeholder="Nome cliente o azienda"
-          autoFocus
         />
       </Field>
 
