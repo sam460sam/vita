@@ -11,7 +11,8 @@ import puppeteer from 'puppeteer';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
 const DIST = path.join(ROOT, 'dist');
-const OUT = path.join(__dirname, 'out');
+const LANG = process.argv[2] === 'en' ? 'en' : 'it';
+const OUT = path.join(__dirname, 'out', LANG === 'it' ? '.' : LANG);
 fs.mkdirSync(OUT, { recursive: true });
 
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.webmanifest': 'application/manifest+json', '.ico': 'image/x-icon' };
@@ -31,11 +32,11 @@ function serve(dir) {
 }
 
 const SLIDES = [
-  { route: 'oggi', bg: 'linear-gradient(165deg,#EEF2FF,#FCE7F3)', title: 'La tua vita,\norganizzata.' },
-  { route: 'abitudini', bg: 'linear-gradient(165deg,#FEF3C7,#FFE4E6)', title: 'Crea abitudini\nche durano.' },
-  { route: 'attivita', bg: 'linear-gradient(165deg,#DCFCE7,#DBEAFE)', title: 'Allenamenti e\nattività, sempre.' },
-  { route: 'diario', bg: 'linear-gradient(165deg,#F3E8FF,#FAE8FF)', title: 'Diario e umore,\nogni giorno.' },
-  { route: 'peso', bg: 'linear-gradient(165deg,#E0F2FE,#EDE9FE)', title: 'Monitora il peso\ne i progressi.' },
+  { route: 'oggi', bg: 'linear-gradient(165deg,#EEF2FF,#FCE7F3)', title: { it: 'La tua vita,\norganizzata.', en: 'Your life,\norganized.' } },
+  { route: 'abitudini', bg: 'linear-gradient(165deg,#FEF3C7,#FFE4E6)', title: { it: 'Crea abitudini\nche durano.', en: 'Build habits\nthat last.' } },
+  { route: 'attivita', bg: 'linear-gradient(165deg,#DCFCE7,#DBEAFE)', title: { it: 'Allenamenti e\nattività, sempre.', en: 'Workouts and\nactivity, always.' } },
+  { route: 'diario', bg: 'linear-gradient(165deg,#F3E8FF,#FAE8FF)', title: { it: 'Diario e umore,\nogni giorno.', en: 'Journal & mood,\nevery day.' } },
+  { route: 'peso', bg: 'linear-gradient(165deg,#E0F2FE,#EDE9FE)', title: { it: 'Monitora il peso\ne i progressi.', en: 'Track your weight\nand progress.' } },
 ];
 
 function slideHTML(bg, title, dataUri) {
@@ -57,8 +58,9 @@ function slideHTML(bg, title, dataUri) {
   </div></body></html>`;
 }
 
-async function seed(page) {
-  await page.evaluate(async () => {
+async function seed(page, lang) {
+  await page.evaluate(async (lang) => {
+    const en = lang === 'en';
     const iso = (d) => d.toISOString().slice(0, 10);
     const today = new Date();
     const day = (n) => { const d = new Date(today); d.setDate(d.getDate() - n); return d; };
@@ -81,12 +83,15 @@ async function seed(page) {
       tx.oncomplete = () => res();
     });
 
+    const hn = en
+      ? ['Hydration', 'Gym', 'Reading', 'Meditation', 'Walking']
+      : ['Idratazione', 'Palestra', 'Lettura', 'Meditazione', 'Camminata'];
     const habits = [
-      { id: 'h1', name: 'Idratazione', color: '#0EA5E9', icon: 'Droplet', frequency: { type: 'daily' }, archived: false, order: 1, createdAt: T, updatedAt: T },
-      { id: 'h2', name: 'Palestra', color: '#10B981', icon: 'Dumbbell', frequency: { type: 'times_per_week', timesPerWeek: 3 }, archived: false, order: 2, createdAt: T, updatedAt: T },
-      { id: 'h3', name: 'Lettura', color: '#F59E0B', icon: 'BookOpen', frequency: { type: 'daily' }, archived: false, order: 3, createdAt: T, updatedAt: T },
-      { id: 'h4', name: 'Meditazione', color: '#7C3AED', icon: 'Brain', frequency: { type: 'daily' }, archived: false, order: 4, createdAt: T, updatedAt: T },
-      { id: 'h5', name: 'Camminata', color: '#FF6B57', icon: 'Footprints', frequency: { type: 'daily' }, archived: false, order: 5, createdAt: T, updatedAt: T },
+      { id: 'h1', name: hn[0], color: '#0EA5E9', icon: 'Droplet', frequency: { type: 'daily' }, archived: false, order: 1, createdAt: T, updatedAt: T },
+      { id: 'h2', name: hn[1], color: '#10B981', icon: 'Dumbbell', frequency: { type: 'times_per_week', timesPerWeek: 3 }, archived: false, order: 2, createdAt: T, updatedAt: T },
+      { id: 'h3', name: hn[2], color: '#F59E0B', icon: 'BookOpen', frequency: { type: 'daily' }, archived: false, order: 3, createdAt: T, updatedAt: T },
+      { id: 'h4', name: hn[3], color: '#7C3AED', icon: 'Brain', frequency: { type: 'daily' }, archived: false, order: 4, createdAt: T, updatedAt: T },
+      { id: 'h5', name: hn[4], color: '#FF6B57', icon: 'Footprints', frequency: { type: 'daily' }, archived: false, order: 5, createdAt: T, updatedAt: T },
     ];
     await put('habits', habits);
 
@@ -115,18 +120,21 @@ async function seed(page) {
     await put('workouts', workouts);
 
     await put('journalEntries', [
-      { id: 'j1', date: iso(today), mood: 4, text: 'Giornata produttiva: corsa al mattino e tanto focus sul progetto.', tags: ['sport', 'lavoro'], createdAt: T, updatedAt: T },
-      { id: 'j2', date: iso(day(1)), mood: 5, text: 'Serata di relax e lettura. Mi sento in equilibrio.', tags: ['relax'], createdAt: T, updatedAt: T },
+      { id: 'j1', date: iso(today), mood: 4, text: en ? 'Productive day: morning run and lots of focus on the project.' : 'Giornata produttiva: corsa al mattino e tanto focus sul progetto.', tags: en ? ['sport', 'work'] : ['sport', 'lavoro'], createdAt: T, updatedAt: T },
+      { id: 'j2', date: iso(day(1)), mood: 5, text: en ? 'Relaxing evening with a book. I feel balanced.' : 'Serata di relax e lettura. Mi sento in equilibrio.', tags: en ? ['relax'] : ['relax'], createdAt: T, updatedAt: T },
     ]);
 
+    const tt = en
+      ? ['Leg workout', 'Read 20 pages', 'Plan the week']
+      : ['Allenamento gambe', 'Leggere 20 pagine', 'Pianificare la settimana'];
     await put('tasks', [
-      { id: 't1', title: 'Allenamento gambe', status: 'done', priority: 'medium', subtasks: [], order: 1, dueDate: iso(today), completedAt: T, createdAt: T, updatedAt: T },
-      { id: 't2', title: 'Leggere 20 pagine', status: 'todo', priority: 'low', subtasks: [], order: 2, dueDate: iso(today), createdAt: T, updatedAt: T },
-      { id: 't3', title: 'Pianificare la settimana', status: 'todo', priority: 'high', subtasks: [], order: 3, dueDate: iso(today), createdAt: T, updatedAt: T },
+      { id: 't1', title: tt[0], status: 'done', priority: 'medium', subtasks: [], order: 1, dueDate: iso(today), completedAt: T, createdAt: T, updatedAt: T },
+      { id: 't2', title: tt[1], status: 'todo', priority: 'low', subtasks: [], order: 2, dueDate: iso(today), createdAt: T, updatedAt: T },
+      { id: 't3', title: tt[2], status: 'todo', priority: 'high', subtasks: [], order: 3, dueDate: iso(today), createdAt: T, updatedAt: T },
     ]);
 
     db.close();
-  });
+  }, lang);
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -137,17 +145,17 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const base = `http://localhost:${port}`;
   const browser = await puppeteer.launch({ headless: 'new', protocolTimeout: 120000, args: ['--no-sandbox', '--font-render-hinting=none'] });
   const page = await browser.newPage();
-  await page.evaluateOnNewDocument(() => {
+  await page.evaluateOnNewDocument((lang) => {
     localStorage.setItem('vita.onboarded', '1');
-    localStorage.setItem('vita.lang', 'it');
-  });
+    localStorage.setItem('vita.lang', lang);
+  }, LANG);
 
   // First load → app creates the Dexie DB, then we seed and reload so the
   // liveQueries pick up the sample data.
   await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
   await page.goto(`${base}/#/oggi`, { waitUntil: 'networkidle0' });
   await sleep(1500);
-  await seed(page);
+  await seed(page, LANG);
   await page.reload({ waitUntil: 'networkidle0' });
   await sleep(1200);
   // Kill animations/transitions so screenshots settle instantly and don't keep
@@ -203,7 +211,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
       const dataUri = `data:image/png;base64,${shot}`;
 
       await slidePage.setViewport({ width: 428, height: 926, deviceScaleFactor: 3 });
-      await slidePage.setContent(slideHTML(s.bg, s.title, dataUri), { waitUntil: 'load', timeout: 60000 });
+      await slidePage.setContent(slideHTML(s.bg, s.title[LANG], dataUri), { waitUntil: 'load', timeout: 60000 });
       await sleep(300);
       const file = path.join(OUT, `${s.route}.png`);
       await shoot(slidePage, { path: file, type: 'png' });
