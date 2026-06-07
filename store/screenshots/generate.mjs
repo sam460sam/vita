@@ -157,6 +157,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   // paint a realistic status bar (time + cellular/wifi/battery) into the page,
   // so the captured screen looks like a real device.
   await page.addStyleTag({ content: '.pt-safe-top{padding-top:47px!important}' });
+  await page.addStyleTag({ content: '.pb-safe-bottom{padding-bottom:22px!important}' });
   await page.evaluate(() => {
     if (document.getElementById('ios-sb')) return;
     const el = document.createElement('div');
@@ -171,6 +172,12 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     el.style.cssText =
       'position:fixed;top:0;left:0;right:0;height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 30px;z-index:99999;color:#0b0b0f;pointer-events:none';
     document.body.appendChild(el);
+    // Home indicator bar at the very bottom.
+    const hi = document.createElement('div');
+    hi.id = 'ios-home';
+    hi.style.cssText =
+      'position:fixed;bottom:8px;left:50%;transform:translateX(-50%);width:140px;height:5px;border-radius:3px;background:#0b0b0f;z-index:99999;pointer-events:none';
+    document.body.appendChild(hi);
   });
   await sleep(200);
 
