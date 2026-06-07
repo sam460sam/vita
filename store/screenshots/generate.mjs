@@ -153,6 +153,26 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   // Kill animations/transitions so screenshots settle instantly and don't keep
   // the compositor busy (the activity rings/mascot animate continuously).
   await page.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important;}' });
+  // Simulate the iOS safe-area (so the app header drops below the notch) and
+  // paint a realistic status bar (time + cellular/wifi/battery) into the page,
+  // so the captured screen looks like a real device.
+  await page.addStyleTag({ content: '.pt-safe-top{padding-top:47px!important}' });
+  await page.evaluate(() => {
+    if (document.getElementById('ios-sb')) return;
+    const el = document.createElement('div');
+    el.id = 'ios-sb';
+    el.innerHTML =
+      '<span style="font:600 15px -apple-system,Helvetica,Arial,sans-serif">9:41</span>' +
+      '<span style="display:flex;align-items:center;gap:7px">' +
+      '<svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>' +
+      '<svg width="17" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.2c2.5 0 4.8 1 6.5 2.6l-1.4 1.5C11.8 5 10 4.2 8 4.2 6 4.2 4.2 5 2.9 6.3L1.5 4.8C3.2 3.2 5.5 2.2 8 2.2z"/><path d="M8 6c1.4 0 2.7.5 3.7 1.5l-1.5 1.5C9.6 8.4 8.8 8 8 8c-.8 0-1.6.4-2.2 1L4.3 7.5C5.3 6.5 6.6 6 8 6z"/><circle cx="8" cy="10.6" r="1.3"/></svg>' +
+      '<svg width="27" height="13" viewBox="0 0 27 13"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" fill="none" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="19" height="9" rx="1.5" fill="currentColor"/><rect x="24" y="4.5" width="2" height="4" rx="1" fill="currentColor" fill-opacity="0.5"/></svg>' +
+      '</span>';
+    el.style.cssText =
+      'position:fixed;top:0;left:0;right:0;height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 30px;z-index:99999;color:#0b0b0f;pointer-events:none';
+    document.body.appendChild(el);
+  });
+  await sleep(200);
 
   // Separate tab for composing the marketing slides (setContent replaces the
   // document, so we keep the live app in its own page).
