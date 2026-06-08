@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { Copy, Check, GraduationCap } from 'lucide-react';
+import { Copy, Check, GraduationCap, History } from 'lucide-react';
 import { Card, CardHeader, Button, Field, Input, Select } from '@/ui';
 import { saveCantiere } from '@/data/cantiere-repo';
 import type { Cantiere } from '@/data/types';
 import { calcolaCemento, generaMessaggioCemento, CLASSI_CEMENTO, ADDITIVI } from './logic';
 import { CementoTutor } from './CementoTutor';
+
+const STORICO_MAX = 5;
 
 export function CementoCalc({ cantiere }: { cantiere: Cantiere }) {
   const [tutorOpen, setTutorOpen] = useState(false);
@@ -29,7 +31,9 @@ export function CementoCalc({ cantiere }: { cantiere: Cantiere }) {
       indirizzo: cantiere.indirizzo ?? 'indirizzo da confermare',
     });
     await navigator.clipboard.writeText(msg);
-    await saveCantiere({ ...cantiere, classeCemento: classe, additivi });
+    const voce = { data: new Date().toISOString().slice(0, 10), m3, classeCemento: classe };
+    const storicoCalcoli = [voce, ...(cantiere.storicoCalcoli ?? [])].slice(0, STORICO_MAX);
+    await saveCantiere({ ...cantiere, classeCemento: classe, additivi, storicoCalcoli });
     setCopiato(true);
     setTimeout(() => setCopiato(false), 2000);
   }
@@ -107,6 +111,24 @@ export function CementoCalc({ cantiere }: { cantiere: Cantiere }) {
           </>
         )}
       </Button>
+
+      {(cantiere.storicoCalcoli ?? []).length > 0 && (
+        <div className="mt-4 pt-3 border-t border-line/50">
+          <div className="flex items-center gap-1.5 text-[12px] font-semibold text-ink-2 mb-2">
+            <History size={13} />
+            Storico ordini per questo cantiere
+          </div>
+          <div className="space-y-1.5">
+            {cantiere.storicoCalcoli!.map((v, i) => (
+              <div key={i} className="flex items-center justify-between text-[12.5px] text-ink-2">
+                <span>{new Date(v.data).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                <span className="font-display font-semibold text-ink tnum">{v.m3} m³</span>
+                <span className="text-ink-3">{v.classeCemento}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </Card>
     <CementoTutor open={tutorOpen} onClose={() => setTutorOpen(false)} />
     </>

@@ -298,6 +298,12 @@ export type CantiereStato = 'preventivo' | 'confermato' | 'in_corso' | 'completa
 export type PagamentoStato = 'da_pagare' | 'parziale' | 'saldato';
 export type TipoUso = 'industriale' | 'residenziale' | 'esterno' | 'garage' | 'altro';
 
+export interface CalcoloCemento {
+  data: string;             // ISO yyyy-MM-dd
+  m3: number;
+  classeCemento: string;
+}
+
 export interface Cantiere extends Timestamped {
   cliente: string;
   telefono?: string;
@@ -319,6 +325,7 @@ export interface Cantiere extends Timestamped {
   dataPagamento?: string;
   classeCemento?: string;
   additivi: string[];
+  storicoCalcoli?: CalcoloCemento[];
   // Verbale legal metadata
   verbaleTimestamp?: string;        // ISO datetime when client signed
   verbaleClienteNome?: string;      // client name confirmed at signing

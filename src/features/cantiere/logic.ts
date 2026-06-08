@@ -33,6 +33,37 @@ export function totaleCrediti(cantieri: Cantiere[]): number {
     .reduce((sum, c) => sum + c.importo - (c.acconto ?? 0), 0);
 }
 
+export interface PromemoriaPagamento {
+  cantiere: Cantiere;
+  giorni: number; // negativo = scaduto da N giorni, 0 = scade oggi, positivo = giorni rimanenti
+}
+
+const FINESTRA_PROMEMORIA_GIORNI = 7;
+
+// Promemoria "automatici": ogni volta che si apre la dashboard, riemergono qui
+// i saldi scaduti o in scadenza entro una settimana — nessuna configurazione richiesta.
+export function promemoriaPagamenti(cantieri: Cantiere[]): PromemoriaPagamento[] {
+  const oggi = new Date();
+  oggi.setHours(0, 0, 0, 0);
+  return cantieri
+    .filter((c) => c.pagamento !== 'saldato' && !!c.scadenzaPagamento)
+    .map((c): PromemoriaPagamento => {
+      const scadenza = new Date(c.scadenzaPagamento!);
+      scadenza.setHours(0, 0, 0, 0);
+      const giorni = Math.round((scadenza.getTime() - oggi.getTime()) / 86_400_000);
+      return { cantiere: c, giorni };
+    })
+    .filter((p) => p.giorni <= FINESTRA_PROMEMORIA_GIORNI)
+    .sort((a, b) => a.giorni - b.giorni);
+}
+
+export function etichettaScadenza(giorni: number): string {
+  if (giorni < 0) return `Scaduto da ${Math.abs(giorni)} ${Math.abs(giorni) === 1 ? 'giorno' : 'giorni'}`;
+  if (giorni === 0) return 'Scade oggi';
+  if (giorni === 1) return 'Scade domani';
+  return `Scade tra ${giorni} giorni`;
+}
+
 export const STATI: { value: Cantiere['stato']; label: string; color: string }[] = [
   { value: 'preventivo', label: 'Preventivo', color: 'bg-ink-3/20 text-ink-2' },
   { value: 'confermato', label: 'Confermato', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' },

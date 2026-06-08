@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Plus, Users, HardHat, Sparkles } from 'lucide-react';
+import { Plus, Users, HardHat, Sparkles, BellRing, Phone, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
@@ -9,7 +9,51 @@ import { db } from '@/data/db';
 import type { Cantiere } from '@/data/types';
 import { CantiereForm } from './CantiereForm';
 import { seedCantieriDemo } from '@/data/cantiere-repo';
-import { formatEuro, statoInfo, pagamentoInfo, totaleCrediti } from './logic';
+import { formatEuro, statoInfo, pagamentoInfo, totaleCrediti, promemoriaPagamenti, etichettaScadenza } from './logic';
+
+function PromemoriaPagamenti({ cantieri, onApri }: { cantieri: Cantiere[]; onApri: (id: string) => void }) {
+  const promemoria = promemoriaPagamenti(cantieri);
+  if (promemoria.length === 0) return null;
+
+  return (
+    <Card className="mb-4">
+      <div className="flex items-center gap-2 mb-2.5">
+        <BellRing size={15} className="text-warning flex-shrink-0" />
+        <span className="text-[13px] font-semibold text-ink">Promemoria pagamenti</span>
+      </div>
+      <div className="space-y-2">
+        {promemoria.slice(0, 3).map(({ cantiere: c, giorni }) => (
+          <div
+            key={c.id}
+            onClick={() => onApri(c.id)}
+            className="flex items-center gap-2 bg-section rounded-xl px-3 py-2.5 cursor-pointer active:scale-[0.985] transition-transform"
+          >
+            <div className="flex-1 min-w-0">
+              <div className="text-[13px] font-semibold text-ink truncate">{c.cliente}</div>
+              <div className={`text-[11.5px] mt-0.5 font-medium ${giorni < 0 ? 'text-danger' : 'text-warning'}`}>
+                {etichettaScadenza(giorni)} · saldo {formatEuro(c.importo - (c.acconto ?? 0))}
+              </div>
+            </div>
+            {c.telefono && (
+              <a
+                href={`tel:${c.telefono}`}
+                onClick={(e) => e.stopPropagation()}
+                className="h-9 w-9 flex items-center justify-center rounded-full bg-app text-ink-2 flex-shrink-0"
+                aria-label={`Chiama ${c.cliente}`}
+              >
+                <Phone size={15} />
+              </a>
+            )}
+            <ChevronRight size={16} className="text-ink-3 flex-shrink-0" />
+          </div>
+        ))}
+      </div>
+      {promemoria.length > 3 && (
+        <p className="text-[11.5px] text-ink-3 mt-2">+ altri {promemoria.length - 3} saldi in scadenza</p>
+      )}
+    </Card>
+  );
+}
 
 type Tab = 'tutti' | 'attivi' | 'completati' | 'da_pagare';
 
@@ -77,6 +121,8 @@ export function CantierePage() {
             )}
           </Card>
         </div>
+
+        <PromemoriaPagamenti cantieri={cantieri ?? []} onApri={(id) => navigate(`/cantiere/${id}`)} />
 
         <div className="mb-4 w-full">
           <Segmented<Tab>
