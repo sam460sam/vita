@@ -42,8 +42,8 @@ const SLIDES = [
 function slideHTML(bg, title, dataUri) {
   return `<!doctype html><html><head><meta charset="utf-8"><style>
   *{margin:0;padding:0;box-sizing:border-box}
-  body{width:428px;height:926px;overflow:hidden}
-  .wrap{width:428px;height:926px;background:${bg};display:flex;flex-direction:column;align-items:center;
+  body{width:430px;height:932px;overflow:hidden}
+  .wrap{width:430px;height:932px;background:${bg};display:flex;flex-direction:column;align-items:center;
     font-family:Inter,'Helvetica Neue',Helvetica,'Liberation Sans',Arial,sans-serif}
   .title{width:344px;margin-top:60px;font-size:36px;line-height:1.08;font-weight:800;color:#0b0b0f;
     letter-spacing:-.02em;white-space:pre-line}
@@ -210,7 +210,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
       const shot = await shoot(page, { type: 'png', encoding: 'base64' });
       const dataUri = `data:image/png;base64,${shot}`;
 
-      await slidePage.setViewport({ width: 428, height: 926, deviceScaleFactor: 3 });
+      await slidePage.setViewport({ width: 430, height: 932, deviceScaleFactor: 3 });
       await slidePage.setContent(slideHTML(s.bg, s.title[LANG], dataUri), { waitUntil: 'load', timeout: 60000 });
       await sleep(300);
       const file = path.join(OUT, `${s.route}.png`);

@@ -41,8 +41,8 @@ function introHTML(lang) {
     </div>`).join('');
   return `<!doctype html><html><head><meta charset="utf-8"><style>
     *{margin:0;padding:0;box-sizing:border-box}
-    body{width:428px;height:926px;overflow:hidden}
-    .wrap{width:428px;height:926px;background:linear-gradient(165deg,#EEF2FF,#FCE7F3);
+    body{width:430px;height:932px;overflow:hidden}
+    .wrap{width:430px;height:932px;background:linear-gradient(165deg,#EEF2FF,#FCE7F3);
       font-family:Inter,'Helvetica Neue',Helvetica,'Liberation Sans',Arial,sans-serif;
       display:flex;flex-direction:column;padding:84px 46px 56px}
     .brand{display:flex;align-items:center;gap:12px;margin-bottom:30px}
@@ -70,7 +70,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 (async () => {
   const browser = await puppeteer.launch({ headless: 'new', protocolTimeout: 120000, args: ['--no-sandbox', '--font-render-hinting=none'] });
   const page = await browser.newPage();
-  await page.setViewport({ width: 428, height: 926, deviceScaleFactor: 3 });
+  await page.setViewport({ width: 430, height: 932, deviceScaleFactor: 3 });
   for (const [lang, out] of [['it', path.join(__dirname, 'out', '00-intro.png')], ['en', path.join(__dirname, 'out', 'en', '00-intro.png')]]) {
     await page.setContent(introHTML(lang), { waitUntil: 'load', timeout: 60000 });
     await sleep(300);
