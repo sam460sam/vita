@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ChevronRight, Sparkles, SlidersHorizontal } from 'lucide-react';
+import { ChevronRight, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { useNavItems } from '@/app/nav';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
@@ -13,15 +13,15 @@ export function MorePage() {
     <>
       <PageHeader title={t('more.title')} />
       <Screen>
-        {/* Vita Pro banner */}
-        <Link to="/pro">
+        {/* Personality test entry */}
+        <Link to="/personalita">
           <Card className="flex items-center gap-3 mb-4 active:bg-section transition-colors">
             <span className="h-10 w-10 rounded-full bg-primary border border-primary-border flex items-center justify-center text-on-primary flex-shrink-0">
               <Sparkles size={20} />
             </span>
             <div className="flex-1 min-w-0">
-              <div className="text-[15px] font-semibold text-ink">{t('pro.title')}</div>
-              <div className="text-[13px] text-ink-2 truncate">{t('pro.subtitle')}</div>
+              <div className="text-[15px] font-semibold text-ink">{t('personality.title')}</div>
+              <div className="text-[13px] text-ink-2 truncate">{t('personality.subtitle')}</div>
             </div>
             <ChevronRight size={18} className="text-ink-3" />
           </Card>

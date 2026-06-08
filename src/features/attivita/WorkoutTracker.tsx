@@ -1,65 +1,49 @@
-import { useEffect, useRef, useState } from 'react';
-import { Pause, Play, Square } from 'lucide-react';
+import { useState } from 'react';
+import { Pause, Play, Square, ChevronDown } from 'lucide-react';
 import { Sheet, Button } from '@/ui';
 import { formatDuration } from '@/lib/format';
-import { createWorkout } from '@/data/repo';
 import { estimateKcal, type Sport } from './sports';
-import { useToast } from '@/ui';
 import { useT } from '@/i18n';
 
-/** Live workout tracking: start/pause/stop timer + live metrics, then save. */
+/**
+ * Live workout view. Presentational: the session (timer/running) lives in the
+ * parent so it keeps going when this sheet is minimized. Closing the sheet
+ * (the X) only minimizes — it does NOT stop the workout. Stopping is explicit:
+ * "Finish" saves it, "Discard" cancels it (with confirmation).
+ */
 export function WorkoutTracker({
   sport,
   open,
-  onClose,
-  onSaved,
+  elapsed,
+  running,
+  onMinimize,
+  onToggle,
+  onFinish,
+  onDiscard,
 }: {
   sport: Sport | null;
   open: boolean;
-  onClose: () => void;
-  onSaved: () => void;
+  elapsed: number;
+  running: boolean;
+  onMinimize: () => void;
+  onToggle: () => void;
+  onFinish: () => void;
+  onDiscard: () => void;
 }) {
-  const [elapsed, setElapsed] = useState(0);
-  const [running, setRunning] = useState(true);
-  const startRef = useRef<number>(Date.now());
-  const toast = useToast();
   const t = useT();
-
-  useEffect(() => {
-    if (!open) return;
-    setElapsed(0);
-    setRunning(true);
-    startRef.current = Date.now();
-  }, [open, sport?.id]);
-
-  useEffect(() => {
-    if (!open || !running) return;
-    const t = setInterval(() => setElapsed((e) => e + 1), 1000);
-    return () => clearInterval(t);
-  }, [open, running]);
-
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
   if (!sport) return null;
   const Icon = sport.icon;
   const kcal = estimateKcal(sport.met, elapsed);
 
-  async function save() {
-    if (!sport) return;
-    await createWorkout({
-      sportId: sport.id,
-      startedAt: startRef.current,
-      durationSec: elapsed,
-      activeKcal: kcal,
-      totalKcal: Math.round(kcal * 1.25),
-      source: 'manual',
-    });
-    toast.show(t('workout.saved'));
-    onSaved();
-    onClose();
-  }
-
   return (
-    <Sheet open={open} onClose={onClose} title={sport.name} size="full">
+    <Sheet open={open} onClose={onMinimize} title={sport.name} size="full">
       <div className="flex flex-col items-center justify-center text-center py-6">
+        {/* Minimize hint button */}
+        <button onClick={onMinimize} className="inline-flex items-center gap-1 text-[13px] text-ink-2 mb-4 active:opacity-60">
+          <ChevronDown size={16} /> {t('workout.minimize')}
+        </button>
+
         <span className="h-16 w-16 rounded-full bg-activity/10 flex items-center justify-center text-activity mb-6">
           <Icon size={30} />
         </span>
@@ -78,16 +62,29 @@ export function WorkoutTracker({
         </div>
 
         <div className="flex items-center gap-3 mt-10">
-          <Button variant="subtle" size="lg" onClick={() => setRunning((r) => !r)} icon={running ? <Pause size={20} /> : <Play size={20} />}>
+          <Button variant="subtle" size="lg" onClick={onToggle} icon={running ? <Pause size={20} /> : <Play size={20} />}>
             {running ? t('workout.pause') : t('workout.resume')}
           </Button>
-          <Button variant="primary" size="lg" onClick={save} icon={<Square size={18} />}>
+          <Button variant="primary" size="lg" onClick={onFinish} icon={<Square size={18} />}>
             {t('workout.finish')}
           </Button>
         </div>
-        <p className="text-[12px] text-ink-3 mt-4 max-w-xs">
-          {t('workout.kcalNote')}
-        </p>
+
+        {confirmDiscard ? (
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <p className="text-[13px] text-ink-2">{t('workout.discardConfirm')}</p>
+            <div className="flex gap-2">
+              <Button variant="ghost" onClick={() => setConfirmDiscard(false)}>{t('common.cancel')}</Button>
+              <Button variant="ghost" className="text-danger" onClick={onDiscard}>{t('workout.discard')}</Button>
+            </div>
+          </div>
+        ) : (
+          <button onClick={() => setConfirmDiscard(true)} className="text-[13px] text-ink-3 mt-6 py-1 active:opacity-60">
+            {t('workout.discard')}
+          </button>
+        )}
+
+        <p className="text-[12px] text-ink-3 mt-4 max-w-xs">{t('workout.kcalNote')}</p>
       </div>
     </Sheet>
   );

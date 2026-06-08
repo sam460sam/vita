@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { Plus, Check, X, Pencil, LayoutGrid, AlertCircle } from 'lucide-react';
+import { MODULE_LIST } from '@/features/personalizzazione/modules';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Button, Sheet, Segmented } from '@/ui';
@@ -161,6 +162,29 @@ export function HomeDashboard() {
             }
           />
         )}
+
+        {/* Quick links to the enabled sections */}
+        {!editing && (
+          <div className="grid grid-cols-4 gap-2 mb-3">
+            {MODULE_LIST.filter((m) => enabled.includes(m.id)).map((m) => {
+              const Icon = m.icon;
+              return (
+                <Link
+                  key={m.id}
+                  to={m.to}
+                  className="flex flex-col items-center gap-1.5 rounded-card bg-card border border-line/60 dark:border-transparent py-2.5 active:bg-section transition-colors"
+                >
+                  <span className="h-9 w-9 rounded-full flex items-center justify-center" style={{ background: `${m.accent}1a`, color: m.accent }}>
+                    <Icon size={18} />
+                  </span>
+                  <span className="text-[11px] font-medium text-ink-2 text-center leading-tight truncate max-w-full px-0.5">
+                    {t(m.shortKey ?? m.labelKey)}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        )}
         {widgets.length === 0 ? (
           <button
             onClick={editing ? () => setGalleryOpen(true) : enterEdit}
@@ -172,7 +196,7 @@ export function HomeDashboard() {
           </button>
         ) : (
           <div
-            className="grid grid-cols-2 lg:grid-cols-4 gap-3 auto-rows-[148px]"
+            className="grid grid-cols-2 lg:grid-cols-4 grid-flow-dense gap-2 auto-rows-[124px]"
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}

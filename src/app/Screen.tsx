@@ -4,6 +4,6 @@ import { cn } from '@/lib/cn';
 /** Standard scrollable content area with bottom padding for the tab bar. */
 export function Screen({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn('max-w-3xl mx-auto px-4 pt-4 pb-28 lg:pb-12', className)}>{children}</div>
+    <div className={cn('max-w-3xl mx-auto px-4 pt-3 pb-24 lg:pb-12', className)}>{children}</div>
   );
 }
