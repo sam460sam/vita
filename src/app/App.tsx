@@ -12,7 +12,7 @@ import { RouteErrorBoundary } from './ErrorBoundary';
 import { Onboarding, hasOnboarded } from '@/features/onboarding/Onboarding';
 
 // Core modules — eager (part of the primary experience).
-import { HomeDashboard } from '@/features/home';
+import { HomeDashboard, CompactHome } from '@/features/home';
 import { TodayPage } from '@/features/oggi';
 import { ActivityPage } from '@/features/attivita';
 import { ProjectsPage, ProjectDetailPage } from '@/features/progetti';
@@ -50,7 +50,8 @@ export function App() {
                     <Suspense fallback={<div className="p-8 text-center text-ink-3" />}>
                       <Routes>
                       <Route path="/" element={<Navigate to="/oggi" replace />} />
-                      <Route path="/oggi" element={<HomeDashboard />} />
+                      <Route path="/oggi" element={<CompactHome />} />
+                      <Route path="/oggi-widgets" element={<HomeDashboard />} />
                       <Route path="/oggi-classic" element={<TodayPage />} />
                       <Route path="/attivita" element={<RequireModule id="attivita"><ActivityPage /></RequireModule>} />
                       <Route path="/peso" element={<RequireModule id="peso"><WeightPage /></RequireModule>} />
