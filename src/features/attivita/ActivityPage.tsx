@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Play, Plus, Trash2, Pencil, Scale, ChevronRight } from 'lucide-react';
+import { Play, Pause, Plus, Trash2, Pencil, Scale, ChevronRight } from 'lucide-react';
 import { db } from '@/data/db';
-import { deleteWorkout, updateSettings } from '@/data/repo';
+import { deleteWorkout, updateSettings, createWorkout } from '@/data/repo';
 import { readSettings } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
@@ -19,12 +19,13 @@ import {
   Sheet,
   Field,
   Input,
+  useToast,
 } from '@/ui';
 import { formatDistance, formatDuration } from '@/lib/format';
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
 import { todayRings, ringsToData, summarize } from './logic';
-import { getSport, type Sport } from './sports';
+import { getSport, estimateKcal, type Sport } from './sports';
 import { SportPicker } from './SportPicker';
 import { WorkoutTracker } from './WorkoutTracker';
 import { HealthCard } from './HealthCard';
@@ -35,11 +36,52 @@ export function ActivityPage() {
   const t = useT();
   const workouts = useLiveQuery(() => db.workouts.orderBy('startedAt').reverse().toArray(), [], []);
   const settings = useLiveQuery(() => readSettings(), [], undefined);
+  const t2 = useToast();
   const [params, setParams] = useSearchParams();
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [activeSport, setActiveSport] = useState<Sport | null>(null);
   const [period, setPeriod] = useState<'week' | 'month'>('week');
   const [goalsOpen, setGoalsOpen] = useState(false);
+
+  // Live workout session — kept here so it survives minimizing the tracker.
+  const [sessionSport, setSessionSport] = useState<Sport | null>(null);
+  const [trackerOpen, setTrackerOpen] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const [running, setRunning] = useState(true);
+  const startedAtRef = useRef<number>(0);
+
+  // Tick while running, regardless of whether the sheet is open or minimized.
+  useEffect(() => {
+    if (!sessionSport || !running) return;
+    const id = setInterval(() => setElapsed((e) => e + 1), 1000);
+    return () => clearInterval(id);
+  }, [sessionSport, running]);
+
+  function startWorkout(sport: Sport) {
+    setSessionSport(sport);
+    startedAtRef.current = Date.now();
+    setElapsed(0);
+    setRunning(true);
+    setTrackerOpen(true);
+  }
+  async function finishWorkout() {
+    if (sessionSport) {
+      await createWorkout({
+        sportId: sessionSport.id,
+        startedAt: startedAtRef.current || Date.now(),
+        durationSec: elapsed,
+        activeKcal: estimateKcal(sessionSport.met, elapsed),
+        totalKcal: Math.round(estimateKcal(sessionSport.met, elapsed) * 1.25),
+        source: 'manual',
+      });
+      t2.show(t('workout.saved'));
+    }
+    setSessionSport(null);
+    setTrackerOpen(false);
+  }
+  function discardWorkout() {
+    setSessionSport(null);
+    setTrackerOpen(false);
+  }
 
   // Quick-add deep link: /attivita?start=1 opens the sport picker.
   useEffect(() => {
@@ -167,19 +209,38 @@ export function ActivityPage() {
         </Card>
       </Screen>
 
+      {/* Minimized workout banner — tap to reopen; the workout keeps running. */}
+      {sessionSport && !trackerOpen && (
+        <button
+          onClick={() => setTrackerOpen(true)}
+          className="fixed left-1/2 -translate-x-1/2 bottom-24 lg:bottom-6 z-40 flex items-center gap-3 bg-ink text-app rounded-full pl-4 pr-5 h-12 shadow-card-hover active:scale-95 transition-transform"
+        >
+          <span className="flex items-center gap-1.5">
+            {running ? <span className="h-2 w-2 rounded-full bg-activity animate-pulse" /> : <Pause size={14} />}
+            <sessionSport.icon size={16} />
+          </span>
+          <span className="text-[14px] font-semibold">{t('workout.ongoing')}</span>
+          <span className="text-[14px] font-bold tnum">{formatDuration(elapsed)}</span>
+        </button>
+      )}
+
       <SportPicker
         open={pickerOpen}
         onClose={() => setPickerOpen(false)}
         onPick={(sport) => {
           setPickerOpen(false);
-          setActiveSport(sport);
+          startWorkout(sport);
         }}
       />
       <WorkoutTracker
-        sport={activeSport}
-        open={!!activeSport}
-        onClose={() => setActiveSport(null)}
-        onSaved={() => setActiveSport(null)}
+        sport={sessionSport}
+        open={trackerOpen}
+        elapsed={elapsed}
+        running={running}
+        onMinimize={() => setTrackerOpen(false)}
+        onToggle={() => setRunning((r) => !r)}
+        onFinish={finishWorkout}
+        onDiscard={discardWorkout}
       />
       <RingGoalsSheet open={goalsOpen} onClose={() => setGoalsOpen(false)} goals={s.goals} />
     </>
