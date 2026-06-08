@@ -48,7 +48,7 @@ export function CantieriTabBar() {
               key={to}
               to={to}
               className={`flex-1 flex flex-col items-center py-2 gap-0.5 transition-colors ${
-                active ? 'text-slate-600 dark:text-slate-300' : 'text-ink-3'
+                active ? 'text-ink' : 'text-ink-3'
               }`}
             >
               <Icon size={24} strokeWidth={active ? 2 : 1.5} />

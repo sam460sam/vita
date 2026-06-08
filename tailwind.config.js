@@ -30,6 +30,9 @@ export default {
         primary: 'var(--c-primary)',
         'on-primary': 'var(--c-on-primary)',
         'primary-border': 'var(--c-primary-border)',
+        // Soft accent for tags/chips — kept distinct from primary
+        'accent-soft': 'var(--c-accent-soft-bg)',
+        'accent-soft-ink': 'var(--c-accent-soft-ink)',
       },
       borderRadius: {
         card: '16px',
@@ -42,6 +45,7 @@ export default {
       },
       fontFamily: {
         sans: ['-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        display: ['Manrope', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
       },
       fontVariantNumeric: {
         tabular: 'tabular-nums',

@@ -1,21 +1,24 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Plus, Users, HardHat } from 'lucide-react';
+import { Plus, Users, HardHat, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
-import { Card, Button, EmptyState, Segmented } from '@/ui';
+import { Card, Segmented, useToast } from '@/ui';
 import { db } from '@/data/db';
 import type { Cantiere } from '@/data/types';
 import { CantiereForm } from './CantiereForm';
+import { seedCantieriDemo } from '@/data/cantiere-repo';
 import { formatEuro, statoInfo, pagamentoInfo, totaleCrediti } from './logic';
 
 type Tab = 'tutti' | 'attivi' | 'completati' | 'da_pagare';
 
 export function CantierePage() {
   const navigate = useNavigate();
+  const { show } = useToast();
   const [tab, setTab] = useState<Tab>('tutti');
   const [formOpen, setFormOpen] = useState(false);
+  const [seeding, setSeeding] = useState(false);
 
   const cantieri = useLiveQuery(() => db.cantieri.orderBy('updatedAt').reverse().toArray(), [], []);
 
@@ -28,12 +31,23 @@ export function CantierePage() {
 
   const crediti = totaleCrediti(cantieri ?? []);
   const attivi = (cantieri ?? []).filter((c) => ['confermato', 'in_corso'].includes(c.stato)).length;
+  const isEmpty = (cantieri ?? []).length === 0;
+
+  async function vediEsempio() {
+    setSeeding(true);
+    try {
+      await seedCantieriDemo();
+      show('Aggiunti 3 cantieri di esempio — modificali o eliminali quando vuoi');
+    } finally {
+      setSeeding(false);
+    }
+  }
 
   return (
     <>
       <PageHeader
         title="Cantieri"
-       
+
         action={
           <button
             onClick={() => navigate('/cantiere/operai')}
@@ -48,11 +62,19 @@ export function CantierePage() {
         <div className="grid grid-cols-2 gap-3 mb-4">
           <Card>
             <div className="text-[11px] text-ink-2 uppercase tracking-wide mb-1">Da riscuotere</div>
-            <div className="text-2xl font-bold text-amber-600">{formatEuro(crediti)}</div>
+            {crediti > 0 ? (
+              <div className="font-display text-2xl font-bold text-primary tnum">{formatEuro(crediti)}</div>
+            ) : (
+              <div className="text-[13px] text-ink-3 leading-snug pt-0.5">Qui vedrai quanto devi ancora incassare</div>
+            )}
           </Card>
           <Card>
             <div className="text-[11px] text-ink-2 uppercase tracking-wide mb-1">Cantieri attivi</div>
-            <div className="text-2xl font-bold">{attivi}</div>
+            {attivi > 0 ? (
+              <div className="font-display text-2xl font-bold text-ink tnum">{attivi}</div>
+            ) : (
+              <div className="text-[13px] text-ink-3 leading-snug pt-0.5">Qui vedrai i lavori in corso</div>
+            )}
           </Card>
         </div>
 
@@ -71,16 +93,34 @@ export function CantierePage() {
         </div>
 
         {filtered.length === 0 ? (
-          <EmptyState
-            icon={<HardHat size={24} />}
-            title="Nessun cantiere"
-            description="Aggiungi il primo cantiere"
-            action={<Button onClick={() => setFormOpen(true)}>Nuovo cantiere</Button>}
-          />
+          <div className="flex flex-col items-center justify-center text-center py-12 px-6">
+            <div className="mb-3 h-12 w-12 rounded-full bg-section flex items-center justify-center text-ink-3">
+              <HardHat size={24} />
+            </div>
+            <h3 className="text-[15px] font-semibold text-ink">Nessun cantiere</h3>
+            <p className="text-[13px] text-ink-2 mt-1 max-w-xs">
+              {isEmpty ? 'Tocca + qui sotto per aggiungere il tuo primo cantiere' : 'Nessun cantiere in questa categoria'}
+            </p>
+            {isEmpty && (
+              <button
+                onClick={vediEsempio}
+                disabled={seeding}
+                className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink-2 bg-section px-4 py-2.5 rounded-btn active:scale-95 transition-transform disabled:opacity-50"
+              >
+                <Sparkles size={15} className="text-primary" />
+                {seeding ? 'Aggiungo...' : 'Vedi un esempio'}
+              </button>
+            )}
+          </div>
         ) : (
           <div className="space-y-3">
-            {filtered.map((c: Cantiere) => (
-              <button key={c.id} className="w-full text-left" onClick={() => navigate(`/cantiere/${c.id}`)}>
+            {filtered.map((c: Cantiere, i) => (
+              <button
+                key={c.id}
+                className="w-full text-left animate-fade-in active:scale-[0.985] transition-transform duration-150"
+                style={{ animationDelay: `${Math.min(i, 8) * 40}ms`, animationFillMode: 'backwards' }}
+                onClick={() => navigate(`/cantiere/${c.id}`)}
+              >
                 <Card>
                   <div className="flex items-start gap-3">
                     {c.foto.length > 0 && (
@@ -103,7 +143,7 @@ export function CantierePage() {
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="font-bold text-[17px]">{formatEuro(c.importo)}</div>
+                      <div className="font-display font-bold text-[17px] tnum">{formatEuro(c.importo)}</div>
                       <div className="text-[12px] text-ink-2">{c.mq} m²</div>
                       {c.dataPrevista && <div className="text-[11px] text-ink-3 mt-1">{c.dataPrevista}</div>}
                     </div>
@@ -117,7 +157,7 @@ export function CantierePage() {
 
       <button
         onClick={() => setFormOpen(true)}
-        className="fixed bottom-24 right-4 z-20 w-14 h-14 rounded-full bg-amber-500 text-white shadow-lg flex items-center justify-center active:scale-95 transition-transform"
+        className="fixed bottom-24 right-4 z-20 w-14 h-14 rounded-full bg-primary text-on-primary shadow-lg flex items-center justify-center active:scale-95 transition-transform"
         aria-label="Nuovo cantiere"
       >
         <Plus size={24} />

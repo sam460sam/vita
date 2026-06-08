@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Plus, Phone, Star, ClipboardList } from 'lucide-react';
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
-import { Card, Button, EmptyState, Segmented } from '@/ui';
+import { Card, EmptyState, Segmented } from '@/ui';
 import { db } from '@/data/db';
 import type { Operaio } from '@/data/types';
 import { OperaioForm } from './OperaioForm';
@@ -48,7 +48,7 @@ function ArtigianoCard({ a }: { a: ArtigianoDirectory }) {
             {a.specializzazioni.map((s) => (
               <span
                 key={s}
-                className="text-[11px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full font-medium"
+                className="text-[11px] bg-accent-soft text-accent-soft-ink px-2 py-0.5 rounded-full font-medium"
               >
                 {s}
               </span>
@@ -61,7 +61,7 @@ function ArtigianoCard({ a }: { a: ArtigianoDirectory }) {
           {a.telefono && (
             <a
               href={`tel:${a.telefono}`}
-              className="flex items-center gap-1 text-[13px] text-amber-500 font-medium"
+              className="flex items-center gap-1 text-[13px] text-ink-2 font-semibold"
             >
               <Phone size={13} />
               Chiama
@@ -137,13 +137,17 @@ export function OperaiPage() {
             {(operai ?? []).length === 0 ? (
               <EmptyState
                 title="Nessun operaio"
-                description="Aggiungi i tuoi collaboratori fidati"
-                action={<Button onClick={openNew}>Aggiungi operaio</Button>}
+                description="Tocca + qui sotto per aggiungere i tuoi collaboratori fidati"
               />
             ) : (
               <div className="space-y-3">
-                {(operai ?? []).map((o: Operaio) => (
-                  <button key={o.id} className="w-full text-left" onClick={() => openEdit(o)}>
+                {(operai ?? []).map((o: Operaio, i) => (
+                  <button
+                    key={o.id}
+                    className="w-full text-left animate-fade-in active:scale-[0.985] transition-transform duration-150"
+                    style={{ animationDelay: `${Math.min(i, 8) * 40}ms`, animationFillMode: 'backwards' }}
+                    onClick={() => openEdit(o)}
+                  >
                     <Card>
                       <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0">
@@ -153,7 +157,7 @@ export function OperaiPage() {
                               {(o.specializzazioni ?? []).map((s) => (
                                 <span
                                   key={s}
-                                  className="text-[11px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full font-medium"
+                                  className="text-[11px] bg-accent-soft text-accent-soft-ink px-2 py-0.5 rounded-full font-medium"
                                 >
                                   {s}
                                 </span>
@@ -184,7 +188,7 @@ export function OperaiPage() {
                             <a
                               href={`tel:${o.telefono}`}
                               onClick={(e) => e.stopPropagation()}
-                              className="flex items-center gap-1 text-[13px] text-amber-500 font-medium"
+                              className="flex items-center gap-1 text-[13px] text-ink-2 font-semibold"
                             >
                               <Phone size={13} />
                               Chiama
@@ -250,7 +254,7 @@ export function OperaiPage() {
       {tab === 'miei' && (
         <button
           onClick={openNew}
-          className="fixed bottom-24 right-4 z-20 w-14 h-14 rounded-full bg-amber-500 text-white shadow-lg flex items-center justify-center active:scale-95 transition-transform"
+          className="fixed bottom-24 right-4 z-20 w-14 h-14 rounded-full bg-primary text-on-primary shadow-lg flex items-center justify-center active:scale-95 transition-transform"
           aria-label="Nuovo operaio"
         >
           <Plus size={24} />

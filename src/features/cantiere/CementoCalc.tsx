@@ -42,7 +42,7 @@ export function CementoCalc({ cantiere }: { cantiere: Cantiere }) {
         action={
           <button
             onClick={() => setTutorOpen(true)}
-            className="flex items-center gap-1.5 text-[12px] text-amber-600 font-medium"
+            className="flex items-center gap-1.5 text-[12px] text-ink-2 font-medium"
           >
             <GraduationCap size={15} />
             Tutor
@@ -50,10 +50,10 @@ export function CementoCalc({ cantiere }: { cantiere: Cantiere }) {
         }
       />
 
-      <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 mb-4 text-center">
-        <div className="text-[13px] text-amber-700 dark:text-amber-300 mb-1">m³ stimati</div>
-        <div className="text-5xl font-bold text-amber-600">{m3}</div>
-        <div className="text-[12px] text-amber-600/70 mt-1">
+      <div className="bg-accent-soft rounded-xl p-4 mb-4 text-center">
+        <div className="text-[13px] text-accent-soft-ink mb-1">m³ stimati</div>
+        <div className="font-display text-5xl font-extrabold text-accent-soft-ink tnum">{m3}</div>
+        <div className="text-[12px] text-accent-soft-ink/70 mt-1">
           {cantiere.mq} m² × {cantiere.spessore} cm
         </div>
       </div>
@@ -75,7 +75,7 @@ export function CementoCalc({ cantiere }: { cantiere: Cantiere }) {
               onClick={() => toggleAdditivo(a)}
               className={`px-3 py-1.5 rounded-full text-[13px] font-medium border transition-colors ${
                 additivi.includes(a)
-                  ? 'bg-amber-500 text-white border-amber-500'
+                  ? 'bg-primary text-on-primary border-primary'
                   : 'bg-section text-ink-2 border-line'
               }`}
             >

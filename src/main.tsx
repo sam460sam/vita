@@ -4,6 +4,9 @@ import { CantieriApp as App } from './app/CantieriApp';
 import { ensureSeedRows } from './data/repo';
 import { initNative } from './platform/native';
 import { platform } from './platform/platform';
+import '@fontsource/manrope/600.css';
+import '@fontsource/manrope/700.css';
+import '@fontsource/manrope/800.css';
 import './styles/index.css';
 
 // Ensure singleton rows (settings, budget) exist before first render so that

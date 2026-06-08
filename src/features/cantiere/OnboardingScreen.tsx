@@ -174,13 +174,13 @@ export function OnboardingScreen({ onDone }: Props) {
     return (
       <div className="fixed inset-0 z-50 bg-white dark:bg-slate-950 flex flex-col overflow-y-auto">
         {/* Hero */}
-        <div className="flex flex-col items-center pt-16 pb-8 px-6 bg-gradient-to-b from-slate-700 to-slate-900">
+        <div className="flex flex-col items-center pt-16 pb-8 px-6 bg-gradient-to-b from-stone-800 to-stone-950">
           <img
             src="./betoniera.png"
             alt="Cantieri"
             className="w-28 h-28 rounded-[28px] shadow-2xl mb-6 object-cover"
           />
-          <h1 className="text-[30px] font-bold text-white tracking-tight">Cantieri</h1>
+          <h1 className="font-display text-[30px] font-extrabold text-white tracking-tight">Cantieri</h1>
           <p className="text-[15px] text-slate-300 mt-2 text-center leading-relaxed max-w-xs">
             L'app per il posatore di pavimenti in cemento.
             Tutto in un posto, tutto offline.
@@ -210,7 +210,7 @@ export function OnboardingScreen({ onDone }: Props) {
         <div className="px-5 pb-12 pt-2 bg-white dark:bg-slate-950">
           <button
             onClick={() => setStep(2)}
-            className="w-full h-14 rounded-2xl bg-slate-700 text-white text-[17px] font-semibold active:scale-[0.97] transition-transform shadow-lg"
+            className="w-full h-14 rounded-2xl bg-primary text-on-primary text-[17px] font-semibold active:scale-[0.97] transition-transform shadow-lg"
           >
             Continua →
           </button>
@@ -222,12 +222,12 @@ export function OnboardingScreen({ onDone }: Props) {
   return (
     <div className="fixed inset-0 z-50 bg-white dark:bg-slate-950 flex flex-col overflow-y-auto">
       {/* Header */}
-      <div className="flex flex-col items-center pt-12 pb-6 px-6 bg-gradient-to-b from-slate-700 to-slate-900">
+      <div className="flex flex-col items-center pt-12 pb-6 px-6 bg-gradient-to-b from-stone-800 to-stone-950">
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-2 h-2 rounded-full bg-slate-500" />
+          <div className="w-2 h-2 rounded-full bg-primary" />
           <div className="w-2 h-2 rounded-full bg-white" />
         </div>
-        <h2 className="text-[24px] font-bold text-white tracking-tight mt-2">Il tuo profilo</h2>
+        <h2 className="font-display text-[24px] font-extrabold text-white tracking-tight mt-2">Il tuo profilo</h2>
         <p className="text-[14px] text-slate-300 mt-1 text-center">
           Personalizza l'app in base al tuo ruolo
         </p>
@@ -274,13 +274,13 @@ export function OnboardingScreen({ onDone }: Props) {
         </div>
 
         {/* Ruolo — solo Impresa */}
-        <div className="flex items-center gap-4 p-4 rounded-2xl border-2 border-slate-700 bg-slate-700 text-white">
+        <div className="flex items-center gap-4 p-4 rounded-2xl border-2 border-primary bg-primary text-on-primary">
           <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
             <Building2 size={26} className="text-white" />
           </div>
           <div>
             <div className="font-semibold text-[16px]">Posatore / Impresa</div>
-            <div className="text-[12px] mt-0.5 text-slate-300">Gestisci cantieri, operai e verbali</div>
+            <div className="text-[12px] mt-0.5 text-on-primary" style={{ opacity: 0.72 }}>Gestisci cantieri, operai e verbali</div>
           </div>
         </div>
       </div>
@@ -290,7 +290,7 @@ export function OnboardingScreen({ onDone }: Props) {
         <button
           onClick={handleStart}
           disabled={!canProceed}
-          className="w-full h-14 rounded-2xl bg-slate-700 text-white text-[17px] font-semibold active:scale-[0.97] transition-transform shadow-lg disabled:opacity-40 disabled:scale-100"
+          className="w-full h-14 rounded-2xl bg-primary text-on-primary text-[17px] font-semibold active:scale-[0.97] transition-transform shadow-lg disabled:opacity-40 disabled:scale-100"
         >
           Inizia →
         </button>

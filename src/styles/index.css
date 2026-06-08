@@ -4,17 +4,17 @@
 
 :root {
   /* ===== Design tokens — single source of truth (Design System §3) ===== */
-  /* Surfaces */
+  /* Surfaces — warm, cantiere-like (vs. cold slate) */
   --c-app: #ffffff;
-  --c-section: #f7f8fa;
+  --c-section: #f8f5f1;
   --c-card: #ffffff;
-  /* Text */
-  --c-ink: #0a0a0c;
-  --c-ink-2: #6b7280;
-  --c-ink-3: #9ca3af;
+  /* Text — slightly warmed and darkened for outdoor/sunlight contrast */
+  --c-ink: #1c1917;
+  --c-ink-2: #57534e;
+  --c-ink-3: #8a847c;
   /* Lines */
-  --c-line: #e5e7eb;
-  --c-divider: #f1f2f4;
+  --c-line: #e9e4dd;
+  --c-divider: #f1ece5;
   /* Module accents (sober, one per module) */
   --c-activity: #ff6b57;
   --c-habit: #10b981;
@@ -25,26 +25,31 @@
   --c-success: #10b981;
   --c-warning: #f59e0b;
   --c-danger: #ef4444;
-  /* Primary action (buttons / FAB) — stays a dark pill with white text */
-  --c-primary: #0a0a0c;
+  /* Primary action (buttons / FAB) — cantiere orange. ONE accent, used only
+     for the primary action, so it keeps standing out. */
+  --c-primary: #ea580c;
   --c-on-primary: #ffffff;
   --c-primary-border: transparent;
+  /* Soft accent for tags/info chips (cement classes, specializations) —
+     intentionally distinct from --c-primary so the orange stays singular. */
+  --c-accent-soft-bg: #fef3c7;
+  --c-accent-soft-ink: #92400e;
   color-scheme: light;
 }
 
 /* ===== Dark theme — true black, no visible contour borders ===== */
 html.dark {
-  /* Surfaces: distinguished by fill, not by borders */
+  /* Surfaces: distinguished by fill, not by borders — warmed slightly */
   --c-app: #000000;
-  --c-section: #0b0b0d;
-  --c-card: #161618;
+  --c-section: #0f0d0b;
+  --c-card: #1a1715;
   /* Text */
   --c-ink: #f4f4f5;
-  --c-ink-2: #a1a1aa;
-  --c-ink-3: #71717a;
+  --c-ink-2: #b6afa6;
+  --c-ink-3: #87807a;
   /* Lines: nearly invisible (no white contour look) */
-  --c-line: #1b1b1f;
-  --c-divider: #161619;
+  --c-line: #221e1a;
+  --c-divider: #1b1714;
   /* Accents stay vivid on dark; slightly brighter for contrast */
   --c-activity: #ff7a68;
   --c-habit: #1fd093;
@@ -54,12 +59,23 @@ html.dark {
   --c-success: #1fd093;
   --c-warning: #fbbf24;
   --c-danger: #f87171;
-  /* Primary action: a lighter pill that stands out on black by its FILL,
-     so it needs no border. */
-  --c-primary: #2a2a30;
-  --c-on-primary: #ffffff;
+  /* Primary action — brighter orange so it pops on black */
+  --c-primary: #fb7a32;
+  --c-on-primary: #1c1917;
   --c-primary-border: transparent;
+  --c-accent-soft-bg: rgba(245, 158, 11, 0.16);
+  --c-accent-soft-ink: #fbbf24;
   color-scheme: dark;
+}
+
+/* Display font — used for titles, large numbers and stats so the brand has a
+   character of its own (vs. the generic system-font "AI-default" look). */
+:root {
+  --font-display: 'Manrope', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
 }
 
 * {

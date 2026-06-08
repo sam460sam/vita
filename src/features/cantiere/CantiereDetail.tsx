@@ -80,19 +80,19 @@ export function CantiereDetail() {
           <div className="space-y-2 text-[14px]">
             {cantiere.telefono && (
               <a href={`tel:${cantiere.telefono}`} className="flex items-center gap-2 text-ink-2">
-                <Phone size={15} className="text-amber-500 flex-shrink-0" />
+                <Phone size={15} className="text-ink-3 flex-shrink-0" />
                 {cantiere.telefono}
               </a>
             )}
             {cantiere.indirizzo && (
               <div className="flex items-center gap-2 text-ink-2">
-                <MapPin size={15} className="text-amber-500 flex-shrink-0" />
+                <MapPin size={15} className="text-ink-3 flex-shrink-0" />
                 {cantiere.indirizzo}
               </div>
             )}
             {cantiere.dataPrevista && (
               <div className="flex items-center gap-2 text-ink-2">
-                <Calendar size={15} className="text-amber-500 flex-shrink-0" />
+                <Calendar size={15} className="text-ink-3 flex-shrink-0" />
                 {cantiere.dataPrevista}
               </div>
             )}
@@ -100,15 +100,15 @@ export function CantiereDetail() {
             <div className="pt-2 border-t border-line/50 grid grid-cols-3 gap-3 mt-2">
               <div>
                 <div className="text-[11px] text-ink-3 uppercase tracking-wide">m²</div>
-                <div className="font-bold text-[16px]">{cantiere.mq}</div>
+                <div className="font-display font-bold text-[16px] tnum">{cantiere.mq}</div>
               </div>
               <div>
                 <div className="text-[11px] text-ink-3 uppercase tracking-wide">Spessore</div>
-                <div className="font-bold text-[16px]">{cantiere.spessore} cm</div>
+                <div className="font-display font-bold text-[16px] tnum">{cantiere.spessore} cm</div>
               </div>
               <div>
                 <div className="text-[11px] text-ink-3 uppercase tracking-wide">Importo</div>
-                <div className="font-bold text-[16px]">{formatEuro(cantiere.importo)}</div>
+                <div className="font-display font-bold text-[16px] tnum">{formatEuro(cantiere.importo)}</div>
               </div>
             </div>
 
@@ -116,11 +116,11 @@ export function CantiereDetail() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <div className="text-[11px] text-ink-3 uppercase tracking-wide">Acconto</div>
-                  <div className="font-semibold text-green-600">{formatEuro(cantiere.acconto)}</div>
+                  <div className="font-display font-semibold text-success tnum">{formatEuro(cantiere.acconto)}</div>
                 </div>
                 <div>
                   <div className="text-[11px] text-ink-3 uppercase tracking-wide">Restante</div>
-                  <div className="font-semibold text-red-600">{formatEuro(restante)}</div>
+                  <div className="font-display font-semibold text-danger tnum">{formatEuro(restante)}</div>
                 </div>
               </div>
             )}
@@ -207,7 +207,7 @@ export function CantiereDetail() {
                 <div key={o.id} className="flex items-center justify-between text-[14px]">
                   <span className="font-medium">{o.nome}</span>
                   {o.telefono && (
-                    <a href={`tel:${o.telefono}`} className="text-amber-500 text-[13px]">
+                    <a href={`tel:${o.telefono}`} className="text-primary text-[13px] font-medium">
                       {o.telefono}
                     </a>
                   )}

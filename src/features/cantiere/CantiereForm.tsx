@@ -124,7 +124,7 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
             <button
               type="button"
               onClick={importContact}
-              className="h-11 w-11 flex items-center justify-center rounded-btn bg-section border border-line text-amber-500 flex-shrink-0"
+              className="h-11 w-11 flex items-center justify-center rounded-btn bg-section border border-line text-primary flex-shrink-0"
               title="Importa contatto"
             >
               <BookUser size={18} />

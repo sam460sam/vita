@@ -177,7 +177,7 @@ export function VerbaleSheet({ open, cantiere, onClose }: Props) {
         {/* Descrizione documento */}
         <div className="bg-slate-50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-700 rounded-xl p-4 mb-4">
           <div className="flex items-start gap-2 mb-2">
-            <AlertTriangle size={15} className="text-amber-500 flex-shrink-0 mt-0.5" />
+            <AlertTriangle size={15} className="text-warning flex-shrink-0 mt-0.5" />
             <span className="text-[13px] font-semibold text-ink">Documento legale vincolante</span>
           </div>
           <p className="text-[12.5px] text-ink-2 leading-relaxed">{RIEPILOGO_VERBALE}</p>

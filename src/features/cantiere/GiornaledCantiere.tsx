@@ -85,7 +85,7 @@ export function GiornaledCantiere({ cantiereId }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <CalendarDays size={16} className="text-amber-500" />
+            <CalendarDays size={16} className="text-ink-3" />
             <span className="font-semibold text-[15px]">Giornale di cantiere</span>
           </div>
           <div className="flex items-center gap-1">
@@ -131,15 +131,15 @@ export function GiornaledCantiere({ cantiereId }: Props) {
                 onClick={() => openDay(d)}
                 className={`flex flex-col items-center py-1 rounded-xl transition-colors ${
                   isSelected
-                    ? 'bg-amber-500 text-white'
+                    ? 'bg-primary text-on-primary'
                     : isToday
-                    ? 'ring-1 ring-amber-400 text-amber-600'
+                    ? 'ring-1 ring-primary text-primary'
                     : 'hover:bg-section text-ink'
                 }`}
               >
                 <span className="text-[13px] font-medium leading-none">{d.getDate()}</span>
                 {hasEntry ? (
-                  <span className={`mt-0.5 w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-amber-500'}`} />
+                  <span className={`mt-0.5 w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-on-primary' : 'bg-primary'}`} />
                 ) : (
                   <span className="mt-0.5 w-1.5 h-1.5" />
                 )}

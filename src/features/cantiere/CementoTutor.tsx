@@ -44,8 +44,8 @@ export function CementoTutor({ open, onClose }: { open: boolean; onClose: () => 
   if (step === 0) return (
     <Sheet open={open} onClose={handleClose} title="Tutor cemento" size="full">
       <div className="flex flex-col items-center py-6">
-        <div className="w-20 h-20 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mb-4">
-          <Calculator size={36} className="text-amber-600" />
+        <div className="w-20 h-20 bg-accent-soft rounded-full flex items-center justify-center mb-4">
+          <Calculator size={36} className="text-accent-soft-ink" />
         </div>
         <h2 className="text-[20px] font-bold text-ink mb-2">Calcola il cemento giusto</h2>
         <p className="text-[14px] text-ink-2 text-center max-w-xs leading-relaxed">
@@ -68,7 +68,7 @@ export function CementoTutor({ open, onClose }: { open: boolean; onClose: () => 
       </div>
       <button
         onClick={() => setStep(1)}
-        className="w-full h-13 py-4 rounded-2xl bg-amber-500 text-white text-[16px] font-semibold"
+        className="w-full h-13 py-4 rounded-2xl bg-primary text-on-primary text-[16px] font-semibold"
       >
         Inizia il calcolo →
       </button>
@@ -88,7 +88,7 @@ export function CementoTutor({ open, onClose }: { open: boolean; onClose: () => 
             onClick={() => { setState((s) => ({ ...s, uso: u.id, spessore: String(u.spessore) })); setStep(2); }}
             className={`w-full flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-colors ${
               state.uso === u.id
-                ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20'
+                ? 'border-primary bg-accent-soft'
                 : 'border-line bg-section'
             }`}
           >
@@ -114,8 +114,8 @@ export function CementoTutor({ open, onClose }: { open: boolean; onClose: () => 
   // Step 2 — m² e spessore
   if (step === 2) return (
     <Sheet open={open} onClose={handleClose} title="Superficie e spessore" size="full">
-      <div className="flex items-center gap-2 mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
-        <span className="text-[13px] text-amber-700 dark:text-amber-300">
+      <div className="flex items-center gap-2 mb-4 p-3 bg-accent-soft rounded-xl">
+        <span className="text-[13px] text-accent-soft-ink">
           Tipo: <strong>{usoSel?.label}</strong> · Classe consigliata: <strong>{usoSel?.classe}</strong>
         </span>
       </div>
@@ -131,7 +131,7 @@ export function CementoTutor({ open, onClose }: { open: boolean; onClose: () => 
             value={state.mq}
             onChange={(e) => setState((s) => ({ ...s, mq: e.target.value }))}
             placeholder="es. 150"
-            className="w-full h-12 px-4 rounded-xl border border-line bg-white dark:bg-slate-800 text-ink text-[16px] focus:outline-none focus:border-amber-400"
+            className="w-full h-12 px-4 rounded-xl border border-line bg-white dark:bg-slate-800 text-ink text-[16px] focus:outline-none focus:border-primary"
           />
           <p className="text-[11px] text-ink-3 mt-1">Misura la lunghezza × larghezza del locale</p>
         </div>
@@ -146,7 +146,7 @@ export function CementoTutor({ open, onClose }: { open: boolean; onClose: () => 
             value={state.spessore}
             onChange={(e) => setState((s) => ({ ...s, spessore: e.target.value }))}
             placeholder={String(usoSel?.spessore ?? 12)}
-            className="w-full h-12 px-4 rounded-xl border border-line bg-white dark:bg-slate-800 text-ink text-[16px] focus:outline-none focus:border-amber-400"
+            className="w-full h-12 px-4 rounded-xl border border-line bg-white dark:bg-slate-800 text-ink text-[16px] focus:outline-none focus:border-primary"
           />
           <p className="text-[11px] text-ink-3 mt-1">
             Spessore minimo normativo {usoSel?.id === 'industriale' ? '15–20 cm' : '10–15 cm'}
@@ -154,10 +154,10 @@ export function CementoTutor({ open, onClose }: { open: boolean; onClose: () => 
         </div>
 
         {mqNum > 0 && spessoreNum > 0 && (
-          <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 text-center">
-            <div className="text-[12px] text-amber-700 dark:text-amber-300 mb-0.5">Anteprima m³</div>
-            <div className="text-4xl font-bold text-amber-600">{calcolaCemento(mqNum, spessoreNum)}</div>
-            <div className="text-[11px] text-amber-600/70 mt-0.5">{mqNum} × {spessoreNum} cm × 0.01</div>
+          <div className="bg-accent-soft rounded-xl p-4 text-center">
+            <div className="text-[12px] text-accent-soft-ink mb-0.5">Anteprima m³</div>
+            <div className="font-display text-4xl font-extrabold text-accent-soft-ink tnum">{calcolaCemento(mqNum, spessoreNum)}</div>
+            <div className="text-[11px] text-accent-soft-ink mt-0.5" style={{ opacity: 0.7 }}>{mqNum} × {spessoreNum} cm × 0.01</div>
           </div>
         )}
       </div>
@@ -169,7 +169,7 @@ export function CementoTutor({ open, onClose }: { open: boolean; onClose: () => 
         <button
           onClick={() => setStep(3)}
           disabled={!mqNum || !spessoreNum}
-          className="flex-1 h-12 rounded-xl bg-amber-500 text-white font-semibold disabled:opacity-40"
+          className="flex-1 h-12 rounded-xl bg-primary text-on-primary font-semibold disabled:opacity-40"
         >
           Calcola →
         </button>
@@ -185,10 +185,10 @@ export function CementoTutor({ open, onClose }: { open: boolean; onClose: () => 
     return (
       <Sheet open={open} onClose={handleClose} title="Risultato calcolo" size="full">
         {/* Main result */}
-        <div className="bg-amber-50 dark:bg-amber-900/20 rounded-2xl p-5 mb-4 text-center">
-          <div className="text-[13px] text-amber-700 dark:text-amber-300 mb-1">m³ da ordinare</div>
-          <div className="text-6xl font-bold text-amber-600 mb-1">{m3ConScarto}</div>
-          <div className="text-[12px] text-amber-600/70">
+        <div className="bg-accent-soft rounded-2xl p-5 mb-4 text-center">
+          <div className="text-[13px] text-accent-soft-ink mb-1">m³ da ordinare</div>
+          <div className="font-display text-6xl font-extrabold text-accent-soft-ink mb-1 tnum">{m3ConScarto}</div>
+          <div className="text-[12px] text-accent-soft-ink" style={{ opacity: 0.7 }}>
             {m3} m³ netti + {scartoPerc}% scarto = {m3ConScarto} m³
           </div>
         </div>
@@ -231,7 +231,7 @@ export function CementoTutor({ open, onClose }: { open: boolean; onClose: () => 
         </div>
 
         <div className="flex items-start gap-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3 mb-4">
-          <AlertTriangle size={15} className="text-amber-500 flex-shrink-0 mt-0.5" />
+          <AlertTriangle size={15} className="text-warning flex-shrink-0 mt-0.5" />
           <p className="text-[12px] text-amber-700 dark:text-amber-300">
             Aggiungi sempre 5–10% di scarto per compensare irregolarità del fondo. Per superfici &gt;500 m² consulta un ingegnere strutturale.
           </p>
@@ -243,7 +243,7 @@ export function CementoTutor({ open, onClose }: { open: boolean; onClose: () => 
           </button>
           <button
             onClick={() => { reset(); onClose(); }}
-            className="flex-1 h-12 rounded-xl bg-slate-700 text-white font-semibold flex items-center justify-center gap-2"
+            className="flex-1 h-12 rounded-xl bg-primary text-on-primary font-semibold flex items-center justify-center gap-2"
           >
             <CheckCircle2 size={18} />
             Fatto

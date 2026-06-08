@@ -19,7 +19,7 @@ function ClassiBadge({ classi }: { classi: string[] }) {
       {classi.map((c) => (
         <span
           key={c}
-          className="text-[10px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded-full font-medium"
+          className="text-[10px] bg-accent-soft text-accent-soft-ink px-1.5 py-0.5 rounded-full font-medium"
         >
           {c}
         </span>
@@ -40,7 +40,7 @@ function ImpiantoCard({ imp }: { imp: ImpiantoCalcestruzzo }) {
             <div className="text-[11px] text-ink-3 mt-0.5">{imp.gruppo}</div>
           )}
           <div className="flex items-start gap-1 mt-1.5">
-            <MapPin size={12} className="text-amber-500 flex-shrink-0 mt-0.5" />
+            <MapPin size={12} className="text-ink-3 flex-shrink-0 mt-0.5" />
             <span className="text-[12px] text-ink-2 leading-snug">{imp.indirizzo}</span>
           </div>
           {imp.classiDisponibili && <ClassiBadge classi={imp.classiDisponibili} />}
@@ -51,7 +51,7 @@ function ImpiantoCard({ imp }: { imp: ImpiantoCalcestruzzo }) {
           {imp.telefono && (
             <a
               href={`tel:${imp.telefono.replace(/\s/g, '')}`}
-              className="flex items-center gap-1 text-[13px] font-semibold text-amber-600 bg-amber-50 dark:bg-amber-900/20 px-2.5 py-1.5 rounded-xl"
+              className="flex items-center gap-1 text-[13px] font-semibold text-ink-2 bg-section px-2.5 py-1.5 rounded-xl"
             >
               <Phone size={13} />
               {imp.telefono}
@@ -161,7 +161,7 @@ export function ImpiantiPage() {
 
         {/* Disclaimer */}
         <div className="flex items-start gap-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3 mb-4">
-          <AlertTriangle size={14} className="text-amber-500 flex-shrink-0 mt-0.5" />
+          <AlertTriangle size={14} className="text-warning flex-shrink-0 mt-0.5" />
           <p className="text-[11.5px] text-amber-700 dark:text-amber-300 leading-relaxed">
             Dati indicativi — verifica sempre indirizzi e orari prima di ordinare.
             Usa "Apri in Maps" per confermare la posizione e trovare contatti aggiornati.
@@ -176,8 +176,10 @@ export function ImpiantiPage() {
 
         {/* List */}
         <div className="space-y-3">
-          {filtered.map((imp) => (
-            <ImpiantoCard key={imp.id} imp={imp} />
+          {filtered.map((imp, i) => (
+            <div key={imp.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i, 8) * 40}ms`, animationFillMode: 'backwards' }}>
+              <ImpiantoCard imp={imp} />
+            </div>
           ))}
         </div>
 

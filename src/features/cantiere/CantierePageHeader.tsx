@@ -31,7 +31,7 @@ export function CantierePageHeader({ title, subtitle, action, back }: Props) {
             </button>
           )}
           <div className="min-w-0 flex-1">
-            <h1 className="text-[18px] font-semibold text-ink truncate leading-tight">{title}</h1>
+            <h1 className="font-display text-[18px] font-bold text-ink truncate leading-tight">{title}</h1>
             {subtitle && <p className="text-[12px] text-ink-2 truncate">{subtitle}</p>}
           </div>
           {action}

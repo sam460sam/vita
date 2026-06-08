@@ -138,7 +138,7 @@ export function PhotoAnnotator({ src, onSave, onCancel }: Props) {
         <span className="text-white font-semibold text-[15px]">Annota foto</span>
         <button
           onClick={handleSave}
-          className="h-9 w-9 flex items-center justify-center rounded-full bg-amber-500 text-white"
+          className="h-9 w-9 flex items-center justify-center rounded-full bg-primary text-on-primary"
           aria-label="Salva"
         >
           <Check size={20} />
@@ -171,7 +171,7 @@ export function PhotoAnnotator({ src, onSave, onCancel }: Props) {
               className="w-7 h-7 rounded-full border-2 transition-transform"
               style={{
                 backgroundColor: c.value,
-                borderColor: color === c.value ? '#f59e0b' : 'transparent',
+                borderColor: color === c.value ? 'var(--c-primary)' : 'transparent',
                 transform: color === c.value ? 'scale(1.2)' : 'scale(1)',
               }}
             />
@@ -182,7 +182,7 @@ export function PhotoAnnotator({ src, onSave, onCancel }: Props) {
           <button
             onClick={() => setThick(false)}
             className={`h-7 px-3 rounded-full text-[12px] font-medium transition-colors ${
-              !thick ? 'bg-amber-500 text-white' : 'bg-white/10 text-white/60'
+              !thick ? 'bg-primary text-on-primary' : 'bg-white/10 text-white/60'
             }`}
           >
             Sottile
@@ -190,7 +190,7 @@ export function PhotoAnnotator({ src, onSave, onCancel }: Props) {
           <button
             onClick={() => setThick(true)}
             className={`h-7 px-3 rounded-full text-[12px] font-medium transition-colors ${
-              thick ? 'bg-amber-500 text-white' : 'bg-white/10 text-white/60'
+              thick ? 'bg-primary text-on-primary' : 'bg-white/10 text-white/60'
             }`}
           >
             Spesso

@@ -180,7 +180,7 @@ export function GiornaleSheet({ open, onClose, cantiereId, data }: Props) {
           <button
             onClick={aggiornaMeteo}
             disabled={meteoLoading}
-            className="flex items-center gap-1 text-[12px] text-amber-500 font-medium disabled:opacity-50"
+            className="flex items-center gap-1 text-[12px] text-primary font-semibold disabled:opacity-50"
           >
             <RefreshCw size={12} className={meteoLoading ? 'animate-spin' : ''} />
             {meteoLoading ? 'Rilevamento...' : 'Aggiorna'}
@@ -195,7 +195,7 @@ export function GiornaleSheet({ open, onClose, cantiereId, data }: Props) {
                 key={opt.value}
                 onClick={() => setMeteo(meteo === opt.value ? '' : opt.value)}
                 className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl text-[11px] font-medium transition-colors ${
-                  meteo === opt.value ? 'bg-amber-500 text-white' : 'bg-section text-ink-2'
+                  meteo === opt.value ? 'bg-primary text-on-primary' : 'bg-section text-ink-2'
                 }`}
               >
                 <span className="text-[20px] leading-none">{opt.emoji}</span>
@@ -222,7 +222,7 @@ export function GiornaleSheet({ open, onClose, cantiereId, data }: Props) {
           <div className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide">Manodopera</div>
           <button
             onClick={addManodopera}
-            className="flex items-center gap-1 text-[12px] text-amber-500 font-medium"
+            className="flex items-center gap-1 text-[12px] text-primary font-semibold"
           >
             <Plus size={14} />
             Aggiungi
@@ -266,7 +266,7 @@ export function GiornaleSheet({ open, onClose, cantiereId, data }: Props) {
           <div className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide">Attrezzature</div>
           <button
             onClick={addAttrezzatura}
-            className="flex items-center gap-1 text-[12px] text-amber-500 font-medium"
+            className="flex items-center gap-1 text-[12px] text-primary font-semibold"
           >
             <Plus size={14} />
             Aggiungi
@@ -302,7 +302,7 @@ export function GiornaleSheet({ open, onClose, cantiereId, data }: Props) {
           <div className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide">Materiali</div>
           <button
             onClick={addMateriale}
-            className="flex items-center gap-1 text-[12px] text-amber-500 font-medium"
+            className="flex items-center gap-1 text-[12px] text-primary font-semibold"
           >
             <Plus size={14} />
             Aggiungi

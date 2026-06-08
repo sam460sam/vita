@@ -144,7 +144,7 @@ export function OperaioForm({ open, onClose, operaio }: Props) {
               onClick={() => toggleSpec(s)}
               className={`px-3 py-1.5 rounded-full text-[13px] font-medium border transition-colors ${
                 specializzazioni.includes(s)
-                  ? 'bg-amber-500 text-white border-amber-500'
+                  ? 'bg-primary text-on-primary border-primary'
                   : 'bg-section text-ink-2 border-line'
               }`}
             >
