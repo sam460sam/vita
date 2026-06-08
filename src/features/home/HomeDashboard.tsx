@@ -196,7 +196,7 @@ export function HomeDashboard() {
           </button>
         ) : (
           <div
-            className="grid grid-cols-2 lg:grid-cols-4 gap-2 auto-rows-[124px]"
+            className="grid grid-cols-2 lg:grid-cols-4 grid-flow-dense gap-2 auto-rows-[124px]"
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
