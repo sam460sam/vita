@@ -125,6 +125,13 @@ export function CantiereDetail() {
               </div>
             )}
 
+            {cantiere.scadenzaPagamento && cantiere.pagamento !== 'saldato' && (
+              <div className="flex items-center gap-2 text-[12.5px] text-ink-2 pt-1">
+                <Calendar size={14} className="text-ink-3 flex-shrink-0" />
+                Saldo da riscuotere entro il {new Date(cantiere.scadenzaPagamento).toLocaleDateString('it-IT')}
+              </div>
+            )}
+
             {cantiere.note && (
               <p className="text-ink-2 text-[13px] pt-1 italic border-t border-line/50">{cantiere.note}</p>
             )}

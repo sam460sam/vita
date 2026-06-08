@@ -132,6 +132,9 @@ export function VerbaleSheet({ open, cantiere, onClose }: Props) {
   async function salva() {
     const firma = firmaPresente ? canvasRef.current?.toDataURL() : undefined;
     const timestamp = new Date().toISOString();
+    // Prima firma del cliente: il lavoro è consegnato e accettato, quindi il
+    // cantiere passa a "completato" e il saldo residuo diventa da riscuotere.
+    const primaFirma = !!firma && !cantiere.firmaCliente;
     await saveCantiere({
       ...cantiere,
       foto,
@@ -140,8 +143,10 @@ export function VerbaleSheet({ open, cantiere, onClose }: Props) {
       verbaleClienteNome: clienteNome.trim() || cantiere.cliente,
       verbaleDisclaimerAccettato: accettazioneGenerale && art1341Approvato,
       scadenzaPagamento: scadenzaPagamento || cantiere.scadenzaPagamento,
+      stato: primaFirma && cantiere.stato !== 'contestato' ? 'completato' : cantiere.stato,
+      dataCompletamento: primaFirma ? (cantiere.dataCompletamento ?? timestamp.slice(0, 10)) : cantiere.dataCompletamento,
     });
-    show('Verbale salvato');
+    show(primaFirma ? 'Verbale firmato — cantiere segnato come completato, saldo da riscuotere' : 'Verbale salvato');
     onClose();
   }
 
