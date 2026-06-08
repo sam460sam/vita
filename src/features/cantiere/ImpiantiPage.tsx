@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Phone, MapPin, ExternalLink, Map, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Phone, MapPin, ExternalLink, Map, AlertTriangle, ChevronDown, ChevronUp, ChevronRight, Calculator } from 'lucide-react';
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { Card } from '@/ui';
@@ -12,6 +12,7 @@ import {
   type ImpiantoCalcestruzzo,
 } from './impianti';
 import { getMioProfilo } from './profiloRepo';
+import { OrdineCalcSheet } from './OrdineCalcSheet';
 
 function ClassiBadge({ classi }: { classi: string[] }) {
   return (
@@ -124,6 +125,7 @@ export function ImpiantiPage() {
     ? profilo.provincia
     : '';
   const [filterProv, setFilterProv] = useState<string>(defaultProv);
+  const [calcOpen, setCalcOpen] = useState(false);
 
   const filtered = filterProv
     ? IMPIANTI_VENETO.filter((i) => i.provincia === filterProv)
@@ -133,6 +135,25 @@ export function ImpiantiPage() {
     <>
       <PageHeader title="Impianti calcestruzzo" back="/cantiere" />
       <Screen>
+
+        {/* Calcolatore m³ → impianto */}
+        <button
+          onClick={() => setCalcOpen(true)}
+          className="w-full flex items-center gap-3 p-4 rounded-2xl bg-accent-soft text-left mb-4 active:scale-[0.985] transition-transform"
+        >
+          <div className="w-11 h-11 rounded-full bg-app/50 dark:bg-black/20 flex items-center justify-center flex-shrink-0">
+            <Calculator size={20} className="text-accent-soft-ink" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="font-display font-bold text-[15px] text-accent-soft-ink leading-snug">
+              Quanto cemento ordinare?
+            </div>
+            <div className="text-[12px] text-accent-soft-ink mt-0.5" style={{ opacity: 0.8 }}>
+              m², spessore e scarto → m³ pronti, con messaggio per l'impianto
+            </div>
+          </div>
+          <ChevronRight size={18} className="text-accent-soft-ink flex-shrink-0" />
+        </button>
 
         {/* Province filter + open maps */}
         <div className="flex gap-2 mb-4">
@@ -196,6 +217,8 @@ export function ImpiantiPage() {
           </a>
         </div>
       </Screen>
+
+      <OrdineCalcSheet open={calcOpen} onClose={() => setCalcOpen(false)} provinciaIniziale={defaultProv} />
     </>
   );
 }

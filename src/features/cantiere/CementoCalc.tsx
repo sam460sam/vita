@@ -53,7 +53,7 @@ export function CementoCalc({ cantiere }: { cantiere: Cantiere }) {
       <div className="bg-accent-soft rounded-xl p-4 mb-4 text-center">
         <div className="text-[13px] text-accent-soft-ink mb-1">m³ stimati</div>
         <div className="font-display text-5xl font-extrabold text-accent-soft-ink tnum">{m3}</div>
-        <div className="text-[12px] text-accent-soft-ink/70 mt-1">
+        <div className="text-[12px] text-accent-soft-ink mt-1" style={{ opacity: 0.7 }}>
           {cantiere.mq} m² × {cantiere.spessore} cm
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Plus, Phone, Star, ClipboardList } from 'lucide-react';
+import { Plus, Phone, Star, ClipboardList, Info } from 'lucide-react';
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, EmptyState, Segmented } from '@/ui';
@@ -196,7 +196,7 @@ export function OperaiPage() {
                           )}
                           <button
                             onClick={(e) => openAssegna(o, e)}
-                            className="flex items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400 font-medium"
+                            className="flex items-center gap-1 text-[13px] text-ink-3 font-medium"
                           >
                             <ClipboardList size={13} />
                             Assegna
@@ -213,6 +213,16 @@ export function OperaiPage() {
 
         {tab === 'trova' && (
           <>
+            {/* Mock-data notice */}
+            <div className="flex items-start gap-2 bg-accent-soft rounded-xl p-3 mb-4">
+              <Info size={14} className="text-accent-soft-ink flex-shrink-0 mt-0.5" />
+              <p className="text-[11.5px] text-accent-soft-ink leading-relaxed">
+                <strong>Dati di esempio</strong> — questi profili sono dimostrativi e servono a
+                mostrare come funzionerà la directory pubblica di artigiani, in arrivo in una
+                prossima versione. Non sono contatti reali.
+              </p>
+            </div>
+
             {/* Province filter */}
             <div className="mb-4">
               <label className="block text-[12px] font-semibold text-ink-3 mb-1.5 uppercase tracking-wide">
@@ -241,11 +251,6 @@ export function OperaiPage() {
               ) : (
                 filteredDirectory.map((a) => <ArtigianoCard key={a.id} a={a} />)
               )}
-            </div>
-
-            {/* Disclaimer */}
-            <div className="mt-6 text-[11px] text-ink-3 text-center leading-relaxed px-2 pb-2">
-              Dati di esempio — la directory pubblica sarà disponibile nella prossima versione
             </div>
           </>
         )}
