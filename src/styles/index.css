@@ -104,10 +104,20 @@ html.dark {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Lock the document; #root is the single scroll container. This kills the iOS
+   rubber-band "bounce" that made fixed/centered pages jitter up and down. */
 html,
-body,
+body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 #root {
   height: 100%;
+  overflow-y: auto;
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -119,8 +129,6 @@ body {
     system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  /* Prevent overscroll bounce revealing white outside app */
-  overscroll-behavior-y: none;
 }
 
 /* Tabular numbers everywhere metrics live */

@@ -43,7 +43,7 @@ function Paywall() {
   }
 
   return (
-    <div className="min-h-[100dvh] flex flex-col items-center justify-center text-center px-6 bg-app pt-safe-top pb-safe-bottom">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center text-center px-6 bg-app overflow-hidden">
       <StarMascot size={96} animated />
       <h1 className="text-2xl font-bold text-ink mt-6">{t('gate.title')}</h1>
       <p className="text-[15px] text-ink-2 mt-2 max-w-xs">{t('gate.subtitle')}</p>
