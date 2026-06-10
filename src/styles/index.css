@@ -21,10 +21,20 @@
   --c-project: #4f46e5;
   --c-journal: #f59e0b;
   --c-finance: #7c3aed;
+  /* New module accents */
+  --c-ore: #2563eb;      /* Ore Lavoro — blue */
+  --c-note: #7c3aed;     /* Note — purple */
   /* States */
   --c-success: #10b981;
   --c-warning: #f59e0b;
   --c-danger: #ef4444;
+  /* Work-day type colors (Sezione Ore — pieno e saturo per celle calendario) */
+  --c-wd-lavorativa: #16a34a;
+  --c-wd-festiva: #dc2626;
+  --c-wd-malattia: #ea580c;
+  --c-wd-infortunio: #7c3aed;
+  --c-wd-ferie: #2563eb;
+  --c-wd-permesso: #ca8a04;
   /* Primary action (buttons / FAB) — cantiere orange. ONE accent, used only
      for the primary action, so it keeps standing out. */
   --c-primary: #ea580c;
@@ -56,6 +66,14 @@ html.dark {
   --c-project: #7c74ff;
   --c-journal: #fbbf24;
   --c-finance: #a78bfa;
+  --c-ore: #60a5fa;
+  --c-note: #a78bfa;
+  --c-wd-lavorativa: #22c55e;
+  --c-wd-festiva: #f87171;
+  --c-wd-malattia: #fb923c;
+  --c-wd-infortunio: #a78bfa;
+  --c-wd-ferie: #60a5fa;
+  --c-wd-permesso: #facc15;
   --c-success: #1fd093;
   --c-warning: #fbbf24;
   --c-danger: #f87171;

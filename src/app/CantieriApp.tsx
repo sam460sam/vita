@@ -15,6 +15,8 @@ import { CantierePage, CantiereDetail, OperaiPage, ImpiantiPage } from '@/featur
 const PrivacyPage = lazy(() => import('@/features/cantiere/PrivacyPage').then((m) => ({ default: m.PrivacyPage })));
 const TerminiPage = lazy(() => import('@/features/cantiere/TerminiPage').then((m) => ({ default: m.TerminiPage })));
 const InfoPage = lazy(() => import('@/features/cantiere/InfoPage').then((m) => ({ default: m.InfoPage })));
+const OrePage = lazy(() => import('@/features/ore/OrePage').then((m) => ({ default: m.OrePage })));
+const NotePage = lazy(() => import('@/features/note/NotePage').then((m) => ({ default: m.NotePage })));
 
 export function CantieriApp() {
   const [onboarded, setOnboarded] = useState(() => !!localStorage.getItem('cantieri.onboarded'));
@@ -40,6 +42,8 @@ export function CantieriApp() {
                       <Route path="/cantiere/operai" element={<OperaiPage />} />
                       <Route path="/cantiere/impianti" element={<ImpiantiPage />} />
                       <Route path="/cantiere/:id" element={<CantiereDetail />} />
+                      <Route path="/ore/*" element={<OrePage />} />
+                      <Route path="/note/*" element={<NotePage />} />
                       <Route path="/info" element={<InfoPage />} />
                       <Route path="/privacy" element={<PrivacyPage />} />
                       <Route path="/termini" element={<TerminiPage />} />

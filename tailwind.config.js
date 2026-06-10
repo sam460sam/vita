@@ -22,6 +22,15 @@ export default {
         project: 'var(--c-project)',
         journal: 'var(--c-journal)',
         finance: 'var(--c-finance)',
+        ore: 'var(--c-ore)',
+        note: 'var(--c-note)',
+        // Work-day type colors
+        'wd-lavorativa': 'var(--c-wd-lavorativa)',
+        'wd-festiva': 'var(--c-wd-festiva)',
+        'wd-malattia': 'var(--c-wd-malattia)',
+        'wd-infortunio': 'var(--c-wd-infortunio)',
+        'wd-ferie': 'var(--c-wd-ferie)',
+        'wd-permesso': 'var(--c-wd-permesso)',
         // States
         success: 'var(--c-success)',
         warning: 'var(--c-warning)',
