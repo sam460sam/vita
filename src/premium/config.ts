@@ -23,6 +23,16 @@ export const REVENUECAT_API_KEY = {
 /** Entitlement identifier configured in RevenueCat (grants full access). */
 export const SUBSCRIPTION_ENTITLEMENT_ID = 'Vyta Pro';
 
+/**
+ * Hard paywall switch.
+ *  • false → the app opens freely; the subscription is offered (and testable)
+ *    from the "Vyta Pro" page, but never blocks the app. Safe for launch +
+ *    while the subscription product is still propagating/under review.
+ *  • true  → the paywall gates the whole app at entry (7-day trial → €2,99/mo).
+ * Flip to true once a real purchase has been confirmed working on a device.
+ */
+export const HARD_PAYWALL = false;
+
 /** RevenueCat package type for the monthly plan (with the 7-day trial). */
 export const MONTHLY_PACKAGE_TYPE = 'MONTHLY';
 

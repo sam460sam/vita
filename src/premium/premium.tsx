@@ -17,6 +17,7 @@ import {
   onProChange,
   type ProPackage,
 } from './billing';
+import { HARD_PAYWALL } from './config';
 
 export type PremiumFeature = 'finances' | 'goals' | 'calendar' | 'stats';
 
@@ -82,10 +83,11 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
   }, [billingActive]);
 
   const isPremium = billingActive ? subActive : UNLOCK_ALL_FOR_NOW || premium;
-  // Hard paywall ONLY when there's a purchasable package. If the store can't
-  // serve the product (agreement still pending, offline, etc.) we fail OPEN so
-  // the user is never trapped on a paywall with no working purchase button.
-  const requiresSubscription = billingActive && billingReady && !subActive && packages.length > 0;
+  // Gate the app only when the hard paywall is ON, billing is ready, the user
+  // isn't subscribed, AND there's a purchasable package. Any of these false →
+  // the app opens freely (never trap the user).
+  const requiresSubscription =
+    HARD_PAYWALL && billingActive && billingReady && !subActive && packages.length > 0;
 
   const purchase = useCallback(async (pkg: ProPackage) => {
     const ok = await billingPurchase(pkg);
