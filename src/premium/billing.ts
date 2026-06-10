@@ -1,19 +1,28 @@
 // ============================================================================
-// Superwall wrapper. Every call is guarded: on web, or when no API key is set
-// (see config.ts), all functions are safe no-ops, so the app keeps building and
-// runs exactly as before. Only with a key does this talk to Superwall.
+// RevenueCat billing wrapper. Every call is guarded: on web, or when no API key
+// is set (see config.ts), all functions are safe no-ops, so the app keeps
+// building and runs exactly as before. Only with a key does this talk to the store.
 // ============================================================================
 import { Capacitor } from '@capacitor/core';
-import { Superwall } from '@capawesome/capacitor-superwall';
-import { SUPERWALL_API_KEY, PAYWALL_PLACEMENT } from './config';
+import { Purchases } from '@revenuecat/purchases-capacitor';
+import { REVENUECAT_API_KEY, SUBSCRIPTION_ENTITLEMENT_ID, MONTHLY_PACKAGE_TYPE } from './config';
 
 const platformName = Capacitor.getPlatform();
 const apiKey =
-  platformName === 'ios' ? SUPERWALL_API_KEY.ios : platformName === 'android' ? SUPERWALL_API_KEY.android : '';
+  platformName === 'ios' ? REVENUECAT_API_KEY.ios : platformName === 'android' ? REVENUECAT_API_KEY.android : '';
 
-/** True when the paywall is wired (native + an API key is set). */
+/** True when real billing is wired (native + an API key is set). */
 export function isBillingConfigured(): boolean {
   return Capacitor.isNativePlatform() && apiKey.length > 0;
+}
+
+export interface ProPackage {
+  identifier: string;
+  type: string;
+  /** Localized price, e.g. '€2,99'. */
+  priceString: string;
+  /** Raw RevenueCat package, passed back to purchase(). */
+  raw: unknown;
 }
 
 let configured = false;
@@ -21,7 +30,7 @@ async function ensureConfigured(): Promise<boolean> {
   if (!isBillingConfigured()) return false;
   if (configured) return true;
   try {
-    await Superwall.configure({ apiKey });
+    await Purchases.configure({ apiKey });
     configured = true;
     return true;
   } catch {
@@ -29,35 +38,76 @@ async function ensureConfigured(): Promise<boolean> {
   }
 }
 
-/** Is the subscription currently active? */
-export async function getSubscriptionActive(): Promise<boolean> {
+function entitlementActive(customerInfo: { entitlements: { active: Record<string, unknown> } }): boolean {
+  return !!customerInfo.entitlements.active[SUBSCRIPTION_ENTITLEMENT_ID];
+}
+
+/** Is the subscription entitlement currently active (incl. during the trial)? */
+export async function isProActive(): Promise<boolean> {
   if (!(await ensureConfigured())) return false;
   try {
-    const { status } = await Superwall.getSubscriptionStatus();
-    return String(status) === 'ACTIVE';
+    const { customerInfo } = await Purchases.getCustomerInfo();
+    return entitlementActive(customerInfo);
   } catch {
     return false;
   }
 }
 
-/**
- * Present the Superwall paywall for a placement (no-op if already subscribed —
- * Superwall decides based on the dashboard campaign).
- */
-export async function presentPaywall(placement: string = PAYWALL_PLACEMENT): Promise<void> {
-  if (!(await ensureConfigured())) return;
+/** Available packages from the current offering. */
+export async function getProPackages(): Promise<ProPackage[]> {
+  if (!(await ensureConfigured())) return [];
   try {
-    await Superwall.register({ placement });
+    const offerings = await Purchases.getOfferings();
+    const pkgs = (offerings.current?.availablePackages ?? []) as Array<{
+      identifier: string;
+      packageType: string;
+      product: { priceString: string };
+    }>;
+    return pkgs.map((p) => ({
+      identifier: p.identifier,
+      type: String(p.packageType),
+      priceString: p.product?.priceString ?? '',
+      raw: p,
+    }));
   } catch {
-    /* ignore */
+    return [];
   }
 }
 
-/** Subscribe to subscription-status changes (purchase, trial end, restore…). */
-export async function onStatusChange(cb: (active: boolean) => void): Promise<void> {
+/** The monthly package (with the trial), or null. */
+export async function getMonthlyPackage(): Promise<ProPackage | null> {
+  const pkgs = await getProPackages();
+  return pkgs.find((p) => p.type === MONTHLY_PACKAGE_TYPE) ?? pkgs[0] ?? null;
+}
+
+/** Purchase a package. Returns true if the subscription is active afterwards. */
+export async function purchasePackage(pkg: ProPackage): Promise<boolean> {
+  if (!(await ensureConfigured())) return false;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg.raw as any });
+    return entitlementActive(customerInfo);
+  } catch {
+    return false;
+  }
+}
+
+/** Restore previous purchases. Returns true if the subscription is active afterwards. */
+export async function restorePurchases(): Promise<boolean> {
+  if (!(await ensureConfigured())) return false;
+  try {
+    const { customerInfo } = await Purchases.restorePurchases();
+    return entitlementActive(customerInfo);
+  } catch {
+    return false;
+  }
+}
+
+/** Subscribe to entitlement changes (renewals / expirations). */
+export async function onProChange(cb: (active: boolean) => void): Promise<void> {
   if (!(await ensureConfigured())) return;
   try {
-    await Superwall.addListener('subscriptionStatusDidChange', (e) => cb(String(e.status) === 'ACTIVE'));
+    await Purchases.addCustomerInfoUpdateListener((info) => cb(entitlementActive(info)));
   } catch {
     /* ignore */
   }

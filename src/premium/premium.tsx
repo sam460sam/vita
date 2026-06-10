@@ -1,16 +1,23 @@
 // ============================================================================
-// Subscription gating (Superwall).
+// Subscription gating (RevenueCat).
 //
-//   • If Superwall is NOT configured (no API key in config.ts) → the app stays
-//     fully unlocked (UNLOCK_ALL_FOR_NOW). This is the shipping default for 1.2.
-//   • If Superwall IS configured → `isPremium` reflects the real subscription
-//     status; `requiresSubscription` drives the hard paywall gate, and
-//     `presentPaywall()` shows the Superwall paywall (7-day trial → €3,99/mo).
+//   • If RevenueCat is NOT configured (no API key in config.ts) → the app stays
+//     fully unlocked (UNLOCK_ALL_FOR_NOW). Shipping default for 1.2.
+//   • If RevenueCat IS configured → `isPremium` reflects the real "pro"
+//     entitlement; `requiresSubscription` drives the paywall gate, and
+//     purchase()/restore() go through the store (7-day trial → €2,99/mo).
 // ============================================================================
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { isBillingConfigured, getSubscriptionActive, presentPaywall as swPresent, onStatusChange } from './billing';
+import {
+  isBillingConfigured,
+  isProActive,
+  getProPackages,
+  purchasePackage as billingPurchase,
+  restorePurchases as billingRestore,
+  onProChange,
+  type ProPackage,
+} from './billing';
 
-/** Features that can be gated (kept for optional per-feature use). */
 export type PremiumFeature = 'finances' | 'goals' | 'calendar' | 'stats';
 
 // While the paywall is not live (no API key), keep the app fully usable.
@@ -21,13 +28,14 @@ const STORAGE_KEY = 'vita.premium';
 interface PremiumCtx {
   isPremium: boolean;
   can: (feature: PremiumFeature) => boolean;
-  /** True when the app must show the paywall (billing on + no active subscription). */
+  /** True when the app must show the paywall (billing on + not subscribed). */
   requiresSubscription: boolean;
-  /** True when Superwall is wired in this build. */
+  /** True when RevenueCat is wired in this build. */
   billingActive: boolean;
-  /** Present the Superwall paywall. */
-  presentPaywall: () => Promise<void>;
-  /** Dev/local toggle until billing is live. */
+  /** Available subscription packages (empty until billing is configured). */
+  packages: ProPackage[];
+  purchase: (pkg: ProPackage) => Promise<boolean>;
+  restore: () => Promise<boolean>;
   setPremium: (v: boolean) => void;
 }
 
@@ -45,6 +53,7 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
   const billingActive = isBillingConfigured();
   const [premium, setPremiumState] = useState<boolean>(loadPremium);
   const [subActive, setSubActive] = useState<boolean>(false);
+  const [packages, setPackages] = useState<ProPackage[]>([]);
 
   const setPremium = useCallback((v: boolean) => {
     setPremiumState(v);
@@ -55,25 +64,34 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Resolve the real subscription status when Superwall is configured.
   useEffect(() => {
     if (!billingActive) return;
     let mounted = true;
-    void getSubscriptionActive().then((active) => mounted && setSubActive(active));
-    void onStatusChange((active) => mounted && setSubActive(active));
+    (async () => {
+      const [active, pkgs] = await Promise.all([isProActive(), getProPackages()]);
+      if (!mounted) return;
+      setSubActive(active);
+      setPackages(pkgs);
+    })();
+    void onProChange((active) => mounted && setSubActive(active));
     return () => {
       mounted = false;
     };
   }, [billingActive]);
 
-  // The 7-day free trial is the App Store introductory offer (tracked per Apple
-  // ID, so reinstalling can't get a new one). During the trial the subscription
-  // is active, so `subActive` already covers it.
   const isPremium = billingActive ? subActive : UNLOCK_ALL_FOR_NOW || premium;
   const requiresSubscription = billingActive && !subActive;
 
-  const presentPaywall = useCallback(async () => {
-    await swPresent();
+  const purchase = useCallback(async (pkg: ProPackage) => {
+    const ok = await billingPurchase(pkg);
+    if (ok) setSubActive(true);
+    return ok;
+  }, []);
+
+  const restore = useCallback(async () => {
+    const ok = await billingRestore();
+    setSubActive(ok);
+    return ok;
   }, []);
 
   const value = useMemo<PremiumCtx>(
@@ -82,10 +100,12 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
       can: () => isPremium,
       requiresSubscription,
       billingActive,
-      presentPaywall,
+      packages,
+      purchase,
+      restore,
       setPremium,
     }),
-    [isPremium, requiresSubscription, billingActive, presentPaywall, setPremium],
+    [isPremium, requiresSubscription, billingActive, packages, purchase, restore, setPremium],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

@@ -2,12 +2,12 @@
 
 Guida passo-passo, dall'inizio alla fine, per:
 1. attivare e testare **Apple Health** dentro l'app,
-2. attivare l'**abbonamento** (**7 giorni di prova gratis**, poi **€2,99/mese** — paywall Superwall, reinstall-proof),
+2. attivare l'**abbonamento** (**7 giorni di prova gratis**, poi **€2,99/mese** — RevenueCat, reinstall-proof),
 3. configurare **App Store Connect**,
 4. compilare, testare su **TestFlight** e **pubblicare**.
 
 > Tutto il **codice** è già nel repo. Questa guida copre le parti che si fanno
-> fuori dal codice (Mac/Xcode, portale Apple, Superwall) + i pochi flag da
+> fuori dal codice (Mac/Xcode, portale Apple, RevenueCat) + i pochi flag da
 > riempire nel codice. Dove serve agire nel codice è scritto **[CODICE]**.
 
 ---
@@ -16,7 +16,7 @@ Guida passo-passo, dall'inizio alla fine, per:
 - Un **Mac** con **Xcode** aggiornato.
 - **Apple Developer Program** attivo (99 $/anno) → https://developer.apple.com
 - **Node 20+** installato.
-- Account **Superwall** (gratuito fino a una certa soglia) → https://superwall.com
+- Account **RevenueCat** (gratis fino a ~2.500 $/mese di incassi) → https://www.revenuecat.com
 - Bundle id dell'app: **`app.vita.lifeos`** (già impostato).
 
 Primo allineamento del progetto nativo:
@@ -67,10 +67,12 @@ e tutta la logica in `src/platform/health.ts`.
 
 ---
 
-## 3) Superwall — paywall con 7 giorni gratis (→ €2,99/mese), reinstall-proof
-**Modello:** all'avvio, se l'utente non è abbonato, parte il **paywall Superwall**
-("7 giorni gratis, poi €2,99/mese"). L'utente avvia la **prova gratuita**; durante i
-7 giorni non c'è addebito, poi si rinnova a €2,99/mese.
+## 3) RevenueCat — abbonamento con 7 giorni gratis (→ €2,99/mese), reinstall-proof
+**Modello:** all'avvio, se l'utente non è abbonato, l'app mostra la **paywall**
+(schermata già nell'app, `src/premium/SubscriptionGate.tsx`) con *"7 giorni gratis, poi
+€2,99/mese"*. Toccando il pulsante parte l'acquisto: l'utente eleggibile ottiene la
+**prova gratuita di 7 giorni** (nessun addebito), poi €2,99/mese. RevenueCat gestisce
+ricevute, rinnovi e "ripristina". **È gratis** fino a ~2.500 $/mese di incassi.
 
 > ✅ **Reinstallazione = paga comunque.** La settimana gratis è la **prova introduttiva
 > (introductory offer)** del prodotto su App Store Connect (punto 4c). Apple traccia
@@ -78,21 +80,23 @@ e tutta la logica in `src/platform/health.ts`.
 > reinstallando o disdicendo.
 
 Passi:
-1. Crea un account su https://superwall.com e un'app (bundle id `app.vita.lifeos`).
-2. **Settings → Keys**: copia la **Public API Key** iOS (inizia con `pk_`).
-3. Collega il prodotto `vyta.monthly` (€2,99/mese con prova 7 giorni, punto 4c) e disegna
-   il **paywall** (titolo "7 giorni gratis", prezzo, pulsanti **Abbonati** e **Ripristina**,
-   link **Termini** e **Privacy** — richiesti da Apple).
-4. **Campaigns → New**: campagna con **Placement** = `campaign_trigger`
-   (= `PAYWALL_PLACEMENT` in `src/premium/config.ts`) e **Feature gating = Gated**.
+1. Crea un account su https://www.revenuecat.com e un **Project** (es. "Vyta").
+2. **Project settings → Apps → + New → App Store**: bundle id `app.vita.lifeos` +
+   **App-Specific Shared Secret** (lo trovi in App Store Connect → la tua app →
+   *App Information → App-Specific Shared Secret*).
+3. **Entitlements → + New**: crea l'entitlement con id **`pro`** (= `SUBSCRIPTION_ENTITLEMENT_ID`).
+4. **Products**: aggiungi `vyta.monthly` e collegalo all'entitlement `pro`.
+5. **Offerings → default**: crea un **Package** di tipo **Monthly** → `vyta.monthly`.
+6. **Project settings → API keys**: copia la **Public SDK Key** iOS (inizia con `appl_`).
 
 **[CODICE]** Incolla la chiave in `src/premium/config.ts`:
 ```ts
-export const SUPERWALL_API_KEY = {
-  ios: 'pk_LA_TUA_CHIAVE',   // ← qui
+export const REVENUECAT_API_KEY = {
+  ios: 'appl_LA_TUA_CHIAVE',   // ← qui
   android: '',
 };
-export const PAYWALL_PLACEMENT = 'campaign_trigger'; // = placement su Superwall
+export const SUBSCRIPTION_ENTITLEMENT_ID = 'pro';     // = entitlement su RevenueCat
+export const MONTHLY_PACKAGE_TYPE = 'MONTHLY';        // = tipo del package
 export const TRIAL_DAYS = 7;        // durata prova (solo per le scritte in-app)
 export const PRICE_FALLBACK = '€2,99';
 ```
@@ -126,13 +130,13 @@ npm run build && npx cap sync
    per nuovi abbonati. *(Questa è la "settimana gratis" tracciata da Apple per Apple ID:
    non si ripristina reinstallando.)*
 4. Stato **"Ready to Submit"**.
-5. Il **Product ID `vyta.monthly`** deve combaciare con quello collegato in Superwall (punto 3).
+5. Il **Product ID `vyta.monthly`** deve combaciare con quello collegato in RevenueCat (punto 3).
 
 ### 4d) Privacy policy + Termini (OBBLIGATORI per gli abbonamenti)
 - **App Information → Privacy Policy URL**: serve un URL pubblico.
 - I **Termini d'uso (EULA)**: puoi usare l'EULA standard di Apple o la tua.
-- Sul **paywall Superwall** inserisci prezzo, durata, prova, **Ripristina** e i link a
-  **Termini** e **Privacy** (Apple li richiede vicino al pulsante d'acquisto).
+- La **paywall in-app** mostra già prezzo, prova, **Ripristina** e il testo legale; assicurati
+  di esporre i link a **Termini** e **Privacy** (Apple li richiede vicino all'acquisto).
 
 ---
 
@@ -199,15 +203,15 @@ npx cap open ios
 4. **App Review Information → Notes:** spiega che
    - l'app legge Apple Health in **sola lettura** (allenamenti/passi/calorie) per
      mostrarli all'utente; nessun account necessario (app **offline**);
-   - all'avvio c'è un **paywall** (Superwall) con **prova gratuita di 7 giorni** e poi
+   - all'avvio c'è un **paywall** (RevenueCat) con **prova gratuita di 7 giorni** e poi
      **€2,99/mese**; per testarlo basta il Sandbox Apple ID.
 5. **Submit for Review**.
 
 ---
 
 ## 10) Errori di review comuni (e come evitarli)
-- **3.1.2 (abbonamenti):** sul **paywall Superwall** servono prezzo, durata, cosa include,
-  **Ripristina** e **link a Termini e Privacy** → configurali nel paywall sulla dashboard.
+- **3.1.2 (abbonamenti):** nella **paywall in-app** servono prezzo, durata, cosa include,
+  **Ripristina** e **link a Termini e Privacy** → prezzo/prova/Ripristina già presenti; aggiungi i link.
 - **5.1.3 (HealthKit):** i dati Salute non vanno usati per pubblicità/marketing e le
   usage-string devono essere chiare → già a posto (sola lettura, stringhe descrittive).
 - **2.1 (IAP non testabili):** assicurati che il paywall + sandbox funzionino prima dell'invio.
@@ -220,22 +224,49 @@ npx cap open ios
 
 ## 11) Dove si "accende" il paywall (riepilogo flag) — [CODICE]
 File `src/premium/config.ts`:
-- `SUPERWALL_API_KEY.ios` **vuoto** → paywall **off** (tutto gratis — stato 1.2).
-- `SUPERWALL_API_KEY.ios` **valorizzato** → paywall **on**: all'avvio, se non abbonato,
-  parte il paywall Superwall; ad abbonamento/prova attivi l'app si sblocca.
-- `PAYWALL_PLACEMENT` deve combaciare col **placement** della campagna Superwall.
+- `REVENUECAT_API_KEY.ios` **vuoto** → paywall **off** (tutto gratis — stato 1.2).
+- `REVENUECAT_API_KEY.ios` **valorizzato** → paywall **on**: all'avvio, se non abbonato,
+  parte la paywall in-app; ad abbonamento/prova attivi l'app si sblocca.
+- `SUBSCRIPTION_ENTITLEMENT_ID` (`pro`) e `MONTHLY_PACKAGE_TYPE` (`MONTHLY`) devono
+  combaciare con entitlement e package su RevenueCat.
 - `TRIAL_DAYS` (7) e `PRICE_FALLBACK` (€2,99) sono solo per le scritte in-app; la prova
-  (7 giorni) e il prezzo "veri" stanno sul prodotto App Store Connect + sul paywall.
+  (7 giorni) e il prezzo "veri" stanno sul prodotto App Store Connect.
 
 **Come funziona il gate:** `SubscriptionGate` (in `src/premium/SubscriptionGate.tsx`)
-avvolge tutta l'app: se `requiresSubscription` (paywall on + non abbonato) presenta il
-paywall Superwall e mostra dietro la schermata "Inizia la settimana di prova". Ad
+avvolge tutta l'app: se `requiresSubscription` (paywall on + non abbonato) mostra la
+paywall in-app ("Inizia la settimana di prova"); il pulsante avvia l'acquisto via
+RevenueCat (con la prova di 7 giorni). Ad
 abbonamento/prova attivi passa i `children` (l'app intera). La **prova di 7 giorni** è
 l'introductory offer su App Store Connect, quindi è **a prova di reinstallazione**.
 
 ---
 
-## 12) Prossimi step (vedi ROADMAP.md)
+## 12) Costi, pagamenti e tasse
+**Costi degli strumenti**
+- **Apple Developer Program: 99 $/anno** — unico costo obbligatorio per pubblicare.
+- **RevenueCat: gratis** fino a ~2.500 $/mese di incassi (poi piano a pagamento).
+- **Commissione Apple su ogni abbonamento:** 30%, oppure **15%** se ti iscrivi
+  all'**App Store Small Business Program** (incassi < 1M $/anno) → **iscriviti, dimezza**.
+
+**Come ricevi i soldi**
+- I clienti pagano **Apple**; Apple trattiene la commissione e ti **bonifica ogni mese**.
+- **App Store Connect → Business → Agreements, Tax, and Banking**: accetta il **Paid Apps
+  Agreement**, aggiungi **IBAN**, compila i **moduli fiscali** (USA: **W-8BEN**) e
+  **iscriviti al Small Business Program (15%)**.
+- Esempio: €2,99 → Apple ~15% → a te ~**€2,54**/utente (poi ci sono le tue tasse).
+
+**Tasse (Italia) — quadro generale, non è consulenza fiscale**
+- **IVA verso i clienti:** non te ne occupi tu. Per gli abbonamenti Apple è
+  **Merchant of Record**: incassa e versa lei l'IVA ai vari Paesi.
+- **Il tuo reddito:** i bonifici Apple sono reddito da dichiarare in Italia. Se l'attività
+  è continuativa serve la **Partita IVA** (tipicamente **regime forfettario**: imposta
+  sostitutiva 15%, o 5% i primi 5 anni, + **INPS** gestione separata). Apple fornisce i
+  **report finanziari** mensili per la contabilità.
+- **Fatti seguire da un commercialista** per aprire/gestire la P.IVA (~€300-800/anno).
+
+---
+
+## 13) Prossimi step (vedi ROADMAP.md)
 - **1.3:** plugin Swift `HKActivitySummary` → Allenamento/In piedi **esatti** + **Sonno**;
   backup **Google/Drive** (occhio alla Guideline 4.8: con login Google serve anche
   "Accedi con Apple").

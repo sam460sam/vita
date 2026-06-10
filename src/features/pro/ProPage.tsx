@@ -1,15 +1,20 @@
+import { useState } from 'react';
 import { Check, Sparkles, Wallet, Target, CalendarDays, BarChart3, Star } from 'lucide-react';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, Button, useToast } from '@/ui';
 import { useT } from '@/i18n';
 import { usePremium } from '@/premium/premium';
-import { TRIAL_DAYS, PRICE_FALLBACK } from '@/premium/config';
+import { MONTHLY_PACKAGE_TYPE, TRIAL_DAYS, PRICE_FALLBACK } from '@/premium/config';
 
 export function ProPage() {
   const t = useT();
   const toast = useToast();
-  const { billingActive, isPremium, presentPaywall } = usePremium();
+  const { billingActive, isPremium, packages, purchase, restore } = usePremium();
+  const [busy, setBusy] = useState(false);
+
+  const monthly = packages.find((p) => p.type === MONTHLY_PACKAGE_TYPE) ?? packages[0];
+  const price = monthly?.priceString || PRICE_FALLBACK;
 
   const features = [
     { icon: Wallet, key: 'pro.feature.finances' as const, color: 'var(--c-finance)' },
@@ -19,12 +24,26 @@ export function ProPage() {
     { icon: Star, key: 'pro.feature.future' as const, color: 'var(--c-journal)' },
   ];
 
-  function onCta() {
+  async function onSubscribe() {
+    if (!billingActive || !monthly) {
+      toast.show(t('pro.soon'));
+      return;
+    }
+    setBusy(true);
+    const ok = await purchase(monthly);
+    setBusy(false);
+    toast.show(ok ? t('pro.purchased') : t('pro.purchaseError'));
+  }
+
+  async function onRestore() {
     if (!billingActive) {
       toast.show(t('pro.soon'));
       return;
     }
-    void presentPaywall();
+    setBusy(true);
+    const ok = await restore();
+    setBusy(false);
+    toast.show(ok ? t('pro.restored') : t('pro.noPurchases'));
   }
 
   return (
@@ -64,17 +83,18 @@ export function ProPage() {
         {!(billingActive && isPremium) && (
           <>
             <div className="text-center mb-3">
-              <span className="text-[15px] font-bold text-ink">
-                {t('gate.headline', { days: TRIAL_DAYS, price: PRICE_FALLBACK })}
-              </span>
+              <span className="text-[15px] font-bold text-ink">{t('gate.headline', { days: TRIAL_DAYS, price })}</span>
             </div>
-            <Button block size="lg" onClick={onCta}>
+            <Button block size="lg" disabled={busy} onClick={onSubscribe}>
               {t('gate.cta')}
             </Button>
+            <button onClick={onRestore} disabled={busy} className="w-full text-center text-[13px] text-ink-2 mt-3 py-2 disabled:opacity-50">
+              {t('pro.restore')}
+            </button>
           </>
         )}
 
-        {!billingActive && <p className="text-center text-[12px] text-ink-3 mt-3">{t('pro.soon')}</p>}
+        {!billingActive && <p className="text-center text-[12px] text-ink-3 mt-2">{t('pro.soon')}</p>}
         {billingActive && <p className="text-center text-[11px] text-ink-3 mt-3 leading-relaxed">{t('pro.legal')}</p>}
       </Screen>
     </>

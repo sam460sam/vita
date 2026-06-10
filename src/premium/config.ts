@@ -1,32 +1,33 @@
 // ============================================================================
-// Vyta subscription / paywall configuration (Superwall).
+// Vyta subscription configuration (RevenueCat — free up to ~$2.5k/mo revenue).
 //
-// MODEL: 7-day free trial, then €2,99/month (reinstall-proof).
-//   • On entry, if not subscribed, the Superwall paywall is shown
-//     ("7 days free, then €2,99/month"). The user starts the free trial.
-//   • The 7-day free trial is the App Store Connect INTRODUCTORY OFFER on the
-//     €2,99/month product. Apple tracks trial eligibility per Apple ID, so
-//     reinstalling / cancelling does NOT grant a new free week — the user pays.
+// MODEL: hard paywall with a 7-day free trial, then €2,99/month (reinstall-proof).
+//   • On entry, if not subscribed, our paywall screen is shown
+//     ("7 days free, then €2,99/month"). Tapping the CTA starts the purchase;
+//     because the product has a 7-day introductory free trial in App Store
+//     Connect, eligible users get the free week (no charge), then €2,99/mo.
+//   • Apple tracks trial eligibility per Apple ID → reinstalling/cancelling does
+//     NOT grant a new free week.
 //   • While the subscription (incl. the trial) is active → full app.
 //
-// DORMANT BY DEFAULT: leave the API key EMPTY → no paywall ever, app fully
-// unlocked (the 1.2 state). Fill the key to turn the subscription on.
-// Key: Superwall dashboard → Settings → Keys (public key, e.g. `pk_...`).
+// DORMANT BY DEFAULT: leave the API key EMPTY → no paywall, app fully unlocked
+// (the 1.2 state). Fill the key to turn the subscription on.
+// Keys: RevenueCat → Project settings → API keys (public SDK key, `appl_...`).
 // ============================================================================
 
-export const SUPERWALL_API_KEY = {
-  ios: '', //  e.g. 'pk_XXXXXXXXXXXXXXXXXXXXXXXX'
-  android: '', // e.g. 'pk_XXXXXXXXXXXXXXXXXXXXXXXX'
+export const REVENUECAT_API_KEY = {
+  ios: '', //  e.g. 'appl_XXXXXXXXXXXXXXXXXXXXXXXX'
+  android: '', // e.g. 'goog_XXXXXXXXXXXXXXXXXXXXXXXX'
 };
 
-/**
- * Placement registered in the Superwall dashboard campaign that shows the
- * paywall. Create a campaign with this placement and gating = "Gated".
- */
-export const PAYWALL_PLACEMENT = 'campaign_trigger';
+/** Entitlement identifier configured in RevenueCat (grants full access). */
+export const SUBSCRIPTION_ENTITLEMENT_ID = 'pro';
 
-/** Length of the free usage week. */
+/** RevenueCat package type for the monthly plan (with the 7-day trial). */
+export const MONTHLY_PACKAGE_TYPE = 'MONTHLY';
+
+/** Free trial length — must match the introductory offer in App Store Connect. */
 export const TRIAL_DAYS = 7;
 
-/** Monthly price shown in the in-app screens (the real price lives on the paywall / App Store). */
+/** Monthly price shown before live store prices load (display only). */
 export const PRICE_FALLBACK = '€2,99';
