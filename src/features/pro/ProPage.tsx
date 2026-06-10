@@ -4,11 +4,19 @@ import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, Button, Segmented, useToast } from '@/ui';
 import { useT } from '@/i18n';
+import { usePremium } from '@/premium/premium';
+import { PRO_PACKAGE } from '@/premium/config';
 
 export function ProPage() {
   const t = useT();
   const toast = useToast();
+  const { billingActive, packages, purchase, restore, isPremium } = usePremium();
   const [plan, setPlan] = useState<'yearly' | 'monthly'>('yearly');
+  const [busy, setBusy] = useState(false);
+
+  const yearlyPkg = packages.find((p) => p.type === PRO_PACKAGE.yearly);
+  const monthlyPkg = packages.find((p) => p.type === PRO_PACKAGE.monthly);
+  const selectedPkg = plan === 'yearly' ? yearlyPkg : monthlyPkg;
 
   const features = [
     { icon: Wallet, key: 'pro.feature.finances' as const, color: 'var(--c-finance)' },
@@ -18,17 +26,47 @@ export function ProPage() {
     { icon: Star, key: 'pro.feature.future' as const, color: 'var(--c-journal)' },
   ];
 
+  async function onSubscribe() {
+    if (!billingActive || !selectedPkg) {
+      toast.show(t('pro.soon'));
+      return;
+    }
+    setBusy(true);
+    const ok = await purchase(selectedPkg);
+    setBusy(false);
+    toast.show(ok ? t('pro.purchased') : t('pro.purchaseError'));
+  }
+
+  async function onRestore() {
+    if (!billingActive) {
+      toast.show(t('pro.soon'));
+      return;
+    }
+    setBusy(true);
+    const ok = await restore();
+    setBusy(false);
+    toast.show(ok ? t('pro.restored') : t('pro.noPurchases'));
+  }
+
+  // Price suffix on the CTA when live prices are available.
+  const ctaLabel = selectedPkg ? `${t('pro.cta')} · ${selectedPkg.priceString}` : t('pro.cta');
+
   return (
     <>
       <PageHeader title={t('pro.title')} back="/altro" />
       <Screen>
         {/* Hero */}
         <div className="flex flex-col items-center text-center pt-2 pb-6">
-          <span className="h-16 w-16 rounded-2xl bg-primary border border-primary-border flex items-center justify-center text-on-primary mb-4">
+          <span className="h-16 w-16 rounded-2xl bg-accent flex items-center justify-center text-on-accent mb-4 shadow-chip">
             <Sparkles size={30} />
           </span>
           <h1 className="text-2xl font-bold text-ink">{t('pro.title')}</h1>
           <p className="text-[15px] text-ink-2 mt-1 max-w-xs">{t('pro.subtitle')}</p>
+          {billingActive && isPremium && (
+            <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-semibold text-habit bg-habit/10 rounded-full px-3 h-7">
+              <Check size={14} /> {t('pro.active')}
+            </span>
+          )}
         </div>
 
         {/* Features */}
@@ -38,7 +76,7 @@ export function ProPage() {
               const Icon = f.icon;
               return (
                 <div key={f.key} className="flex items-center gap-3">
-                  <span className="h-9 w-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${f.color}1a`, color: f.color }}>
+                  <span className="h-10 w-10 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: `${f.color}1a`, color: f.color }}>
                     <Icon size={18} />
                   </span>
                   <span className="flex-1 text-[15px] text-ink">{t(f.key)}</span>
@@ -55,8 +93,8 @@ export function ProPage() {
           value={plan}
           onChange={setPlan}
           options={[
-            { value: 'yearly', label: t('pro.yearly') },
-            { value: 'monthly', label: t('pro.monthly') },
+            { value: 'yearly', label: yearlyPkg ? `${t('pro.yearly')} · ${yearlyPkg.priceString}` : t('pro.yearly') },
+            { value: 'monthly', label: monthlyPkg ? `${t('pro.monthly')} · ${monthlyPkg.priceString}` : t('pro.monthly') },
           ]}
         />
         {plan === 'yearly' && (
@@ -67,17 +105,21 @@ export function ProPage() {
           </div>
         )}
 
-        <Button block size="lg" onClick={() => toast.show(t('pro.soon'))}>
-          {t('pro.cta')}
+        <Button block size="lg" disabled={busy} onClick={onSubscribe}>
+          {ctaLabel}
         </Button>
-        <button
-          onClick={() => toast.show(t('pro.soon'))}
-          className="w-full text-center text-[13px] text-ink-2 mt-3 py-2"
-        >
+        <button onClick={onRestore} disabled={busy} className="w-full text-center text-[13px] text-ink-2 mt-3 py-2 disabled:opacity-50">
           {t('pro.restore')}
         </button>
 
-        <p className="text-center text-[12px] text-ink-3 mt-2">{t('pro.soon')}</p>
+        {!billingActive && <p className="text-center text-[12px] text-ink-3 mt-2">{t('pro.soon')}</p>}
+
+        {/* Required by Apple: terms + privacy links near the purchase. */}
+        {billingActive && (
+          <p className="text-center text-[11px] text-ink-3 mt-3 leading-relaxed">
+            {t('pro.legal')}
+          </p>
+        )}
       </Screen>
     </>
   );

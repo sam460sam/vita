@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { HeartPulse, Check, Info, Upload } from 'lucide-react';
+import { HeartPulse, Check, Info, Upload, Footprints, Flame } from 'lucide-react';
 import { Card, Button, useToast } from '@/ui';
 import { useT } from '@/i18n';
-import { health } from '@/platform/health';
+import { health, useHealthSummary } from '@/platform/health';
 import { platform } from '@/platform/platform';
 import { parseWorkoutFile } from './importWorkouts';
 import { createWorkout } from '@/data/repo';
@@ -12,6 +12,7 @@ export function HealthCard() {
   const t = useT();
   const toast = useToast();
   const [status, setStatus] = useState(health.status());
+  const summary = useHealthSummary();
 
   async function importFromFile() {
     const text = await platform.pickTextFile('.tcx,.gpx,.xml,application/xml,text/xml');
@@ -68,14 +69,27 @@ export function HealthCard() {
           {t('health.webNote')}
         </p>
       ) : status.authorized ? (
-        <div className="flex gap-2 mt-3">
-          <Button variant="subtle" className="flex-1" onClick={() => connect()}>
-            {t('health.import')}
-          </Button>
-          <Button variant="ghost" className="text-danger" onClick={disconnect}>
-            {t('health.disconnect')}
-          </Button>
-        </div>
+        <>
+          {summary && (
+            <div className="flex items-center gap-4 mt-3 text-[13px]">
+              <span className="inline-flex items-center gap-1 text-ink-2">
+                <Footprints size={14} className="text-activity" /> {summary.steps.toLocaleString()} {t('activity.unit.steps')}
+              </span>
+              <span className="inline-flex items-center gap-1 text-ink-2">
+                <Flame size={14} className="text-activity" /> {summary.activeKcal} {t('activity.unit.kcal')}
+              </span>
+              <span className="ml-auto text-[11px] text-ink-3">{t('health.syncedToday')}</span>
+            </div>
+          )}
+          <div className="flex gap-2 mt-3">
+            <Button variant="subtle" className="flex-1" onClick={() => connect()}>
+              {t('health.import')}
+            </Button>
+            <Button variant="ghost" className="text-danger" onClick={disconnect}>
+              {t('health.disconnect')}
+            </Button>
+          </div>
+        </>
       ) : (
         <Button block className="mt-3" onClick={connect}>
           {connectLabel}
