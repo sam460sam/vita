@@ -23,7 +23,8 @@ import {
 import { formatDistance, formatDuration } from '@/lib/format';
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
-import { todayRings, ringsToData, summarize } from './logic';
+import { todayRings, ringsToData, summarize, mergeHealthRings } from './logic';
+import { useHealthSummary } from '@/platform/health';
 import { getSport, type Sport } from './sports';
 import { SportPicker } from './SportPicker';
 import { WorkoutTracker } from './WorkoutTracker';
@@ -51,7 +52,8 @@ export function ActivityPage() {
   }, [params, setParams]);
 
   const s = settings ?? defaultSettings();
-  const rings = todayRings(workouts ?? [], s);
+  const healthSummary = useHealthSummary();
+  const rings = mergeHealthRings(todayRings(workouts ?? [], s), healthSummary);
   const summary = summarize(workouts ?? [], period);
 
   const weightLogs = useLiveQuery(() => db.weightLogs.orderBy('date').reverse().limit(1).toArray(), [], []);

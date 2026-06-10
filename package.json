@@ -1,7 +1,7 @@
 {
   "name": "vita",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.2.0",
   "type": "module",
   "description": "Vita — all-in-one life OS (offline-first PWA, Capacitor-ready)",
   "scripts": {
@@ -20,6 +20,7 @@
     "@capacitor/share": "^8.0.1",
     "@capacitor/splash-screen": "^8.0.1",
     "@capacitor/status-bar": "^8.0.2",
+    "capacitor-health": "^8.1.2",
     "date-fns": "^3.6.0",
     "dexie": "^4.0.8",
     "dexie-react-hooks": "^1.1.7",

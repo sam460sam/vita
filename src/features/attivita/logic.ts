@@ -31,6 +31,24 @@ export function todayRings(workouts: Workout[], settings: Settings): RingsSummar
   };
 }
 
+/**
+ * Overlay real Apple Health / Health Connect daily data onto the rings when
+ * available: Movimento ← active energy burned, Allenamento ← max(logged, health
+ * exercise minutes). Goals and the Stand ring stay as computed. No-op if `hk` is
+ * null (web, or not connected), so behaviour is unchanged for everyone else.
+ */
+export function mergeHealthRings(
+  base: RingsSummary,
+  hk: { activeKcal: number; exerciseMin: number } | null,
+): RingsSummary {
+  if (!hk) return base;
+  return {
+    move: { value: Math.round(hk.activeKcal), goal: base.move.goal },
+    exercise: { value: Math.max(base.exercise.value, hk.exerciseMin), goal: base.exercise.goal },
+    stand: base.stand,
+  };
+}
+
 export function ringsToData(s: RingsSummary): [RingData, RingData, RingData] {
   return [
     { value: s.move.value, goal: s.move.goal, color: 'var(--c-activity)' },

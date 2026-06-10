@@ -11,7 +11,8 @@ import { readSettings } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { todayISO, longDate } from '@/lib/format';
 import { computeMomentum, stellaMood, momentumMessageKey, getStreakState } from '@/features/oggi/momentum';
-import { todayRings, ringsToData } from '@/features/attivita/logic';
+import { todayRings, ringsToData, mergeHealthRings } from '@/features/attivita/logic';
+import { useHealthSummary } from '@/platform/health';
 import { dailyAffirmation } from '@/features/oggi/coach';
 import { dayPoints, type LifeData } from '@/features/gamification/logic';
 import { DailyWin } from '@/features/oggi/DailyWin';
@@ -45,7 +46,8 @@ export function HomeDashboard() {
   const todayWater = useLiveQuery(() => db.waterLogs.get(todayISO()), [], undefined);
 
   const m = computeMomentum(s, habits ?? [], logs ?? [], tasks ?? [], workouts ?? [], todayWater, journals ?? []);
-  const rings = todayRings(workouts ?? [], s);
+  const healthSummary = useHealthSummary();
+  const rings = mergeHealthRings(todayRings(workouts ?? [], s), healthSummary);
   const affirmation = t(dailyAffirmation() as TKey);
   const greeting = greetByHour(s.name, t);
 

@@ -19,7 +19,7 @@ export interface ParsedWorkout {
 }
 
 const SPORT_IDS = new Set(SPORTS.map((s) => s.id));
-function toSportId(raw: string): string {
+export function toSportId(raw: string): string {
   const s = raw.toLowerCase();
   const map: Record<string, string> = {
     running: 'run_outdoor',
