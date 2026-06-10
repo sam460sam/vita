@@ -19,6 +19,11 @@ const SHOTS = [
   ['04-finances', '#/finanze'],
   ['05-journal', '#/diario'],
   ['06-projects', '#/progetti'],
+  ['08-goals', '#/obiettivi'],
+  ['09-weight', '#/peso'],
+  ['10-more', '#/altro'],
+  ['11-rewards', '#/premi'],
+  ['12-recap', '#/recap'],
 ];
 
 const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });

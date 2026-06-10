@@ -16,7 +16,7 @@ export function MorePage() {
         {/* Vita Pro banner */}
         <Link to="/pro">
           <Card className="flex items-center gap-3 mb-4 active:bg-section transition-colors">
-            <span className="h-10 w-10 rounded-full bg-primary border border-primary-border flex items-center justify-center text-on-primary flex-shrink-0">
+            <span className="h-11 w-11 rounded-2xl bg-accent flex items-center justify-center text-on-accent flex-shrink-0 shadow-chip">
               <Sparkles size={20} />
             </span>
             <div className="flex-1 min-w-0">
@@ -34,7 +34,10 @@ export function MorePage() {
               <div key={item.to}>
                 {i > 0 && <Divider />}
                 <Link to={item.to} className="flex items-center gap-3 px-4 py-3.5 active:bg-section transition-colors">
-                  <span className="h-9 w-9 rounded-full bg-section flex items-center justify-center" style={{ color: item.accent ?? 'var(--c-ink-2)' }}>
+                  <span
+                    className="h-10 w-10 rounded-2xl flex items-center justify-center"
+                    style={{ background: (item.accent ?? 'var(--c-ink-2)').replace(')', '-tint)'), color: item.accent ?? 'var(--c-ink-2)' }}
+                  >
                     <Icon size={18} />
                   </span>
                   <span className="flex-1 text-[15px] text-ink font-medium">{t(item.labelKey)}</span>
@@ -45,7 +48,7 @@ export function MorePage() {
           })}
           <Divider />
           <Link to="/impostazioni#personalizzazione" className="flex items-center gap-3 px-4 py-3.5 active:bg-section transition-colors">
-            <span className="h-9 w-9 rounded-full bg-section flex items-center justify-center text-habit">
+            <span className="h-10 w-10 rounded-2xl flex items-center justify-center bg-habit-tint text-habit">
               <SlidersHorizontal size={18} />
             </span>
             <span className="flex-1 text-[15px] text-ink font-medium">{t('personalize.title')}</span>

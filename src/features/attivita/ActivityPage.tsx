@@ -87,7 +87,7 @@ export function ActivityPage() {
         {/* Weight tracker entry */}
         <Link to="/peso">
           <Card className="flex items-center gap-3 mb-4 active:bg-section transition-colors">
-            <span className="h-10 w-10 rounded-full bg-project/10 flex items-center justify-center text-project flex-shrink-0">
+            <span className="h-11 w-11 rounded-2xl bg-project-tint flex items-center justify-center text-project flex-shrink-0">
               <Scale size={20} />
             </span>
             <div className="flex-1 min-w-0">
@@ -134,7 +134,7 @@ export function ActivityPage() {
                 const Icon = sport.icon;
                 return (
                   <div key={w.id} className="flex items-center gap-3 py-3 group">
-                    <span className="h-10 w-10 rounded-full bg-activity/10 flex items-center justify-center text-activity flex-shrink-0">
+                    <span className="h-11 w-11 rounded-2xl bg-activity-tint flex items-center justify-center text-activity flex-shrink-0">
                       <Icon size={18} />
                     </span>
                     <div className="min-w-0 flex-1">

@@ -141,7 +141,13 @@ export function JournalPage() {
                     onClick={() => { setEditing(e); setDefaultDate(e.date); setFormOpen(true); }}
                     className="w-full flex items-start gap-3 py-3 text-left active:bg-section -mx-1 px-1 rounded-lg"
                   >
-                    <span className="text-2xl leading-none mt-0.5" title={t(`mood.${meta.value}` as TKey)}>{meta.emoji}</span>
+                    <span
+                      className="h-10 w-10 rounded-2xl flex items-center justify-center text-xl leading-none flex-shrink-0 mt-0.5"
+                      style={{ background: `${meta.color}24` }}
+                      title={t(`mood.${meta.value}` as TKey)}
+                    >
+                      {meta.emoji}
+                    </span>
                     <div className="min-w-0 flex-1">
                       <div className="text-[13px] text-ink-2 capitalize">{format(new Date(e.date), 'EEEE d MMMM', { locale: it })}</div>
                       {e.text && <div className="text-[15px] text-ink line-clamp-2 mt-0.5">{e.text}</div>}

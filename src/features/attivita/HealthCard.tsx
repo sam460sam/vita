@@ -50,7 +50,7 @@ export function HealthCard() {
   return (
     <Card className="mb-4">
       <div className="flex items-center gap-3">
-        <span className="h-10 w-10 rounded-full bg-activity/10 flex items-center justify-center text-activity flex-shrink-0">
+        <span className="h-11 w-11 rounded-2xl bg-activity-tint flex items-center justify-center text-activity flex-shrink-0">
           <HeartPulse size={20} />
         </span>
         <div className="min-w-0 flex-1">

@@ -139,7 +139,7 @@ export function TodayPage() {
         {lastWeight && lastWeight.length > 0 && (
           <Link to="/peso">
             <Card className="flex items-center gap-3 mb-4 active:bg-section transition-colors">
-              <span className="h-10 w-10 rounded-full bg-project/10 flex items-center justify-center text-project flex-shrink-0">
+              <span className="h-11 w-11 rounded-2xl bg-project-tint flex items-center justify-center text-project flex-shrink-0">
                 <Scale size={20} />
               </span>
               <div className="flex-1 min-w-0">
@@ -216,7 +216,7 @@ export function TodayPage() {
         {/* Rewards / gamification entry */}
         <Link to="/premi">
           <Card className="flex items-center gap-3 mt-4 active:bg-section transition-colors">
-            <span className="h-10 w-10 rounded-full bg-habit/10 flex items-center justify-center text-habit flex-shrink-0">
+            <span className="h-11 w-11 rounded-2xl bg-habit-tint flex items-center justify-center text-habit flex-shrink-0">
               <Trophy size={20} />
             </span>
             <div className="flex-1 min-w-0">
@@ -229,7 +229,7 @@ export function TodayPage() {
 
         {/* Daily affirmation — positive, low-pressure */}
         <Card className="flex items-center gap-3 mt-4">
-          <span className="h-10 w-10 rounded-full bg-journal/10 flex items-center justify-center text-journal flex-shrink-0">
+          <span className="h-11 w-11 rounded-2xl bg-journal-tint flex items-center justify-center text-journal flex-shrink-0">
             <Quote size={18} />
           </span>
           <p className="flex-1 text-[14px] text-ink-2 italic leading-snug">{t(dailyAffirmation() as TKey)}</p>

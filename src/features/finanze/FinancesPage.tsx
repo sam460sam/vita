@@ -99,7 +99,7 @@ export function FinancesPage() {
         {/* Budget */}
         <Card className="mb-4" onClick={() => setBudgetOpen(true)}>
           <div className="flex items-center gap-3 cursor-pointer">
-            <span className="h-9 w-9 rounded-full bg-finance/10 flex items-center justify-center text-finance">
+            <span className="h-10 w-10 rounded-2xl bg-finance-tint flex items-center justify-center text-finance">
               <Wallet size={18} />
             </span>
             <div className="flex-1">
@@ -182,8 +182,8 @@ export function FinancesPage() {
               {(txs ?? []).slice(0, 50).map((tx) => (
                 <div key={tx.id} className="flex items-center gap-3 py-2.5 group">
                   <span
-                    className="h-9 w-9 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: `${categoryColor(tx.category)}1a`, color: categoryColor(tx.category) }}
+                    className="h-10 w-10 rounded-2xl flex items-center justify-center flex-shrink-0"
+                    style={{ background: `${categoryColor(tx.category)}24`, color: categoryColor(tx.category) }}
                   >
                     {tx.type === 'income' ? <ArrowDownLeft size={17} /> : <ArrowUpRight size={17} />}
                   </span>
