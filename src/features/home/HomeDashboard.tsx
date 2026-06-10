@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Plus, Check, X, Pencil, LayoutGrid, AlertCircle } from 'lucide-react';
 import { PageHeader } from '@/app/PageHeader';
-import { Screen } from '@/app/Screen';
 import { Button, Sheet, Segmented } from '@/ui';
 import { useT, type TKey } from '@/i18n';
 import { cn } from '@/lib/cn';
@@ -86,8 +85,10 @@ export function HomeDashboard() {
     setWin(null);
   }
 
-  // Source of truth: live widgets when viewing, the local draft when editing.
-  const widgets = editing ? draft : liveWidgets;
+  // Source of truth: the editable draft when editing; for viewing we compose a
+  // fixed, single-screen layout (drop quick-actions, put a motivational phrase
+  // right below the panda) without ever mutating the saved data.
+  const widgets = editing ? draft : composeView(liveWidgets);
 
   function enterEdit() {
     setDraft(liveWidgets.map((w, i) => ({ ...w, position: i })));
@@ -133,7 +134,7 @@ export function HomeDashboard() {
   const greeting = greetByHour(s.name, t);
 
   return (
-    <>
+    <div className="h-[100dvh] flex flex-col bg-app overflow-hidden">
       <PageHeader
         title={editing ? t('home.editTitle') : greeting}
         subtitle={editing ? t('home.editHint') : longDate()}
@@ -153,7 +154,7 @@ export function HomeDashboard() {
           )
         }
       />
-      <Screen>
+      <div className="flex-1 min-h-0 w-full max-w-3xl mx-auto px-4 pt-3 flex flex-col">
         {!editing && (
           <BackupNudge
             hasData={
@@ -172,7 +173,12 @@ export function HomeDashboard() {
           </button>
         ) : (
           <div
-            className="grid grid-cols-2 lg:grid-cols-4 gap-3 auto-rows-[148px]"
+            className={cn(
+              'grid grid-cols-2 lg:grid-cols-4 gap-3 flex-1 min-h-0',
+              editing
+                ? 'auto-rows-[148px] content-start overflow-y-auto no-scrollbar pb-28'
+                : '[grid-auto-rows:minmax(0,1fr)] overflow-hidden pb-[calc(96px+env(safe-area-inset-bottom))]',
+            )}
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
@@ -203,7 +209,7 @@ export function HomeDashboard() {
                       <span className="text-[11px]">{t('home.widgetUnavailable')}</span>
                     </div>
                   ) : (
-                    <div className={cn(editing && 'pointer-events-none select-none')}>
+                    <div className={cn('h-full', editing && 'pointer-events-none select-none')}>
                       <Comp instance={w} />
                     </div>
                   )}
@@ -223,12 +229,32 @@ export function HomeDashboard() {
             })}
           </div>
         )}
-      </Screen>
+      </div>
 
       <WidgetGallery open={galleryOpen} onClose={() => setGalleryOpen(false)} onAdd={addWidget} enabled={enabled} />
       {win && <DailyWin streak={win.streak} pointsToday={win.today} pointsYesterday={win.yesterday} onClose={closeWin} />}
-    </>
+    </div>
   );
+}
+
+/**
+ * View-only composition: keep the saved layout but (1) drop the legacy
+ * quick-actions card and (2) guarantee a motivational phrase sits directly
+ * below the panda (momentum). Never mutates persisted data.
+ */
+function composeView(ws: WidgetInstance[]): WidgetInstance[] {
+  const hasAffirmation = ws.some((w) => w.type === 'affirmation');
+  const out: WidgetInstance[] = [];
+  let added = false;
+  for (const w of ws) {
+    if (w.type === 'quick-actions') continue; // replaced by the motivational card
+    out.push(w);
+    if (!added && !hasAffirmation && w.type === 'momentum') {
+      out.push({ id: 'view-affirmation', type: 'affirmation', size: w.size === 'large' ? 'large' : 'medium', position: 0 });
+      added = true;
+    }
+  }
+  return out.map((w, i) => ({ ...w, position: i }));
 }
 
 function WidgetGallery({
