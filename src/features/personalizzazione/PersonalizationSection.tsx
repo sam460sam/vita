@@ -1,5 +1,4 @@
-import { useNavigate } from 'react-router-dom';
-import { ChevronUp, ChevronDown, LayoutGrid, RefreshCw, Info } from 'lucide-react';
+import { ChevronUp, ChevronDown, RefreshCw, Info } from 'lucide-react';
 import { Card, CardHeader, Divider, Button } from '@/ui';
 import { useT } from '@/i18n';
 import { cn } from '@/lib/cn';
@@ -12,7 +11,6 @@ import { useModules } from './prefs';
 /** Settings → "Personalizzazione": interests/sections + home widgets + redo. */
 export function PersonalizationSection() {
   const t = useT();
-  const navigate = useNavigate();
   const { enabled, order } = useModules();
 
   const disabled = ALL_MODULES.filter((m) => !enabled.includes(m));
@@ -97,9 +95,6 @@ export function PersonalizationSection() {
       )}
 
       <div className="flex flex-col gap-2 mt-4">
-        <Button variant="subtle" block icon={<LayoutGrid size={18} />} onClick={() => navigate('/oggi?edit=1')}>
-          {t('personalize.editHome')}
-        </Button>
         <Button variant="ghost" block icon={<RefreshCw size={18} />} onClick={redo}>
           {t('personalize.redo')}
         </Button>
