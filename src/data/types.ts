@@ -409,6 +409,31 @@ export interface WorkProfile {
 }
 
 // ----------------------------------------------------------------------------
+// Note — timeline notes linked to projects / cantieri
+// ----------------------------------------------------------------------------
+
+export interface Note extends Timestamped {
+  projectId: string;        // 'inbox' for uncategorized, or NoteProject.id
+  title: string;
+  content: string;          // pseudo-markdown body (# heading, - bullet, [ ] checkbox)
+  data?: string;            // ISO yyyy-MM-dd — the note's "calendar date"
+  inAgenda: boolean;        // flagged for "In Agenda" overview
+  tags: string[];           // extracted #tags from content
+  attachments: string[];    // base64 data URLs for photos
+  cantiereId?: string;      // direct link to a Cantiere
+  workDayDate?: string;     // linked work-day date (yyyy-MM-dd)
+}
+
+export interface NoteProject {
+  id: string;
+  nome: string;
+  colore: string;           // hex accent color
+  cantiereId?: string;      // linked Cantiere (one project per cantiere)
+  createdAt: number;
+  updatedAt: number;
+}
+
+// ----------------------------------------------------------------------------
 // Full export shape (backup)
 // ----------------------------------------------------------------------------
 export interface VitaBackup {

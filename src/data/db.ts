@@ -14,6 +14,8 @@ import type {
   HabitLog,
   HomeLayout,
   JournalEntry,
+  Note,
+  NoteProject,
   Operaio,
   Project,
   Settings,
@@ -45,6 +47,8 @@ export class VitaDB extends Dexie {
   giornaleEntries!: Table<GiornaleEntry, string>;
   workDays!: Table<WorkDay, string>;
   workProfiles!: Table<WorkProfile, string>;
+  notes!: Table<Note, string>;
+  noteProjects!: Table<NoteProject, string>;
 
   constructor() {
     super('vita');
@@ -86,6 +90,11 @@ export class VitaDB extends Dexie {
     this.version(7).stores({
       workDays: 'id, data, status, workerId, updatedAt',
       workProfiles: 'id',
+    });
+    // v8: note — timeline notes linked to projects and cantieri.
+    this.version(8).stores({
+      notes: 'id, projectId, data, inAgenda, cantiereId, updatedAt',
+      noteProjects: 'id, cantiereId, updatedAt',
     });
   }
 }

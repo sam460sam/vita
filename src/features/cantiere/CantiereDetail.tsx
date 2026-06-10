@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useParams } from 'react-router-dom';
-import { Phone, MapPin, Calendar, Edit3, Camera, PenTool, FileText, Share2 } from 'lucide-react';
+import { Phone, MapPin, Calendar, Edit3, Camera, PenTool, FileText, Share2, StickyNote, Plus } from 'lucide-react';
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, CardHeader, Button } from '@/ui';
 import { db } from '@/data/db';
-import type { Operaio } from '@/data/types';
+import type { Operaio, Note } from '@/data/types';
 import { formatEuro, statoInfo, pagamentoInfo } from './logic';
 import { CantiereForm } from './CantiereForm';
 import { CementoCalc } from './CementoCalc';
@@ -15,6 +15,9 @@ import { condividiVerbale } from './generateVerbale';
 import { GiornaledCantiere } from './GiornaledCantiere';
 import { PhotoAnnotator } from './PhotoAnnotator';
 import { saveCantiere } from '@/data/cantiere-repo';
+import { getNotesByCantiere, getOrCreateProjectForCantiere } from '@/data/note-repo';
+import { NoteSheet } from '@/features/note/NoteSheet';
+import { NoteCard } from '@/features/note/NoteCard';
 
 export function CantiereDetail() {
   const { id } = useParams<{ id: string }>();
@@ -22,8 +25,16 @@ export function CantiereDetail() {
   const [verbaleOpen, setVerbaleOpen] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [annotatePhoto, setAnnotatePhoto] = useState<{ index: number; src: string } | null>(null);
+  const [noteSheetOpen, setNoteSheetOpen] = useState(false);
+  const [editNote, setEditNote] = useState<Note | null>(null);
+  const [noteProjectId, setNoteProjectId] = useState<string | undefined>(undefined);
+  const [noteRefresh, setNoteRefresh] = useState(0);
 
   const cantiere = useLiveQuery(() => db.cantieri.get(id!), [id]);
+  const cantiereNotes = useLiveQuery(
+    () => (id ? getNotesByCantiere(id) : Promise.resolve([])),
+    [id, noteRefresh],
+  ) ?? [];
   const operai = useLiveQuery<Operaio[], Operaio[]>(
     () =>
       cantiere?.operaiIds.length
@@ -35,6 +46,14 @@ export function CantiereDetail() {
 
   if (cantiere === undefined) return null;
   if (cantiere === null) return null;
+
+  async function apriNuovaNota() {
+    if (!cantiere) return;
+    const project = await getOrCreateProjectForCantiere(cantiere.id, cantiere.cliente);
+    setNoteProjectId(project.id);
+    setEditNote(null);
+    setNoteSheetOpen(true);
+  }
 
   async function scaricaPdf() {
     if (!cantiere) return;
@@ -226,6 +245,44 @@ export function CantiereDetail() {
 
         {/* Giornale di cantiere */}
         <GiornaledCantiere cantiereId={cantiere.id} />
+
+        {/* Note cantiere */}
+        <Card className="mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <CardHeader title="Note" />
+            <button
+              onClick={apriNuovaNota}
+              className="flex items-center gap-1 text-[13px] font-semibold text-primary active:opacity-70"
+            >
+              <Plus size={15} />
+              Nuova
+            </button>
+          </div>
+          {cantiereNotes.length === 0 ? (
+            <button
+              onClick={apriNuovaNota}
+              className="w-full flex flex-col items-center justify-center py-6 rounded-xl border-2 border-dashed border-line/60 text-ink-3 active:bg-section transition-colors"
+            >
+              <StickyNote size={22} className="mb-1.5" />
+              <span className="text-[13px]">Aggiungi la prima nota</span>
+            </button>
+          ) : (
+            <div className="space-y-2">
+              {cantiereNotes.slice(0, 3).map((note) => (
+                <NoteCard
+                  key={note.id}
+                  note={note}
+                  onClick={() => { setEditNote(note); setNoteSheetOpen(true); }}
+                />
+              ))}
+              {cantiereNotes.length > 3 && (
+                <p className="text-[12px] text-ink-3 text-center pt-1">
+                  +{cantiereNotes.length - 3} altre note
+                </p>
+              )}
+            </div>
+          )}
+        </Card>
       </Screen>
 
       <CantiereForm open={editOpen} cantiere={cantiere} onClose={() => setEditOpen(false)} />
@@ -244,6 +301,14 @@ export function CantiereDetail() {
           onCancel={() => setAnnotatePhoto(null)}
         />
       )}
+
+      <NoteSheet
+        open={noteSheetOpen}
+        note={editNote}
+        defaultProjectId={noteProjectId}
+        onClose={() => setNoteSheetOpen(false)}
+        onSaved={() => setNoteRefresh((v) => v + 1)}
+      />
     </>
   );
 }
