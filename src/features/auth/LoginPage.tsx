@@ -1,10 +1,15 @@
 import { useState } from 'react';
-import { HardHat } from 'lucide-react';
+import { HardHat, Mail, ArrowRight, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/auth/AuthContext';
 
+type Step = 'home' | 'email' | 'sent';
+
 export function LoginPage() {
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, signInWithEmail } = useAuth();
+  const [step, setStep] = useState<Step>('home');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   async function handleGoogle() {
     setLoading(true);
@@ -12,10 +17,27 @@ export function LoginPage() {
     setLoading(false);
   }
 
+  async function handleEmail() {
+    if (!email.trim() || !email.includes('@')) {
+      setError('Inserisci un indirizzo email valido');
+      return;
+    }
+    setLoading(true);
+    setError('');
+    const { error } = await signInWithEmail(email.trim());
+    setLoading(false);
+    if (error) {
+      setError('Errore: ' + error);
+    } else {
+      setStep('sent');
+    }
+  }
+
   return (
     <div className="min-h-screen bg-app flex flex-col items-center justify-center px-6 py-12">
+
       {/* Logo */}
-      <div className="flex flex-col items-center mb-12">
+      <div className="flex flex-col items-center mb-10">
         <div className="w-20 h-20 rounded-[22px] bg-card border border-line shadow-card flex items-center justify-center mb-5">
           <HardHat size={40} style={{ color: 'var(--c-primary)' }} />
         </div>
@@ -27,27 +49,105 @@ export function LoginPage() {
         </p>
       </div>
 
-      {/* Login buttons */}
       <div className="w-full max-w-sm space-y-3">
-        <button
-          onClick={handleGoogle}
-          disabled={loading}
-          className="w-full h-[52px] flex items-center justify-center gap-3 bg-card border border-line rounded-[14px] text-[15px] font-semibold text-ink shadow-card active:scale-[0.98] transition-transform disabled:opacity-60"
-        >
-          {loading ? (
-            <span className="text-ink-3 text-[14px]">Apertura browser…</span>
-          ) : (
-            <>
+
+        {/* Step: home */}
+        {step === 'home' && (
+          <>
+            {/* Google */}
+            <button
+              onClick={handleGoogle}
+              disabled={loading}
+              className="w-full h-[52px] flex items-center justify-center gap-3 bg-card border border-line rounded-[14px] text-[15px] font-semibold text-ink shadow-card active:scale-[0.98] transition-transform disabled:opacity-60"
+            >
               <GoogleIcon />
               Accedi con Google
-            </>
-          )}
-        </button>
+            </button>
 
-        {/* More providers coming soon */}
-        <p className="text-center text-[12px] text-ink-3 pt-1">
-          Presto disponibile: Apple, Email
-        </p>
+            {/* Divider */}
+            <div className="flex items-center gap-3 py-1">
+              <div className="flex-1 h-px bg-divider" />
+              <span className="text-[12px] text-ink-3">oppure</span>
+              <div className="flex-1 h-px bg-divider" />
+            </div>
+
+            {/* Email */}
+            <button
+              onClick={() => setStep('email')}
+              className="w-full h-[52px] flex items-center justify-center gap-3 bg-card border border-line rounded-[14px] text-[15px] font-semibold text-ink shadow-card active:scale-[0.98] transition-transform"
+            >
+              <Mail size={20} className="text-ink-3" />
+              Accedi con Email
+            </button>
+          </>
+        )}
+
+        {/* Step: inserisci email */}
+        {step === 'email' && (
+          <>
+            <div className="bg-card border border-line rounded-[14px] p-4 shadow-card">
+              <p className="text-[13px] text-ink-3 mb-3">
+                Ti mandiamo un link magico via email — nessuna password necessaria.
+              </p>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                placeholder="la-tua@email.com"
+                autoFocus
+                className="w-full h-11 px-3 bg-section border border-line rounded-[10px] text-[15px] text-ink placeholder:text-ink-3 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                onKeyDown={(e) => e.key === 'Enter' && handleEmail()}
+              />
+              {error && (
+                <p className="text-[12px] text-danger mt-2">{error}</p>
+              )}
+            </div>
+
+            <button
+              onClick={handleEmail}
+              disabled={loading || !email.trim()}
+              className="w-full h-[52px] btn-primary rounded-[14px] flex items-center justify-center gap-2 text-[15px] font-bold disabled:opacity-50"
+            >
+              {loading ? 'Invio in corso…' : (
+                <>
+                  Invia link di accesso
+                  <ArrowRight size={18} />
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={() => { setStep('home'); setError(''); }}
+              className="w-full text-center text-[13px] text-ink-3 py-2"
+            >
+              ← Torna indietro
+            </button>
+          </>
+        )}
+
+        {/* Step: email inviata */}
+        {step === 'sent' && (
+          <div className="bg-card border border-line rounded-[14px] p-6 shadow-card text-center">
+            <CheckCircle size={40} className="mx-auto mb-3" style={{ color: 'var(--c-success)' }} />
+            <h2 className="font-display text-[17px] font-bold text-ink mb-2">
+              Controlla la tua email
+            </h2>
+            <p className="text-[14px] text-ink-3 leading-relaxed">
+              Abbiamo inviato un link di accesso a<br />
+              <strong className="text-ink">{email}</strong>
+            </p>
+            <p className="text-[12px] text-ink-3 mt-3">
+              Clicca il link nell'email per accedere all'app.
+            </p>
+            <button
+              onClick={() => { setStep('email'); }}
+              className="mt-4 text-[13px] text-ink-3 underline"
+            >
+              Cambia email
+            </button>
+          </div>
+        )}
+
       </div>
 
       {/* Legal */}
