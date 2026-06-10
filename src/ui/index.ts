@@ -14,3 +14,8 @@ export { LineChart } from './LineChart';
 export { Sankey, type SankeyFlow } from './Sankey';
 export { StarMascot } from './StarMascot';
 export { Toast, useToast, ToastProvider } from './Toast';
+export { Icon } from './Icon';
+export { IconChip } from './IconChip';
+export { StreakBadge, CheckBadge, IncrementButton } from './Badges';
+export { ListItemCard } from './ListItemCard';
+export { DateStrip } from './DateStrip';

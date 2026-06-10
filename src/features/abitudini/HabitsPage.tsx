@@ -5,7 +5,8 @@ import { db } from '@/data/db';
 import { toggleHabitLog } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
-import { Card, Checkbox, EmptyState, Button, IconButton } from '@/ui';
+import { Card, EmptyState, Button, IconButton, IconChip, Icon, StreakBadge, CheckBadge, DateStrip } from '@/ui';
+import { tint } from '@/lib/color';
 import { todayISO } from '@/lib/format';
 import { HabitForm } from './HabitForm';
 import { Heatmap } from './Heatmap';
@@ -22,6 +23,7 @@ export function HabitsPage() {
   const today = todayISO();
 
   const active = (habits ?? []).filter((h) => !h.archived);
+  const markedDays = new Set((logs ?? []).filter((l) => l.done).map((l) => l.date));
 
   return (
     <>
@@ -34,6 +36,13 @@ export function HabitsPage() {
         }
       />
       <Screen>
+        {active.length > 0 && (
+          <Card className="mb-3" inset={false}>
+            <div className="px-3 py-2.5">
+              <DateStrip selected={today} marked={markedDays} />
+            </div>
+          </Card>
+        )}
         {active.length === 0 ? (
           <Card>
             <EmptyState
@@ -51,31 +60,38 @@ export function HabitsPage() {
               const best = bestStreak(h, logs ?? []);
               const rate = Math.round(completionRate(h, logs ?? []) * 100);
               return (
-                <Card key={h.id}>
+                <div
+                  key={h.id}
+                  className="rounded-card p-3.5 shadow-card"
+                  style={{ backgroundColor: tint(h.color) }}
+                >
                   <div className="flex items-center gap-3">
-                    <Checkbox checked={done} color={h.color} onChange={() => toggleHabitLog(h.id, today)} label={h.name} />
+                    <IconChip color={h.color} size="md">
+                      <Icon name={h.icon} size={20} strokeWidth={2.25} />
+                    </IconChip>
                     <div className="min-w-0 flex-1">
-                      <div className="text-[15px] font-semibold text-ink truncate">{h.name}</div>
+                      <div className="text-[15px] font-bold text-ink truncate">{h.name}</div>
                       <div className="text-[13px] text-ink-2">{frequencyLabel(h, t)}</div>
                     </div>
-                    <div className="flex items-center gap-1 text-[13px] font-semibold tnum" style={{ color: h.color }}>
-                      <Flame size={15} /> {streak}
+                    <div className="flex flex-col items-end gap-1.5">
+                      {streak > 0 && <StreakBadge count={streak} />}
+                      <CheckBadge done={done} onClick={() => toggleHabitLog(h.id, today)} label={h.name} />
                     </div>
-                    <IconButton label={t('common.edit')} onClick={() => { setEditing(h); setFormOpen(true); }}>
-                      <Pencil size={15} />
-                    </IconButton>
                   </div>
 
                   <div className="mt-3">
                     <Heatmap cells={heatmapData(h, logs ?? [])} color={h.color} />
                   </div>
 
-                  <div className="flex gap-4 mt-3 pt-3 border-t border-divider">
+                  <div className="flex items-center gap-4 mt-3 pt-3 border-t border-black/5 dark:border-white/5">
                     <Stat label={t('habits.stat.streak')} value={streak} />
                     <Stat label={t('habits.stat.record')} value={best} />
                     <Stat label={t('habits.stat.last30')} value={`${rate}%`} />
+                    <IconButton label={t('common.edit')} onClick={() => { setEditing(h); setFormOpen(true); }} className="ml-auto -mr-1">
+                      <Pencil size={15} />
+                    </IconButton>
                   </div>
-                </Card>
+                </div>
               );
             })}
           </div>
