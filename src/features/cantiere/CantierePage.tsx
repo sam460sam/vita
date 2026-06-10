@@ -1,36 +1,69 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Plus, Users, HardHat, Sparkles, BellRing, Phone, ChevronRight } from 'lucide-react';
+import { Plus, Users, HardHat, Sparkles, BellRing, Phone, ChevronRight, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
-import { Card, Segmented, useToast } from '@/ui';
+import { Segmented, useToast } from '@/ui';
 import { db } from '@/data/db';
-import type { Cantiere } from '@/data/types';
+import type { Cantiere, CantiereStato } from '@/data/types';
 import { CantiereForm } from './CantiereForm';
 import { seedCantieriDemo } from '@/data/cantiere-repo';
-import { formatEuro, statoInfo, pagamentoInfo, totaleCrediti, promemoriaPagamenti, etichettaScadenza } from './logic';
+import {
+  formatEuro,
+  statoInfo,
+  pagamentoInfo,
+  totaleCrediti,
+  promemoriaPagamenti,
+  etichettaScadenza,
+} from './logic';
 
-function PromemoriaPagamenti({ cantieri, onApri }: { cantieri: Cantiere[]; onApri: (id: string) => void }) {
+// CSS-var accent per ogni stato — coerente con i token del design system
+const STATO_ACCENT: Record<CantiereStato, string> = {
+  preventivo:  'var(--c-stato-preventivo)',
+  confermato:  'var(--c-stato-confermato)',
+  in_corso:    'var(--c-stato-in-corso)',
+  completato:  'var(--c-stato-completato)',
+  contestato:  'var(--c-stato-contestato)',
+};
+
+function PromemoriaPagamenti({
+  cantieri,
+  onApri,
+}: {
+  cantieri: Cantiere[];
+  onApri: (id: string) => void;
+}) {
   const promemoria = promemoriaPagamenti(cantieri);
   if (promemoria.length === 0) return null;
 
   return (
-    <Card className="mb-4">
-      <div className="flex items-center gap-2 mb-2.5">
-        <BellRing size={15} className="text-warning flex-shrink-0" />
-        <span className="text-[13px] font-semibold text-ink">Promemoria pagamenti</span>
+    <div className="bg-card rounded-card border border-line shadow-card dark:shadow-none p-4 mb-4">
+      <div className="flex items-center gap-2 mb-3">
+        <div className="h-6 w-6 rounded-lg bg-warning/15 flex items-center justify-center flex-shrink-0">
+          <BellRing size={13} className="text-warning" />
+        </div>
+        <span className="text-[13px] font-bold text-ink uppercase tracking-[0.05em]">
+          Promemoria pagamenti
+        </span>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         {promemoria.slice(0, 3).map(({ cantiere: c, giorni }) => (
           <div
             key={c.id}
             onClick={() => onApri(c.id)}
-            className="flex items-center gap-2 bg-section rounded-xl px-3 py-2.5 cursor-pointer active:scale-[0.985] transition-transform"
+            className="flex items-center gap-3 bg-section rounded-xl px-3 py-2.5 cursor-pointer active:scale-[0.985] transition-transform border border-line/50"
           >
+            <div
+              className="w-1 self-stretch rounded-full flex-shrink-0 min-h-[32px]"
+              style={{ backgroundColor: giorni < 0 ? 'var(--c-danger)' : 'var(--c-warning)' }}
+            />
             <div className="flex-1 min-w-0">
               <div className="text-[13px] font-semibold text-ink truncate">{c.cliente}</div>
-              <div className={`text-[11.5px] mt-0.5 font-medium ${giorni < 0 ? 'text-danger' : 'text-warning'}`}>
+              <div
+                className="text-[11px] mt-0.5 font-medium"
+                style={{ color: giorni < 0 ? 'var(--c-danger)' : 'var(--c-warning)' }}
+              >
                 {etichettaScadenza(giorni)} · saldo {formatEuro(c.importo - (c.acconto ?? 0))}
               </div>
             </div>
@@ -38,20 +71,22 @@ function PromemoriaPagamenti({ cantieri, onApri }: { cantieri: Cantiere[]; onApr
               <a
                 href={`tel:${c.telefono}`}
                 onClick={(e) => e.stopPropagation()}
-                className="h-9 w-9 flex items-center justify-center rounded-full bg-app text-ink-2 flex-shrink-0"
+                className="h-8 w-8 flex items-center justify-center rounded-lg bg-card border border-line text-ink-2 flex-shrink-0"
                 aria-label={`Chiama ${c.cliente}`}
               >
-                <Phone size={15} />
+                <Phone size={14} />
               </a>
             )}
-            <ChevronRight size={16} className="text-ink-3 flex-shrink-0" />
+            <ChevronRight size={14} className="text-ink-3 flex-shrink-0" />
           </div>
         ))}
       </div>
       {promemoria.length > 3 && (
-        <p className="text-[11.5px] text-ink-3 mt-2">+ altri {promemoria.length - 3} saldi in scadenza</p>
+        <p className="text-[11px] text-ink-3 mt-2 font-medium">
+          +{promemoria.length - 3} altri in scadenza
+        </p>
       )}
-    </Card>
+    </div>
   );
 }
 
@@ -64,7 +99,11 @@ export function CantierePage() {
   const [formOpen, setFormOpen] = useState(false);
   const [seeding, setSeeding] = useState(false);
 
-  const cantieri = useLiveQuery(() => db.cantieri.orderBy('updatedAt').reverse().toArray(), [], []);
+  const cantieri = useLiveQuery(
+    () => db.cantieri.orderBy('updatedAt').reverse().toArray(),
+    [],
+    [],
+  );
 
   const filtered = (cantieri ?? []).filter((c) => {
     if (tab === 'attivi') return ['confermato', 'in_corso'].includes(c.stato);
@@ -91,46 +130,63 @@ export function CantierePage() {
     <>
       <PageHeader
         title="Cantieri"
-
         action={
           <button
             onClick={() => navigate('/cantiere/operai')}
-            className="h-10 w-10 flex items-center justify-center rounded-full text-ink-2 hover:bg-section"
+            className="h-9 w-9 flex items-center justify-center rounded-xl text-ink-2 hover:bg-section active:bg-divider transition-colors"
             aria-label="Operai"
           >
-            <Users size={20} />
+            <Users size={19} />
           </button>
         }
       />
+
       <Screen>
+        {/* KPI tiles */}
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <Card>
-            <div className="text-[11px] text-ink-2 uppercase tracking-wide mb-1">Da riscuotere</div>
+          {/* Da riscuotere */}
+          <div className="bg-card rounded-card border border-line shadow-card dark:shadow-none p-4 relative overflow-hidden">
+            <div className="metric-label mb-2">Da riscuotere</div>
             {crediti > 0 ? (
-              <div className="font-display text-2xl font-bold text-primary tnum">{formatEuro(crediti)}</div>
+              <>
+                <div className="font-display text-[22px] font-bold tnum leading-tight" style={{ color: 'var(--c-primary)' }}>
+                  {formatEuro(crediti)}
+                </div>
+                <TrendingUp size={14} className="absolute top-3 right-3 text-primary/40" />
+              </>
             ) : (
-              <div className="text-[13px] text-ink-3 leading-snug pt-0.5">Qui vedrai quanto devi ancora incassare</div>
+              <div className="text-[12px] text-ink-3 leading-snug">
+                Nessun saldo aperto
+              </div>
             )}
-          </Card>
-          <Card>
-            <div className="text-[11px] text-ink-2 uppercase tracking-wide mb-1">Cantieri attivi</div>
+          </div>
+
+          {/* Cantieri attivi */}
+          <div className="bg-card rounded-card border border-line shadow-card dark:shadow-none p-4">
+            <div className="metric-label mb-2">Cantieri attivi</div>
             {attivi > 0 ? (
-              <div className="font-display text-2xl font-bold text-ink tnum">{attivi}</div>
+              <div className="font-display text-[22px] font-bold tnum text-ink leading-tight">
+                {attivi}
+              </div>
             ) : (
-              <div className="text-[13px] text-ink-3 leading-snug pt-0.5">Qui vedrai i lavori in corso</div>
+              <div className="text-[12px] text-ink-3 leading-snug">
+                Nessun lavoro in corso
+              </div>
             )}
-          </Card>
+          </div>
         </div>
 
+        {/* Payment reminders */}
         <PromemoriaPagamenti cantieri={cantieri ?? []} onApri={(id) => navigate(`/cantiere/${id}`)} />
 
+        {/* Filter tabs */}
         <div className="mb-4 w-full">
           <Segmented<Tab>
             options={[
-              { value: 'tutti', label: 'Tutti' },
-              { value: 'attivi', label: 'Attivi' },
-              { value: 'completati', label: 'Completati' },
-              { value: 'da_pagare', label: 'Da pagare' },
+              { value: 'tutti',      label: 'Tutti'     },
+              { value: 'attivi',     label: 'Attivi'    },
+              { value: 'completati', label: 'Completati'},
+              { value: 'da_pagare',  label: 'Da pagare' },
             ]}
             value={tab}
             onChange={setTab}
@@ -138,72 +194,49 @@ export function CantierePage() {
           />
         </div>
 
+        {/* List */}
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center text-center py-12 px-6">
-            <div className="mb-3 h-12 w-12 rounded-full bg-section flex items-center justify-center text-ink-3">
-              <HardHat size={24} />
+          <div className="flex flex-col items-center justify-center text-center py-16 px-6">
+            <div className="mb-4 h-14 w-14 rounded-2xl bg-section border border-line flex items-center justify-center text-ink-3">
+              <HardHat size={26} />
             </div>
-            <h3 className="text-[15px] font-semibold text-ink">Nessun cantiere</h3>
-            <p className="text-[13px] text-ink-2 mt-1 max-w-xs">
-              {isEmpty ? 'Tocca + qui sotto per aggiungere il tuo primo cantiere' : 'Nessun cantiere in questa categoria'}
+            <h3 className="font-display text-[16px] font-bold text-ink">
+              {isEmpty ? 'Nessun cantiere' : 'Nessun risultato'}
+            </h3>
+            <p className="text-[13px] text-ink-3 mt-1.5 max-w-xs leading-relaxed">
+              {isEmpty
+                ? 'Tocca + per aggiungere il tuo primo cantiere'
+                : 'Nessun cantiere in questa categoria'}
             </p>
             {isEmpty && (
               <button
                 onClick={vediEsempio}
                 disabled={seeding}
-                className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink-2 bg-section px-4 py-2.5 rounded-btn active:scale-95 transition-transform disabled:opacity-50"
+                className="mt-5 inline-flex items-center gap-2 text-[13px] font-semibold text-ink-2 bg-section border border-line px-4 py-2.5 rounded-btn active:scale-95 transition-transform disabled:opacity-50"
               >
-                <Sparkles size={15} className="text-primary" />
-                {seeding ? 'Aggiungo...' : 'Vedi un esempio'}
+                <Sparkles size={14} style={{ color: 'var(--c-primary)' }} />
+                {seeding ? 'Caricamento...' : 'Carica un esempio'}
               </button>
             )}
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {filtered.map((c: Cantiere, i) => (
-              <button
+              <CantiereCard
                 key={c.id}
-                className="w-full text-left animate-fade-in active:scale-[0.985] transition-transform duration-150"
-                style={{ animationDelay: `${Math.min(i, 8) * 40}ms`, animationFillMode: 'backwards' }}
+                cantiere={c}
+                delay={Math.min(i, 8) * 35}
                 onClick={() => navigate(`/cantiere/${c.id}`)}
-              >
-                <Card>
-                  <div className="flex items-start gap-3">
-                    {c.foto.length > 0 && (
-                      <img
-                        src={c.foto[0]}
-                        alt="Foto cantiere"
-                        className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
-                      />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-[16px] truncate">{c.cliente}</div>
-                      {c.indirizzo && <div className="text-[13px] text-ink-2 truncate mt-0.5">{c.indirizzo}</div>}
-                      <div className="flex gap-1.5 mt-2 flex-wrap">
-                        <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${statoInfo(c.stato).color}`}>
-                          {statoInfo(c.stato).label}
-                        </span>
-                        <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${pagamentoInfo(c.pagamento).color}`}>
-                          {pagamentoInfo(c.pagamento).label}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-right flex-shrink-0">
-                      <div className="font-display font-bold text-[17px] tnum">{formatEuro(c.importo)}</div>
-                      <div className="text-[12px] text-ink-2">{c.mq} m²</div>
-                      {c.dataPrevista && <div className="text-[11px] text-ink-3 mt-1">{c.dataPrevista}</div>}
-                    </div>
-                  </div>
-                </Card>
-              </button>
+              />
             ))}
           </div>
         )}
       </Screen>
 
+      {/* FAB */}
       <button
         onClick={() => setFormOpen(true)}
-        className="fixed bottom-24 right-4 z-20 w-14 h-14 rounded-full bg-primary text-on-primary shadow-lg flex items-center justify-center active:scale-95 transition-transform"
+        className="fixed bottom-24 right-4 z-20 w-14 h-14 rounded-full btn-primary flex items-center justify-center active:scale-90 transition-transform"
         aria-label="Nuovo cantiere"
       >
         <Plus size={24} />
@@ -211,5 +244,82 @@ export function CantierePage() {
 
       <CantiereForm open={formOpen} onClose={() => setFormOpen(false)} />
     </>
+  );
+}
+
+function CantiereCard({
+  cantiere: c,
+  delay,
+  onClick,
+}: {
+  cantiere: Cantiere;
+  delay: number;
+  onClick: () => void;
+}) {
+  const accentColor = STATO_ACCENT[c.stato];
+  const sInfo = statoInfo(c.stato);
+  const pInfo = pagamentoInfo(c.pagamento);
+
+  return (
+    <button
+      onClick={onClick}
+      className="w-full text-left animate-slide-up active:scale-[0.982] transition-transform duration-150"
+      style={{ animationDelay: `${delay}ms`, animationFillMode: 'backwards' }}
+    >
+      {/* Card with left accent border */}
+      <div className="flex overflow-hidden rounded-card border border-line bg-card shadow-card dark:shadow-none">
+        {/* Status accent bar */}
+        <div className="w-1 flex-shrink-0 self-stretch" style={{ backgroundColor: accentColor }} />
+
+        {/* Content */}
+        <div className="flex-1 px-3.5 py-3 min-w-0">
+          <div className="flex items-start gap-2">
+            {/* Left: name + address + badges */}
+            <div className="flex-1 min-w-0">
+              <div className="font-display font-bold text-[16px] text-ink truncate leading-tight">
+                {c.cliente}
+              </div>
+              {c.indirizzo && (
+                <div className="text-[12px] text-ink-3 truncate mt-0.5">{c.indirizzo}</div>
+              )}
+              <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                <span
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                  style={{
+                    color: accentColor,
+                    backgroundColor: `color-mix(in srgb, ${accentColor} 13%, transparent)`,
+                  }}
+                >
+                  <span
+                    className="h-1.5 w-1.5 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: accentColor }}
+                  />
+                  {sInfo.label}
+                </span>
+                {c.pagamento !== 'saldato' && (
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full text-warning bg-warning/10">
+                    {pInfo.label}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Right: amount + metrics */}
+            <div className="text-right flex-shrink-0 pl-2">
+              <div
+                className="font-display font-bold text-[18px] tnum leading-tight"
+                style={{ color: accentColor }}
+              >
+                {formatEuro(c.importo)}
+              </div>
+              <div className="text-[12px] text-ink-3 tnum mt-0.5">{c.mq} m²</div>
+              {c.dataPrevista && (
+                <div className="text-[11px] text-ink-3 mt-0.5 tnum">{c.dataPrevista}</div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </button>
   );
 }

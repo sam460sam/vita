@@ -2,144 +2,163 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   FORGE — design tokens. Cool-slate palette. Tech & Functional.
+   ============================================================ */
 :root {
-  /* ===== Design tokens — single source of truth (Design System §3) ===== */
-  /* Surfaces — warm, cantiere-like (vs. cold slate) */
-  --c-app: #ffffff;
-  --c-section: #f8f5f1;
-  --c-card: #ffffff;
-  /* Text — slightly warmed and darkened for outdoor/sunlight contrast */
-  --c-ink: #1c1917;
-  --c-ink-2: #57534e;
-  --c-ink-3: #8a847c;
-  /* Lines */
-  --c-line: #e9e4dd;
-  --c-divider: #f1ece5;
-  /* Module accents (sober, one per module) */
-  --c-activity: #ff6b57;
-  --c-habit: #10b981;
-  --c-project: #4f46e5;
-  --c-journal: #f59e0b;
-  --c-finance: #7c3aed;
-  /* New module accents */
-  --c-ore: #2563eb;      /* Ore Lavoro — blue */
-  --c-note: #7c3aed;     /* Note — purple */
-  /* States */
-  --c-success: #10b981;
-  --c-warning: #f59e0b;
-  --c-danger: #ef4444;
-  /* Work-day type colors (Sezione Ore — pieno e saturo per celle calendario) */
+  /* --- Surfaces (cool-neutral light) --- */
+  --c-app:     #f4f4f8;
+  --c-section: #eaeaef;
+  --c-card:    #ffffff;
+
+  /* --- Text --- */
+  --c-ink:   #0e0e1a;
+  --c-ink-2: #5a5a7c;
+  --c-ink-3: #9898b8;
+
+  /* --- Borders --- */
+  --c-line:    rgba(14,14,26,0.09);
+  --c-divider: rgba(14,14,26,0.05);
+
+  /* --- Module accents --- */
+  --c-activity: #f97316;
+  --c-habit:    #10b981;
+  --c-project:  #4f46e5;
+  --c-journal:  #f59e0b;
+  --c-finance:  #7c3aed;
+  --c-ore:      #2563eb;
+  --c-note:     #7c3aed;
+
+  /* --- Semantic states --- */
+  --c-success: #16a34a;
+  --c-warning: #d97706;
+  --c-danger:  #dc2626;
+
+  /* --- Work-day type colors --- */
   --c-wd-lavorativa: #16a34a;
-  --c-wd-festiva: #dc2626;
-  --c-wd-malattia: #ea580c;
+  --c-wd-festiva:    #dc2626;
+  --c-wd-malattia:   #ea580c;
   --c-wd-infortunio: #7c3aed;
-  --c-wd-ferie: #2563eb;
-  --c-wd-permesso: #ca8a04;
-  /* Primary action (buttons / FAB) — cantiere orange. ONE accent, used only
-     for the primary action, so it keeps standing out. */
-  --c-primary: #ea580c;
-  --c-on-primary: #ffffff;
+  --c-wd-ferie:      #2563eb;
+  --c-wd-permesso:   #ca8a04;
+
+  /* --- Primary action — ONE orange accent --- */
+  --c-primary:        #f97316;
+  --c-on-primary:     #ffffff;
   --c-primary-border: transparent;
-  /* Soft accent for tags/info chips (cement classes, specializations) —
-     intentionally distinct from --c-primary so the orange stays singular. */
-  --c-accent-soft-bg: #fef3c7;
-  --c-accent-soft-ink: #92400e;
+
+  /* --- Soft chip --- */
+  --c-accent-soft-bg:  rgba(249,115,22,0.10);
+  --c-accent-soft-ink: #c2410c;
+
+  /* --- Cantiere status left-border accents --- */
+  --c-stato-preventivo:  #6366f1;
+  --c-stato-confermato:  #2563eb;
+  --c-stato-in-corso:    #16a34a;
+  --c-stato-completato:  #6b7280;
+  --c-stato-contestato:  #dc2626;
+
   color-scheme: light;
 }
 
-/* ===== Dark theme — true black, no visible contour borders ===== */
+/* ============================================================
+   DARK FORGE — deep blue-black, vibrant orange
+   ============================================================ */
 html.dark {
-  /* Surfaces: distinguished by fill, not by borders — warmed slightly */
-  --c-app: #000000;
-  --c-section: #0f0d0b;
-  --c-card: #1a1715;
-  /* Text */
-  --c-ink: #f4f4f5;
-  --c-ink-2: #b6afa6;
-  --c-ink-3: #87807a;
-  /* Lines: nearly invisible (no white contour look) */
-  --c-line: #221e1a;
-  --c-divider: #1b1714;
-  /* Accents stay vivid on dark; slightly brighter for contrast */
-  --c-activity: #ff7a68;
-  --c-habit: #1fd093;
-  --c-project: #7c74ff;
-  --c-journal: #fbbf24;
-  --c-finance: #a78bfa;
-  --c-ore: #60a5fa;
-  --c-note: #a78bfa;
-  --c-wd-lavorativa: #22c55e;
-  --c-wd-festiva: #f87171;
-  --c-wd-malattia: #fb923c;
-  --c-wd-infortunio: #a78bfa;
-  --c-wd-ferie: #60a5fa;
-  --c-wd-permesso: #facc15;
-  --c-success: #1fd093;
+  --c-app:     #09090f;
+  --c-section: #111119;
+  --c-card:    #16161f;
+
+  --c-ink:   #f0f0ff;
+  --c-ink-2: #7878a8;
+  --c-ink-3: #48486a;
+
+  --c-line:    rgba(255,255,255,0.08);
+  --c-divider: rgba(255,255,255,0.04);
+
+  --c-activity: #fb923c;
+  --c-habit:    #34d399;
+  --c-project:  #818cf8;
+  --c-journal:  #fbbf24;
+  --c-finance:  #c084fc;
+  --c-ore:      #60a5fa;
+  --c-note:     #a78bfa;
+
+  --c-success: #22c55e;
   --c-warning: #fbbf24;
-  --c-danger: #f87171;
-  /* Primary action — brighter orange so it pops on black */
-  --c-primary: #fb7a32;
-  --c-on-primary: #1c1917;
+  --c-danger:  #f43f5e;
+
+  --c-wd-lavorativa: #4ade80;
+  --c-wd-festiva:    #f87171;
+  --c-wd-malattia:   #fb923c;
+  --c-wd-infortunio: #c4b5fd;
+  --c-wd-ferie:      #60a5fa;
+  --c-wd-permesso:   #fde047;
+
+  --c-primary:        #fb923c;
+  --c-on-primary:     #1a0800;
   --c-primary-border: transparent;
-  --c-accent-soft-bg: rgba(245, 158, 11, 0.16);
-  --c-accent-soft-ink: #fbbf24;
+
+  --c-accent-soft-bg:  rgba(251,146,60,0.14);
+  --c-accent-soft-ink: #fdba74;
+
+  --c-stato-preventivo:  #818cf8;
+  --c-stato-confermato:  #60a5fa;
+  --c-stato-in-corso:    #4ade80;
+  --c-stato-completato:  #6b7280;
+  --c-stato-contestato:  #f87171;
+
   color-scheme: dark;
 }
 
-/* Display font — used for titles, large numbers and stats so the brand has a
-   character of its own (vs. the generic system-font "AI-default" look). */
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
 :root {
   --font-display: 'Manrope', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 * {
   -webkit-tap-highlight-color: transparent;
 }
 
-html,
-body,
-#root {
+html, body, #root {
   height: 100%;
 }
 
 body {
   margin: 0;
-  background: var(--c-section);
+  background: var(--c-app);
   color: var(--c-ink);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  /* Prevent overscroll bounce revealing white outside app */
   overscroll-behavior-y: none;
 }
 
-/* Tabular numbers everywhere metrics live */
 .tnum {
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum';
 }
 
-/* Small uppercase metric label */
 .metric-label {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--c-ink-3);
 }
 
-/* Focus visibility (WCAG AA) */
 :focus-visible {
-  outline: 2px solid var(--c-project);
+  outline: 2px solid var(--c-primary);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
-/* Hide scrollbars on horizontal scrollers but keep functionality */
 .no-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -148,56 +167,89 @@ body {
   display: none;
 }
 
+/* ============================================================
+   PRIMARY BUTTON — gradient + glow
+   ============================================================ */
+.btn-primary {
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 55%, #ea580c 100%);
+  box-shadow: 0 4px 14px rgba(249,115,22,0.30), 0 1px 2px rgba(0,0,0,0.12);
+  color: #ffffff;
+  border: none;
+  transition: opacity 0.12s, transform 0.12s, box-shadow 0.12s;
+}
+html.dark .btn-primary {
+  background: linear-gradient(135deg, #fdba74 0%, #fb923c 50%, #f97316 100%);
+  box-shadow: 0 4px 18px rgba(251,146,60,0.35), 0 1px 3px rgba(0,0,0,0.30);
+  color: #1a0800;
+}
+.btn-primary:hover  { opacity: 0.93; }
+.btn-primary:active { opacity: 0.84; transform: scale(0.982); box-shadow: 0 2px 8px rgba(249,115,22,0.20); }
+.btn-primary:disabled { opacity: 0.42; pointer-events: none; box-shadow: none; }
+
+/* ============================================================
+   GLASS SURFACES
+   ============================================================ */
+.header-glass {
+  background: rgba(244,244,248,0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+html.dark .header-glass {
+  background: rgba(9,9,15,0.90);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+}
+
+.tabbar-glass {
+  background: rgba(244,244,248,0.92);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+}
+html.dark .tabbar-glass {
+  background: rgba(9,9,15,0.94);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+}
+
+.sheet-surface {
+  background: #ffffff;
+}
+html.dark .sheet-surface {
+  background: #1c1c28;
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 @keyframes sheet-in {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0);    }
 }
 @keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
-.animate-sheet-in {
-  animation: sheet-in 250ms cubic-bezier(0.32, 0.72, 0, 1);
+@keyframes slide-up {
+  from { transform: translateY(10px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
-.animate-fade-in {
-  animation: fade-in 150ms ease-out;
-}
-
-@keyframes stella-float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-6px) rotate(2deg); }
-}
-.animate-stella-float {
-  animation: stella-float 3s ease-in-out infinite;
-}
-
-@keyframes confetti-fall {
-  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(360px) rotate(540deg); opacity: 0; }
-}
-
 @keyframes pop {
-  0% { transform: scale(0.85); opacity: 0; }
-  60% { transform: scale(1.03); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+  0%   { transform: scale(0.85); opacity: 0; }
+  60%  { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(1);    opacity: 1; }
 }
-.animate-pop {
-  animation: pop 320ms cubic-bezier(0.32, 0.72, 0, 1);
+@keyframes stella-float {
+  0%, 100% { transform: translateY(0)   rotate(0deg);  }
+  50%       { transform: translateY(-6px) rotate(2deg); }
 }
-
-/* Apple-style "jiggle" for home edit mode */
 @keyframes wiggle {
   0%, 100% { transform: rotate(-1deg); }
-  50% { transform: rotate(1deg); }
+  50%       { transform: rotate(1deg); }
 }
-.animate-wiggle {
-  animation: wiggle 0.28s ease-in-out infinite;
-}
+
+.animate-sheet-in      { animation: sheet-in     250ms cubic-bezier(0.32,0.72,0,1);  }
+.animate-fade-in       { animation: fade-in      150ms ease-out;                      }
+.animate-slide-up      { animation: slide-up     200ms ease-out;                      }
+.animate-pop           { animation: pop          320ms cubic-bezier(0.32,0.72,0,1);   }
+.animate-stella-float  { animation: stella-float 3s ease-in-out infinite;             }
+.animate-wiggle        { animation: wiggle       0.28s ease-in-out infinite;           }

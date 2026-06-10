@@ -13,9 +13,9 @@ const THEME_COLOR = { light: '#ffffff', dark: '#0a0a0c' };
 function loadPref(): ThemePref {
   try {
     const v = localStorage.getItem(STORAGE_KEY);
-    return v === 'light' || v === 'dark' || v === 'system' ? v : 'system';
+    return v === 'light' || v === 'dark' || v === 'system' ? v : 'dark';
   } catch {
-    return 'system';
+    return 'dark';
   }
 }
 
