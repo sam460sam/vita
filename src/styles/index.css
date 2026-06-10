@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 /* ============================================================
-   FORGE — design tokens. Cool-slate palette. Tech & Functional.
+   CALCESTRUZZO — design tokens. Amber segnaletica + dark concrete.
    ============================================================ */
 :root {
   /* --- Surfaces (cool-neutral light) --- */
-  --c-app:     #f4f4f8;
-  --c-section: #eaeaef;
+  --c-app:     #f2f2f6;
+  --c-section: #e8e8ed;
   --c-card:    #ffffff;
 
   /* --- Text --- */
@@ -21,7 +21,7 @@
   --c-divider: rgba(14,14,26,0.05);
 
   /* --- Module accents --- */
-  --c-activity: #f97316;
+  --c-activity: #E8A020;
   --c-habit:    #10b981;
   --c-project:  #4f46e5;
   --c-journal:  #f59e0b;
@@ -42,14 +42,14 @@
   --c-wd-ferie:      #2563eb;
   --c-wd-permesso:   #ca8a04;
 
-  /* --- Primary action — ONE orange accent --- */
-  --c-primary:        #f97316;
+  /* --- Primary action — amber segnaletica --- */
+  --c-primary:        #E8A020;
   --c-on-primary:     #ffffff;
   --c-primary-border: transparent;
 
   /* --- Soft chip --- */
-  --c-accent-soft-bg:  rgba(249,115,22,0.10);
-  --c-accent-soft-ink: #c2410c;
+  --c-accent-soft-bg:  rgba(232,160,32,0.12);
+  --c-accent-soft-ink: #92600A;
 
   /* --- Cantiere status left-border accents --- */
   --c-stato-preventivo:  #6366f1;
@@ -58,16 +58,25 @@
   --c-stato-completato:  #6b7280;
   --c-stato-contestato:  #dc2626;
 
+  /* --- Hazard stripe (in_corso card top border) --- */
+  --hazard-stripe: repeating-linear-gradient(
+    -45deg,
+    #E8A020 0px,
+    #E8A020 4px,
+    #1a1200 4px,
+    #1a1200 8px
+  );
+
   color-scheme: light;
 }
 
 /* ============================================================
-   DARK FORGE — deep blue-black, vibrant orange
+   DARK CALCESTRUZZO — deep concrete black, vibrant amber
    ============================================================ */
 html.dark {
-  --c-app:     #09090f;
-  --c-section: #111119;
-  --c-card:    #16161f;
+  --c-app:     #0C0C10;
+  --c-section: #14141A;
+  --c-card:    #1C1C26;
 
   --c-ink:   #f0f0ff;
   --c-ink-2: #7878a8;
@@ -76,7 +85,7 @@ html.dark {
   --c-line:    rgba(255,255,255,0.08);
   --c-divider: rgba(255,255,255,0.04);
 
-  --c-activity: #fb923c;
+  --c-activity: #F5B840;
   --c-habit:    #34d399;
   --c-project:  #818cf8;
   --c-journal:  #fbbf24;
@@ -95,12 +104,12 @@ html.dark {
   --c-wd-ferie:      #60a5fa;
   --c-wd-permesso:   #fde047;
 
-  --c-primary:        #fb923c;
+  --c-primary:        #F5B840;
   --c-on-primary:     #1a0800;
   --c-primary-border: transparent;
 
-  --c-accent-soft-bg:  rgba(251,146,60,0.14);
-  --c-accent-soft-ink: #fdba74;
+  --c-accent-soft-bg:  rgba(245,184,64,0.14);
+  --c-accent-soft-ink: #fcd34d;
 
   --c-stato-preventivo:  #818cf8;
   --c-stato-confermato:  #60a5fa;
@@ -108,14 +117,22 @@ html.dark {
   --c-stato-completato:  #6b7280;
   --c-stato-contestato:  #f87171;
 
+  --hazard-stripe: repeating-linear-gradient(
+    -45deg,
+    #F5B840 0px,
+    #F5B840 4px,
+    #0C0C10 4px,
+    #0C0C10 8px
+  );
+
   color-scheme: dark;
 }
 
 /* ============================================================
-   TYPOGRAPHY
+   TYPOGRAPHY — Space Grotesk display
    ============================================================ */
 :root {
-  --font-display: 'Manrope', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 .font-display {
   font-family: var(--font-display);
@@ -168,45 +185,45 @@ body {
 }
 
 /* ============================================================
-   PRIMARY BUTTON — gradient + glow
+   PRIMARY BUTTON — amber gradient + glow
    ============================================================ */
 .btn-primary {
-  background: linear-gradient(135deg, #fb923c 0%, #f97316 55%, #ea580c 100%);
-  box-shadow: 0 4px 14px rgba(249,115,22,0.30), 0 1px 2px rgba(0,0,0,0.12);
+  background: linear-gradient(135deg, #F5B840 0%, #E8A020 55%, #c87d10 100%);
+  box-shadow: 0 4px 14px rgba(232,160,32,0.32), 0 1px 2px rgba(0,0,0,0.12);
   color: #ffffff;
   border: none;
   transition: opacity 0.12s, transform 0.12s, box-shadow 0.12s;
 }
 html.dark .btn-primary {
-  background: linear-gradient(135deg, #fdba74 0%, #fb923c 50%, #f97316 100%);
-  box-shadow: 0 4px 18px rgba(251,146,60,0.35), 0 1px 3px rgba(0,0,0,0.30);
+  background: linear-gradient(135deg, #fcd34d 0%, #F5B840 50%, #E8A020 100%);
+  box-shadow: 0 4px 18px rgba(245,184,64,0.38), 0 1px 3px rgba(0,0,0,0.30);
   color: #1a0800;
 }
 .btn-primary:hover  { opacity: 0.93; }
-.btn-primary:active { opacity: 0.84; transform: scale(0.982); box-shadow: 0 2px 8px rgba(249,115,22,0.20); }
+.btn-primary:active { opacity: 0.84; transform: scale(0.982); box-shadow: 0 2px 8px rgba(232,160,32,0.22); }
 .btn-primary:disabled { opacity: 0.42; pointer-events: none; box-shadow: none; }
 
 /* ============================================================
    GLASS SURFACES
    ============================================================ */
 .header-glass {
-  background: rgba(244,244,248,0.88);
+  background: rgba(242,242,246,0.88);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 html.dark .header-glass {
-  background: rgba(9,9,15,0.90);
+  background: rgba(12,12,16,0.92);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
 }
 
 .tabbar-glass {
-  background: rgba(244,244,248,0.92);
+  background: rgba(242,242,246,0.92);
   backdrop-filter: blur(24px) saturate(200%);
   -webkit-backdrop-filter: blur(24px) saturate(200%);
 }
 html.dark .tabbar-glass {
-  background: rgba(9,9,15,0.94);
+  background: rgba(12,12,16,0.96);
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
 }
@@ -215,7 +232,25 @@ html.dark .tabbar-glass {
   background: #ffffff;
 }
 html.dark .sheet-surface {
-  background: #1c1c28;
+  background: #16161E;
+}
+
+/* ============================================================
+   HAZARD STRIPE — top border on in_corso cantiere cards
+   ============================================================ */
+.hazard-stripe-top {
+  background: var(--hazard-stripe);
+  height: 4px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   KPI TILE TOP ACCENT LINE
+   ============================================================ */
+.kpi-tile-accent {
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  margin: -1px -1px 0 -1px;
 }
 
 /* ============================================================

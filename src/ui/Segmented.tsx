@@ -16,26 +16,33 @@ export function Segmented<T extends string>({
   return (
     <div
       className={cn(
-        'inline-flex p-1 bg-section rounded-[12px] gap-0.5',
+        'inline-flex bg-section rounded-[12px]',
         'border border-line',
         className,
       )}
     >
-      {options.map((o) => (
-        <button
-          key={o.value}
-          onClick={() => onChange(o.value)}
-          className={cn(
-            'flex-1 h-[34px] px-3 rounded-[9px] text-[13px] font-semibold',
-            'transition-all duration-150 whitespace-nowrap',
-            value === o.value
-              ? 'bg-card text-ink shadow-[0_1px_4px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_4px_rgba(0,0,0,0.40)]'
-              : 'text-ink-3 hover:text-ink-2',
-          )}
-        >
-          {o.label}
-        </button>
-      ))}
+      {options.map((o) => {
+        const active = value === o.value;
+        return (
+          <button
+            key={o.value}
+            onClick={() => onChange(o.value)}
+            className={cn(
+              'relative flex-1 h-[36px] px-3 text-[13px] font-semibold',
+              'transition-colors duration-150 whitespace-nowrap',
+              active ? 'text-ink' : 'text-ink-3 hover:text-ink-2',
+            )}
+          >
+            {o.label}
+            {active && (
+              <span
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-5 rounded-full"
+                style={{ backgroundColor: 'var(--c-primary)' }}
+              />
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }

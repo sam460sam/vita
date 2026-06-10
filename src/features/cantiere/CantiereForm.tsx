@@ -32,6 +32,7 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
   const navigate = useNavigate();
   const { show } = useToast();
   const [form, setForm] = useState<FormState>({ ...DEFAULT });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -68,11 +69,18 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
   }
 
   async function save() {
-    if (!form.cliente.trim()) return;
-    const id = await saveCantiere({ ...form, id: cantiere?.id });
-    show(cantiere ? 'Cantiere aggiornato' : 'Cantiere salvato');
-    onClose();
-    if (!cantiere) navigate(`/cantiere/${id}`);
+    if (!form.cliente.trim() || saving) return;
+    setSaving(true);
+    try {
+      const id = await saveCantiere({ ...form, id: cantiere?.id });
+      show(cantiere ? 'Cantiere aggiornato' : 'Cantiere salvato');
+      onClose();
+      if (!cantiere) navigate(`/cantiere/${id}`);
+    } catch {
+      show('Errore durante il salvataggio');
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function importContact() {
@@ -86,12 +94,19 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
   }
 
   async function destroy() {
-    if (!cantiere) return;
+    if (!cantiere || saving) return;
     if (!confirm('Eliminare il cantiere?')) return;
-    await deleteCantiere(cantiere.id);
-    show('Cantiere eliminato');
-    onClose();
-    navigate('/cantiere');
+    setSaving(true);
+    try {
+      await deleteCantiere(cantiere.id);
+      show('Cantiere eliminato');
+      onClose();
+      navigate('/cantiere');
+    } catch {
+      show('Errore durante l\'eliminazione');
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -101,11 +116,11 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
       title={cantiere ? 'Modifica cantiere' : 'Nuovo cantiere'}
       footer={
         <div className="flex flex-col gap-2">
-          <Button onClick={save} block disabled={!form.cliente.trim()}>
-            {cantiere ? 'Aggiorna' : 'Crea cantiere'}
+          <Button onClick={save} block disabled={!form.cliente.trim() || saving}>
+            {saving ? 'Salvataggio…' : cantiere ? 'Aggiorna' : 'Crea cantiere'}
           </Button>
           {cantiere && (
-            <Button variant="danger" onClick={destroy} block>
+            <Button variant="danger" onClick={destroy} block disabled={saving}>
               Elimina cantiere
             </Button>
           )}
@@ -125,7 +140,7 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
               type="button"
               onClick={importContact}
               className="h-11 w-11 flex items-center justify-center rounded-btn bg-section border border-line text-primary flex-shrink-0"
-              title="Importa contatto"
+              aria-label="Importa contatto"
             >
               <BookUser size={18} />
             </button>

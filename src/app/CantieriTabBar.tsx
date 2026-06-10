@@ -62,23 +62,15 @@ export function CantieriTabBar() {
             <Link
               key={to}
               to={to}
-              className="flex-1 flex flex-col items-center pt-2 pb-1.5 gap-0.5 min-w-0"
+              className="flex-1 flex flex-col items-center pt-2.5 pb-1 gap-0.5 min-w-0"
             >
-              {/* Icon pill — fills on active */}
-              <div
-                className={cn(
-                  'w-12 h-8 rounded-full flex items-center justify-center transition-all duration-200',
-                  active ? 'bg-primary/[0.14] dark:bg-primary/[0.18]' : '',
-                )}
-                style={active && accent ? { backgroundColor: `color-mix(in srgb, ${accent} 16%, transparent)` } : undefined}
-              >
+              <div className="w-10 h-10 flex items-center justify-center">
                 <Icon
-                  size={20}
-                  strokeWidth={active ? 2.2 : 1.6}
+                  size={21}
+                  strokeWidth={active ? 2.3 : 1.6}
                   style={{ color: accentColor ?? 'var(--c-ink-3)' }}
                 />
               </div>
-              {/* Label */}
               <span
                 className={cn(
                   'text-[10px] font-semibold tracking-wide transition-colors duration-200',
@@ -88,6 +80,14 @@ export function CantieriTabBar() {
               >
                 {label}
               </span>
+              {/* 3px active dot indicator */}
+              <span
+                className="h-[3px] w-[3px] rounded-full transition-opacity duration-200"
+                style={{
+                  backgroundColor: accentColor ?? 'var(--c-primary)',
+                  opacity: active ? 1 : 0,
+                }}
+              />
             </Link>
           );
         })}

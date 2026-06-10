@@ -43,11 +43,11 @@ export default {
         card:       '0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04)',
         'card-md':  '0 4px 16px rgba(0,0,0,0.08)',
         sheet:      '0 -8px 40px rgba(0,0,0,0.16)',
-        'glow-sm':  '0 4px 14px rgba(249,115,22,0.28)',
+        'glow-sm':  '0 4px 14px rgba(232,160,32,0.32)',
       },
       fontFamily: {
         sans:    ['-apple-system','BlinkMacSystemFont','Inter','system-ui','sans-serif'],
-        display: ['Manrope','-apple-system','BlinkMacSystemFont','system-ui','sans-serif'],
+        display: ['Space Grotesk','-apple-system','BlinkMacSystemFont','system-ui','sans-serif'],
       },
       spacing: {
         'safe-top':    'env(safe-area-inset-top)',

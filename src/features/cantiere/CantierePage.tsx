@@ -18,7 +18,6 @@ import {
   etichettaScadenza,
 } from './logic';
 
-// CSS-var accent per ogni stato — coerente con i token del design system
 const STATO_ACCENT: Record<CantiereStato, string> = {
   preventivo:  'var(--c-stato-preventivo)',
   confermato:  'var(--c-stato-confermato)',
@@ -145,34 +144,46 @@ export function CantierePage() {
         {/* KPI tiles */}
         <div className="grid grid-cols-2 gap-3 mb-4">
           {/* Da riscuotere */}
-          <div className="bg-card rounded-card border border-line shadow-card dark:shadow-none p-4 relative overflow-hidden">
-            <div className="metric-label mb-2">Da riscuotere</div>
-            {crediti > 0 ? (
-              <>
-                <div className="font-display text-[22px] font-bold tnum leading-tight" style={{ color: 'var(--c-primary)' }}>
-                  {formatEuro(crediti)}
+          <div className="bg-card rounded-card border border-line shadow-card dark:shadow-none overflow-hidden relative">
+            <div
+              className="kpi-tile-accent"
+              style={{ background: crediti > 0 ? 'var(--c-primary)' : 'var(--c-line)' }}
+            />
+            <div className="p-4">
+              <div className="metric-label mb-2">Da riscuotere</div>
+              {crediti > 0 ? (
+                <>
+                  <div className="font-display text-[22px] font-bold tnum leading-tight" style={{ color: 'var(--c-primary)' }}>
+                    {formatEuro(crediti)}
+                  </div>
+                  <TrendingUp size={14} className="absolute top-7 right-3 opacity-30" style={{ color: 'var(--c-primary)' }} />
+                </>
+              ) : (
+                <div className="text-[12px] text-ink-3 leading-snug">
+                  Nessun saldo aperto
                 </div>
-                <TrendingUp size={14} className="absolute top-3 right-3 text-primary/40" />
-              </>
-            ) : (
-              <div className="text-[12px] text-ink-3 leading-snug">
-                Nessun saldo aperto
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* Cantieri attivi */}
-          <div className="bg-card rounded-card border border-line shadow-card dark:shadow-none p-4">
-            <div className="metric-label mb-2">Cantieri attivi</div>
-            {attivi > 0 ? (
-              <div className="font-display text-[22px] font-bold tnum text-ink leading-tight">
-                {attivi}
-              </div>
-            ) : (
-              <div className="text-[12px] text-ink-3 leading-snug">
-                Nessun lavoro in corso
-              </div>
-            )}
+          <div className="bg-card rounded-card border border-line shadow-card dark:shadow-none overflow-hidden">
+            <div
+              className="kpi-tile-accent"
+              style={{ background: attivi > 0 ? 'var(--c-stato-in-corso)' : 'var(--c-line)' }}
+            />
+            <div className="p-4">
+              <div className="metric-label mb-2">Cantieri attivi</div>
+              {attivi > 0 ? (
+                <div className="font-display text-[22px] font-bold tnum text-ink leading-tight">
+                  {attivi}
+                </div>
+              ) : (
+                <div className="text-[12px] text-ink-3 leading-snug">
+                  Nessun lavoro in corso
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -259,6 +270,7 @@ function CantiereCard({
   const accentColor = STATO_ACCENT[c.stato];
   const sInfo = statoInfo(c.stato);
   const pInfo = pagamentoInfo(c.pagamento);
+  const isInCorso = c.stato === 'in_corso';
 
   return (
     <button
@@ -266,56 +278,62 @@ function CantiereCard({
       className="w-full text-left animate-slide-up active:scale-[0.982] transition-transform duration-150"
       style={{ animationDelay: `${delay}ms`, animationFillMode: 'backwards' }}
     >
-      {/* Card with left accent border */}
-      <div className="flex overflow-hidden rounded-card border border-line bg-card shadow-card dark:shadow-none">
-        {/* Status accent bar */}
-        <div className="w-1 flex-shrink-0 self-stretch" style={{ backgroundColor: accentColor }} />
+      <div className="flex flex-col overflow-hidden rounded-card border border-line bg-card shadow-card dark:shadow-none">
+        {/* Hazard stripe top border for in_corso cards */}
+        {isInCorso && <div className="hazard-stripe-top w-full" />}
 
-        {/* Content */}
-        <div className="flex-1 px-3.5 py-3 min-w-0">
-          <div className="flex items-start gap-2">
-            {/* Left: name + address + badges */}
-            <div className="flex-1 min-w-0">
-              <div className="font-display font-bold text-[16px] text-ink truncate leading-tight">
-                {c.cliente}
-              </div>
-              {c.indirizzo && (
-                <div className="text-[12px] text-ink-3 truncate mt-0.5">{c.indirizzo}</div>
-              )}
-              <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                <span
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                  style={{
-                    color: accentColor,
-                    backgroundColor: `color-mix(in srgb, ${accentColor} 13%, transparent)`,
-                  }}
-                >
+        <div className="flex">
+          {/* Status accent bar (left) — hidden for in_corso (uses top stripe instead) */}
+          {!isInCorso && (
+            <div className="w-1 flex-shrink-0 self-stretch" style={{ backgroundColor: accentColor }} />
+          )}
+
+          {/* Content */}
+          <div className="flex-1 px-3.5 py-3 min-w-0">
+            <div className="flex items-start gap-2">
+              {/* Left: name + address + badges */}
+              <div className="flex-1 min-w-0">
+                <div className="font-display font-bold text-[16px] text-ink truncate leading-tight">
+                  {c.cliente}
+                </div>
+                {c.indirizzo && (
+                  <div className="text-[12px] text-ink-3 truncate mt-0.5">{c.indirizzo}</div>
+                )}
+                <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                   <span
-                    className="h-1.5 w-1.5 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: accentColor }}
-                  />
-                  {sInfo.label}
-                </span>
-                {c.pagamento !== 'saldato' && (
-                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full text-warning bg-warning/10">
-                    {pInfo.label}
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                    style={{
+                      color: accentColor,
+                      backgroundColor: `color-mix(in srgb, ${accentColor} 13%, transparent)`,
+                    }}
+                  >
+                    <span
+                      className="h-1.5 w-1.5 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: accentColor }}
+                    />
+                    {sInfo.label}
                   </span>
+                  {c.pagamento !== 'saldato' && (
+                    <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full text-warning bg-warning/10">
+                      {pInfo.label}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Right: amount + metrics */}
+              <div className="text-right flex-shrink-0 pl-2">
+                <div
+                  className="font-display font-bold text-[18px] tnum leading-tight"
+                  style={{ color: accentColor }}
+                >
+                  {formatEuro(c.importo)}
+                </div>
+                <div className="text-[12px] text-ink-3 tnum mt-0.5">{c.mq} m²</div>
+                {c.dataPrevista && (
+                  <div className="text-[11px] text-ink-3 mt-0.5 tnum">{c.dataPrevista}</div>
                 )}
               </div>
-            </div>
-
-            {/* Right: amount + metrics */}
-            <div className="text-right flex-shrink-0 pl-2">
-              <div
-                className="font-display font-bold text-[18px] tnum leading-tight"
-                style={{ color: accentColor }}
-              >
-                {formatEuro(c.importo)}
-              </div>
-              <div className="text-[12px] text-ink-3 tnum mt-0.5">{c.mq} m²</div>
-              {c.dataPrevista && (
-                <div className="text-[11px] text-ink-3 mt-0.5 tnum">{c.dataPrevista}</div>
-              )}
             </div>
           </div>
         </div>
