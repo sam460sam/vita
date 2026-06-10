@@ -16,7 +16,7 @@
 // ============================================================================
 
 export const REVENUECAT_API_KEY = {
-  ios: '', //  e.g. 'appl_XXXXXXXXXXXXXXXXXXXXXXXX'
+  ios: 'appl_OtiEuvtgdEhyxkMVzrNjirFsFEq', // RevenueCat public SDK key (App Store)
   android: '', // e.g. 'goog_XXXXXXXXXXXXXXXXXXXXXXXX'
 };
 
