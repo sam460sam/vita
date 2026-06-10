@@ -4,6 +4,7 @@ import { BookUser } from 'lucide-react';
 import { Sheet, Field, Input, Select, Textarea, Button } from '@/ui';
 import { useToast } from '@/ui';
 import { saveCantiere, deleteCantiere } from '@/data/cantiere-repo';
+import { useTeam } from '@/auth/TeamContext';
 import type { Cantiere } from '@/data/types';
 import { STATI, PAGAMENTI, TIPO_USO } from './logic';
 
@@ -31,6 +32,7 @@ const DEFAULT: FormState = {
 export function CantiereForm({ open, onClose, cantiere }: Props) {
   const navigate = useNavigate();
   const { show } = useToast();
+  const { team } = useTeam();
   const [form, setForm] = useState<FormState>({ ...DEFAULT });
   const [saving, setSaving] = useState(false);
 
@@ -69,10 +71,10 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
   }
 
   async function save() {
-    if (!form.cliente.trim() || saving) return;
+    if (!form.cliente.trim() || saving || !team) return;
     setSaving(true);
     try {
-      const id = await saveCantiere({ ...form, id: cantiere?.id });
+      const id = await saveCantiere({ ...form, id: cantiere?.id }, team.id);
       show(cantiere ? 'Cantiere aggiornato' : 'Cantiere salvato');
       onClose();
       if (!cantiere) navigate(`/cantiere/${id}`);

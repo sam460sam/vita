@@ -3,6 +3,7 @@ import { Star, BookUser } from 'lucide-react';
 import { Sheet, Field, Input, Textarea, Button } from '@/ui';
 import { useToast } from '@/ui';
 import { saveOperaio, deleteOperaio } from '@/data/cantiere-repo';
+import { useTeam } from '@/auth/TeamContext';
 import type { Operaio } from '@/data/types';
 import { SPECIALIZZAZIONI } from './logic';
 
@@ -22,6 +23,7 @@ interface Props {
 
 export function OperaioForm({ open, onClose, operaio }: Props) {
   const { show } = useToast();
+  const { team } = useTeam();
   const [nome, setNome] = useState('');
   const [telefono, setTelefono] = useState('');
   const [specializzazioni, setSpecializzazioni] = useState<string[]>([]);
@@ -64,7 +66,7 @@ export function OperaioForm({ open, onClose, operaio }: Props) {
   }
 
   async function save() {
-    if (!nome.trim()) return;
+    if (!nome.trim() || !team) return;
     await saveOperaio({
       nome: nome.trim(),
       telefono: telefono.trim() || undefined,
@@ -73,7 +75,7 @@ export function OperaioForm({ open, onClose, operaio }: Props) {
       notePrivate: note.trim() || undefined,
       attivo: true,
       id: operaio?.id,
-    });
+    }, team.id);
     show(operaio ? 'Operaio aggiornato' : 'Operaio salvato');
     onClose();
   }

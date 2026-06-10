@@ -5,8 +5,7 @@ import { Phone, MapPin, Calendar, Edit3, Camera, PenTool, FileText, Share2, Stic
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, CardHeader, Button } from '@/ui';
-import { db } from '@/data/db';
-import type { Operaio, Note } from '@/data/types';
+import type { Note } from '@/data/types';
 import { formatEuro, statoInfo, pagamentoInfo } from './logic';
 import { CantiereForm } from './CantiereForm';
 import { CementoCalc } from './CementoCalc';
@@ -18,9 +17,12 @@ import { saveCantiere } from '@/data/cantiere-repo';
 import { getNotesByCantiere, getOrCreateProjectForCantiere } from '@/data/note-repo';
 import { NoteSheet } from '@/features/note/NoteSheet';
 import { NoteCard } from '@/features/note/NoteCard';
+import { useCantiere, useOperai } from '@/hooks/useCantieri';
+import { useTeam } from '@/auth/TeamContext';
 
 export function CantiereDetail() {
   const { id } = useParams<{ id: string }>();
+  const { team } = useTeam();
   const [editOpen, setEditOpen] = useState(false);
   const [verbaleOpen, setVerbaleOpen] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
@@ -30,19 +32,12 @@ export function CantiereDetail() {
   const [noteProjectId, setNoteProjectId] = useState<string | undefined>(undefined);
   const [noteRefresh, setNoteRefresh] = useState(0);
 
-  const cantiere = useLiveQuery(() => db.cantieri.get(id!), [id]);
+  const cantiere = useCantiere(id);
   const cantiereNotes = useLiveQuery(
     () => (id ? getNotesByCantiere(id) : Promise.resolve([])),
     [id, noteRefresh],
   ) ?? [];
-  const operai = useLiveQuery<Operaio[], Operaio[]>(
-    () =>
-      cantiere?.operaiIds.length
-        ? db.operai.where('id').anyOf(cantiere.operaiIds).toArray()
-        : Promise.resolve([]),
-    [cantiere],
-    [],
-  );
+  const operai = useOperai(cantiere?.operaiIds);
 
   if (cantiere === undefined) return null;
   if (cantiere === null) return null;
@@ -295,7 +290,7 @@ export function CantiereDetail() {
             const newFoto = cantiere.foto.map((f, i) =>
               i === annotatePhoto.index ? dataUrl : f,
             );
-            await saveCantiere({ ...cantiere, foto: newFoto });
+            if (team) await saveCantiere({ ...cantiere, foto: newFoto }, team.id);
             setAnnotatePhoto(null);
           }}
           onCancel={() => setAnnotatePhoto(null)}

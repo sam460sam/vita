@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { Plus, Users, HardHat, Sparkles, BellRing, Phone, ChevronRight, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { Segmented, useToast } from '@/ui';
-import { db } from '@/data/db';
 import type { Cantiere, CantiereStato } from '@/data/types';
 import { CantiereForm } from './CantiereForm';
-import { seedCantieriDemo } from '@/data/cantiere-repo';
+import { seedCantieriDemo } from '@/data/supabase-cantiere-repo';
+import { useCantieri } from '@/hooks/useCantieri';
+import { useTeam } from '@/auth/TeamContext';
 import {
   formatEuro,
   statoInfo,
@@ -94,31 +94,29 @@ type Tab = 'tutti' | 'attivi' | 'completati' | 'da_pagare';
 export function CantierePage() {
   const navigate = useNavigate();
   const { show } = useToast();
+  const { team } = useTeam();
   const [tab, setTab] = useState<Tab>('tutti');
   const [formOpen, setFormOpen] = useState(false);
   const [seeding, setSeeding] = useState(false);
 
-  const cantieri = useLiveQuery(
-    () => db.cantieri.orderBy('updatedAt').reverse().toArray(),
-    [],
-    [],
-  );
+  const cantieri = useCantieri();
 
-  const filtered = (cantieri ?? []).filter((c) => {
+  const filtered = cantieri.filter((c) => {
     if (tab === 'attivi') return ['confermato', 'in_corso'].includes(c.stato);
     if (tab === 'completati') return c.stato === 'completato';
     if (tab === 'da_pagare') return c.pagamento !== 'saldato';
     return true;
   });
 
-  const crediti = totaleCrediti(cantieri ?? []);
-  const attivi = (cantieri ?? []).filter((c) => ['confermato', 'in_corso'].includes(c.stato)).length;
-  const isEmpty = (cantieri ?? []).length === 0;
+  const crediti = totaleCrediti(cantieri);
+  const attivi = cantieri.filter((c) => ['confermato', 'in_corso'].includes(c.stato)).length;
+  const isEmpty = cantieri.length === 0;
 
   async function vediEsempio() {
+    if (!team) return;
     setSeeding(true);
     try {
-      await seedCantieriDemo();
+      await seedCantieriDemo(team.id);
       show('Aggiunti 3 cantieri di esempio — modificali o eliminali quando vuoi');
     } finally {
       setSeeding(false);
@@ -188,7 +186,7 @@ export function CantierePage() {
         </div>
 
         {/* Payment reminders */}
-        <PromemoriaPagamenti cantieri={cantieri ?? []} onApri={(id) => navigate(`/cantiere/${id}`)} />
+        <PromemoriaPagamenti cantieri={cantieri} onApri={(id) => navigate(`/cantiere/${id}`)} />
 
         {/* Filter tabs */}
         <div className="mb-4 w-full">

@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { Plus, Phone, Star, ClipboardList, Info } from 'lucide-react';
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, EmptyState, Segmented } from '@/ui';
-import { db } from '@/data/db';
 import type { Operaio } from '@/data/types';
+import { useOperai } from '@/hooks/useCantieri';
 import { OperaioForm } from './OperaioForm';
 import { AssegnaCantiereSheet } from './AssegnaCantiereSheet';
 import { DIRECTORY_VENETO } from './directory';
@@ -90,11 +89,7 @@ export function OperaiPage() {
   const [assegnaOperaio, setAssegnaOperaio] = useState<Operaio | undefined>();
   const [filterProv, setFilterProv] = useState<string>(defaultProvincia);
 
-  const operai = useLiveQuery(
-    () => db.operai.toArray().then((arr) => arr.sort((a, b) => a.nome.localeCompare(b.nome))),
-    [],
-    [],
-  );
+  const operai = useOperai();
 
   function openEdit(o: Operaio) {
     setEditing(o);

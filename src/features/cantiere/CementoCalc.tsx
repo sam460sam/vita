@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Copy, Check, GraduationCap, History } from 'lucide-react';
 import { Card, CardHeader, Button, Field, Input, Select } from '@/ui';
 import { saveCantiere } from '@/data/cantiere-repo';
+import { useTeam } from '@/auth/TeamContext';
 import type { Cantiere } from '@/data/types';
 import { calcolaCemento, generaMessaggioCemento, CLASSI_CEMENTO, ADDITIVI } from './logic';
 import { CementoTutor } from './CementoTutor';
@@ -9,6 +10,7 @@ import { CementoTutor } from './CementoTutor';
 const STORICO_MAX = 5;
 
 export function CementoCalc({ cantiere }: { cantiere: Cantiere }) {
+  const { team } = useTeam();
   const [tutorOpen, setTutorOpen] = useState(false);
   const m3 = calcolaCemento(cantiere.mq, cantiere.spessore);
   const [classe, setClasse] = useState(cantiere.classeCemento ?? 'C30/37');
@@ -33,7 +35,7 @@ export function CementoCalc({ cantiere }: { cantiere: Cantiere }) {
     await navigator.clipboard.writeText(msg);
     const voce = { data: new Date().toISOString().slice(0, 10), m3, classeCemento: classe };
     const storicoCalcoli = [voce, ...(cantiere.storicoCalcoli ?? [])].slice(0, STORICO_MAX);
-    await saveCantiere({ ...cantiere, classeCemento: classe, additivi, storicoCalcoli });
+    if (team) await saveCantiere({ ...cantiere, classeCemento: classe, additivi, storicoCalcoli }, team.id);
     setCopiato(true);
     setTimeout(() => setCopiato(false), 2000);
   }

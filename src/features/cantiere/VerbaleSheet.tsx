@@ -3,6 +3,7 @@ import { Camera, X, CheckCircle2, AlertTriangle, Scale } from 'lucide-react';
 import { Sheet, Button, Field, Input } from '@/ui';
 import { useToast } from '@/ui';
 import { saveCantiere } from '@/data/cantiere-repo';
+import { useTeam } from '@/auth/TeamContext';
 import type { Cantiere } from '@/data/types';
 import { formatEuro } from './logic';
 import { CHECKLIST_ITEMS } from './verbale-data';
@@ -27,6 +28,7 @@ type Step = 'dati' | 'firma';
 
 export function VerbaleSheet({ open, cantiere, onClose }: Props) {
   const { show } = useToast();
+  const { team } = useTeam();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawing = useRef(false);
 
@@ -135,6 +137,7 @@ export function VerbaleSheet({ open, cantiere, onClose }: Props) {
     // Prima firma del cliente: il lavoro è consegnato e accettato, quindi il
     // cantiere passa a "completato" e il saldo residuo diventa da riscuotere.
     const primaFirma = !!firma && !cantiere.firmaCliente;
+    if (!team) return;
     await saveCantiere({
       ...cantiere,
       foto,
@@ -145,7 +148,7 @@ export function VerbaleSheet({ open, cantiere, onClose }: Props) {
       scadenzaPagamento: scadenzaPagamento || cantiere.scadenzaPagamento,
       stato: primaFirma && cantiere.stato !== 'contestato' ? 'completato' : cantiere.stato,
       dataCompletamento: primaFirma ? (cantiere.dataCompletamento ?? timestamp.slice(0, 10)) : cantiere.dataCompletamento,
-    });
+    }, team.id);
     show(primaFirma ? 'Verbale firmato — cantiere segnato come completato, saldo da riscuotere' : 'Verbale salvato');
     onClose();
   }
