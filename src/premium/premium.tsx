@@ -9,7 +9,6 @@
 // ============================================================================
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { isBillingConfigured, getSubscriptionActive, presentPaywall as swPresent, onStatusChange } from './billing';
-import { ensureTrialStarted, isTrialActive, trialDaysLeft } from './trial';
 
 /** Features that can be gated (kept for optional per-feature use). */
 export type PremiumFeature = 'finances' | 'goals' | 'calendar' | 'stats';
@@ -22,12 +21,8 @@ const STORAGE_KEY = 'vita.premium';
 interface PremiumCtx {
   isPremium: boolean;
   can: (feature: PremiumFeature) => boolean;
-  /** True when the app must show the paywall (free week over + not subscribed). */
+  /** True when the app must show the paywall (billing on + no active subscription). */
   requiresSubscription: boolean;
-  /** Days left in the free week (0 once expired). */
-  trialDaysLeft: number;
-  /** True while the free week is running. */
-  inTrial: boolean;
   /** True when Superwall is wired in this build. */
   billingActive: boolean;
   /** Present the Superwall paywall. */
@@ -60,13 +55,10 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Start the free-week clock + resolve subscription status when Superwall is on.
-  const [daysLeft, setDaysLeft] = useState<number>(0);
+  // Resolve the real subscription status when Superwall is configured.
   useEffect(() => {
     if (!billingActive) return;
     let mounted = true;
-    ensureTrialStarted();
-    setDaysLeft(trialDaysLeft());
     void getSubscriptionActive().then((active) => mounted && setSubActive(active));
     void onStatusChange((active) => mounted && setSubActive(active));
     return () => {
@@ -74,11 +66,11 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     };
   }, [billingActive]);
 
-  const inTrial = billingActive && isTrialActive();
-  // Full access during the free week OR with an active subscription.
-  const isPremium = billingActive ? subActive || inTrial : UNLOCK_ALL_FOR_NOW || premium;
-  // Paywall only after the free week, if not subscribed.
-  const requiresSubscription = billingActive && !subActive && !inTrial;
+  // The 7-day free trial is the App Store introductory offer (tracked per Apple
+  // ID, so reinstalling can't get a new one). During the trial the subscription
+  // is active, so `subActive` already covers it.
+  const isPremium = billingActive ? subActive : UNLOCK_ALL_FOR_NOW || premium;
+  const requiresSubscription = billingActive && !subActive;
 
   const presentPaywall = useCallback(async () => {
     await swPresent();
@@ -89,13 +81,11 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
       isPremium,
       can: () => isPremium,
       requiresSubscription,
-      trialDaysLeft: daysLeft,
-      inTrial,
       billingActive,
       presentPaywall,
       setPremium,
     }),
-    [isPremium, requiresSubscription, daysLeft, inTrial, billingActive, presentPaywall, setPremium],
+    [isPremium, requiresSubscription, billingActive, presentPaywall, setPremium],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

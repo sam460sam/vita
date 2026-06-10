@@ -1,16 +1,13 @@
 // ============================================================================
 // Vyta subscription / paywall configuration (Superwall).
 //
-// MODEL: free for the first week of use, then subscribe.
-//   • For the first TRIAL_DAYS of use the whole app is FREE (no paywall).
-//   • After that, if not subscribed, the Superwall paywall is shown
-//     ("Continue with Vyta — €2,99/month"). The paywall UI is designed REMOTELY
-//     on the Superwall dashboard. The €2,99/month product lives in App Store
-//     Connect.
-//
-// NOTE: the free week is tracked LOCALLY (first-launch date). Uninstalling and
-// reinstalling resets it. To make it reinstall-proof, switch to a StoreKit
-// introductory free trial (see PUBLISHING.md).
+// MODEL: 7-day free trial, then €2,99/month (reinstall-proof).
+//   • On entry, if not subscribed, the Superwall paywall is shown
+//     ("7 days free, then €2,99/month"). The user starts the free trial.
+//   • The 7-day free trial is the App Store Connect INTRODUCTORY OFFER on the
+//     €2,99/month product. Apple tracks trial eligibility per Apple ID, so
+//     reinstalling / cancelling does NOT grant a new free week — the user pays.
+//   • While the subscription (incl. the trial) is active → full app.
 //
 // DORMANT BY DEFAULT: leave the API key EMPTY → no paywall ever, app fully
 // unlocked (the 1.2 state). Fill the key to turn the subscription on.

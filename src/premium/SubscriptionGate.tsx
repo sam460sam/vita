@@ -2,7 +2,7 @@ import { useEffect, type ReactNode } from 'react';
 import { Button, StarMascot } from '@/ui';
 import { useT } from '@/i18n';
 import { usePremium } from './premium';
-import { PRICE_FALLBACK } from './config';
+import { TRIAL_DAYS, PRICE_FALLBACK } from './config';
 
 /**
  * Hard paywall gate. When a subscription is required (Superwall configured + not
@@ -29,7 +29,7 @@ function LockedScreen({ onUnlock }: { onUnlock: () => void }) {
       <h1 className="text-2xl font-bold text-ink mt-6">{t('gate.title')}</h1>
       <p className="text-[15px] text-ink-2 mt-2 max-w-xs">{t('gate.subtitle')}</p>
       <div className="mt-6 rounded-card bg-section px-5 py-3.5 shadow-chip">
-        <p className="text-[15px] font-bold text-ink">{t('gate.headline', { price: PRICE_FALLBACK })}</p>
+        <p className="text-[15px] font-bold text-ink">{t('gate.headline', { days: TRIAL_DAYS, price: PRICE_FALLBACK })}</p>
       </div>
       <Button size="lg" className="mt-6 w-full max-w-xs" onClick={onUnlock}>
         {t('gate.cta')}
