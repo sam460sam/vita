@@ -21,6 +21,8 @@ import type {
   Transaction,
   WaterLog,
   WeightLog,
+  WorkDay,
+  WorkProfile,
   Workout,
 } from './types';
 
@@ -41,6 +43,8 @@ export class VitaDB extends Dexie {
   cantieri!: Table<Cantiere, string>;
   operai!: Table<Operaio, string>;
   giornaleEntries!: Table<GiornaleEntry, string>;
+  workDays!: Table<WorkDay, string>;
+  workProfiles!: Table<WorkProfile, string>;
 
   constructor() {
     super('vita');
@@ -77,6 +81,11 @@ export class VitaDB extends Dexie {
     // v6: giornale di cantiere — daily construction log.
     this.version(6).stores({
       giornaleEntries: 'id, cantiereId, data, updatedAt',
+    });
+    // v7: ore lavoro — work hours tracking with role-based workflow.
+    this.version(7).stores({
+      workDays: 'id, data, status, workerId, updatedAt',
+      workProfiles: 'id',
     });
   }
 }

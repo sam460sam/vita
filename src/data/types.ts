@@ -377,6 +377,38 @@ export interface GiornaleEntry extends Timestamped {
 }
 
 // ----------------------------------------------------------------------------
+// Ore Lavoro — work hours tracker
+// ----------------------------------------------------------------------------
+export type WorkDayType = 'lavorativa' | 'festiva' | 'malattia' | 'infortunio' | 'ferie' | 'permesso';
+export type WorkDayStatus = 'bozza' | 'inviato' | 'approvato';
+
+export interface WorkDay extends Timestamped {
+  data: string;               // ISO yyyy-MM-dd
+  tipo: WorkDayType;
+  oraInizio: string;          // HH:mm (always set; non-work days default to 08:00)
+  oraFine: string;            // HH:mm
+  pausaMinuti: number;        // break subtracted from total
+  oreCalcolate: number;       // persisted computed result for quick reads
+  cantiereId?: string;
+  cantiereName?: string;      // denormalized for display if cantiere is later deleted
+  note?: string;
+  status: WorkDayStatus;
+  workerId: string;           // 'local' for the device owner; future: user UUID
+  companyId?: string;         // future backend use
+}
+
+export interface WorkProfile {
+  id: 'work';                 // singleton row
+  nome: string;
+  tariffaOraria: number;      // €/h gross
+  aliquotaIRPEF: number;      // % (e.g. 23)
+  aliquotaINPS: number;       // % (e.g. 9.19)
+  oreDefaultGiornata: number; // hours auto-filled for non-work day types
+  ruolo: 'dipendente' | 'impresa';
+  updatedAt: number;
+}
+
+// ----------------------------------------------------------------------------
 // Full export shape (backup)
 // ----------------------------------------------------------------------------
 export interface VitaBackup {
