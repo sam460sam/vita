@@ -11,6 +11,8 @@ import { CantiereForm } from './CantiereForm';
 import { CementoCalc } from './CementoCalc';
 import { VerbaleSheet } from './VerbaleSheet';
 import { condividiVerbale } from './generateVerbale';
+import { ContrattoSheet } from './ContrattoSheet';
+import { condividiContratto } from './generateContratto';
 import { GiornaledCantiere } from './GiornaledCantiere';
 import { PhotoAnnotator } from './PhotoAnnotator';
 import { saveCantiere } from '@/data/cantiere-repo';
@@ -26,6 +28,8 @@ export function CantiereDetail() {
   const [editOpen, setEditOpen] = useState(false);
   const [verbaleOpen, setVerbaleOpen] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [contrattoOpen, setContrattoOpen] = useState(false);
+  const [contrattoPdfLoading, setContrattoPdfLoading] = useState(false);
   const [annotatePhoto, setAnnotatePhoto] = useState<{ index: number; src: string } | null>(null);
   const [noteSheetOpen, setNoteSheetOpen] = useState(false);
   const [editNote, setEditNote] = useState<Note | null>(null);
@@ -55,6 +59,13 @@ export function CantiereDetail() {
     setPdfLoading(true);
     try { await condividiVerbale(cantiere); }
     finally { setPdfLoading(false); }
+  }
+
+  async function scaricaContrattoPdf() {
+    if (!cantiere) return;
+    setContrattoPdfLoading(true);
+    try { await condividiContratto(cantiere, team?.name ?? 'Impresa Edile'); }
+    finally { setContrattoPdfLoading(false); }
   }
 
   const sInfo = statoInfo(cantiere.stato);
@@ -154,6 +165,61 @@ export function CantiereDetail() {
 
         {/* Cement calculator */}
         <CementoCalc cantiere={cantiere} />
+
+        {/* Contratto pre-lavori */}
+        <Card className="mb-4">
+          <CardHeader title="Contratto pre-lavori" />
+          {cantiere.contrattoFirmaCliente ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-green-600 font-medium text-[14px]">
+                <PenTool size={16} />
+                Contratto firmato
+                {cantiere.contrattoClienteNome && (
+                  <span className="text-ink-3 font-normal text-[12px]">
+                    — {cantiere.contrattoClienteNome}
+                  </span>
+                )}
+              </div>
+              <img
+                src={cantiere.contrattoFirmaCliente}
+                alt="Firma contratto"
+                className="h-16 object-contain border border-line rounded-lg bg-white"
+              />
+              <div className="flex gap-2">
+                <Button
+                  onClick={scaricaContrattoPdf}
+                  disabled={contrattoPdfLoading}
+                  variant="primary"
+                  className="flex-1"
+                >
+                  {contrattoPdfLoading ? (
+                    'Generazione...'
+                  ) : (
+                    <>
+                      <Share2 size={15} className="mr-1.5" />
+                      {typeof navigator !== 'undefined' && 'canShare' in navigator ? 'Condividi PDF' : 'Scarica PDF'}
+                    </>
+                  )}
+                </Button>
+                <Button variant="ghost" onClick={() => setContrattoOpen(true)}>
+                  <FileText size={15} className="mr-1.5" />
+                  Modifica
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-[13px] text-ink-2">
+                Nessun contratto firmato. Fai firmare il cliente prima di iniziare i lavori
+                per tutelare il pagamento.
+              </p>
+              <Button onClick={() => setContrattoOpen(true)}>
+                <PenTool size={16} className="mr-2" />
+                Firma contratto
+              </Button>
+            </div>
+          )}
+        </Card>
 
         {/* Verbale */}
         <Card className="mb-4">
@@ -281,6 +347,7 @@ export function CantiereDetail() {
       </Screen>
 
       <CantiereForm open={editOpen} cantiere={cantiere} onClose={() => setEditOpen(false)} />
+      <ContrattoSheet open={contrattoOpen} cantiere={cantiere} onClose={() => setContrattoOpen(false)} />
       <VerbaleSheet open={verbaleOpen} cantiere={cantiere} onClose={() => setVerbaleOpen(false)} />
 
       {annotatePhoto && (

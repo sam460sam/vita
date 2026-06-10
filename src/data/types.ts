@@ -330,6 +330,10 @@ export interface Cantiere extends Timestamped {
   verbaleTimestamp?: string;        // ISO datetime when client signed
   verbaleClienteNome?: string;      // client name confirmed at signing
   verbaleDisclaimerAccettato?: boolean;
+  // Pre-work contract
+  contrattoFirmaCliente?: string;   // base64 PNG canvas signature
+  contrattoTimestamp?: string;      // ISO datetime of contract signing
+  contrattoClienteNome?: string;    // confirmed client name at contract signing
 }
 
 export interface Operaio extends Timestamped {

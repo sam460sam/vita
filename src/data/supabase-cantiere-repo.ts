@@ -36,6 +36,9 @@ interface CantiereRow {
   verbale_timestamp: string | null;
   verbale_cliente_nome: string | null;
   verbale_disclaimer_accettato: boolean | null;
+  contratto_firma_cliente: string | null;
+  contratto_timestamp: string | null;
+  contratto_cliente_nome: string | null;
   created_at: number;
   updated_at: number;
 }
@@ -82,6 +85,9 @@ function rowToCantiere(r: CantiereRow): Cantiere {
     verbaleTimestamp: r.verbale_timestamp ?? undefined,
     verbaleClienteNome: r.verbale_cliente_nome ?? undefined,
     verbaleDisclaimerAccettato: r.verbale_disclaimer_accettato ?? undefined,
+    contrattoFirmaCliente: r.contratto_firma_cliente ?? undefined,
+    contrattoTimestamp: r.contratto_timestamp ?? undefined,
+    contrattoClienteNome: r.contratto_cliente_nome ?? undefined,
   };
 }
 
@@ -113,6 +119,9 @@ function cantiereToRow(c: Cantiere, teamId: string): CantiereRow {
     verbale_timestamp: c.verbaleTimestamp ?? null,
     verbale_cliente_nome: c.verbaleClienteNome ?? null,
     verbale_disclaimer_accettato: c.verbaleDisclaimerAccettato ?? null,
+    contratto_firma_cliente: c.contrattoFirmaCliente ?? null,
+    contratto_timestamp: c.contrattoTimestamp ?? null,
+    contratto_cliente_nome: c.contrattoClienteNome ?? null,
     created_at: c.createdAt,
     updated_at: c.updatedAt,
   };
