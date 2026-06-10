@@ -2,12 +2,12 @@
 
 Guida passo-passo, dall'inizio alla fine, per:
 1. attivare e testare **Apple Health** dentro l'app,
-2. attivare **Vyta Pro** (abbonamenti con RevenueCat),
+2. attivare l'**abbonamento** (paywall **Superwall**: 7 giorni gratis, poi €3,99/mese),
 3. configurare **App Store Connect**,
 4. compilare, testare su **TestFlight** e **pubblicare**.
 
 > Tutto il **codice** è già nel repo. Questa guida copre le parti che si fanno
-> fuori dal codice (Mac/Xcode, portale Apple, RevenueCat) + i pochi flag da
+> fuori dal codice (Mac/Xcode, portale Apple, Superwall) + i pochi flag da
 > riempire nel codice. Dove serve agire nel codice è scritto **[CODICE]**.
 
 ---
@@ -16,7 +16,7 @@ Guida passo-passo, dall'inizio alla fine, per:
 - Un **Mac** con **Xcode** aggiornato.
 - **Apple Developer Program** attivo (99 $/anno) → https://developer.apple.com
 - **Node 20+** installato.
-- Account **RevenueCat** (gratuito fino a una certa soglia) → https://www.revenuecat.com
+- Account **Superwall** (gratuito fino a una certa soglia) → https://superwall.com
 - Bundle id dell'app: **`app.vita.lifeos`** (già impostato).
 
 Primo allineamento del progetto nativo:
@@ -67,36 +67,38 @@ e tutta la logica in `src/platform/health.ts`.
 
 ---
 
-## 3) RevenueCat — configurazione abbonamenti
-RevenueCat gestisce ricevute, rinnovi e "ripristina acquisti" su iOS e Android.
+## 3) Superwall — paywall e abbonamento (settimana gratis → €3,99/mese)
+Il paywall (grafica + testo "7 giorni gratis, poi €3,99/mese") si disegna **da
+remoto** sulla dashboard di Superwall: puoi cambiarlo senza ripubblicare l'app.
+Superwall gestisce anche l'acquisto (StoreKit) e lo "ripristina".
 
-1. Crea un account su RevenueCat e un **Project** (es. "Vyta").
-2. **Project settings → Apps → + New → App Store**:
-   - Inserisci il bundle id `app.vita.lifeos`.
-   - Incolla l'**App-Specific Shared Secret** (lo trovi in App Store Connect →
-     la tua app → **App Information → App-Specific Shared Secret**).
-3. **Entitlements → + New**: crea un entitlement con identificativo **`pro`**
-   (deve essere ESATTAMENTE `pro` — vedi `src/premium/config.ts`).
-4. **Products**: aggiungi i due prodotti (li crei al punto 4 in App Store Connect):
-   - `vyta.pro.monthly`
-   - `vyta.pro.yearly`
-   Collegali entrambi all'entitlement **`pro`**.
-5. **Offerings → default**: crea due **Packages**:
-   - **Annual** → `vyta.pro.yearly`
-   - **Monthly** → `vyta.pro.monthly`
-   (i tipi `ANNUAL` / `MONTHLY` sono quelli che l'app cerca, vedi `PRO_PACKAGE`.)
-6. **Project settings → API keys**: copia la **Public SDK Key** iOS (inizia con `appl_`).
+**Importante (reinstallazione = paga comunque):** la settimana gratis è la **prova
+gratuita introduttiva** del prodotto su App Store Connect (punto 4c). Apple traccia
+l'idoneità alla prova **per Apple ID**, quindi chi l'ha già usata **non la riottiene**
+disinstallando/reinstallando o disdicendo.
+
+Passi:
+1. Crea un account su https://superwall.com e un'app (bundle id `app.vita.lifeos`).
+2. **Settings → Keys**: copia la **Public API Key** iOS (inizia con `pk_`).
+3. Collega il prodotto: in Superwall colleghi il prodotto/abbonamento di App Store
+   Connect (`vyta.monthly`, vedi punto 4c) e disegni il **paywall** (titolo, "7 giorni
+   gratis", prezzo, pulsanti **Abbonati** e **Ripristina**, link **Termini** e **Privacy**
+   — richiesti da Apple).
+4. **Campaigns → New**: crea una campagna con **Placement** = `campaign_trigger`
+   (lo stesso di `PAYWALL_PLACEMENT` in `src/premium/config.ts`) e **Feature gating =
+   Gated**, così il paywall blocca l'accesso finché non c'è l'abbonamento/prova.
 
 **[CODICE]** Incolla la chiave in `src/premium/config.ts`:
 ```ts
-export const REVENUECAT_API_KEY = {
-  ios: 'appl_LA_TUA_CHIAVE',   // ← qui
+export const SUPERWALL_API_KEY = {
+  ios: 'pk_LA_TUA_CHIAVE',   // ← qui
   android: '',
 };
+export const PAYWALL_PLACEMENT = 'campaign_trigger'; // = nome placement su Superwall
 ```
-Appena c'è una chiave, **Vyta Pro si attiva**: l'app risolve l'abbonamento reale,
-la pagina Pro mostra i **prezzi live** e i pulsanti fanno acquisto/ripristino veri.
-(Con la chiave vuota resta "dormiente" e tutto è sbloccato gratis — lo stato della 1.2.)
+Appena c'è una chiave, **il paywall si attiva**: all'avvio, se non sei abbonato,
+Vyta mostra il paywall Superwall; quando l'abbonamento (o la prova) è attivo, l'app
+si sblocca. (Con la chiave vuota resta "dormiente" e tutto è gratis — lo stato della 1.2.)
 
 Poi:
 ```bash
@@ -114,24 +116,25 @@ npm run build && npx cap sync
 - **Business → Agreements, Tax, and Banking**: accetta il **Paid Apps Agreement** e
   compila dati **bancari** e **fiscali**. Senza questo gli abbonamenti **non funzionano**.
 
-### 4c) Crea gli abbonamenti
+### 4c) Crea l'abbonamento con prova gratuita di 7 giorni
 1. La tua app → **Monetization → Subscriptions** → crea un **Subscription Group**
-   (es. "Vyta Pro").
-2. Aggiungi due **auto-renewable subscriptions**:
-   - **Reference Name:** Vyta Pro Mensile — **Product ID:** `vyta.pro.monthly` — durata 1 mese
-   - **Reference Name:** Vyta Pro Annuale — **Product ID:** `vyta.pro.yearly` — durata 1 anno
-   (i Product ID devono combaciare con RevenueCat, punto 3.4)
-3. Per ciascuno imposta:
-   - **Prezzo** (scegli la fascia),
-   - **Localizzazione** (nome visualizzato + descrizione, almeno in italiano),
-   - **Review information**: una **screenshot** della pagina Pro dell'app,
-   - stato **"Ready to Submit"**.
+   (es. "Vyta").
+2. Aggiungi **un'auto-renewable subscription**:
+   - **Reference Name:** Vyta Mensile — **Product ID:** `vyta.monthly` — durata **1 mese**
+   - **Prezzo:** la fascia corrispondente a **€3,99**.
+   - **Localizzazione** (nome visualizzato + descrizione, almeno in italiano).
+   - **Review information**: una **screenshot** del paywall.
+3. **Introductory Offer → +**: tipo **Free trial**, durata **1 settimana (7 giorni)**,
+   per nuovi abbonati. *(Questa è la "settimana gratis" tracciata da Apple per Apple ID:
+   non si ripristina reinstallando.)*
+4. Stato **"Ready to Submit"**.
+5. Il **Product ID `vyta.monthly`** deve combaciare con quello collegato in Superwall (punto 3).
 
 ### 4d) Privacy policy + Termini (OBBLIGATORI per gli abbonamenti)
 - **App Information → Privacy Policy URL**: serve un URL pubblico.
 - I **Termini d'uso (EULA)**: puoi usare l'EULA standard di Apple o la tua.
-- L'app mostra già vicino al pulsante d'acquisto il testo legale e il pulsante
-  **Ripristina** (richiesti da Apple, vedi `pro.legal` + "Ripristina acquisti").
+- Sul **paywall Superwall** inserisci prezzo, durata, prova, **Ripristina** e i link a
+  **Termini** e **Privacy** (Apple li richiede vicino al pulsante d'acquisto).
 
 ---
 
@@ -163,14 +166,15 @@ npx cap open ios
 
 **Test Apple Health:** segui la checklist del punto 2 (su device reale).
 
-**Test acquisti in sandbox** (gli IAP su TestFlight usano l'ambiente sandbox):
+**Test paywall + prova/acquisto in sandbox** (gli IAP su TestFlight usano il sandbox):
 1. App Store Connect → **Users and Access → Sandbox → Testers**: crea un
    **Sandbox Apple ID** (email finta ma valida).
-2. Sull'iPhone: **Impostazioni → Sviluppatore / App Store** → accedi col Sandbox account
-   quando richiesto durante l'acquisto.
-3. Nell'app: **Altro → Vyta Pro** → scegli piano → **Diventa Pro** → completa l'acquisto
-   sandbox → deve comparire **"Abbonamento attivo"**.
-4. Prova **Ripristina acquisti** dopo aver reinstallato.
+2. Sull'iPhone: **Impostazioni → App Store → Sandbox Account** → accedi col tester.
+3. Avvia Vyta da TestFlight: all'ingresso deve comparire il **paywall Superwall**
+   con **"7 giorni gratis, poi €3,99/mese"** → avvia la **prova** → l'app si sblocca.
+4. **Verifica reinstallazione:** disinstalla e reinstalla con lo **stesso Sandbox Apple ID** →
+   il paywall **non** offre di nuovo la settimana gratis (deve far pagare) ✅.
+5. Prova **Ripristina** dal paywall.
 
 ---
 
@@ -180,7 +184,8 @@ npx cap open ios
 - [ ] Salute: Connetti → permessi → "Sincronizzato oggi" con passi/kcal.
 - [ ] Card **Passi** e anello **Movimento** popolati da Apple Health.
 - [ ] Import allenamenti → compaiono nello Storico (nessun duplicato a re-import).
-- [ ] Vyta Pro: prezzi live, acquisto sandbox, "Abbonamento attivo", ripristino.
+- [ ] Paywall all'ingresso: "7 giorni gratis, poi €3,99/mese", prova → sblocca.
+- [ ] Reinstallazione con stesso Apple ID → niente nuova prova gratis (paga).
 - [ ] Notifiche locali (promemoria) chiedono il permesso e funzionano.
 
 ---
@@ -192,40 +197,42 @@ npx cap open ios
 2. **App Privacy** (nutrition labels): dichiara
    - **Salute e fitness** (dati Health) — *non* collegati all'identità, *non* per tracking;
    - **Acquisti** (per gli abbonamenti).
-3. Allega gli **abbonamenti** alla versione (la prima volta vengono recensiti insieme all'app).
+3. Allega l'**abbonamento** alla versione (la prima volta viene recensito insieme all'app).
 4. **App Review Information → Notes:** spiega che
    - l'app legge Apple Health in **sola lettura** (allenamenti/passi/calorie) per
      mostrarli all'utente; nessun account necessario (app **offline**);
-   - **Vyta Pro** è un abbonamento auto-rinnovabile che sblocca funzioni; per testarlo
-     basta il sandbox.
+   - all'avvio c'è un **paywall** (Superwall) con **prova gratuita di 7 giorni** e poi
+     **€3,99/mese**; per testarlo basta il Sandbox Apple ID.
 5. **Submit for Review**.
 
 ---
 
-## 10) Errori di review comuni (e come li abbiamo già evitati)
-- **3.1.2 (abbonamenti):** vicino al pulsante d'acquisto servono prezzo, cosa include,
-  **link a Termini e Privacy** e **Ripristina acquisti** → già presenti (`pro.legal`,
-  pulsante Ripristina, lista feature, prezzi live).
+## 10) Errori di review comuni (e come evitarli)
+- **3.1.2 (abbonamenti):** sul **paywall Superwall** servono prezzo, durata, cosa include,
+  **Ripristina** e **link a Termini e Privacy** → configurali nel paywall sulla dashboard.
 - **5.1.3 (HealthKit):** i dati Salute non vanno usati per pubblicità/marketing e le
   usage-string devono essere chiare → già a posto (sola lettura, stringhe descrittive).
-- **2.1 (IAP non testabili):** assicurati che il sandbox funzioni prima dell'invio.
+- **2.1 (IAP non testabili):** assicurati che il paywall + sandbox funzionino prima dell'invio.
+- **3.1.1 (paywall che blocca tutto):** un hard paywall è ammesso, ma deve essere chiaro su
+  prova/prezzo; se Apple obietta, valuta di mostrare un assaggio prima del paywall.
 - **Privacy policy mancante:** obbligatoria con HealthKit + abbonamenti → metti l'URL.
 - **Banking/Tax non compilati:** gli IAP risultano "non disponibili" → completa il punto 4b.
 
 ---
 
-## 11) Dove si "accende" Vyta Pro (riepilogo flag) — [CODICE]
+## 11) Dove si "accende" il paywall (riepilogo flag) — [CODICE]
 File `src/premium/config.ts`:
-- `REVENUECAT_API_KEY.ios` **vuoto** → Pro **off** (tutto gratis, pagina Pro "presto").
-- `REVENUECAT_API_KEY.ios` **valorizzato** → Pro **on** (entitlement reale + prezzi live).
-- `PRO_ENTITLEMENT_ID = 'pro'` deve combaciare con l'entitlement RevenueCat.
-- `PRO_PACKAGE` (`ANNUAL`/`MONTHLY`) deve combaciare con i Package dell'offering.
+- `SUPERWALL_API_KEY.ios` **vuoto** → paywall **off** (tutto gratis — stato 1.2).
+- `SUPERWALL_API_KEY.ios` **valorizzato** → paywall **on**: all'avvio, se non abbonato,
+  parte la paywall Superwall; ad abbonamento/prova attivi l'app si sblocca.
+- `PAYWALL_PLACEMENT` deve combaciare col **placement** della campagna Superwall.
+- `TRIAL_DAYS` (7) e `PRICE_FALLBACK` (€3,99) sono solo per la schermata di fallback
+  in-app; il prezzo/prova "veri" stanno sul prodotto App Store Connect + sul paywall.
 
-**Importante:** oggi `can()` sblocca/blocca *globalmente* in base all'abbonamento, ma
-**nessuna schermata è ancora "chiusa" dietro Pro**. Quando deciderai *cosa* rendere Pro
-(es. Finanze, Obiettivi, Calendario, Statistiche), avvolgi quelle sezioni con un controllo
-`usePremium().can('finances')` e mostra la pagina Pro se non attivo. Finché non lo fai,
-l'abbonamento è acquistabile ma non limita nulla (scelta sicura per il primo rilascio).
+**Come funziona il gate:** `SubscriptionGate` (in `src/premium/SubscriptionGate.tsx`)
+avvolge tutta l'app: se `requiresSubscription` è vero presenta il paywall Superwall e
+mostra dietro una schermata "Inizia la prova". Ad abbonamento attivo passa i `children`
+(l'app intera). Quindi **tutta l'app** è dietro il paywall (modello a settimana gratis).
 
 ---
 

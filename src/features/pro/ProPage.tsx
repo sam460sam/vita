@@ -1,22 +1,15 @@
-import { useState } from 'react';
 import { Check, Sparkles, Wallet, Target, CalendarDays, BarChart3, Star } from 'lucide-react';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
-import { Card, Button, Segmented, useToast } from '@/ui';
+import { Card, Button, useToast } from '@/ui';
 import { useT } from '@/i18n';
 import { usePremium } from '@/premium/premium';
-import { PRO_PACKAGE } from '@/premium/config';
+import { TRIAL_DAYS, PRICE_FALLBACK } from '@/premium/config';
 
 export function ProPage() {
   const t = useT();
   const toast = useToast();
-  const { billingActive, packages, purchase, restore, isPremium } = usePremium();
-  const [plan, setPlan] = useState<'yearly' | 'monthly'>('yearly');
-  const [busy, setBusy] = useState(false);
-
-  const yearlyPkg = packages.find((p) => p.type === PRO_PACKAGE.yearly);
-  const monthlyPkg = packages.find((p) => p.type === PRO_PACKAGE.monthly);
-  const selectedPkg = plan === 'yearly' ? yearlyPkg : monthlyPkg;
+  const { billingActive, isPremium, presentPaywall } = usePremium();
 
   const features = [
     { icon: Wallet, key: 'pro.feature.finances' as const, color: 'var(--c-finance)' },
@@ -26,36 +19,18 @@ export function ProPage() {
     { icon: Star, key: 'pro.feature.future' as const, color: 'var(--c-journal)' },
   ];
 
-  async function onSubscribe() {
-    if (!billingActive || !selectedPkg) {
-      toast.show(t('pro.soon'));
-      return;
-    }
-    setBusy(true);
-    const ok = await purchase(selectedPkg);
-    setBusy(false);
-    toast.show(ok ? t('pro.purchased') : t('pro.purchaseError'));
-  }
-
-  async function onRestore() {
+  function onCta() {
     if (!billingActive) {
       toast.show(t('pro.soon'));
       return;
     }
-    setBusy(true);
-    const ok = await restore();
-    setBusy(false);
-    toast.show(ok ? t('pro.restored') : t('pro.noPurchases'));
+    void presentPaywall();
   }
-
-  // Price suffix on the CTA when live prices are available.
-  const ctaLabel = selectedPkg ? `${t('pro.cta')} · ${selectedPkg.priceString}` : t('pro.cta');
 
   return (
     <>
       <PageHeader title={t('pro.title')} back="/altro" />
       <Screen>
-        {/* Hero */}
         <div className="flex flex-col items-center text-center pt-2 pb-6">
           <span className="h-16 w-16 rounded-2xl bg-accent flex items-center justify-center text-on-accent mb-4 shadow-chip">
             <Sparkles size={30} />
@@ -69,7 +44,6 @@ export function ProPage() {
           )}
         </div>
 
-        {/* Features */}
         <Card className="mb-4">
           <div className="space-y-3.5">
             {features.map((f) => {
@@ -87,39 +61,21 @@ export function ProPage() {
           </div>
         </Card>
 
-        {/* Plan selector */}
-        <Segmented
-          className="w-full mb-3"
-          value={plan}
-          onChange={setPlan}
-          options={[
-            { value: 'yearly', label: yearlyPkg ? `${t('pro.yearly')} · ${yearlyPkg.priceString}` : t('pro.yearly') },
-            { value: 'monthly', label: monthlyPkg ? `${t('pro.monthly')} · ${monthlyPkg.priceString}` : t('pro.monthly') },
-          ]}
-        />
-        {plan === 'yearly' && (
-          <div className="text-center mb-3">
-            <span className="inline-flex items-center gap-1 text-[13px] font-semibold text-habit bg-habit/10 rounded-full px-3 h-7">
-              {t('pro.yearly.badge')}
-            </span>
-          </div>
+        {!(billingActive && isPremium) && (
+          <>
+            <div className="text-center mb-3">
+              <span className="text-[15px] font-bold text-ink">
+                {t('gate.headline', { days: TRIAL_DAYS, price: PRICE_FALLBACK })}
+              </span>
+            </div>
+            <Button block size="lg" onClick={onCta}>
+              {t('gate.cta')}
+            </Button>
+          </>
         )}
 
-        <Button block size="lg" disabled={busy} onClick={onSubscribe}>
-          {ctaLabel}
-        </Button>
-        <button onClick={onRestore} disabled={busy} className="w-full text-center text-[13px] text-ink-2 mt-3 py-2 disabled:opacity-50">
-          {t('pro.restore')}
-        </button>
-
-        {!billingActive && <p className="text-center text-[12px] text-ink-3 mt-2">{t('pro.soon')}</p>}
-
-        {/* Required by Apple: terms + privacy links near the purchase. */}
-        {billingActive && (
-          <p className="text-center text-[11px] text-ink-3 mt-3 leading-relaxed">
-            {t('pro.legal')}
-          </p>
-        )}
+        {!billingActive && <p className="text-center text-[12px] text-ink-3 mt-3">{t('pro.soon')}</p>}
+        {billingActive && <p className="text-center text-[11px] text-ink-3 mt-3 leading-relaxed">{t('pro.legal')}</p>}
       </Screen>
     </>
   );
