@@ -146,6 +146,38 @@ export const health = {
     }
   },
 
+  /** Steps per day for the last `days` days (oldest→newest); null if unavailable. */
+  async weeklySteps(days = 7): Promise<{ date: string; value: number }[] | null> {
+    if (!isNative || !readFlag()) return null;
+    try {
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+      start.setDate(start.getDate() - (days - 1));
+      const { aggregatedData } = await Health.queryAggregated({
+        startDate: start.toISOString(),
+        endDate: new Date().toISOString(),
+        dataType: 'steps',
+        bucket: 'day',
+      });
+      // Bucket into a complete, gap-free series so the chart always has `days` bars.
+      const byDay = new Map<string, number>();
+      for (const a of aggregatedData) {
+        const key = a.startDate.slice(0, 10);
+        byDay.set(key, (byDay.get(key) ?? 0) + (a.value || 0));
+      }
+      const out: { date: string; value: number }[] = [];
+      for (let i = 0; i < days; i++) {
+        const d = new Date(start);
+        d.setDate(start.getDate() + i);
+        const key = d.toISOString().slice(0, 10);
+        out.push({ date: key, value: Math.round(byDay.get(key) ?? 0) });
+      }
+      return out;
+    } catch {
+      return null;
+    }
+  },
+
   /** Today's active energy + steps from the health provider (null if unavailable). */
   async todaySummary(): Promise<HealthSummary | null> {
     if (!isNative || !readFlag()) return null;
@@ -200,4 +232,28 @@ export function useHealthSummary(): HealthSummary | null {
   }, []);
 
   return summary;
+}
+
+/** Last 7 days of steps as reactive state. `null` until loaded / when unavailable. */
+export function useWeeklySteps(): { date: string; value: number }[] | null {
+  const [steps, setSteps] = useState<{ date: string; value: number }[] | null>(null);
+
+  useEffect(() => {
+    if (!isNative) return;
+    let alive = true;
+    const load = () => {
+      void health.weeklySteps().then((s) => {
+        if (alive) setSteps(s);
+      });
+    };
+    load();
+    const onVisible = () => document.visibilityState === 'visible' && load();
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      alive = false;
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, []);
+
+  return steps;
 }

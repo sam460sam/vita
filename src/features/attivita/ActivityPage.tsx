@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Play, Plus, Trash2, Pencil, Scale, ChevronRight } from 'lucide-react';
+import { Play, Plus, Trash2, Pencil, Scale, ChevronRight, Footprints } from 'lucide-react';
 import { db } from '@/data/db';
 import { deleteWorkout, updateSettings } from '@/data/repo';
 import { readSettings } from '@/data/repo';
@@ -21,10 +21,10 @@ import {
   Input,
 } from '@/ui';
 import { formatDistance, formatDuration } from '@/lib/format';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { it } from 'date-fns/locale';
 import { todayRings, ringsToData, summarize, mergeHealthRings } from './logic';
-import { useHealthSummary } from '@/platform/health';
+import { useHealthSummary, useWeeklySteps } from '@/platform/health';
 import { getSport, type Sport } from './sports';
 import { SportPicker } from './SportPicker';
 import { WorkoutTracker } from './WorkoutTracker';
@@ -53,6 +53,7 @@ export function ActivityPage() {
 
   const s = settings ?? defaultSettings();
   const healthSummary = useHealthSummary();
+  const weekSteps = useWeeklySteps();
   const rings = mergeHealthRings(todayRings(workouts ?? [], s), healthSummary);
   const summary = summarize(workouts ?? [], period);
 
@@ -85,6 +86,9 @@ export function ActivityPage() {
             <RingStat label={t('activity.ring.stand')} value={rings.stand.value} goal={rings.stand.goal} unit={t('activity.unit.hours')} color="var(--c-project)" />
           </div>
         </Card>
+
+        {/* Steps (from Apple Health / Health Connect when connected) */}
+        {weekSteps && weekSteps.some((d) => d.value > 0) && <StepsCard data={weekSteps} />}
 
         {/* Weight tracker entry */}
         <Link to="/peso">
@@ -244,6 +248,34 @@ function RingStat({ label, value, goal, unit, color }: { label: string; value: n
       </div>
       <div className="text-[11px] text-ink-3">{unit}</div>
     </div>
+  );
+}
+
+function StepsCard({ data }: { data: { date: string; value: number }[] }) {
+  const t = useT();
+  const today = data[data.length - 1]?.value ?? 0;
+  return (
+    <Card className="mb-4">
+      <CardHeader
+        title={
+          <span className="inline-flex items-center gap-1.5">
+            <Footprints size={16} className="text-activity" /> {t('activity.steps')}
+          </span>
+        }
+      />
+      <div className="flex items-end justify-between mb-3">
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-3xl font-bold tnum text-ink leading-none">{today.toLocaleString()}</span>
+          <span className="text-[13px] text-ink-3 font-medium">{t('activity.steps.today')}</span>
+        </div>
+      </div>
+      <BarChart
+        data={data.map((d) => ({ label: format(parseISO(d.date), 'EEEEE', { locale: it }), value: d.value }))}
+        color="var(--c-activity)"
+        unit={t('activity.unit.steps')}
+        height={96}
+      />
+    </Card>
   );
 }
 
