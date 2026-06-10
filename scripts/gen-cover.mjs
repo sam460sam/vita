@@ -47,10 +47,26 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>
   </div>
 </div></body></html>`;
 
+import { writeFileSync } from 'node:fs';
+
+// Force a JFIF APP0 segment with 72 DPI (units=1, 72x72) — App Store Connect
+// requires 72 dpi, RGB, flattened. JPEG is inherently flattened (no alpha).
+function set72dpiJpeg(buf) {
+  if (buf[0] !== 0xff || buf[1] !== 0xd8) return buf;
+  if (buf[2] === 0xff && buf[3] === 0xe0 && buf.toString('latin1', 6, 10) === 'JFIF') {
+    buf[13] = 1; buf.writeUInt16BE(72, 14); buf.writeUInt16BE(72, 16);
+    return buf;
+  }
+  const app0 = Buffer.from([0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x01, 0x00, 0x48, 0x00, 0x48, 0x00, 0x00]);
+  return Buffer.concat([buf.subarray(0, 2), app0, buf.subarray(2)]);
+}
+
 const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
 const page = await browser.newPage();
 await page.setViewport({ width: 1024, height: 1024, deviceScaleFactor: 1 });
 await page.setContent(html, { waitUntil: 'networkidle0' });
 await page.screenshot({ path: resolve(OUT, 'vyta-cover-1024.png') });
+const jpg = await page.screenshot({ type: 'jpeg', quality: 95 });
+writeFileSync(resolve(OUT, 'vyta-cover-1024.jpg'), set72dpiJpeg(Buffer.from(jpg)));
 await browser.close();
-console.log('cover →', resolve(OUT, 'vyta-cover-1024.png'));
+console.log('cover →', resolve(OUT, 'vyta-cover-1024.jpg'));
