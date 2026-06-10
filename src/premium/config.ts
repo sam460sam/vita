@@ -21,7 +21,7 @@ export const REVENUECAT_API_KEY = {
 };
 
 /** Entitlement identifier configured in RevenueCat (grants full access). */
-export const SUBSCRIPTION_ENTITLEMENT_ID = 'pro';
+export const SUBSCRIPTION_ENTITLEMENT_ID = 'Vyta Pro';
 
 /** RevenueCat package type for the monthly plan (with the 7-day trial). */
 export const MONTHLY_PACKAGE_TYPE = 'MONTHLY';
