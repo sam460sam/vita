@@ -4,12 +4,12 @@ import { Screen } from '@/app/Screen';
 import { Card, Button, useToast } from '@/ui';
 import { useT } from '@/i18n';
 import { usePremium } from '@/premium/premium';
-import { TRIAL_DAYS, PRICE_FALLBACK } from '@/premium/config';
+import { PRICE_FALLBACK } from '@/premium/config';
 
 export function ProPage() {
   const t = useT();
   const toast = useToast();
-  const { billingActive, isPremium, presentPaywall } = usePremium();
+  const { billingActive, isPremium, inTrial, trialDaysLeft, presentPaywall } = usePremium();
 
   const features = [
     { icon: Wallet, key: 'pro.feature.finances' as const, color: 'var(--c-finance)' },
@@ -37,9 +37,14 @@ export function ProPage() {
           </span>
           <h1 className="text-2xl font-bold text-ink">{t('pro.title')}</h1>
           <p className="text-[15px] text-ink-2 mt-1 max-w-xs">{t('pro.subtitle')}</p>
-          {billingActive && isPremium && (
+          {billingActive && isPremium && !inTrial && (
             <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-semibold text-habit bg-habit/10 rounded-full px-3 h-7">
               <Check size={14} /> {t('pro.active')}
+            </span>
+          )}
+          {billingActive && inTrial && (
+            <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-semibold text-accent bg-accent/10 rounded-full px-3 h-7">
+              {t('pro.trialLeft', { n: trialDaysLeft })}
             </span>
           )}
         </div>
@@ -65,7 +70,7 @@ export function ProPage() {
           <>
             <div className="text-center mb-3">
               <span className="text-[15px] font-bold text-ink">
-                {t('gate.headline', { days: TRIAL_DAYS, price: PRICE_FALLBACK })}
+                {t('gate.headline', { price: PRICE_FALLBACK })}
               </span>
             </div>
             <Button block size="lg" onClick={onCta}>

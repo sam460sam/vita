@@ -2,7 +2,7 @@
 
 Guida passo-passo, dall'inizio alla fine, per:
 1. attivare e testare **Apple Health** dentro l'app,
-2. attivare l'**abbonamento** (paywall **Superwall**: 7 giorni gratis, poi €3,99/mese),
+2. attivare l'**abbonamento** (una **settimana di uso gratis**, poi **€2,99/mese** — paywall Superwall),
 3. configurare **App Store Connect**,
 4. compilare, testare su **TestFlight** e **pubblicare**.
 
@@ -67,26 +67,25 @@ e tutta la logica in `src/platform/health.ts`.
 
 ---
 
-## 3) Superwall — paywall e abbonamento (settimana gratis → €3,99/mese)
-Il paywall (grafica + testo "7 giorni gratis, poi €3,99/mese") si disegna **da
-remoto** sulla dashboard di Superwall: puoi cambiarlo senza ripubblicare l'app.
-Superwall gestisce anche l'acquisto (StoreKit) e lo "ripristina".
+## 3) Superwall — paywall dopo la settimana gratis (→ €2,99/mese)
+**Modello:** l'app è **gratis per i primi 7 giorni di utilizzo** (conteggio locale,
+in `src/premium/trial.ts`). Allo scadere, se l'utente non è abbonato, parte il
+**paywall Superwall** ("Continua con Vyta — €2,99/mese"). Il paywall si disegna **da
+remoto** sulla dashboard di Superwall e gestisce acquisto + "ripristina".
 
-**Importante (reinstallazione = paga comunque):** la settimana gratis è la **prova
-gratuita introduttiva** del prodotto su App Store Connect (punto 4c). Apple traccia
-l'idoneità alla prova **per Apple ID**, quindi chi l'ha già usata **non la riottiene**
-disinstallando/reinstallando o disdicendo.
+> ⚠️ **Reinstallazione:** la settimana gratis è **locale**, quindi disinstallando e
+> reinstallando **riparte**. Se vuoi che "reinstalla = paga comunque", la settimana
+> va trasformata in una **prova introduttiva StoreKit** (Apple la traccia per Apple
+> ID): vedi la variante in fondo a questa sezione.
 
 Passi:
 1. Crea un account su https://superwall.com e un'app (bundle id `app.vita.lifeos`).
 2. **Settings → Keys**: copia la **Public API Key** iOS (inizia con `pk_`).
-3. Collega il prodotto: in Superwall colleghi il prodotto/abbonamento di App Store
-   Connect (`vyta.monthly`, vedi punto 4c) e disegni il **paywall** (titolo, "7 giorni
-   gratis", prezzo, pulsanti **Abbonati** e **Ripristina**, link **Termini** e **Privacy**
+3. Collega il prodotto `vyta.monthly` (€2,99/mese, punto 4c) e disegna il **paywall**
+   (titolo, prezzo, pulsanti **Abbonati** e **Ripristina**, link **Termini** e **Privacy**
    — richiesti da Apple).
-4. **Campaigns → New**: crea una campagna con **Placement** = `campaign_trigger`
-   (lo stesso di `PAYWALL_PLACEMENT` in `src/premium/config.ts`) e **Feature gating =
-   Gated**, così il paywall blocca l'accesso finché non c'è l'abbonamento/prova.
+4. **Campaigns → New**: campagna con **Placement** = `campaign_trigger`
+   (= `PAYWALL_PLACEMENT` in `src/premium/config.ts`) e **Feature gating = Gated**.
 
 **[CODICE]** Incolla la chiave in `src/premium/config.ts`:
 ```ts
@@ -94,16 +93,22 @@ export const SUPERWALL_API_KEY = {
   ios: 'pk_LA_TUA_CHIAVE',   // ← qui
   android: '',
 };
-export const PAYWALL_PLACEMENT = 'campaign_trigger'; // = nome placement su Superwall
+export const PAYWALL_PLACEMENT = 'campaign_trigger'; // = placement su Superwall
+export const TRIAL_DAYS = 7;        // settimana gratis (locale)
+export const PRICE_FALLBACK = '€2,99';
 ```
-Appena c'è una chiave, **il paywall si attiva**: all'avvio, se non sei abbonato,
-Vyta mostra il paywall Superwall; quando l'abbonamento (o la prova) è attivo, l'app
-si sblocca. (Con la chiave vuota resta "dormiente" e tutto è gratis — lo stato della 1.2.)
+Con la chiave vuota resta "dormiente": **niente paywall, tutto gratis** (lo stato 1.2).
 
 Poi:
 ```bash
 npm run build && npx cap sync
 ```
+
+**Variante reinstall-proof (opzionale):** invece della settimana locale, configura su
+App Store Connect un **Introductory Offer = Free trial 7 giorni** sul prodotto
+`vyta.monthly` e fai partire il paywall **all'avvio** (gating dall'inizio). Apple
+traccia la prova per Apple ID → reinstallare non la riassegna. Dimmelo e cambio il
+codice (il gate diventa "presenta sempre se non abbonato").
 
 ---
 
@@ -116,19 +121,19 @@ npm run build && npx cap sync
 - **Business → Agreements, Tax, and Banking**: accetta il **Paid Apps Agreement** e
   compila dati **bancari** e **fiscali**. Senza questo gli abbonamenti **non funzionano**.
 
-### 4c) Crea l'abbonamento con prova gratuita di 7 giorni
+### 4c) Crea l'abbonamento €2,99/mese
 1. La tua app → **Monetization → Subscriptions** → crea un **Subscription Group**
    (es. "Vyta").
 2. Aggiungi **un'auto-renewable subscription**:
    - **Reference Name:** Vyta Mensile — **Product ID:** `vyta.monthly` — durata **1 mese**
-   - **Prezzo:** la fascia corrispondente a **€3,99**.
+   - **Prezzo:** la fascia corrispondente a **€2,99**.
    - **Localizzazione** (nome visualizzato + descrizione, almeno in italiano).
    - **Review information**: una **screenshot** del paywall.
-3. **Introductory Offer → +**: tipo **Free trial**, durata **1 settimana (7 giorni)**,
-   per nuovi abbonati. *(Questa è la "settimana gratis" tracciata da Apple per Apple ID:
-   non si ripristina reinstallando.)*
-4. Stato **"Ready to Submit"**.
-5. Il **Product ID `vyta.monthly`** deve combaciare con quello collegato in Superwall (punto 3).
+3. Stato **"Ready to Submit"**.
+4. Il **Product ID `vyta.monthly`** deve combaciare con quello collegato in Superwall (punto 3).
+
+> La "settimana gratis" è gestita **nell'app** (conteggio locale), quindi qui **non**
+> serve un introductory offer. Aggiungilo solo se scegli la variante reinstall-proof (punto 3).
 
 ### 4d) Privacy policy + Termini (OBBLIGATORI per gli abbonamenti)
 - **App Information → Privacy Policy URL**: serve un URL pubblico.
@@ -166,14 +171,15 @@ npx cap open ios
 
 **Test Apple Health:** segui la checklist del punto 2 (su device reale).
 
-**Test paywall + prova/acquisto in sandbox** (gli IAP su TestFlight usano il sandbox):
+**Test settimana gratis + acquisto in sandbox** (gli IAP su TestFlight usano il sandbox):
 1. App Store Connect → **Users and Access → Sandbox → Testers**: crea un
    **Sandbox Apple ID** (email finta ma valida).
 2. Sull'iPhone: **Impostazioni → App Store → Sandbox Account** → accedi col tester.
-3. Avvia Vyta da TestFlight: all'ingresso deve comparire il **paywall Superwall**
-   con **"7 giorni gratis, poi €3,99/mese"** → avvia la **prova** → l'app si sblocca.
-4. **Verifica reinstallazione:** disinstalla e reinstalla con lo **stesso Sandbox Apple ID** →
-   il paywall **non** offre di nuovo la settimana gratis (deve far pagare) ✅.
+3. Per i primi 7 giorni l'app è **libera** (nessun paywall).
+4. **Per provare subito il paywall** senza aspettare una settimana: imposta
+   temporaneamente `TRIAL_DAYS = 0` in `src/premium/config.ts` (oppure cancella la chiave
+   `vita.trialStart` dallo storage) → al riavvio parte il **paywall Superwall** a **€2,99/mese**
+   → completa l'acquisto sandbox → l'app si sblocca. Riporta poi `TRIAL_DAYS = 7`.
 5. Prova **Ripristina** dal paywall.
 
 ---
@@ -184,8 +190,8 @@ npx cap open ios
 - [ ] Salute: Connetti → permessi → "Sincronizzato oggi" con passi/kcal.
 - [ ] Card **Passi** e anello **Movimento** popolati da Apple Health.
 - [ ] Import allenamenti → compaiono nello Storico (nessun duplicato a re-import).
-- [ ] Paywall all'ingresso: "7 giorni gratis, poi €3,99/mese", prova → sblocca.
-- [ ] Reinstallazione con stesso Apple ID → niente nuova prova gratis (paga).
+- [ ] Primi 7 giorni: app libera, nessun paywall. Badge "giorni di prova" in Vyta Pro.
+- [ ] Scaduta la settimana (o con `TRIAL_DAYS=0`): paywall "€2,99/mese" → acquisto → sblocca.
 - [ ] Notifiche locali (promemoria) chiedono il permesso e funzionano.
 
 ---
@@ -201,8 +207,8 @@ npx cap open ios
 4. **App Review Information → Notes:** spiega che
    - l'app legge Apple Health in **sola lettura** (allenamenti/passi/calorie) per
      mostrarli all'utente; nessun account necessario (app **offline**);
-   - all'avvio c'è un **paywall** (Superwall) con **prova gratuita di 7 giorni** e poi
-     **€3,99/mese**; per testarlo basta il Sandbox Apple ID.
+   - l'app è **gratis per i primi 7 giorni di utilizzo**, poi un **paywall** (Superwall)
+     a **€2,99/mese**; per testarlo basta il Sandbox Apple ID.
 5. **Submit for Review**.
 
 ---
@@ -223,16 +229,18 @@ npx cap open ios
 ## 11) Dove si "accende" il paywall (riepilogo flag) — [CODICE]
 File `src/premium/config.ts`:
 - `SUPERWALL_API_KEY.ios` **vuoto** → paywall **off** (tutto gratis — stato 1.2).
-- `SUPERWALL_API_KEY.ios` **valorizzato** → paywall **on**: all'avvio, se non abbonato,
-  parte la paywall Superwall; ad abbonamento/prova attivi l'app si sblocca.
+- `SUPERWALL_API_KEY.ios` **valorizzato** → paywall **on**: i primi `TRIAL_DAYS` giorni
+  l'app è libera; poi, se non abbonato, parte il paywall Superwall.
 - `PAYWALL_PLACEMENT` deve combaciare col **placement** della campagna Superwall.
-- `TRIAL_DAYS` (7) e `PRICE_FALLBACK` (€3,99) sono solo per la schermata di fallback
-  in-app; il prezzo/prova "veri" stanno sul prodotto App Store Connect + sul paywall.
+- `TRIAL_DAYS` (7) = durata della settimana gratis (conteggio locale).
+- `PRICE_FALLBACK` (€2,99) è solo per le scritte in-app; il prezzo "vero" sta sul
+  prodotto App Store Connect + sul paywall Superwall.
 
 **Come funziona il gate:** `SubscriptionGate` (in `src/premium/SubscriptionGate.tsx`)
-avvolge tutta l'app: se `requiresSubscription` è vero presenta il paywall Superwall e
-mostra dietro una schermata "Inizia la prova". Ad abbonamento attivo passa i `children`
-(l'app intera). Quindi **tutta l'app** è dietro il paywall (modello a settimana gratis).
+avvolge tutta l'app. Durante la settimana gratis (o con abbonamento attivo) passa i
+`children` (app intera). Quando la settimana è finita e non c'è abbonamento
+(`requiresSubscription`), presenta il paywall Superwall con dietro la schermata
+"La tua settimana di prova è finita".
 
 ---
 
