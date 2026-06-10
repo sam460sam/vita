@@ -54,6 +54,7 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
   const [premium, setPremiumState] = useState<boolean>(loadPremium);
   const [subActive, setSubActive] = useState<boolean>(false);
   const [packages, setPackages] = useState<ProPackage[]>([]);
+  const [billingReady, setBillingReady] = useState<boolean>(false);
 
   const setPremium = useCallback((v: boolean) => {
     setPremiumState(v);
@@ -72,6 +73,7 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
       if (!mounted) return;
       setSubActive(active);
       setPackages(pkgs);
+      setBillingReady(true);
     })();
     void onProChange((active) => mounted && setSubActive(active));
     return () => {
@@ -80,7 +82,10 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
   }, [billingActive]);
 
   const isPremium = billingActive ? subActive : UNLOCK_ALL_FOR_NOW || premium;
-  const requiresSubscription = billingActive && !subActive;
+  // Hard paywall ONLY when there's a purchasable package. If the store can't
+  // serve the product (agreement still pending, offline, etc.) we fail OPEN so
+  // the user is never trapped on a paywall with no working purchase button.
+  const requiresSubscription = billingActive && billingReady && !subActive && packages.length > 0;
 
   const purchase = useCallback(async (pkg: ProPackage) => {
     const ok = await billingPurchase(pkg);
