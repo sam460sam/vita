@@ -106,22 +106,21 @@ html.dark {
 
 /* Lock the document; #root is the single scroll container. This kills the iOS
    rubber-band "bounce" that made fixed/centered pages jitter up and down. */
-html,
-body {
+/* Bulletproof lock: the <body> itself is fixed to the viewport and cannot move;
+   #root is the ONLY scroll container. Kills every iOS rubber-band / jitter so
+   fixed/centered pages (paywall, home) stay perfectly still. */
+html {
   height: 100%;
   overflow: hidden;
-  overscroll-behavior: none;
-}
-
-#root {
-  height: 100%;
-  overflow-y: auto;
-  overscroll-behavior-y: none;
-  -webkit-overflow-scrolling: touch;
 }
 
 body {
   margin: 0;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: pan-y;
   background: var(--c-app);
   color: var(--c-ink);
   /* Rounded / geometric sans (SF Rounded on Apple, falls back to system) */
@@ -129,6 +128,14 @@ body {
     system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+#root {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Tabular numbers everywhere metrics live */
