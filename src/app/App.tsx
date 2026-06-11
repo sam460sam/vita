@@ -24,6 +24,7 @@ import { RequireModule } from '@/features/personalizzazione/RequireModule';
 
 // Secondary modules — lazy (loaded on demand, keeps initial bundle slim).
 const JournalPage = lazy(() => import('@/features/diario').then((m) => ({ default: m.JournalPage })));
+const NotesPage = lazy(() => import('@/features/note').then((m) => ({ default: m.NotesPage })));
 const GoalsPage = lazy(() => import('@/features/obiettivi').then((m) => ({ default: m.GoalsPage })));
 const FinancesPage = lazy(() => import('@/features/finanze').then((m) => ({ default: m.FinancesPage })));
 const CalendarPage = lazy(() => import('@/features/calendario').then((m) => ({ default: m.CalendarPage })));
@@ -65,6 +66,7 @@ export function App() {
                       <Route path="/progetti/:id" element={<RequireModule id="progetti"><ProjectDetailPage /></RequireModule>} />
                       <Route path="/abitudini" element={<RequireModule id="abitudini"><HabitsPage /></RequireModule>} />
                       <Route path="/diario" element={<RequireModule id="diario"><JournalPage /></RequireModule>} />
+                      <Route path="/note" element={<RequireModule id="note"><NotesPage /></RequireModule>} />
                       <Route path="/obiettivi" element={<RequireModule id="obiettivi"><GoalsPage /></RequireModule>} />
                       <Route path="/finanze" element={<RequireModule id="finanze"><FinancesPage /></RequireModule>} />
                       <Route path="/calendario" element={<RequireModule id="calendario"><CalendarPage /></RequireModule>} />

@@ -22,6 +22,7 @@ export default {
         project: 'var(--c-project)',
         journal: 'var(--c-journal)',
         finance: 'var(--c-finance)',
+        note: 'var(--c-note)',
         // Module card tints (desaturated wash for card backgrounds)
         'activity-tint': 'var(--c-activity-tint)',
         'habit-tint': 'var(--c-habit-tint)',
@@ -29,6 +30,7 @@ export default {
         'journal-tint': 'var(--c-journal-tint)',
         'finance-tint': 'var(--c-finance-tint)',
         'calendar-tint': 'var(--c-calendar-tint)',
+        'note-tint': 'var(--c-note-tint)',
         // Module icon chips (slightly more saturated than the tint)
         'activity-chip': 'var(--c-activity-chip)',
         'habit-chip': 'var(--c-habit-chip)',
@@ -36,6 +38,7 @@ export default {
         'journal-chip': 'var(--c-journal-chip)',
         'finance-chip': 'var(--c-finance-chip)',
         'calendar-chip': 'var(--c-calendar-chip)',
+        'note-chip': 'var(--c-note-chip)',
         // States
         success: 'var(--c-success)',
         warning: 'var(--c-warning)',

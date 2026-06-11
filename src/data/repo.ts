@@ -12,6 +12,8 @@ import type {
   HomeLayout,
   JournalEntry,
   ModuleId,
+  Note,
+  NoteChecklistItem,
   Project,
   Settings,
   Subtask,
@@ -41,10 +43,27 @@ export async function readSettings(): Promise<Settings> {
   return (await db.settings.get('app')) ?? defaultSettings();
 }
 
+/** New modules introduced after launch that should auto-enable for existing
+ *  users (so they appear without the user re-onboarding). */
+const AUTO_ENABLE_MODULES: ModuleId[] = ['note'];
+
 /** Ensure singleton rows exist. Call once at app startup (outside liveQuery). */
 export async function ensureSeedRows(): Promise<void> {
   if (!(await db.settings.get('app'))) await db.settings.put(defaultSettings());
   if (!(await db.budgets.get('monthly'))) await db.budgets.put({ id: 'monthly', monthlyLimit: 0, updatedAt: now() });
+
+  // Migration: surface newly-shipped modules for users who already onboarded
+  // (their saved enabledModules predates the module, so it would stay hidden).
+  const s = await db.settings.get('app');
+  if (s?.enabledModules && AUTO_ENABLE_MODULES.some((m) => !s.enabledModules!.includes(m))) {
+    const missing = AUTO_ENABLE_MODULES.filter((m) => !s.enabledModules!.includes(m));
+    await db.settings.put({
+      ...s,
+      enabledModules: [...s.enabledModules, ...missing],
+      moduleOrder: [...(s.moduleOrder ?? s.enabledModules), ...missing],
+      updatedAt: now(),
+    });
+  }
 }
 
 export async function updateSettings(patch: Partial<Settings>): Promise<void> {
@@ -281,6 +300,45 @@ export async function deleteJournalEntry(id: string) {
 }
 
 // ---------------------------------------------------------------------------
+// Notes
+// ---------------------------------------------------------------------------
+export async function createNote(data: Partial<Note> = {}) {
+  const t = now();
+  const note: Note = {
+    id: uid('not_'),
+    title: data.title ?? '',
+    body: data.body ?? '',
+    checklist: data.checklist ?? [],
+    color: data.color ?? '#e0992f',
+    pinned: data.pinned ?? false,
+    createdAt: t,
+    updatedAt: t,
+  };
+  await db.notes.put(note);
+  return note;
+}
+
+export async function updateNote(id: string, patch: Partial<Note>) {
+  const n = await db.notes.get(id);
+  if (!n) return;
+  await db.notes.put({ ...n, ...patch, updatedAt: now() });
+}
+
+export async function deleteNote(id: string) {
+  await db.notes.delete(id);
+}
+
+export async function toggleNotePin(id: string) {
+  const n = await db.notes.get(id);
+  if (!n) return;
+  await db.notes.put({ ...n, pinned: !n.pinned, updatedAt: now() });
+}
+
+export function newChecklistItem(text = ''): NoteChecklistItem {
+  return { id: uid('chk_'), text, done: false };
+}
+
+// ---------------------------------------------------------------------------
 // Goals
 // ---------------------------------------------------------------------------
 export async function createGoal(data: Partial<Goal> & { title: string }) {
@@ -402,7 +460,7 @@ export async function deleteWeightLog(id: string) {
 // Backup — export / import full state (BUILD-SPEC §5)
 // ---------------------------------------------------------------------------
 export async function exportBackup(): Promise<VitaBackup> {
-  const [settings, projects, tasks, habits, habitLogs, workouts, journalEntries, goals, transactions, budgets, waterLogs, weightLogs] =
+  const [settings, projects, tasks, habits, habitLogs, workouts, journalEntries, goals, transactions, budgets, waterLogs, weightLogs, notes] =
     await Promise.all([
       db.settings.get('app'),
       db.projects.toArray(),
@@ -416,6 +474,7 @@ export async function exportBackup(): Promise<VitaBackup> {
       db.budgets.toArray(),
       db.waterLogs.toArray(),
       db.weightLogs.toArray(),
+      db.notes.toArray(),
     ]);
   return {
     schema: 'vita',
@@ -433,6 +492,7 @@ export async function exportBackup(): Promise<VitaBackup> {
     budgets,
     waterLogs,
     weightLogs,
+    notes,
   };
 }
 
@@ -440,7 +500,7 @@ export async function importBackup(backup: VitaBackup, mode: 'replace' | 'merge'
   if (backup.schema !== 'vita') throw new Error('File di backup non valido.');
   await db.transaction(
     'rw',
-    [db.settings, db.projects, db.tasks, db.habits, db.habitLogs, db.workouts, db.journalEntries, db.goals, db.transactions, db.budgets, db.waterLogs, db.weightLogs],
+    [db.settings, db.projects, db.tasks, db.habits, db.habitLogs, db.workouts, db.journalEntries, db.goals, db.transactions, db.budgets, db.waterLogs, db.weightLogs, db.notes],
     async () => {
       if (mode === 'replace') {
         await Promise.all([
@@ -456,6 +516,7 @@ export async function importBackup(backup: VitaBackup, mode: 'replace' | 'merge'
           db.budgets.clear(),
           db.waterLogs.clear(),
           db.weightLogs.clear(),
+          db.notes.clear(),
         ]);
       }
       if (backup.settings) await db.settings.put(backup.settings);
@@ -470,6 +531,7 @@ export async function importBackup(backup: VitaBackup, mode: 'replace' | 'merge'
       await db.budgets.bulkPut(backup.budgets ?? []);
       await db.waterLogs.bulkPut(backup.waterLogs ?? []);
       await db.weightLogs.bulkPut(backup.weightLogs ?? []);
+      await db.notes.bulkPut(backup.notes ?? []);
     },
   );
 }
@@ -488,5 +550,6 @@ export async function clearAllData() {
     db.budgets.clear(),
     db.waterLogs.clear(),
     db.weightLogs.clear(),
+    db.notes.clear(),
   ]);
 }

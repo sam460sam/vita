@@ -25,17 +25,21 @@ export type ModuleId =
   | 'abitudini'
   | 'finanze'
   | 'diario'
+  | 'note'
   | 'obiettivi'
   | 'calendario';
 
-/** All known modules in canonical order — single source of truth. */
+/** All known modules in canonical order — single source of truth.
+ *  Core four (abitudini · attivita · diario · note) lead so they fill the
+ *  bottom tab bar; secondary modules follow. */
 export const ALL_MODULES: ModuleId[] = [
   'abitudini',
   'attivita',
+  'diario',
+  'note',
   'peso',
   'progetti',
   'obiettivi',
-  'diario',
   'finanze',
   'calendario',
 ];
@@ -246,6 +250,25 @@ export interface JournalEntry extends Timestamped {
 }
 
 // ----------------------------------------------------------------------------
+// Notes (native note-taking with optional checklist)
+// ----------------------------------------------------------------------------
+/** A single tickable line inside a note's checklist. */
+export interface NoteChecklistItem {
+  id: ID;
+  text: string;
+  done: boolean;
+}
+
+export interface Note extends Timestamped {
+  title: string;
+  body: string;
+  checklist: NoteChecklistItem[];
+  /** Accent color key (one of the warm note palette swatches), hex string. */
+  color: string;
+  pinned: boolean;
+}
+
+// ----------------------------------------------------------------------------
 // Goals
 // ----------------------------------------------------------------------------
 export type GoalLinkType = 'none' | 'project' | 'habit' | 'milestones';
@@ -310,4 +333,5 @@ export interface VitaBackup {
   budgets: Budget[];
   waterLogs?: WaterLog[];
   weightLogs?: WeightLog[];
+  notes?: Note[];
 }

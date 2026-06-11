@@ -21,6 +21,7 @@
   --c-project: #4f46e5;
   --c-journal: #f59e0b;
   --c-finance: #7c3aed;
+  --c-note: #e0992f; /* honey gold */
   /* Module card TINTS — very desaturated wash for the card background */
   --c-activity-tint: #fbe8ec; /* rose */
   --c-habit-tint: #e5f4dd; /* mint */
@@ -28,6 +29,7 @@
   --c-journal-tint: #fbead6; /* peach */
   --c-finance-tint: #f0e9fb; /* lavender */
   --c-calendar-tint: #eef0f6; /* slate-tint */
+  --c-note-tint: #fdf2d4; /* warm cream */
   /* Module CHIPS — a touch more saturated than the tint, for the icon container */
   --c-activity-chip: #ff8a7a;
   --c-habit-chip: #5bc98c;
@@ -35,6 +37,7 @@
   --c-journal-chip: #f5b454;
   --c-finance-chip: #a98ce6;
   --c-calendar-chip: #9fa8c9;
+  --c-note-chip: #ecc35a;
   /* States */
   --c-success: #34c759;
   --c-warning: #ff8a3d;
@@ -70,6 +73,7 @@ html.dark {
   --c-project: #7c74ff;
   --c-journal: #fbbf24;
   --c-finance: #a78bfa;
+  --c-note: #f5c265;
   /* Module card tints — muted, darkened washes of each hue */
   --c-activity-tint: #2e1f22;
   --c-habit-tint: #18271c;
@@ -77,6 +81,7 @@ html.dark {
   --c-journal-tint: #2c2417;
   --c-finance-tint: #241f30;
   --c-calendar-tint: #1f2230;
+  --c-note-tint: #2b2514;
   /* Module chips — vivid on dark */
   --c-activity-chip: #ff7a68;
   --c-habit-chip: #1fd093;
@@ -84,6 +89,7 @@ html.dark {
   --c-journal-chip: #fbbf24;
   --c-finance-chip: #a78bfa;
   --c-calendar-chip: #9fa8c9;
+  --c-note-chip: #f5c265;
   /* States */
   --c-success: #34d97a;
   --c-warning: #ff9d57;

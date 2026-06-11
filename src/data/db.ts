@@ -12,6 +12,7 @@ import type {
   HabitLog,
   HomeLayout,
   JournalEntry,
+  Note,
   Project,
   Settings,
   Task,
@@ -35,6 +36,7 @@ export class VitaDB extends Dexie {
   waterLogs!: Table<WaterLog, string>;
   weightLogs!: Table<WeightLog, string>;
   homeLayout!: Table<HomeLayout, string>;
+  notes!: Table<Note, string>;
 
   constructor() {
     super('vita');
@@ -62,6 +64,10 @@ export class VitaDB extends Dexie {
     // Additive only; all existing tables and data are preserved.
     this.version(4).stores({
       homeLayout: 'id',
+    });
+    // v5: native notes (with optional checklist). Additive only.
+    this.version(5).stores({
+      notes: 'id, pinned, updatedAt',
     });
   }
 }
