@@ -9,7 +9,10 @@ const config: CapacitorConfig = {
   // Light theme to match the app's white design system.
   backgroundColor: '#ffffff',
   ios: {
-    contentInset: 'always',
+    // Full-screen: let the WebView extend behind the status bar / home indicator.
+    // Safe areas are handled in CSS (pt-safe-top / pb-safe-bottom), so there are
+    // no white native inset bars at the top/bottom.
+    contentInset: 'never',
     backgroundColor: '#ffffff',
   },
   android: {
