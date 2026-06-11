@@ -25,13 +25,12 @@ export const SUBSCRIPTION_ENTITLEMENT_ID = 'Vyta Pro';
 
 /**
  * Hard paywall switch.
- *  • false → the app opens freely; the subscription is offered (and testable)
- *    from the "Vyta Pro" page, but never blocks the app. Safe for launch +
- *    while the subscription product is still propagating/under review.
- *  • true  → the paywall gates the whole app at entry (7-day trial → €2,99/mo).
- * Flip to true once a real purchase has been confirmed working on a device.
+ *  • true  → after the free trial week the app is gated (must subscribe to keep
+ *    using). NO paywall at first launch — the user is free for TRIAL_DAYS days,
+ *    then the paywall appears.
+ *  • false → the app never gates; the subscription is only offered on the Pro page.
  */
-export const HARD_PAYWALL = false;
+export const HARD_PAYWALL = true;
 
 /** RevenueCat package type for the monthly plan (with the 7-day trial). */
 export const MONTHLY_PACKAGE_TYPE = 'MONTHLY';

@@ -18,6 +18,7 @@ import {
   type ProPackage,
 } from './billing';
 import { HARD_PAYWALL } from './config';
+import { ensureTrialStarted, isTrialActive, trialDaysLeft } from './trial';
 
 export type PremiumFeature = 'finances' | 'goals' | 'calendar' | 'stats';
 
@@ -29,8 +30,12 @@ const STORAGE_KEY = 'vita.premium';
 interface PremiumCtx {
   isPremium: boolean;
   can: (feature: PremiumFeature) => boolean;
-  /** True when the app must show the paywall (billing on + not subscribed). */
+  /** True when the app must show the paywall (free week over + not subscribed). */
   requiresSubscription: boolean;
+  /** True while the free week is still running (app usable, no paywall). */
+  inTrial: boolean;
+  /** Days left in the free week (0 once expired). */
+  trialDaysLeft: number;
   /** True when RevenueCat is wired in this build. */
   billingActive: boolean;
   /** Available subscription packages (empty until billing is configured). */
@@ -69,6 +74,7 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!billingActive) return;
     let mounted = true;
+    ensureTrialStarted(); // start the free-week clock at first launch
     (async () => {
       const [active, pkgs] = await Promise.all([isProActive(), getProPackages()]);
       if (!mounted) return;
@@ -82,12 +88,14 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     };
   }, [billingActive]);
 
-  const isPremium = billingActive ? subActive : UNLOCK_ALL_FOR_NOW || premium;
-  // Gate the app only when the hard paywall is ON, billing is ready, the user
-  // isn't subscribed, AND there's a purchasable package. Any of these false →
-  // the app opens freely (never trap the user).
+  const inTrial = billingActive && isTrialActive();
+  const daysLeft = billingActive ? trialDaysLeft() : 0;
+  // Full access during the free week OR with an active subscription.
+  const isPremium = billingActive ? subActive || inTrial : UNLOCK_ALL_FOR_NOW || premium;
+  // NO paywall at launch: gate only AFTER the free week, if not subscribed and a
+  // purchasable package exists (fail open otherwise so the user is never trapped).
   const requiresSubscription =
-    HARD_PAYWALL && billingActive && billingReady && !subActive && packages.length > 0;
+    HARD_PAYWALL && billingActive && billingReady && !subActive && !inTrial && packages.length > 0;
 
   const purchase = useCallback(async (pkg: ProPackage) => {
     const ok = await billingPurchase(pkg);
@@ -106,13 +114,15 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
       isPremium,
       can: () => isPremium,
       requiresSubscription,
+      inTrial,
+      trialDaysLeft: daysLeft,
       billingActive,
       packages,
       purchase,
       restore,
       setPremium,
     }),
-    [isPremium, requiresSubscription, billingActive, packages, purchase, restore, setPremium],
+    [isPremium, requiresSubscription, inTrial, daysLeft, billingActive, packages, purchase, restore, setPremium],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

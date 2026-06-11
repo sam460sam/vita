@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { Button, StarMascot, useToast } from '@/ui';
 import { useT } from '@/i18n';
 import { usePremium } from './premium';
-import { MONTHLY_PACKAGE_TYPE, TRIAL_DAYS, PRICE_FALLBACK } from './config';
+import { MONTHLY_PACKAGE_TYPE, PRICE_FALLBACK } from './config';
 
 /**
  * Hard paywall gate. When a subscription is required (RevenueCat configured +
@@ -48,7 +48,7 @@ function Paywall() {
       <h1 className="text-2xl font-bold text-ink mt-6">{t('gate.title')}</h1>
       <p className="text-[15px] text-ink-2 mt-2 max-w-xs">{t('gate.subtitle')}</p>
       <div className="mt-6 rounded-card bg-section px-5 py-3.5 shadow-chip">
-        <p className="text-[15px] font-bold text-ink">{t('gate.headline', { days: TRIAL_DAYS, price })}</p>
+        <p className="text-[15px] font-bold text-ink">{t('gate.headline', { price })}</p>
       </div>
       <Button size="lg" disabled={busy} className="mt-6 w-full max-w-xs" onClick={start}>
         {t('gate.cta')}
