@@ -81,7 +81,7 @@ export function HomeDashboard() {
     <div className="h-[100dvh] flex flex-col bg-app overflow-hidden">
       <PageHeader title={greeting} subtitle={longDate()} />
 
-      <div className="flex-1 min-h-0 w-full max-w-3xl mx-auto px-4 pt-3 pb-[calc(96px+env(safe-area-inset-bottom))] flex flex-col gap-3 overflow-hidden">
+      <div className="flex-1 min-h-0 w-full max-w-3xl mx-auto px-4 pt-2 pb-[calc(92px+env(safe-area-inset-bottom))] flex flex-col gap-2.5 overflow-hidden">
         <BackupNudge hasData={hasData} />
 
         {/* Momentum (panda) + Activity rings */}
@@ -130,7 +130,7 @@ export function HomeDashboard() {
 
         {/* Module shortcuts (collegamenti) */}
         <nav className="flex-1 min-h-0">
-          <div className="grid grid-cols-4 gap-2.5 content-start">
+          <div className="grid grid-cols-4 gap-2 h-full [grid-auto-rows:minmax(0,1fr)]">
             {modules.map((mod) => {
               const Icon = mod.icon;
               const accent = mod.accent ?? 'var(--c-ink-2)';
@@ -138,13 +138,13 @@ export function HomeDashboard() {
                 <button
                   key={mod.to}
                   onClick={() => navigate(mod.to)}
-                  className="flex flex-col items-center gap-1.5 rounded-2xl bg-card shadow-card border border-line/40 dark:border-transparent py-3 active:scale-95 transition-transform"
+                  className="flex flex-col items-center justify-center gap-1 rounded-2xl bg-card shadow-card border border-line/40 dark:border-transparent py-2 min-h-0 overflow-hidden active:scale-95 transition-transform"
                 >
                   <span
-                    className="h-10 w-10 rounded-2xl flex items-center justify-center"
+                    className="h-9 w-9 rounded-2xl flex items-center justify-center flex-shrink-0"
                     style={{ background: accent.replace(')', '-tint)'), color: accent }}
                   >
-                    <Icon size={19} />
+                    <Icon size={18} />
                   </span>
                   <span className="text-[11px] font-semibold text-ink-2 truncate max-w-full px-1">{t(mod.shortKey ?? mod.labelKey)}</span>
                 </button>

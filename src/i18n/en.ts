@@ -510,7 +510,7 @@ export const en: Record<TKey, string> = {
   'onboard.habits.custom': 'Or write your own',
   'onboard.habits.customPh': 'e.g. Play the guitar',
   'onboard.focus.title': 'What matters most to you?',
-  'onboard.focus.desc': "We'll tailor Vyta for you. You can always use everything.",
+  'onboard.focus.desc': 'Pick one or more areas. You can always change them and use everything.',
   'onboard.focus.health': 'Health & fitness',
   'onboard.focus.healthDesc': 'Workouts, weight, water, habits',
   'onboard.focus.productivity': 'Productivity',

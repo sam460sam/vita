@@ -12,6 +12,21 @@ import { MODULE_LIST } from '@/features/personalizzazione/modules';
 
 type Focus = 'health' | 'productivity' | 'wellbeing' | 'all';
 
+/** Which modules each focus area enables. Selecting several = the union. */
+const FOCUS_MODULES: Record<'health' | 'productivity' | 'wellbeing', ModuleId[]> = {
+  health: ['attivita', 'peso', 'abitudini'],
+  productivity: ['progetti', 'obiettivi', 'calendario', 'finanze'],
+  wellbeing: ['diario', 'abitudini'],
+};
+
+/** Modules to enable from a set of chosen focuses (all/empty → everything). */
+function modulesForFocus(set: Set<Focus>): Set<ModuleId> {
+  if (set.has('all') || set.size === 0) return new Set(ALL_MODULES);
+  const out = new Set<ModuleId>();
+  for (const f of set) if (f !== 'all') FOCUS_MODULES[f].forEach((m) => out.add(m));
+  return out.size ? out : new Set(ALL_MODULES);
+}
+
 const STORAGE_KEY = 'vita.onboarded';
 
 export function hasOnboarded(): boolean {
@@ -48,7 +63,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const { resolved, setPref: setThemePref } = useTheme();
   const [stepIdx, setStepIdx] = useState(0);
   const [name, setName] = useState('');
-  const [focus, setFocus] = useState<Focus>('all');
+  const [focusSet, setFocusSet] = useState<Set<Focus>>(new Set(['all']));
   const [modules, setModules] = useState<Set<ModuleId>>(new Set(ALL_MODULES));
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const [customHabits, setCustomHabits] = useState<string[]>([]);
@@ -57,6 +72,9 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const isLast = stepIdx === STEPS.length - 1;
 
   const [committed, setCommitted] = useState(false);
+
+  // A single representative focus for settings/AhaStep (several or 'all' → 'all').
+  const primaryFocus: Focus = focusSet.has('all') || focusSet.size !== 1 ? 'all' : [...focusSet][0];
 
   async function commit() {
     if (committed) return;
@@ -68,14 +86,26 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
     for (const n of customHabits) await createHabit({ name: n, frequency: { type: 'daily' } });
     // Persist chosen interests (in canonical order) alongside name + focus.
     const selected = ALL_MODULES.filter((m) => modules.has(m));
-    await updateSettings({ name: name.trim() || undefined, focus, enabledModules: selected, moduleOrder: selected });
+    await updateSettings({ name: name.trim() || undefined, focus: primaryFocus, enabledModules: selected, moduleOrder: selected });
   }
 
   async function next() {
+    // Pre-select modules from the chosen focus areas (the user can still tweak).
+    if (step === 'focus') setModules(modulesForFocus(focusSet));
     // Persist everything when leaving the "name" step, so the aha screen and
     // the app behind it already reflect the user's choices.
     if (step === 'name') await commit();
     setStepIdx((i) => Math.min(i + 1, STEPS.length - 1));
+  }
+
+  function toggleFocus(f: Focus) {
+    setFocusSet((prev) => {
+      if (f === 'all') return new Set<Focus>(['all']);
+      const n = new Set(prev);
+      n.delete('all');
+      n.has(f) ? n.delete(f) : n.add(f);
+      return n;
+    });
   }
 
   function back() {
@@ -147,7 +177,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
           </div>
         )}
         {step === 'intro' && <IntroStep />}
-        {step === 'focus' && <FocusStep value={focus} onPick={setFocus} />}
+        {step === 'focus' && <FocusStep value={focusSet} onToggle={toggleFocus} />}
         {step === 'modules' && <ModulesStep selected={modules} onToggle={toggleModule} />}
         {step === 'habits' && (
           <HabitsStep picked={picked} onToggle={toggleHabit} customHabits={customHabits} setCustomHabits={setCustomHabits} />
@@ -165,7 +195,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
             </div>
           </div>
         )}
-        {step === 'aha' && <AhaStep name={name} focus={focus} habitCount={totalPicked} />}
+        {step === 'aha' && <AhaStep name={name} focus={primaryFocus} habitCount={totalPicked} />}
       </div>
 
       {/* Dots */}
@@ -180,7 +210,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       </div>
 
       <div className="px-6 pb-6">
-        <Button block size="lg" disabled={step === 'modules' && modules.size === 0} onClick={() => (isLast ? finish() : next())}>
+        <Button block size="lg" disabled={(step === 'modules' && modules.size === 0) || (step === 'focus' && focusSet.size === 0)} onClick={() => (isLast ? finish() : next())}>
           {isLast
             ? t('onboard.start')
             : step === 'habits'
@@ -201,7 +231,7 @@ const FOCUS_OPTS: { value: Focus; icon: typeof HeartPulse; color: string; titleK
   { value: 'all', icon: Star, color: 'var(--c-habit)', titleKey: 'onboard.focus.all', descKey: 'onboard.focus.allDesc' },
 ];
 
-function FocusStep({ value, onPick }: { value: Focus; onPick: (f: Focus) => void }) {
+function FocusStep({ value, onToggle }: { value: Set<Focus>; onToggle: (f: Focus) => void }) {
   const { t } = useI18n();
   return (
     <div className="pt-4">
@@ -212,11 +242,11 @@ function FocusStep({ value, onPick }: { value: Focus; onPick: (f: Focus) => void
       <div className="space-y-2 max-w-md mx-auto">
         {FOCUS_OPTS.map((o) => {
           const Icon = o.icon;
-          const on = value === o.value;
+          const on = value.has(o.value);
           return (
             <button
               key={o.value}
-              onClick={() => onPick(o.value)}
+              onClick={() => onToggle(o.value)}
               className={cn(
                 'w-full flex items-center gap-3 px-4 py-3 rounded-card border transition-colors text-left',
                 on ? 'border-ink bg-section' : 'border-line dark:border-transparent dark:bg-section',

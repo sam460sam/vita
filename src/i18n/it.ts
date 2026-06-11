@@ -513,7 +513,7 @@ export const it = {
   'onboard.habits.custom': 'Oppure scrivine una tua',
   'onboard.habits.customPh': 'es. Suonare la chitarra',
   'onboard.focus.title': 'Cosa ti interessa di più?',
-  'onboard.focus.desc': 'Personalizziamo Vyta per te. Potrai sempre usare tutto.',
+  'onboard.focus.desc': 'Scegli uno o più ambiti. Potrai sempre cambiarli e usare tutto.',
   'onboard.focus.health': 'Salute & forma fisica',
   'onboard.focus.healthDesc': 'Allenamenti, peso, acqua, abitudini',
   'onboard.focus.productivity': 'Produttività',
