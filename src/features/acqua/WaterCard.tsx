@@ -33,7 +33,7 @@ export function WaterCard({ settings }: { settings: Settings }) {
   }
 
   return (
-    <Card className="mb-4">
+    <Card className="mb-4" style={{ background: 'linear-gradient(135deg, var(--c-card) 0%, var(--c-project-tint) 150%)' }}>
       <div className="flex items-center gap-4">
         {/* Visual fill droplet */}
         <div className="relative h-14 w-14 flex-shrink-0">
@@ -81,13 +81,13 @@ export function WaterCard({ settings }: { settings: Settings }) {
       <div className="flex gap-2 mt-3">
         <button
           onClick={() => add(glassMl)}
-          className="flex-1 h-11 rounded-btn bg-section active:bg-divider flex items-center justify-center gap-2 text-[14px] font-semibold text-ink"
+          className="flex-1 h-11 rounded-btn bg-card shadow-card active:bg-section flex items-center justify-center gap-2 text-[14px] font-semibold text-ink"
         >
           <GlassWater size={17} style={{ color: WATER_COLOR }} /> + {t('water.glass')}
         </button>
         <button
           onClick={() => add(1000)}
-          className="flex-1 h-11 rounded-btn bg-section active:bg-divider flex items-center justify-center gap-2 text-[14px] font-semibold text-ink"
+          className="flex-1 h-11 rounded-btn bg-card shadow-card active:bg-section flex items-center justify-center gap-2 text-[14px] font-semibold text-ink"
         >
           <Droplet size={17} style={{ color: WATER_COLOR }} /> + {t('water.liter')}
         </button>
