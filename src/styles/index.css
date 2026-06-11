@@ -4,17 +4,17 @@
 
 :root {
   /* ===== Design tokens — single source of truth (Candy UI / soft-pastel) ===== */
-  /* Surfaces — near-white app, soft pastel sections */
-  --c-app: #fbfbfc;
-  --c-section: #f3f4f7;
-  --c-card: #ffffff;
+  /* Surfaces — warm cream "panna" (not blinding white) */
+  --c-app: #f7f3ea;
+  --c-section: #efe9dc;
+  --c-card: #fffefa;
   /* Text */
   --c-ink: #1a1a1a;
-  --c-ink-2: #8a8a8e;
-  --c-ink-3: #b4b4ba;
+  --c-ink-2: #8a857c;
+  --c-ink-3: #b6afa2;
   /* Lines */
-  --c-line: #ececf0;
-  --c-divider: #f2f3f5;
+  --c-line: #e9e2d4;
+  --c-divider: #f1ece1;
   /* Module accents (saturated — used for chips / strokes / numbers) */
   --c-activity: #ff6b57;
   --c-habit: #10b981;

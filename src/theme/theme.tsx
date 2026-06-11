@@ -8,7 +8,7 @@ export type ThemePref = 'system' | 'light' | 'dark';
 type Resolved = 'light' | 'dark';
 
 const STORAGE_KEY = 'vita.theme';
-const THEME_COLOR = { light: '#ffffff', dark: '#0a0a0c' };
+const THEME_COLOR = { light: '#f7f3ea', dark: '#0a0a0c' };
 
 function loadPref(): ThemePref {
   try {

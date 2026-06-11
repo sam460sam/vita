@@ -138,15 +138,13 @@ export function HomeDashboard() {
                 <button
                   key={mod.to}
                   onClick={() => navigate(mod.to)}
-                  className="flex flex-col items-center justify-center gap-1 rounded-2xl bg-card shadow-card border border-line/40 dark:border-transparent py-2 min-h-0 overflow-hidden active:scale-95 transition-transform"
+                  className="flex flex-col items-center justify-center gap-1.5 rounded-2xl shadow-card py-2 min-h-0 overflow-hidden active:scale-95 transition-transform"
+                  style={{ background: accent.replace(')', '-tint)') }}
                 >
-                  <span
-                    className="h-9 w-9 rounded-2xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: accent.replace(')', '-tint)'), color: accent }}
-                  >
-                    <Icon size={18} />
+                  <span className="flex items-center justify-center flex-shrink-0" style={{ color: accent }}>
+                    <Icon size={22} strokeWidth={2.25} />
                   </span>
-                  <span className="text-[11px] font-semibold text-ink-2 truncate max-w-full px-1">{t(mod.shortKey ?? mod.labelKey)}</span>
+                  <span className="text-[11px] font-bold truncate max-w-full px-1" style={{ color: accent }}>{t(mod.shortKey ?? mod.labelKey)}</span>
                 </button>
               );
             })}
