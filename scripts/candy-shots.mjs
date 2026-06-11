@@ -16,11 +16,12 @@ const SHOTS = [
   ['01-home', '#/oggi'],
   ['02-habits', '#/abitudini'],
   ['03-activity', '#/attivita'],
-  ['04-finances', '#/finanze'],
-  ['05-journal', '#/diario'],
+  ['04-journal', '#/diario'],
+  ['05-notes', '#/note'],
   ['06-projects', '#/progetti'],
-  ['08-goals', '#/obiettivi'],
-  ['09-weight', '#/peso'],
+  ['07-goals', '#/obiettivi'],
+  ['08-weight', '#/peso'],
+  ['09-finances', '#/finanze'],
   ['10-more', '#/altro'],
   ['11-rewards', '#/premi'],
   ['12-recap', '#/recap'],
@@ -54,6 +55,38 @@ async function run(theme) {
       if (b) b.click();
     });
     await sleep(6000);
+
+    // Seed a few demo notes (the demo loader predates the Notes module).
+    await page.evaluate(async () => {
+      const NOTES = [
+        { title: 'Spesa settimana', body: '', color: '#10b981', pinned: true,
+          checklist: [['Pane integrale', true], ['Avocado', true], ['Yogurt greco', false], ['Caffè', false], ['Spinaci', false]] },
+        { title: 'Idee app Vyta', body: 'Widget meteo + frase del giorno sulla lock screen. Tema “sunset”.', color: '#8b5cf6', pinned: true, checklist: [] },
+        { title: 'Allenamento', body: '', color: '#ff6b57', pinned: false,
+          checklist: [['Riscaldamento 10’', true], ['Panca 4x8', false], ['Trazioni 3x10', false], ['Stretching', false]] },
+        { title: 'Viaggio Lisbona', body: 'Volo 14 giu · ostello a Alfama. Provare i pastéis de nata!', color: '#e0992f', pinned: false, checklist: [] },
+        { title: 'Regali', body: '', color: '#ec4899', pinned: false,
+          checklist: [['Mamma — sciarpa', true], ['Luca — libro', false], ['Sara — candela', false]] },
+        { title: 'Note riunione', body: 'Decidere prezzo abbonamento. Lanciare v1.2 venerdì. Beta TestFlight a 10 amici.', color: '#3b82f6', pinned: false, checklist: [] },
+      ];
+      const req = indexedDB.open('vita');
+      const dbReq = await new Promise((res) => { req.onsuccess = () => res(req.result); });
+      if (![...dbReq.objectStoreNames].includes('notes')) return;
+      const now = Date.now();
+      const uid = (p) => p + Math.random().toString(36).slice(2, 10);
+      const rows = NOTES.map((n, i) => ({
+        id: uid('not_'), title: n.title, body: n.body, color: n.color, pinned: n.pinned,
+        checklist: n.checklist.map(([text, done]) => ({ id: uid('chk_'), text, done })),
+        createdAt: now - i * 1000, updatedAt: now - i * 1000,
+      }));
+      await new Promise((res, rej) => {
+        const tx = dbReq.transaction('notes', 'readwrite');
+        const store = tx.objectStore('notes');
+        rows.forEach((r) => store.put(r));
+        tx.oncomplete = res; tx.onerror = () => rej(tx.error);
+      });
+    });
+    await sleep(800);
   }
 
   for (const [name, hash] of SHOTS) {
