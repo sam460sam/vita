@@ -731,6 +731,14 @@ export const en: Record<TKey, string> = {
   'onboard.modules.desc': 'Pick the sections you care about. You can change them anytime in Settings.',
 
   // Home / widgets
+  'home.routine.title': 'Your day',
+  'home.routine.progress': '{done} of {total} done',
+  'home.routine.all': 'See all',
+  'home.routine.streak': '{n}-day streak',
+  'home.routine.tapDone': 'Tap to complete',
+  'home.routine.empty.title': 'Build your routine',
+  'home.routine.empty.desc': 'Add the habits you want to keep daily',
+  'home.explore': 'Explore',
   'home.editTitle': 'Edit home',
   'home.editHint': 'Drag to reorder · tap ✕ to remove',
   'home.edit': 'Edit',

@@ -734,6 +734,14 @@ export const it = {
   'onboard.modules.desc': 'Scegli le sezioni che ti interessano. Potrai modificarle quando vuoi dalle Impostazioni.',
 
   // Home / widgets
+  'home.routine.title': 'La tua giornata',
+  'home.routine.progress': '{done} di {total} completati',
+  'home.routine.all': 'Vedi tutte',
+  'home.routine.streak': '{n} giorni di fila',
+  'home.routine.tapDone': 'Tocca per completare',
+  'home.routine.empty.title': 'Crea la tua routine',
+  'home.routine.empty.desc': 'Aggiungi le abitudini da seguire ogni giorno',
+  'home.explore': 'Esplora',
   'home.editTitle': 'Modifica home',
   'home.editHint': 'Trascina per riordinare · tocca ✕ per rimuovere',
   'home.edit': 'Modifica',

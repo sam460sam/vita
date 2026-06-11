@@ -3,52 +3,56 @@
 @tailwind utilities;
 
 :root {
-  /* ===== Design tokens — single source of truth (Candy UI / soft-pastel) ===== */
-  /* Surfaces — warm cream "panna" (not blinding white) */
-  --c-app: #f7f3ea;
-  --c-section: #efe9dc;
-  --c-card: #fffefa;
-  /* Text */
-  --c-ink: #1a1a1a;
-  --c-ink-2: #8a857c;
-  --c-ink-3: #b6afa2;
+  /* ===== Design tokens — single source of truth (Warm & Soft / cozy) ===== */
+  /* Surfaces — toasty cream that feels like morning light, not paper-white */
+  --c-app: #f8f1e6;
+  --c-section: #f1e7d7;
+  --c-card: #fffdf8;
+  /* Warm gradient washes for hero surfaces */
+  --c-hero-1: #ffe9d0;
+  --c-hero-2: #ffd9c0;
+  --c-glow: rgba(255, 138, 76, 0.16);
+  /* Text — warm espresso, never a cold pure black */
+  --c-ink: #2a2018;
+  --c-ink-2: #7c7263;
+  --c-ink-3: #aaa08e;
   /* Lines */
-  --c-line: #e9e2d4;
-  --c-divider: #f1ece1;
+  --c-line: #ece1cf;
+  --c-divider: #f4ecde;
   /* Module accents (saturated — used for chips / strokes / numbers) */
-  --c-activity: #ff6b57;
-  --c-habit: #10b981;
-  --c-project: #4f46e5;
+  --c-activity: #ff6b4a;
+  --c-habit: #16b87a;
+  --c-project: #5b6cf0;
   --c-journal: #f59e0b;
-  --c-finance: #7c3aed;
+  --c-finance: #9b5de5;
   --c-note: #e0992f; /* honey gold */
-  /* Module card TINTS — very desaturated wash for the card background */
-  --c-activity-tint: #fbe8ec; /* rose */
-  --c-habit-tint: #e5f4dd; /* mint */
-  --c-project-tint: #e8f2fb; /* sky */
-  --c-journal-tint: #fbead6; /* peach */
-  --c-finance-tint: #f0e9fb; /* lavender */
-  --c-calendar-tint: #eef0f6; /* slate-tint */
+  /* Module card TINTS — soft warm washes for the card background */
+  --c-activity-tint: #ffe6db; /* warm coral */
+  --c-habit-tint: #d8f2e4; /* soft mint */
+  --c-project-tint: #e4e7fd; /* periwinkle */
+  --c-journal-tint: #fdeccd; /* butter */
+  --c-finance-tint: #efe4fb; /* lilac */
+  --c-calendar-tint: #eceef7; /* slate-tint */
   --c-note-tint: #fdf2d4; /* warm cream */
   /* Module CHIPS — a touch more saturated than the tint, for the icon container */
-  --c-activity-chip: #ff8a7a;
-  --c-habit-chip: #5bc98c;
-  --c-project-chip: #7c8cf0;
+  --c-activity-chip: #ff8a6e;
+  --c-habit-chip: #44c794;
+  --c-project-chip: #8590f4;
   --c-journal-chip: #f5b454;
-  --c-finance-chip: #a98ce6;
+  --c-finance-chip: #b386ec;
   --c-calendar-chip: #9fa8c9;
   --c-note-chip: #ecc35a;
   /* States */
-  --c-success: #34c759;
+  --c-success: #1fb877;
   --c-warning: #ff8a3d;
-  --c-danger: #ef4444;
-  /* Candy signature colors */
-  --c-accent: #ff5a6e; /* coral — filter pill / FAB */
+  --c-danger: #ef5350;
+  /* Signature colors — warm sunset orange is the brand */
+  --c-accent: #ff7a45;
   --c-on-accent: #ffffff;
   --c-streak: #ff8a3d; /* flame */
-  --c-check: #34c759; /* completed badge */
-  /* Primary action (buttons / FAB) — coral candy pill with white text */
-  --c-primary: #ff5a6e;
+  --c-check: #1fb877; /* completed badge */
+  /* Primary action (buttons / FAB) — warm sunset pill with white text */
+  --c-primary: #ff7a45;
   --c-on-primary: #ffffff;
   --c-primary-border: transparent;
   color-scheme: light;
@@ -56,52 +60,56 @@
 
 /* ===== Dark theme — deep charcoal, candy accents kept vivid ===== */
 html.dark {
-  /* Surfaces: distinguished by fill, not by borders */
-  --c-app: #101013;
-  --c-section: #0b0b0d;
-  --c-card: #1b1b20;
+  /* Surfaces: warm charcoal (a hint of brown), distinguished by fill */
+  --c-app: #16130f;
+  --c-section: #100d0a;
+  --c-card: #211c17;
+  /* Warm gradient washes for hero surfaces */
+  --c-hero-1: #3a2a1c;
+  --c-hero-2: #2c1f16;
+  --c-glow: rgba(255, 138, 76, 0.12);
   /* Text */
-  --c-ink: #f4f4f5;
-  --c-ink-2: #a1a1aa;
-  --c-ink-3: #71717a;
-  /* Lines: nearly invisible (no white contour look) */
-  --c-line: #232329;
-  --c-divider: #1c1c21;
+  --c-ink: #f6f1e9;
+  --c-ink-2: #a89e90;
+  --c-ink-3: #756d61;
+  /* Lines: nearly invisible (no contour look) */
+  --c-line: #2c2620;
+  --c-divider: #211c17;
   /* Accents stay vivid on dark; slightly brighter for contrast */
-  --c-activity: #ff7a68;
-  --c-habit: #1fd093;
-  --c-project: #7c74ff;
+  --c-activity: #ff8163;
+  --c-habit: #2bd398;
+  --c-project: #8b93ff;
   --c-journal: #fbbf24;
-  --c-finance: #a78bfa;
+  --c-finance: #b98cf5;
   --c-note: #f5c265;
-  /* Module card tints — muted, darkened washes of each hue */
-  --c-activity-tint: #2e1f22;
-  --c-habit-tint: #18271c;
-  --c-project-tint: #1b2030;
-  --c-journal-tint: #2c2417;
-  --c-finance-tint: #241f30;
-  --c-calendar-tint: #1f2230;
-  --c-note-tint: #2b2514;
+  /* Module card tints — warm, darkened washes of each hue */
+  --c-activity-tint: #32211a;
+  --c-habit-tint: #16271f;
+  --c-project-tint: #1e2034;
+  --c-journal-tint: #2e2515;
+  --c-finance-tint: #281f34;
+  --c-calendar-tint: #20222f;
+  --c-note-tint: #2d2715;
   /* Module chips — vivid on dark */
-  --c-activity-chip: #ff7a68;
-  --c-habit-chip: #1fd093;
-  --c-project-chip: #7c74ff;
+  --c-activity-chip: #ff8163;
+  --c-habit-chip: #2bd398;
+  --c-project-chip: #8b93ff;
   --c-journal-chip: #fbbf24;
-  --c-finance-chip: #a78bfa;
+  --c-finance-chip: #b98cf5;
   --c-calendar-chip: #9fa8c9;
   --c-note-chip: #f5c265;
   /* States */
-  --c-success: #34d97a;
+  --c-success: #2bd398;
   --c-warning: #ff9d57;
   --c-danger: #f87171;
-  /* Candy signature colors */
-  --c-accent: #ff6b7d;
+  /* Signature colors — warm sunset orange, brighter on dark */
+  --c-accent: #ff8a5a;
   --c-on-accent: #ffffff;
   --c-streak: #ff9d57;
-  --c-check: #34d97a;
-  /* Primary action: candy coral pill, stands out on dark by its FILL. */
-  --c-primary: #ff5a6e;
-  --c-on-primary: #ffffff;
+  --c-check: #2bd398;
+  /* Primary action: warm sunset pill, stands out on dark by its FILL. */
+  --c-primary: #ff8a5a;
+  --c-on-primary: #1a1208;
   --c-primary-border: transparent;
   color-scheme: dark;
 }
