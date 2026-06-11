@@ -87,7 +87,7 @@ export function HomeDashboard() {
         {/* Momentum (panda) + Activity rings */}
         <section className="rounded-card bg-card shadow-card border border-line/40 dark:border-transparent p-4 flex-none">
           <div className="flex items-center gap-4">
-            <button onClick={stella.open} aria-label="Stella" className="flex-shrink-0 active:scale-95 transition-transform">
+            <button onClick={stella.open} aria-label={t('stella.name')} className="flex-shrink-0 active:scale-95 transition-transform">
               <ProgressRing progress={m.score / 100} size={64} stroke={7} color="var(--c-habit)">
                 <StarMascot size={40} mood={stellaMood(m.score)} animated={m.score >= 80} />
               </ProgressRing>

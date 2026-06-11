@@ -409,8 +409,8 @@ export const it = {
   'water.glassesCount': '{n} bicchieri',
 
   // Stella — the helper mascot
-  'stella.name': 'Stella',
-  'stella.title': 'Ciao, sono Stella ⭐',
+  'stella.name': 'Aiutante di Vyta',
+  'stella.title': 'Ciao, sono l’Aiutante di Vyta ⭐',
   'stella.subtitle': 'La tua guida in Vyta. Come posso aiutarti?',
   'stella.placeholder': 'Scrivi una domanda…',
   'stella.suggested': 'Domande frequenti',
@@ -524,7 +524,7 @@ export const it = {
   'onboard.focus.allDesc': 'Il pacchetto completo',
   'onboard.aha.title': 'Sei pronto, {name}!',
   'onboard.aha.titleNoName': 'Sei pronto!',
-  'onboard.aha.desc': 'Ecco il tuo punto di partenza. Ogni giorno Stella riassume i tuoi progressi qui.',
+  'onboard.aha.desc': 'Ecco il tuo punto di partenza. Ogni giorno l’Aiutante di Vyta riassume i tuoi progressi qui.',
   'onboard.aha.habits': '{n} abitudini pronte',
   'onboard.aha.focus': 'Focus: {focus}',
   // Recommended habits
@@ -566,7 +566,7 @@ export const it = {
   'pro.purchaseError': 'Acquisto non completato',
   'pro.legal': 'Abbonamento auto-rinnovabile, si rinnova salvo disdetta almeno 24h prima della fine del periodo. Gestiscilo nelle impostazioni dell’App Store. Termini e Privacy nelle Impostazioni.',
   'gate.title': 'Prova Vyta',
-  'gate.subtitle': 'Tutto Vyta, con Stella al tuo fianco. Costruisci le tue abitudini e monitora i tuoi progressi.',
+  'gate.subtitle': 'Tutto Vyta, con il tuo aiutante al tuo fianco. Costruisci le tue abitudini e monitora i tuoi progressi.',
   'gate.headline': '{days} giorni gratis, poi {price}/mese',
   'gate.cta': 'Inizia la settimana di prova',
   'gate.note': 'Nessun addebito durante la prova. Disdici quando vuoi.',

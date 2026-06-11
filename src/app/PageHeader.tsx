@@ -50,7 +50,7 @@ export function PageHeader({ title, subtitle, action, back, large, hideStella }:
         {!hideStella && (
           <button
             onClick={stella.open}
-            aria-label="Stella"
+            aria-label={t('stella.name')}
             className="h-10 w-10 -mr-1 flex items-center justify-center rounded-full hover:bg-section active:scale-90 transition-transform"
           >
             <StarMascot size={28} />

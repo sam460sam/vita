@@ -406,8 +406,8 @@ export const en: Record<TKey, string> = {
   'water.glassesCount': '{n} glasses',
 
   // Stella — the helper mascot
-  'stella.name': 'Stella',
-  'stella.title': "Hi, I'm Stella ⭐",
+  'stella.name': 'Vyta Helper',
+  'stella.title': "Hi, I'm your Vyta Helper ⭐",
   'stella.subtitle': 'Your guide in Vyta. How can I help?',
   'stella.placeholder': 'Type a question…',
   'stella.suggested': 'Frequent questions',
@@ -521,7 +521,7 @@ export const en: Record<TKey, string> = {
   'onboard.focus.allDesc': 'The full package',
   'onboard.aha.title': "You're all set, {name}!",
   'onboard.aha.titleNoName': "You're all set!",
-  'onboard.aha.desc': "Here's your starting point. Every day Stella sums up your progress here.",
+  'onboard.aha.desc': "Here's your starting point. Every day your Vyta Helper sums up your progress here.",
   'onboard.aha.habits': '{n} habits ready',
   'onboard.aha.focus': 'Focus: {focus}',
   // Recommended habits
@@ -563,7 +563,7 @@ export const en: Record<TKey, string> = {
   'pro.purchaseError': 'Purchase not completed',
   'pro.legal': 'Auto-renewable subscription; renews unless cancelled at least 24h before the period ends. Manage it in your App Store settings. Terms & Privacy in Settings.',
   'gate.title': 'Try Vyta',
-  'gate.subtitle': 'All of Vyta, with Stella by your side. Build your habits and track your progress.',
+  'gate.subtitle': 'All of Vyta, with your helper by your side. Build your habits and track your progress.',
   'gate.headline': '{days} days free, then {price}/month',
   'gate.cta': 'Start your free week',
   'gate.note': 'No charge during the trial. Cancel anytime.',

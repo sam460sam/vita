@@ -42,7 +42,7 @@ export function MomentumCard({ m }: { m: Momentum }) {
     <Card className="mb-4 relative overflow-hidden">
       {burst && <Confetti />}
       <div className="flex items-center gap-4">
-        <button onClick={stella.open} aria-label="Stella" className="flex-shrink-0 active:scale-95 transition-transform">
+        <button onClick={stella.open} aria-label={t('stella.name')} className="flex-shrink-0 active:scale-95 transition-transform">
           <ProgressRing progress={m.score / 100} size={72} stroke={7} color="var(--c-habit)">
             <StarMascot size={46} mood={mood} animated={m.score >= 80} />
           </ProgressRing>

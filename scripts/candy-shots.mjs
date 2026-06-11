@@ -69,7 +69,7 @@ async function run(theme) {
   await page.evaluate(() => { location.hash = '#/oggi'; });
   await sleep(1200);
   const opened = await page.evaluate(() => {
-    const b = [...document.querySelectorAll('button')].find((x) => x.getAttribute('aria-label') === 'Stella');
+    const b = [...document.querySelectorAll('button')].find((x) => x.getAttribute('aria-label') === 'Aiutante di Vyta');
     if (b) { b.click(); return true; }
     return false;
   });
