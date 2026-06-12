@@ -12,6 +12,7 @@ import { TabBar } from './TabBar';
 import { GlobalSheets } from './GlobalSheets';
 import { RouteErrorBoundary } from './ErrorBoundary';
 import { Onboarding, hasOnboarded } from '@/features/onboarding/Onboarding';
+import { BrandSplash } from './BrandSplash';
 
 // Core modules — eager (part of the primary experience).
 import { HomeDashboard } from '@/features/home';
@@ -41,6 +42,7 @@ export function App() {
   return (
     <I18nProvider>
       <ThemeProvider>
+      <BrandSplash />
       <PremiumProvider>
         <ToastProvider>
           {/* HashRouter keeps deep-links working from static assets (Capacitor-ready). */}
