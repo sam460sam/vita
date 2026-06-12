@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { FileText, Plus, Share2, Percent, FileSignature } from 'lucide-react';
+import { FileText, Plus, Share2, Percent, FileSignature, Mic } from 'lucide-react';
 import { useT } from '@/i18n';
 import { EmptyState, Button, Card, MoneyText, useToast } from '@/ui';
 import { money, qty as fmtQty, unitLabel } from '@/lib/format';
 import { estimateForProject, itemsForEstimate, getOrCreateEstimate, computeTotals, round2 } from '@/services/estimates';
 import { shareEstimate } from '@/services/documents';
+import { aiEnabled } from '@/services/ai';
 import { AddLineSheet } from '@/features/estimate/AddLineSheet';
+import { VoiceEstimateSheet } from '@/features/estimate/VoiceEstimateSheet';
 import { EditLineSheet } from '@/features/estimate/EditLineSheet';
 import { RatesSheet } from '@/features/estimate/RatesSheet';
 import { ContractSignSheet } from '@/features/contract/ContractSignSheet';
@@ -21,6 +23,8 @@ export function EstimateTab({ project }: { project: Project }) {
   const [editing, setEditing] = useState<EstimateItem | null>(null);
   const [ratesOpen, setRatesOpen] = useState(false);
   const [signOpen, setSignOpen] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
+  const showAi = useLiveQuery(() => aiEnabled(), []) ?? false;
 
   if (estimate === undefined) return null;
 
@@ -82,9 +86,16 @@ export function EstimateTab({ project }: { project: Project }) {
         </Card>
       )}
 
-      <Button variant="secondary" className="mb-2 w-full" onClick={() => setAddOpen(true)}>
-        <Plus size={18} /> Add line
-      </Button>
+      <div className="mb-2 flex gap-2">
+        <Button variant="secondary" className="flex-1" onClick={() => setAddOpen(true)}>
+          <Plus size={18} /> Add line
+        </Button>
+        {showAi && (
+          <Button variant="secondary" className="flex-1" onClick={() => setVoiceOpen(true)}>
+            <Mic size={18} /> Voice
+          </Button>
+        )}
+      </div>
 
       {items.length > 0 && (
         <>
@@ -104,6 +115,7 @@ export function EstimateTab({ project }: { project: Project }) {
       )}
 
       {addOpen && <AddLineSheet open={addOpen} onClose={() => setAddOpen(false)} estimateId={estimate.id} />}
+      {voiceOpen && <VoiceEstimateSheet open={voiceOpen} onClose={() => setVoiceOpen(false)} project={project} estimateId={estimate.id} />}
       {editing && <EditLineSheet open={!!editing} onClose={() => setEditing(null)} item={editing} />}
       {ratesOpen && <RatesSheet open={ratesOpen} onClose={() => setRatesOpen(false)} estimate={estimate} />}
       {signOpen && <ContractSignSheet open={signOpen} onClose={() => setSignOpen(false)} project={project} estimate={estimate} />}

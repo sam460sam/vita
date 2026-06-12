@@ -22,6 +22,8 @@ export function SettingsPage() {
   const [email, setEmail] = useState('');
   const [payInstr, setPayInstr] = useState('');
   const [taxRate, setTaxRate] = useState('0');
+  const [aiMode, setAiMode] = useState<'off' | 'mock' | 'live'>('mock');
+  const [aiProxyUrl, setAiProxyUrl] = useState('');
 
   useEffect(() => {
     if (!settings) return;
@@ -32,7 +34,14 @@ export function SettingsPage() {
     setEmail(settings.company.email ?? '');
     setPayInstr(settings.company.paymentInstructions ?? '');
     setTaxRate(String((settings.defaultTaxRate * 100).toFixed(2)).replace(/\.00$/, ''));
+    setAiMode(settings.aiMode);
+    setAiProxyUrl(settings.aiProxyUrl ?? '');
   }, [settings]);
+
+  async function saveAi() {
+    await updateSettings({ aiMode, aiProxyUrl: aiProxyUrl.trim() || undefined });
+    toast.show('AI settings saved', 'go');
+  }
 
   async function saveCompany() {
     await updateCompany({ name, licenseNumber: license, address, phone, email, paymentInstructions: payInstr });
@@ -87,6 +96,27 @@ export function SettingsPage() {
                 <option value="es">Español</option>
               </Select>
             </Field>
+          </div>
+        </Card>
+
+        <Card>
+          <div className="p-4">
+            <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-wide text-dust">AI assist</h3>
+            <Field label="Mode" hint="voice estimate, change orders & logs">
+              <Select value={aiMode} onChange={(e) => setAiMode(e.target.value as 'off' | 'mock' | 'live')}>
+                <option value="off">Off — hide AI</option>
+                <option value="mock">On-device (offline)</option>
+                <option value="live">Live (your proxy)</option>
+              </Select>
+            </Field>
+            {aiMode === 'live' && (
+              <Field label="AI proxy URL" hint="your serverless endpoint — see docs/AI_PROXY.md">
+                <Input value={aiProxyUrl} onChange={(e) => setAiProxyUrl(e.target.value)} placeholder="https://your-worker.workers.dev" inputMode="url" />
+              </Field>
+            )}
+            <Button variant="secondary" className="w-full" onClick={saveAi}>
+              {t('common.save')}
+            </Button>
           </div>
         </Card>
 

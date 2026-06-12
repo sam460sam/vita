@@ -17,7 +17,9 @@ orders → proof package → payment milestones. Offline-first, phone-first.
 - **Phase 1 (M1–M6)** — complete: Clients & Projects, Price book & Estimate,
   Contract + Signature, Payments/Protection, Proof Package, Daily log. See
   `docs/QA_P1.md`.
-- **Phase 2 (M7–M8)** — AI estimate/change-order/log + voice. Not started.
+- **Phase 2 (M7–M8)** — complete: AI service layer (Mock offline default +
+  proxy-backed live), voice estimate / change-order / daily-log flows. See
+  `docs/QA_P2.md` and `docs/AI_PROXY.md`.
 - **Phase 3** — parked (seams only: `src/config/features.ts`,
   `src/services/phase3/`).
 
@@ -26,8 +28,11 @@ orders → proof package → payment milestones. Offline-first, phone-first.
 - React 18 + TypeScript (strict) + Vite + Tailwind (dark “Premium Jobsite”)
 - Dexie.js (IndexedDB) behind a repository/service layer — UI never touches the
   DB directly; business logic lives in `src/services`
-- Capacitor (iOS-first): Camera, Geolocation, Haptics, Share, Filesystem
+- Capacitor (iOS-first): Camera, Geolocation, Haptics, Share, Filesystem,
+  Speech Recognition
 - pdf-lib (Letter PDFs), JSZip (backup), WebCrypto (SHA-256 audit)
+- AI: pluggable provider (offline Mock default; live via your own proxy —
+  `claude-sonnet-4-6`, key never in the client)
 
 ## Commands
 
