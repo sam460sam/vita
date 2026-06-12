@@ -1,4 +1,4 @@
-# GUIDA COMPLETA — Pubblicare Vyta 1.2 (build 33) con i widget
+# GUIDA COMPLETA — Pubblicare Vyta 1.2 (build 34) con i widget
 
 Guida dettagliata, pensata come se fosse la prima volta. Segui i passi **in
 ordine**, senza saltarne. Tempo stimato: 45–90 min (la prima volta).
@@ -65,7 +65,7 @@ Menu di Xcode in inglese (Xcode è quasi sempre in inglese anche su Mac italiani
     - Se non compare: menu **Xcode → Settings → Accounts → +** e accedi con
       l'Apple ID dello sviluppatore, poi torna qui.
 13. Controlla che **Bundle Identifier** sia `app.vita.lifeos`.
-14. Non toccare il numero **Build** (è già **33** nel codice).
+14. Non toccare il numero **Build** (è già **34** nel codice).
 
 ---
 
@@ -187,7 +187,7 @@ Ora a sinistra trovi una nuova cartella gialla **VytaWidgets**.
 47. Scegli **App Store Connect** → **Next** → **Upload** → **Next**.
 48. Lascia le opzioni di default (Upload symbols, Manage signing automatically)
     → **Next** → **Upload**.
-49. Attendi "Upload successful". Il build **33** ora è in elaborazione su App
+49. Attendi "Upload successful". Il build **34** ora è in elaborazione su App
     Store Connect (15–60 minuti). Puoi chiudere Xcode.
 
 ---
@@ -198,7 +198,7 @@ Ora a sinistra trovi una nuova cartella gialla **VytaWidgets**.
 51. Apri la versione **1.2** (a sinistra, sotto la piattaforma iOS). Se non c'è
     o è già pubblicata, clicca **(+) Version or Platform** e crea **1.2**.
 52. **Build**: scorri fino alla sezione *Build* → clicca **(+)** o **Add Build**
-    → seleziona il **build 33** (quando ha finito di elaborare; se non lo vedi,
+    → seleziona il **build 34** (quando ha finito di elaborare; se non lo vedi,
     aspetta e ricarica).
 53. **Screenshot**: sezione *App Previews and Screenshots* → seleziona la
     dimensione **iPhone 6.9"** → trascina le slide **inglesi** nella
@@ -229,7 +229,7 @@ Ora a sinistra trovi una nuova cartella gialla **VytaWidgets**.
   Minimum Deployment del target VytaWidgets a **iOS 17.0** (passo 34).
 - **Widget mostra zeri/vuoto** → App Group diverso tra app e widget, o app non
   aperta dopo l'install (passi 18, 33, 39).
-- **Il build 33 non appare in App Store Connect** → è ancora "in elaborazione",
+- **Il build 34 non appare in App Store Connect** → è ancora "in elaborazione",
   aspetta qualche minuto e ricarica la pagina.
 - **Revisione precedente ancora "In Review"** → rimuovi quel build dalla
   revisione, poi seleziona il 33 e reinvia.
@@ -238,7 +238,7 @@ Ora a sinistra trovi una nuova cartella gialla **VytaWidgets**.
 
 ## RIEPILOGO CHIAVI
 - Branch: `claude/vyta-candy-ui-restyle-hdzg0g`
-- Versione **1.2** · Build **33**
+- Versione **1.2** · Build **34**
 - App Group (identico su 2 target): `group.app.vita.lifeos`
 - Bundle ID app: `app.vita.lifeos` · Widget: `app.vita.lifeos.VytaWidgets`
 - Comando aggiornamento: `git reset --hard origin/<branch>` (mai `git pull`)

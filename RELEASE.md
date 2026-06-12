@@ -1,6 +1,6 @@
-# Vyta — Rilascio 1.2 (build 33)
+# Vyta — Rilascio 1.2 (build 34)
 
-Branch: `claude/vyta-candy-ui-restyle-hdzg0g` · Versione **1.2** · Build **33**
+Branch: `claude/vyta-candy-ui-restyle-hdzg0g` · Versione **1.2** · Build **34**
 Tutto committato e pushato. Questa release arriva **fino ai widget**; il resto
 (allenamento nativo + Apple Watch) va alla **prossima versione**.
 
@@ -11,11 +11,15 @@ Tutto committato e pushato. Questa release arriva **fino ai widget**; il resto
 - Nuovo **logo a foglia "V"** + **splash animato** V → Vyta
 - Nuovo modulo **Note con checklist**
 - **Home** ridisegnata: saluto, settimana, momentum, "La tua giornata", Esplora
+- **Abitudini** ridisegnate (statistiche, heatmap colorata, giorni settimana, Check in)
+- **Acqua**: nuova schermata "tracking" (gocce, promemoria con intervallo, obiettivo con medie)
 - **Promemoria intelligenti** (avviso serale solo se rischi di perdere lo streak)
 - **Apple Salute**: import allenamenti, passi, calorie → anelli + card Passi
 - **Localizzazione completa IT/EN** (UI, date, dati demo)
-- **Widget** Home + Lock Screen: Acqua (+ Bicchiere / + 1 L) e Lista
-  configurabile (Oggi · Settimana · To‑Do). Bilingue, 3 dimensioni.
+- **3 famiglie di widget** Home + Lock Screen (Piccolo · Medio · Grande), bilingui:
+  - **Acqua** — gocce interattive (tocca una goccia vuota = +1 bicchiere) + 1 L
+  - **Lista** configurabile — Oggi · Settimana · To‑Do
+  - **Abitudini** — heatmap (piccolo) e tracker settimanale (medio/grande)
 
 ## 📝 Novità di questa versione (App Store)
 
@@ -24,11 +28,12 @@ Tutto committato e pushato. Questa release arriva **fino ai widget**; il resto
 Vyta si rinnova completamente! 🌱
 • Nuovo look caldo e luminoso con il nuovo logo a foglia
 • Splash animato all'avvio
-• Nuova sezione Note con checklist
-• Home ridisegnata: la tua giornata, abitudini e momentum a colpo d'occhio
-• Promemoria intelligenti: ti avvisiamo la sera solo se rischi di perdere lo streak
-• Widget per Home e schermata di blocco: acqua e promemoria
-• Connessione ad Apple Salute per allenamenti, anelli attività e passi
+• Note con checklist
+• Abitudini ridisegnate con heatmap e check-in
+• Nuova schermata Acqua con promemoria e obiettivi
+• Promemoria intelligenti: ti avvisiamo solo se rischi di perdere lo streak
+• Widget per Home e blocco schermo: acqua, lista (oggi/settimana/to-do) e abitudini
+• Connessione ad Apple Salute per allenamenti, anelli e passi
 • Tante rifiniture grafiche e miglioramenti di stabilità
 ```
 
@@ -37,11 +42,12 @@ Vyta si rinnova completamente! 🌱
 Vyta gets a full refresh! 🌱
 • Warm, brighter new design with our new leaf logo
 • Animated launch splash
-• New Notes section with checklists
-• Redesigned Home: your day, habits and momentum at a glance
-• Smart reminders: we only nudge you in the evening if your streak is at risk
-• Home & Lock Screen widgets: water and reminders
-• Apple Health connection for workouts, activity rings and steps
+• Notes with checklists
+• Redesigned Habits with heatmaps and check-in
+• New Water screen with reminders and goals
+• Smart reminders: we only nudge you if your streak is at risk
+• Home & Lock Screen widgets: water, list (today/week/to-do) and habits
+• Apple Health connection for workouts, rings and steps
 • Lots of visual polish and stability improvements
 ```
 
@@ -52,61 +58,15 @@ Già generati e **inviati in chat** (salvali dal telefono):
 
 ---
 
-# 🖥️ DA FARE A CASA (passo-passo)
+Per i passaggi dettagliati con verifiche, vedi **GUIDA.md**.
 
-### 1 · Aggiorna il codice
-```
-cd <cartella-progetto>
-git fetch origin
-git reset --hard origin/claude/vyta-candy-ui-restyle-hdzg0g   # NON git pull
-npm install
-npm run build
-npx cap sync ios
-npx cap open ios
-```
+## 🔑 Chiavi
+- Branch `claude/vyta-candy-ui-restyle-hdzg0g` · **1.2 / build 34**
+- App Group (su entrambi i target): `group.app.vita.lifeos`
+- Bundle: app `app.vita.lifeos` · widget `app.vita.lifeos.VytaWidgets`
+- Aggiorna con `git reset --hard origin/<branch>` (mai `git pull`)
+- Min iOS del widget: **17.0**
 
-### 2 · Firma
-- Target **App** → **Signing & Capabilities** → seleziona il **Team**
-- Build number = **33** (già nel repo, non toccarlo)
-
-### 3 · Widget — App Group (una volta sola)
-- Target **App** → **+ Capability → App Groups** → `group.app.vita.lifeos` (✓)
-
-### 4 · Widget — crea il target
-- **File → New → Target → Widget Extension** → nome **VytaWidgets**
-  (togli "Include Live Activity") → Finish → **Activate**
-- Elimina il file `.swift` d'esempio creato da Xcode
-- **File → Add Files** → `ios/widget/VytaWidgets.swift` → spunta **solo** *VytaWidgets*
-- Target **VytaWidgets** → **+ App Groups** → `group.app.vita.lifeos` (identico) + **Team**
-
-### 5 · Prova sul telefono
-- Schema **App** → Run sull'iPhone → apri la Home dell'app una volta
-- Home iPhone: tieni premuto → **+** → cerca **Vyta** → aggiungi widget
-- Lista: long‑press sul widget → **Modifica widget** → Oggi / Settimana / To‑Do
-- Lock Screen: tieni premuto sul blocco → Personalizza → Aggiungi widget → Vyta
-
-### 6 · Archivia e carica
-- Destinazione **Any iOS Device (arm64)**
-- **Product → Clean Build Folder** → **Product → Archive**
-- **Distribute App → App Store Connect → Upload** → attendi elaborazione (~15–60 min)
-
-### 7 · App Store Connect (browser)
-- Versione **1.2** → **Build** → seleziona il **33**
-- **Screenshot 6.9"**: carica le slide IT (localizzazione Italiano) e EN (English)
-- **Novità di questa versione**: incolla i testi qui sopra (IT + EN)
-- **Export Compliance** → esente (solo HTTPS) · **IDFA** → No
-- Se appare il banner *Agreements, Tax, and Banking* → completalo
-- **Aggiungi per la revisione → Invia**
-
----
-
-## ⚠️ Promemoria importanti
-- Usa sempre `git reset --hard origin/<branch>`, **mai** `git pull`
-- L'App Group deve essere **identico** nei due target: `group.app.vita.lifeos`
-- Se i widget mostrano zeri → App Group diverso, o app non aperta dopo l'install
-- Dettagli widget in **`WIDGETS.md`**
-
-## 🔜 Prossima versione (1.3 / 1.4)
+## 🔜 Prossima versione
 - To‑do spuntabili dal widget
 - Allenamento **nativo** (HKWorkoutSession) + **app Apple Watch**
-- Eventuali widget aggiuntivi (es. Momentum)
