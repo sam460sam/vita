@@ -104,16 +104,16 @@ struct LogWaterIntent: AppIntent {
 
 // MARK: - Configurable list mode (Today / Week / To-Do)
 
+// AppEnum titles must be compile-time string literals (the AppEnum macro can't
+// read runtime values), so the picker labels are bilingual literals.
 enum ListMode: String, AppEnum {
     case today, week, todo
     static var typeDisplayRepresentation: TypeDisplayRepresentation { "Vista" }
-    static var caseDisplayRepresentations: [ListMode: DisplayRepresentation] {
-        [
-            .today: DisplayRepresentation(title: LocalizedStringResource(stringLiteral: L.t("Oggi", "Today"))),
-            .week: DisplayRepresentation(title: LocalizedStringResource(stringLiteral: L.t("Settimana", "This week"))),
-            .todo: DisplayRepresentation(title: LocalizedStringResource(stringLiteral: L.t("To-Do list", "To-Do list"))),
-        ]
-    }
+    static var caseDisplayRepresentations: [ListMode: DisplayRepresentation] = [
+        .today: "Oggi · Today",
+        .week:  "Settimana · This week",
+        .todo:  "To-Do",
+    ]
 }
 
 struct ListConfigIntent: WidgetConfigurationIntent {
