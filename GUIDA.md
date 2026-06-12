@@ -1,4 +1,4 @@
-# GUIDA MASTER — Pubblicare Vyta 1.2 (build 35)
+# GUIDA MASTER — Pubblicare Vyta 1.2 (build 36)
 
 Guida unica, da zero, senza saltare passi. Copre: aggiornamento codice,
 rimozione RevenueCat, Apple Salute, widget, abbonamenti (Vyta Pro) e invio su
@@ -41,7 +41,7 @@ npx cap open ios       # apre Xcode
 1. Project Navigator (sinistra) → icona blu **App** in cima
 2. **TARGETS → App** → scheda **Signing & Capabilities**
 3. Spunta **Automatically manage signing** · **Team** = il tuo
-4. **Bundle Identifier** = `app.vita.lifeos` · **Build** = **35** (non toccarlo)
+4. **Bundle Identifier** = `app.vita.lifeos` · **Build** = **36** (non toccarlo)
 
 ✅ **Verifica:** nessun errore rosso sotto Signing.
 
@@ -124,7 +124,7 @@ appstoreconnect.apple.com → la tua app → **Monetization → Subscriptions**
 
 ## PARTE 10 — Versione 1.2 su App Store Connect
 1. Vai alla versione **1.2** (creala con **(+) Version** se non c'è)
-2. **Build** → **+** → seleziona il **build 35** (dopo l'upload, Parte 12)
+2. **Build** → **+** → seleziona il **build 36** (dopo l'upload, Parte 12)
 3. **In-App Purchases** (nella pagina della versione) → **allega i 2 abbonamenti**
    (fondamentale: così vengono revisionati col build)
 4. **Screenshot 6.9"** → carica IT (loc. Italiano) ed EN (loc. English)
@@ -149,7 +149,7 @@ appstoreconnect.apple.com → la tua app → **Monetization → Subscriptions**
 1. Destinazione → **Any iOS Device (arm64)** · schema **App**
 2. **Product → Clean Build Folder** (`⇧⌘K`) → **Product → Archive**
 3. Organizer → **Distribute App → App Store Connect → Upload → Next** (default) → **Upload**
-4. Attendi "Upload successful" (build 35 in elaborazione 15–60 min) → poi torna alla **Parte 10 punto 2** e seleziona il build
+4. Attendi "Upload successful" (build 36 in elaborazione 15–60 min) → poi torna alla **Parte 10 punto 2** e seleziona il build
 5. **Export Compliance** → esente (solo HTTPS) · **IDFA** → No
 6. **Add for Review → Submit** (con i 2 IAP allegati)
 
@@ -170,7 +170,7 @@ appstoreconnect.apple.com → la tua app → **Monetization → Subscriptions**
 ---
 
 ## 🔑 CHIAVI
-- Branch `claude/vyta-candy-ui-restyle-hdzg0g` · **1.2 / build 35** · commit `dd67d4a`
+- Branch `claude/vyta-candy-ui-restyle-hdzg0g` · **1.2 / build 36** · commit `dd67d4a`
 - App Group (su entrambi i target): `group.app.vita.lifeos`
 - Bundle: app `app.vita.lifeos` · widget `app.vita.lifeos.VytaWidgets`
 - Prodotti: `vyta_pro_monthly` (€3,99) · `vyta_pro_yearly` (€29,99) · trial 7 giorni
