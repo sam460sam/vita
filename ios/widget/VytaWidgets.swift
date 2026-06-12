@@ -168,11 +168,27 @@ struct WaterWidgetView: View {
     var progress: Double { data.water.goalMl > 0 ? min(1, Double(data.water.ml) / Double(data.water.goalMl)) : 0 }
     var glass: Int { data.water.glassMl ?? 200 }
     var glassLabel: String { L.t("Bicchiere", "Glass") }
+    var glasses: Int { max(1, data.water.goalMl / glass) }
+    var done: Int { data.water.ml / glass }
 
     var header: some View {
         HStack(spacing: 5) {
             Image(systemName: "drop.fill").foregroundColor(vBlue)
-            Text(L.t("Acqua", "Water")).font(.caption).bold().foregroundColor(.secondary); Spacer()
+            Text(L.t("Acqua", "Water")).font(.caption).bold().foregroundColor(.secondary)
+            Spacer()
+            Text("\(done)/\(glasses)").font(.caption).bold().foregroundColor(vBlue)
+        }
+    }
+
+    // Grid of drops: filled = consumed, outline = remaining.
+    func drops(cols: Int, cap: Int, size: CGFloat) -> some View {
+        let shown = min(glasses, cap)
+        return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 5), count: cols), spacing: 5) {
+            ForEach(0..<shown, id: \.self) { i in
+                Image(systemName: i < done ? "drop.fill" : "drop")
+                    .font(.system(size: size))
+                    .foregroundColor(i < done ? vBlue : vBlue.opacity(0.35))
+            }
         }
     }
 
@@ -181,30 +197,26 @@ struct WaterWidgetView: View {
         case .accessoryCircular:
             Gauge(value: progress) { Image(systemName: "drop.fill") }.gaugeStyle(.accessoryCircular)
         case .systemMedium:
-            HStack(spacing: 16) {
-                WaterRing(progress: progress, size: 84)
-                VStack(alignment: .leading, spacing: 5) {
-                    header
-                    Text(litersStr(data.water.ml)).font(.system(size: 26, weight: .heavy)).foregroundColor(vInk)
-                    Text("\(L.t("Obiettivo", "Goal")) \(litersStr(data.water.goalMl))").font(.caption2).foregroundColor(.secondary)
-                    HStack(spacing: 8) { addButton(glass, glassLabel); addButton(1000, "1 L") }
-                }
+            VStack(alignment: .leading, spacing: 8) {
+                header
+                drops(cols: 8, cap: 16, size: 17)
+                Spacer(minLength: 2)
+                HStack(spacing: 8) { addButton(glass, glassLabel); addButton(1000, "1 L") }
             }.padding()
         case .systemLarge:
-            VStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 12) {
                 header
-                WaterRing(progress: progress, size: 150)
-                Text(litersStr(data.water.ml) + " / " + litersStr(data.water.goalMl)).font(.system(size: 26, weight: .heavy)).foregroundColor(vInk)
-                Text("\(Int(progress * 100))% · \(data.water.ml / max(glass,1)) \(glassLabel.lowercased())").font(.subheadline).foregroundColor(.secondary)
+                Text("\(done) \(L.t("di", "of")) \(glasses) \(glassLabel.lowercased())\(glasses == 1 ? "" : (L.isIT ? "" : "es"))")
+                    .font(.system(size: 22, weight: .heavy)).foregroundColor(vInk)
+                drops(cols: 8, cap: 32, size: 22)
                 Spacer()
                 HStack(spacing: 10) { addButton(glass, glassLabel); addButton(1000, "1 L") }
             }.padding()
-        default:
+        default: // systemSmall
             VStack(alignment: .leading, spacing: 6) {
                 header
-                Text(litersStr(data.water.ml)).font(.system(size: 28, weight: .heavy)).foregroundColor(vInk)
-                Text("\(Int(progress * 100))% · \(litersStr(data.water.goalMl))").font(.caption2).foregroundColor(.secondary)
-                Spacer()
+                drops(cols: 4, cap: 8, size: 15)
+                Spacer(minLength: 2)
                 addButton(glass, glassLabel)
             }.padding()
         }
