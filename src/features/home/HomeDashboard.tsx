@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Quote, ChevronRight, Settings2, Check, Flame, Plus, Footprints } from 'lucide-react';
+import { Quote, ChevronRight, Settings2, Check, Flame, Plus, Footprints, LayoutGrid, Droplet, Bell } from 'lucide-react';
 import { subDays, format } from 'date-fns';
-import { ProgressRing, ActivityRings, StarMascot, Icon, useToast } from '@/ui';
+import { ProgressRing, ActivityRings, StarMascot, Icon, useToast, Sheet } from '@/ui';
 import { DateStrip } from '@/ui/DateStrip';
 import { useT, type TKey } from '@/i18n';
 import { db } from '@/data/db';
-import { readSettings, toggleHabitLog, createHabit } from '@/data/repo';
+import { readSettings, toggleHabitLog, createHabit, addWaterMl } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { todayISO, longDate } from '@/lib/format';
 import { computeMomentum, stellaMood, momentumMessageKey, getStreakState } from '@/features/oggi/momentum';
@@ -24,6 +24,7 @@ import { useStella } from '@/features/stella';
 import { useNavItems } from '@/app/nav';
 import { platform } from '@/platform/platform';
 import { refreshStreakNudge } from '@/features/notify/smart';
+import { syncWidgetData, drainWidgetWaterInbox } from '@/platform/widget';
 import type { Habit, HabitLog } from '@/data/types';
 
 const ALLDONE_KEY = 'vita.allhabits.shown';
@@ -114,6 +115,25 @@ export function HomeDashboard() {
   const allDone = routine.length > 0 && pending === 0;
   const steps = healthSummary?.steps ?? 0;
 
+  // Apply water logged from the interactive widget, on mount and on foreground.
+  useEffect(() => {
+    const drain = () => void drainWidgetWaterInbox((ml) => addWaterMl(today, ml));
+    drain();
+    const onVisible = () => document.visibilityState === 'visible' && drain();
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [today]);
+
+  // Mirror water + reminders into the shared App Group so the Home/Lock-Screen
+  // widgets can display them.
+  useEffect(() => {
+    const reminders = Object.entries(s.reminders ?? {})
+      .filter(([, time]) => !!time)
+      .map(([kind, time]) => ({ label: t(`reminder.${kind}.title` as TKey), time: time as string }))
+      .sort((a, b) => a.time.localeCompare(b.time));
+    void syncWidgetData({ water: { ml: todayWater?.ml ?? 0, goalMl: s.water.dailyGoalMl }, reminders });
+  }, [s, todayWater, t]);
+
   // Smart notification: (re)schedule the adaptive evening streak nudge whenever
   // today's pending count or the streak changes.
   useEffect(() => {
@@ -127,6 +147,7 @@ export function HomeDashboard() {
   }, [pending, streak, t]);
 
   // Celebrate (once per day) the moment every habit for today is complete.
+  const [widgetsOpen, setWidgetsOpen] = useState(false);
   const celebrated = useRef(false);
   useEffect(() => {
     if (!allDone) return;
@@ -301,6 +322,22 @@ export function HomeDashboard() {
           <p className="text-[14px] font-bold text-ink italic leading-snug">{affirmation}</p>
         </section>
 
+        {/* Widgets promo */}
+        <button
+          onClick={() => setWidgetsOpen(true)}
+          className="mt-3 w-full flex items-center gap-3 rounded-card p-4 text-left active:scale-[0.99] transition-transform"
+          style={{ background: wash('var(--c-habit)', 13) }}
+        >
+          <span className="h-11 w-11 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--c-card)', color: 'var(--c-habit)' }}>
+            <LayoutGrid size={20} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="text-[14px] font-extrabold text-ink">{t('home.widgets.title')}</div>
+            <div className="text-[12px] text-ink-2 leading-snug">{t('home.widgets.desc')}</div>
+          </div>
+          <ChevronRight size={18} className="text-ink-3 flex-shrink-0" />
+        </button>
+
         {/* Explore modules */}
         <h2 className="text-[16px] font-extrabold text-ink mt-5 mb-2.5 px-1">{t('home.explore')}</h2>
         <nav className="grid grid-cols-4 gap-2.5">
@@ -325,6 +362,28 @@ export function HomeDashboard() {
       </div>
 
       {win && <DailyWin streak={win.streak} pointsToday={win.today} pointsYesterday={win.yesterday} onClose={closeWin} />}
+
+      <Sheet open={widgetsOpen} onClose={() => setWidgetsOpen(false)} title={t('widgets.sheet.title')}>
+        <div className="flex gap-3 mb-4">
+          <div className="flex-1 rounded-2xl p-3.5 flex flex-col items-center text-center gap-1.5" style={{ background: wash('#0EA5E9', 14) }}>
+            <Droplet size={24} style={{ color: '#0EA5E9' }} />
+            <span className="text-[13px] font-bold text-ink">{t('widgets.water')}</span>
+          </div>
+          <div className="flex-1 rounded-2xl p-3.5 flex flex-col items-center text-center gap-1.5" style={{ background: wash('var(--c-finance)', 14) }}>
+            <Bell size={24} style={{ color: 'var(--c-finance)' }} />
+            <span className="text-[13px] font-bold text-ink">{t('widgets.reminders')}</span>
+          </div>
+        </div>
+        <p className="text-[13px] text-ink-2 leading-relaxed mb-4">{t('widgets.sheet.intro')}</p>
+        <ol className="space-y-3">
+          {([1, 2, 3, 4] as const).map((n) => (
+            <li key={n} className="flex gap-3">
+              <span className="h-6 w-6 rounded-full bg-habit text-white text-[12px] font-bold flex items-center justify-center flex-shrink-0">{n}</span>
+              <span className="text-[14px] text-ink leading-snug">{t(`widgets.step${n}` as TKey)}</span>
+            </li>
+          ))}
+        </ol>
+      </Sheet>
     </div>
   );
 }
