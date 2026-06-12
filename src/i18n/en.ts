@@ -4,7 +4,7 @@ import type { TKey } from './it';
 export const en: Record<TKey, string> = {
   // Navigation
   'nav.today': 'Today',
-  'nav.activity': 'Activity',
+  'nav.activity': 'Health',
   'nav.projects': 'Projects',
   'nav.habits': 'Habits',
   'nav.finances': 'Finances',

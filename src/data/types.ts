@@ -30,15 +30,15 @@ export type ModuleId =
   | 'calendario';
 
 /** All known modules in canonical order — single source of truth.
- *  Core four (abitudini · attivita · diario · note) lead so they fill the
- *  bottom tab bar; secondary modules follow. */
+ *  Core four (abitudini · attivita/salute · note · progetti) lead so they fill
+ *  the bottom tab bar; diario and the rest live in "Altro" + the home grid. */
 export const ALL_MODULES: ModuleId[] = [
   'abitudini',
   'attivita',
-  'diario',
   'note',
-  'peso',
   'progetti',
+  'diario',
+  'peso',
   'obiettivi',
   'finanze',
   'calendario',

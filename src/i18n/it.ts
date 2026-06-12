@@ -3,7 +3,7 @@
 export const it = {
   // Navigation
   'nav.today': 'Oggi',
-  'nav.activity': 'Attività',
+  'nav.activity': 'Salute',
   'nav.projects': 'Progetti',
   'nav.habits': 'Abitudini',
   'nav.finances': 'Finanze',

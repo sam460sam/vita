@@ -4,6 +4,7 @@
 // ============================================================================
 import { db, now, uid } from './db';
 import { defaultSettings } from './defaults';
+import { ALL_MODULES } from './types';
 import type {
   Budget,
   Goal,
@@ -45,7 +46,12 @@ export async function readSettings(): Promise<Settings> {
 
 /** New modules introduced after launch that should auto-enable for existing
  *  users (so they appear without the user re-onboarding). */
-const AUTO_ENABLE_MODULES: ModuleId[] = ['note'];
+const AUTO_ENABLE_MODULES: ModuleId[] = ['note', 'attivita'];
+
+/** One-time nav reorder: bump this when the canonical tab order changes so
+ *  existing devices pick it up (their saved moduleOrder predates it). */
+const NAV_ORDER_VERSION = 'v2';
+const NAV_ORDER_KEY = 'vita.navOrder';
 
 /** Ensure singleton rows exist. Call once at app startup (outside liveQuery). */
 export async function ensureSeedRows(): Promise<void> {
@@ -63,6 +69,21 @@ export async function ensureSeedRows(): Promise<void> {
       moduleOrder: [...(s.moduleOrder ?? s.enabledModules), ...missing],
       updatedAt: now(),
     });
+  }
+
+  // One-time migration: re-sort the saved moduleOrder to the new canonical
+  // order (tabs = abitudini · salute · note · progetti) on existing devices.
+  try {
+    if (localStorage.getItem(NAV_ORDER_KEY) !== NAV_ORDER_VERSION) {
+      const cur = await db.settings.get('app');
+      if (cur?.moduleOrder?.length) {
+        const sorted = [...cur.moduleOrder].sort((a, b) => ALL_MODULES.indexOf(a) - ALL_MODULES.indexOf(b));
+        await db.settings.put({ ...cur, moduleOrder: sorted, updatedAt: now() });
+      }
+      localStorage.setItem(NAV_ORDER_KEY, NAV_ORDER_VERSION);
+    }
+  } catch {
+    /* localStorage unavailable — skip */
   }
 }
 

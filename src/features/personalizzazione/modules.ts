@@ -3,7 +3,7 @@
 // navigable route. Single source of truth for onboarding, navigation filtering
 // and the widget gallery.
 // ============================================================================
-import { Activity, Scale, CheckSquare, Flame, Wallet, BookHeart, Target, CalendarDays, StickyNote, type LucideIcon } from 'lucide-react';
+import { HeartPulse, Scale, CheckSquare, Flame, Wallet, BookHeart, Target, CalendarDays, StickyNote, type LucideIcon } from 'lucide-react';
 import type { ModuleId } from '@/data/types';
 import { ALL_MODULES } from '@/data/types';
 import type { TKey } from '@/i18n';
@@ -20,7 +20,7 @@ export interface ModuleDef {
 
 export const MODULE_CATALOG: Record<ModuleId, ModuleDef> = {
   abitudini: { id: 'abitudini', to: '/abitudini', labelKey: 'nav.habits', shortKey: 'nav.habits.short', descKey: 'module.abitudini.desc', icon: Flame, accent: 'var(--c-habit)' },
-  attivita: { id: 'attivita', to: '/attivita', labelKey: 'nav.activity', descKey: 'module.attivita.desc', icon: Activity, accent: 'var(--c-activity)' },
+  attivita: { id: 'attivita', to: '/attivita', labelKey: 'nav.activity', descKey: 'module.attivita.desc', icon: HeartPulse, accent: 'var(--c-activity)' },
   peso: { id: 'peso', to: '/peso', labelKey: 'weight.title', descKey: 'module.peso.desc', icon: Scale, accent: 'var(--c-project)' },
   progetti: { id: 'progetti', to: '/progetti', labelKey: 'nav.projects', descKey: 'module.progetti.desc', icon: CheckSquare, accent: 'var(--c-project)' },
   obiettivi: { id: 'obiettivi', to: '/obiettivi', labelKey: 'nav.goals', descKey: 'module.obiettivi.desc', icon: Target, accent: 'var(--c-project)' },
