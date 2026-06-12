@@ -55,10 +55,19 @@ func withinDays(_ iso: String, _ days: Int) -> Bool {
 struct WidgetReminder: Decodable, Hashable { let label: String; let time: String }
 struct WidgetTask: Decodable, Hashable { let title: String; let due: String? }
 struct WidgetWater: Decodable { let ml: Int; let goalMl: Int; let glassMl: Int? }
-struct WidgetData: Decodable { let water: WidgetWater; let reminders: [WidgetReminder]; let tasks: [WidgetTask] }
+struct WidgetHabit: Decodable, Hashable { let name: String; let color: String; let week: [Int]; let heat: [Int] }
+struct WidgetData: Decodable { let water: WidgetWater; let reminders: [WidgetReminder]; let tasks: [WidgetTask]; let habits: [WidgetHabit] }
+
+/** Parse a #rrggbb hex into a SwiftUI Color (falls back to green). */
+func hexColor(_ hex: String) -> Color {
+    var s = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+    if s.hasPrefix("#") { s.removeFirst() }
+    guard s.count == 6, let v = Int(s, radix: 16) else { return vGreen }
+    return Color(red: Double((v >> 16) & 0xff) / 255, green: Double((v >> 8) & 0xff) / 255, blue: Double(v & 0xff) / 255)
+}
 
 func readWidgetData() -> WidgetData {
-    let fallback = WidgetData(water: .init(ml: 0, goalMl: 2000, glassMl: 200), reminders: [], tasks: [])
+    let fallback = WidgetData(water: .init(ml: 0, goalMl: 2000, glassMl: 200), reminders: [], tasks: [], habits: [])
     guard let defaults = UserDefaults(suiteName: APP_GROUP),
           let raw = defaults.string(forKey: WIDGET_KEY),
           let data = raw.data(using: .utf8),
@@ -180,18 +189,31 @@ struct WaterWidgetView: View {
         }
     }
 
-    // Grid of drops: filled = consumed, outline = remaining. Columns are
-    // balanced so the drops sit symmetrically (e.g. 10 → 5×2, 16 → 8×2).
-    func drops(maxCols: Int, cap: Int, size: CGFloat) -> some View {
+    // One drop cell. Filled = consumed; empty = a "+" button that logs a glass
+    // (interactive, iOS 17+), so the widget is actually useful.
+    @ViewBuilder
+    func dropCell(_ i: Int, size: CGFloat, interactive: Bool) -> some View {
+        if i < done {
+            Image(systemName: "drop.fill").font(.system(size: size)).foregroundColor(vBlue)
+        } else if interactive, #available(iOS 17.0, *) {
+            Button(intent: LogWaterIntent(ml: glass)) {
+                ZStack {
+                    Image(systemName: "drop").font(.system(size: size)).foregroundColor(vBlue.opacity(0.4))
+                    Image(systemName: "plus").font(.system(size: size * 0.42, weight: .bold)).foregroundColor(vBlue)
+                }
+            }.buttonStyle(.plain)
+        } else {
+            Image(systemName: "drop").font(.system(size: size)).foregroundColor(vBlue.opacity(0.35))
+        }
+    }
+
+    // Balanced columns so drops sit symmetrically (e.g. 10 → 5×2, 16 → 8×2).
+    func drops(maxCols: Int, cap: Int, size: CGFloat, interactive: Bool) -> some View {
         let shown = min(glasses, cap)
         let rows = max(1, Int(ceil(Double(shown) / Double(maxCols))))
         let cols = Int(ceil(Double(shown) / Double(rows)))
         return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: cols), spacing: 6) {
-            ForEach(0..<shown, id: \.self) { i in
-                Image(systemName: i < done ? "drop.fill" : "drop")
-                    .font(.system(size: size))
-                    .foregroundColor(i < done ? vBlue : vBlue.opacity(0.35))
-            }
+            ForEach(0..<shown, id: \.self) { i in dropCell(i, size: size, interactive: interactive) }
         }
     }
 
@@ -202,23 +224,23 @@ struct WaterWidgetView: View {
         case .systemMedium:
             VStack(alignment: .leading, spacing: 8) {
                 header
-                drops(maxCols: 8, cap: 16, size: 18)
+                drops(maxCols: 8, cap: 16, size: 18, interactive: true)
                 Spacer(minLength: 2)
-                HStack(spacing: 8) { addButton(glass, glassLabel); addButton(1000, "1 L") }
+                addButton(1000, "1 L")
             }.padding()
         case .systemLarge:
             VStack(alignment: .leading, spacing: 12) {
                 header
                 Text("\(done) \(L.t("di", "of")) \(glasses)")
                     .font(.system(size: 22, weight: .heavy)).foregroundColor(vInk)
-                drops(maxCols: 8, cap: 32, size: 24)
+                drops(maxCols: 8, cap: 32, size: 26, interactive: true)
                 Spacer()
-                HStack(spacing: 10) { addButton(glass, glassLabel); addButton(1000, "1 L") }
+                addButton(1000, "1 L")
             }.padding()
         default: // systemSmall
             VStack(alignment: .leading, spacing: 6) {
                 header
-                drops(maxCols: 4, cap: 8, size: 16)
+                drops(maxCols: 4, cap: 8, size: 16, interactive: false)
                 Spacer(minLength: 2)
                 addButton(glass, glassLabel)
             }.padding()
@@ -332,6 +354,123 @@ struct ListWidget: Widget {
     }
 }
 
+// MARK: - Habit widgets (heatmap + weekly tracker)
+
+struct HabitsEntry: TimelineEntry { let date: Date; let data: WidgetData }
+struct HabitsProvider: TimelineProvider {
+    func placeholder(in c: Context) -> HabitsEntry { HabitsEntry(date: Date(), data: readWidgetData()) }
+    func getSnapshot(in c: Context, completion: @escaping (HabitsEntry) -> Void) { completion(HabitsEntry(date: Date(), data: readWidgetData())) }
+    func getTimeline(in c: Context, completion: @escaping (Timeline<HabitsEntry>) -> Void) {
+        let next = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
+        completion(Timeline(entries: [HabitsEntry(date: Date(), data: readWidgetData())], policy: .after(next)))
+    }
+}
+
+// Monday-first localized weekday letters (e.g. M T W T F S S).
+func weekdayLetters() -> [String] {
+    let sym = Calendar.current.veryShortWeekdaySymbols // [S,M,T,W,T,F,S]
+    return Array(sym[1...6]) + [sym[0]]
+}
+// "9 – 15 Mar" for the current week.
+func currentWeekRange() -> String {
+    let cal = Calendar.current
+    let today = cal.startOfDay(for: Date())
+    let weekday = cal.component(.weekday, from: today) // 1 = Sun
+    let monday = cal.date(byAdding: .day, value: -((weekday + 5) % 7), to: today)!
+    let sunday = cal.date(byAdding: .day, value: 6, to: monday)!
+    let f = DateFormatter(); f.locale = Locale.current
+    f.dateFormat = "d"; let a = f.string(from: monday)
+    f.dateFormat = "d MMM"; let b = f.string(from: sunday)
+    return "\(a) – \(b)"
+}
+
+func heatColor(_ s: Int, _ c: Color) -> Color {
+    s == 2 ? c : (s == 1 ? c.opacity(0.26) : Color.gray.opacity(0.16))
+}
+
+struct HabitsWidgetView: View {
+    @Environment(\.widgetFamily) var family
+    let data: WidgetData
+
+    var emptyText: String { L.t("Nessuna abitudine", "No habits") }
+
+    // GitHub-style heatmap for one habit (49 days → 7×7).
+    func heatmap(_ h: WidgetHabit, cell: CGFloat) -> some View {
+        let c = hexColor(h.color)
+        let weeks = stride(from: 0, to: h.heat.count, by: 7).map { Array(h.heat[$0..<min($0 + 7, h.heat.count)]) }
+        return HStack(spacing: 3) {
+            ForEach(Array(weeks.enumerated()), id: \.offset) { _, wk in
+                VStack(spacing: 3) {
+                    ForEach(Array(wk.enumerated()), id: \.offset) { _, s in
+                        RoundedRectangle(cornerRadius: 2).fill(heatColor(s, c)).frame(width: cell, height: cell)
+                    }
+                }
+            }
+        }
+    }
+
+    func dayCircle(_ s: Int, _ c: Color) -> some View {
+        ZStack {
+            Circle().fill(s == 2 ? c : (s == 1 ? c.opacity(0.16) : Color.gray.opacity(0.14)))
+            if s == 2 { Image(systemName: "checkmark").font(.system(size: 9, weight: .bold)).foregroundColor(.white) }
+        }.frame(width: 22, height: 22)
+    }
+
+    var tracker: some View {
+        let nameW: CGFloat = 92
+        let rows = family == .systemLarge ? 6 : 4
+        return VStack(spacing: 8) {
+            HStack(spacing: 0) {
+                Text(currentWeekRange()).font(.caption2).bold().foregroundColor(.secondary).frame(width: nameW, alignment: .leading)
+                ForEach(Array(weekdayLetters().enumerated()), id: \.offset) { _, d in
+                    Text(d).font(.system(size: 10, weight: .bold)).foregroundColor(.secondary).frame(maxWidth: .infinity)
+                }
+            }
+            ForEach(Array(data.habits.prefix(rows).enumerated()), id: \.offset) { _, h in
+                HStack(spacing: 0) {
+                    HStack(spacing: 6) {
+                        Circle().fill(hexColor(h.color)).frame(width: 8, height: 8)
+                        Text(h.name).font(.caption).foregroundColor(vInk).lineLimit(1)
+                        Spacer(minLength: 0)
+                    }.frame(width: nameW, alignment: .leading)
+                    ForEach(0..<7, id: \.self) { i in
+                        dayCircle(i < h.week.count ? h.week[i] : 0, hexColor(h.color)).frame(maxWidth: .infinity)
+                    }
+                }
+            }
+        }
+    }
+
+    var body: some View {
+        if data.habits.isEmpty {
+            VStack { Spacer(); Text(emptyText).font(.subheadline).foregroundColor(.secondary); Spacer() }
+        } else if family == .systemSmall {
+            let h = data.habits[0]
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 5) {
+                    Circle().fill(hexColor(h.color)).frame(width: 9, height: 9)
+                    Text(h.name).font(.caption).bold().foregroundColor(vInk).lineLimit(1); Spacer()
+                }
+                heatmap(h, cell: 11)
+            }.padding()
+        } else {
+            tracker.padding()
+        }
+    }
+}
+
+struct HabitsWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "VytaHabitsWidget", provider: HabitsProvider()) { entry in
+            if #available(iOS 17.0, *) { HabitsWidgetView(data: entry.data).containerBackground(vCream, for: .widget) }
+            else { HabitsWidgetView(data: entry.data).background(vCream) }
+        }
+        .configurationDisplayName(L.t("Vyta · Abitudini", "Vyta · Habits"))
+        .description(L.t("Heatmap e tracker settimanale.", "Heatmap and weekly tracker."))
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+    }
+}
+
 // MARK: - Bundle
 
 @main
@@ -339,5 +478,6 @@ struct VytaWidgets: WidgetBundle {
     var body: some Widget {
         WaterWidget()
         ListWidget()
+        HabitsWidget()
     }
 }

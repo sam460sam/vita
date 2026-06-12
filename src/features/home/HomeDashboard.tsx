@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Quote, ChevronRight, Settings2, Check, Flame, Plus, Footprints, LayoutGrid, Droplet, Bell } from 'lucide-react';
-import { subDays, format } from 'date-fns';
+import { subDays, format, startOfWeek, addDays } from 'date-fns';
 import { ProgressRing, ActivityRings, StarMascot, Icon, useToast, Sheet } from '@/ui';
 import { DateStrip } from '@/ui/DateStrip';
 import { useT, type TKey } from '@/i18n';
@@ -136,12 +136,25 @@ export function HomeDashboard() {
       .sort((a, b) => (a.dueDate ?? '9999').localeCompare(b.dueDate ?? '9999') || a.order - b.order)
       .slice(0, 12)
       .map((tk) => ({ title: tk.title, due: tk.dueDate }));
+
+    // Habit widgets: current week (Mon..Sun) + last 49 days heatmap.
+    const ll = logs ?? [];
+    const enc = (h: Habit, d: string) => (!isScheduled(h, d) ? 0 : isDone(ll, h.id, d) ? 2 : 1);
+    const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+    const weekDays = Array.from({ length: 7 }, (_, i) => format(addDays(weekStart, i), 'yyyy-MM-dd'));
+    const heatDays = Array.from({ length: 49 }, (_, i) => format(subDays(new Date(), 48 - i), 'yyyy-MM-dd'));
+    const habitData = (habits ?? [])
+      .filter((h) => !h.archived)
+      .slice(0, 6)
+      .map((h) => ({ name: h.name, color: h.color, week: weekDays.map((d) => enc(h, d)), heat: heatDays.map((d) => enc(h, d)) }));
+
     void syncWidgetData({
       water: { ml: todayWater?.ml ?? 0, goalMl: s.water.dailyGoalMl, glassMl: s.water.glassMl || 200 },
       reminders,
       tasks: openTasks,
+      habits: habitData,
     });
-  }, [s, todayWater, tasks, t]);
+  }, [s, todayWater, tasks, habits, logs, t]);
 
   // Smart notification: (re)schedule the adaptive evening streak nudge whenever
   // today's pending count or the streak changes.

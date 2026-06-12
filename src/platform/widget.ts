@@ -24,10 +24,20 @@ export interface WidgetTask {
   due?: string; // ISO yyyy-MM-dd
 }
 
+/** Per-day state used by the habit widgets: 0 = not scheduled, 1 = scheduled
+ *  but not done, 2 = done. */
+export interface WidgetHabit {
+  name: string;
+  color: string; // hex (or CSS var, ignored by the widget)
+  week: number[]; // 7 values, Monday..Sunday of the current week
+  heat: number[]; // last 49 days, oldest→newest (heatmap)
+}
+
 export interface WidgetPayload {
   water: { ml: number; goalMl: number; glassMl: number };
   reminders: WidgetReminder[];
   tasks: WidgetTask[];
+  habits: WidgetHabit[];
   updatedAt: number;
 }
 
