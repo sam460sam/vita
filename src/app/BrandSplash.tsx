@@ -86,11 +86,11 @@ export function BrandSplash() {
           style={{
             fontSize: FONT,
             fontWeight: 900,
-            lineHeight: 1,
+            lineHeight: 1.3, // room for the y descender (no clipping)
             position: 'relative',
             top: 11, // drop "yta" onto the V's baseline so it reads as one word
             left: -18, // tuck it right up against the V
-            opacity: mount < 2 ? 0 : 0.82,
+            opacity: mount < 2 ? 0 : 1, // full opacity → identical to the V
             transition: 'opacity 520ms ease 140ms',
             backgroundImage: `url(${leafTexUrl})`,
             backgroundSize: 'cover',
