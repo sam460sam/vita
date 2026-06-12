@@ -33,6 +33,9 @@ export function WaterPage() {
   const total = Math.max(1, Math.round(goalMl / glassMl));
   const done = Math.round(ml / glassMl);
   const left = Math.max(0, total - done);
+  // Balanced columns so drops sit symmetrically (e.g. 10 → 5×2, 15 → 8+7).
+  const cols = total <= 6 ? total : Math.ceil(total / 2);
+  const dropSize = cols <= 5 ? 52 : cols <= 6 ? 46 : 38;
 
   // Average / minimum / maximum daily intake (l/d) over days with any intake.
   const stats = useMemo(() => {
@@ -64,7 +67,7 @@ export function WaterPage() {
 
   return (
     <div className="min-h-[100dvh] bg-app">
-      <div className="max-w-2xl mx-auto px-5 pt-safe-top pb-[calc(40px+env(safe-area-inset-bottom))]">
+      <div className="max-w-2xl mx-auto px-5 pt-safe-top pb-[calc(108px+env(safe-area-inset-bottom))] min-h-[100dvh] flex flex-col">
         {/* Top bar */}
         <div className="flex items-center justify-between h-14 pt-2">
           <button onClick={() => navigate(-1)} aria-label={t('common.close')} className="h-10 w-10 rounded-full border-2 border-dashed border-line flex items-center justify-center text-ink-2 active:scale-90 transition-transform">
@@ -88,7 +91,7 @@ export function WaterPage() {
         </div>
 
         {/* Drops grid */}
-        <div className="mt-4 grid grid-cols-8 gap-2.5">
+        <div className="mt-6 grid gap-3.5 justify-items-center" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
           {Array.from({ length: total }, (_, i) => {
             const filled = i < done;
             const isLastFilled = i + 1 === done;
@@ -97,12 +100,10 @@ export function WaterPage() {
                 key={i}
                 onClick={() => setGlasses(isLastFilled ? i : i + 1)}
                 aria-label={`${i + 1}`}
-                className="aspect-square flex items-center justify-center active:scale-90 transition-transform"
+                className="relative flex items-center justify-center active:scale-90 transition-transform"
               >
-                <span className="relative inline-flex items-center justify-center w-full h-full">
-                  <Droplet size={34} strokeWidth={1.5} style={{ color: WATER }} fill={filled ? WATER : `${WATER}26`} />
-                  {!filled && <span className="absolute text-[14px] font-bold" style={{ color: WATER }}>+</span>}
-                </span>
+                <Droplet size={dropSize} strokeWidth={1.5} style={{ color: WATER }} fill={filled ? WATER : `${WATER}22`} />
+                {!filled && <span className="absolute font-bold" style={{ color: WATER, fontSize: dropSize * 0.4 }}>+</span>}
               </button>
             );
           })}
@@ -132,8 +133,11 @@ export function WaterPage() {
           </div>
         )}
 
+        {/* push the goal + button toward the bottom so the screen feels full */}
+        <div className="flex-1 min-h-[24px]" />
+
         {/* Daily goal */}
-        <div className="mt-5 rounded-card p-4 relative overflow-hidden" style={{ background: 'color-mix(in srgb, #0EA5E9 14%, transparent)' }}>
+        <div className="rounded-card p-4 relative overflow-hidden" style={{ background: 'color-mix(in srgb, #0EA5E9 14%, transparent)' }}>
           <div className="text-[16px] font-extrabold text-ink">{t('water.screen.dailyGoal', { n: total })}</div>
           <div className="flex gap-6 mt-3">
             <GoalStat value={fmtL(stats.avg)} label={t('water.screen.average')} />

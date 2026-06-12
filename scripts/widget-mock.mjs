@@ -39,7 +39,7 @@ const html=`<!doctype html><meta charset=utf-8><style>
 </style><body>
  <div class=bar><span class=t>9:41</span><span class=r>●●●● 5G ▮▮</span></div>
  <div class=grid>
-   <div class="w medium"><div class=cap>${dropIcon} Acqua <span class=cnt>5/10</span></div>${drops(10,5,8,7)}<div class=btns><div class=btn>＋ Bicchiere</div><div class=btn>＋ 1 L</div></div></div>
+   <div class="w medium"><div class=cap>${dropIcon} Acqua <span class=cnt>5/10</span></div>${drops(10,5,5,7)}<div class=btns><div class=btn>＋ Bicchiere</div><div class=btn>＋ 1 L</div></div></div>
    <div class=rowsmall>
      <div class="w small"><div class=cap>${dropIcon} Acqua <span class=cnt>5/10</span></div>${drops(8,5,4,6)}<div class=btns><div class=btn>＋ Bicchiere</div></div></div>
      <div class="wrap" style="width:186px"><div class="w small"><div class=cap>${check} To-Do</div><div style="margin-top:5px">${todoRows(3)}</div></div><span class=tag>To-Do</span></div>

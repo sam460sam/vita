@@ -180,10 +180,13 @@ struct WaterWidgetView: View {
         }
     }
 
-    // Grid of drops: filled = consumed, outline = remaining.
-    func drops(cols: Int, cap: Int, size: CGFloat) -> some View {
+    // Grid of drops: filled = consumed, outline = remaining. Columns are
+    // balanced so the drops sit symmetrically (e.g. 10 → 5×2, 16 → 8×2).
+    func drops(maxCols: Int, cap: Int, size: CGFloat) -> some View {
         let shown = min(glasses, cap)
-        return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 5), count: cols), spacing: 5) {
+        let rows = max(1, Int(ceil(Double(shown) / Double(maxCols))))
+        let cols = Int(ceil(Double(shown) / Double(rows)))
+        return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: cols), spacing: 6) {
             ForEach(0..<shown, id: \.self) { i in
                 Image(systemName: i < done ? "drop.fill" : "drop")
                     .font(.system(size: size))
@@ -199,23 +202,23 @@ struct WaterWidgetView: View {
         case .systemMedium:
             VStack(alignment: .leading, spacing: 8) {
                 header
-                drops(cols: 8, cap: 16, size: 17)
+                drops(maxCols: 8, cap: 16, size: 18)
                 Spacer(minLength: 2)
                 HStack(spacing: 8) { addButton(glass, glassLabel); addButton(1000, "1 L") }
             }.padding()
         case .systemLarge:
             VStack(alignment: .leading, spacing: 12) {
                 header
-                Text("\(done) \(L.t("di", "of")) \(glasses) \(glassLabel.lowercased())\(glasses == 1 ? "" : (L.isIT ? "" : "es"))")
+                Text("\(done) \(L.t("di", "of")) \(glasses)")
                     .font(.system(size: 22, weight: .heavy)).foregroundColor(vInk)
-                drops(cols: 8, cap: 32, size: 22)
+                drops(maxCols: 8, cap: 32, size: 24)
                 Spacer()
                 HStack(spacing: 10) { addButton(glass, glassLabel); addButton(1000, "1 L") }
             }.padding()
         default: // systemSmall
             VStack(alignment: .leading, spacing: 6) {
                 header
-                drops(cols: 4, cap: 8, size: 15)
+                drops(maxCols: 4, cap: 8, size: 16)
                 Spacer(minLength: 2)
                 addButton(glass, glassLabel)
             }.padding()
