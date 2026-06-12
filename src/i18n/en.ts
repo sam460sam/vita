@@ -27,6 +27,8 @@ export const en: Record<TKey, string> = {
   'common.edit': 'Edit',
   'common.back': 'Back',
   'common.close': 'Close',
+  'common.previous': 'Previous',
+  'common.next': 'Next',
   'common.all': 'All',
   'common.optional': 'optional',
   'common.search': 'Search',

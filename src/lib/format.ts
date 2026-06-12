@@ -22,6 +22,11 @@ export function setActiveLang(lang: LangCode) {
   activeLocale = lang === 'it' ? dfnIt : dfnEn;
 }
 
+/** Current UI language for plain (non-React) modules (e.g. demo seed copy). */
+export function getActiveLang(): LangCode {
+  return activeLang;
+}
+
 /** Today as ISO yyyy-MM-dd in local time. */
 export function todayISO(d: Date = new Date()): string {
   return format(d, ISO_DAY);

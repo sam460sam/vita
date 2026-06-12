@@ -136,7 +136,7 @@ export function TaskForm({
                 onChange={() => setSubtasks((p) => p.map((x) => (x.id === s.id ? { ...x, done: !x.done } : x)))}
               />
               <span className={s.done ? 'text-ink-3 line-through text-sm flex-1' : 'text-ink text-sm flex-1'}>{s.title}</span>
-              <button onClick={() => setSubtasks((p) => p.filter((x) => x.id !== s.id))} className="text-ink-3 p-1" aria-label="Rimuovi">
+              <button onClick={() => setSubtasks((p) => p.filter((x) => x.id !== s.id))} className="text-ink-3 p-1" aria-label={t('common.delete')}>
                 <X size={16} />
               </button>
             </div>

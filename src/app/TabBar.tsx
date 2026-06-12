@@ -33,10 +33,11 @@ export function TabBar() {
 
 function QuickAddButton() {
   const { openMenu } = useQuickAdd();
+  const t = useT();
   return (
     <button
       onClick={openMenu}
-      aria-label="Aggiungi"
+      aria-label={t('common.add')}
       className="h-[56px] w-[56px] -mt-7 rounded-full bg-accent text-on-accent shadow-fab ring-4 ring-card flex items-center justify-center active:scale-90 transition-transform"
     >
       <Plus size={28} strokeWidth={2.75} />

@@ -20,9 +20,8 @@ import {
   Field,
   Input,
 } from '@/ui';
-import { formatDistance, formatDuration } from '@/lib/format';
+import { formatDistance, formatDuration, activeDfnLocale } from '@/lib/format';
 import { format, parseISO } from 'date-fns';
-import { it } from 'date-fns/locale';
 import { todayRings, ringsToData, summarize, mergeHealthRings } from './logic';
 import { useHealthSummary, useWeeklySteps } from '@/platform/health';
 import { getSport, type Sport } from './sports';
@@ -146,7 +145,7 @@ export function ActivityPage() {
                     <div className="min-w-0 flex-1">
                       <div className="text-[15px] font-medium text-ink truncate">{sport.name}</div>
                       <div className="text-[13px] text-ink-2">
-                        {format(new Date(w.startedAt), 'd MMM · HH:mm', { locale: it })}
+                        {format(new Date(w.startedAt), 'd MMM · HH:mm', { locale: activeDfnLocale() })}
                       </div>
                     </div>
                     <div className="text-right">
@@ -270,7 +269,7 @@ function StepsCard({ data }: { data: { date: string; value: number }[] }) {
         </div>
       </div>
       <BarChart
-        data={data.map((d) => ({ label: format(parseISO(d.date), 'EEEEE', { locale: it }), value: d.value }))}
+        data={data.map((d) => ({ label: format(parseISO(d.date), 'EEEEE', { locale: activeDfnLocale() }), value: d.value }))}
         color="var(--c-activity)"
         unit={t('activity.unit.steps')}
         height={96}

@@ -26,6 +26,8 @@ export const it = {
   'common.edit': 'Modifica',
   'common.back': 'Indietro',
   'common.close': 'Chiudi',
+  'common.previous': 'Precedente',
+  'common.next': 'Successivo',
   'common.all': 'Tutti',
   'common.optional': 'opzionale',
   'common.search': 'Cerca',

@@ -1,5 +1,6 @@
 import { addDays, format, isSameDay, parseISO, startOfWeek } from 'date-fns';
 import { cn } from '@/lib/cn';
+import { activeDfnLocale } from '@/lib/format';
 
 interface DateStripProps {
   /** Selected day (ISO yyyy-MM-dd). Defaults to today. */
@@ -32,10 +33,10 @@ export function DateStrip({ selected, marked, onSelect, className }: DateStripPr
             key={key}
             onClick={() => onSelect?.(key)}
             className="flex-1 flex flex-col items-center gap-1 py-1"
-            aria-label={format(d, 'EEEE d')}
+            aria-label={format(d, 'EEEE d', { locale: activeDfnLocale() })}
             aria-pressed={isSel}
           >
-            <span className="text-[11px] font-semibold text-ink-3">{format(d, 'EEEEE')}</span>
+            <span className="text-[11px] font-semibold text-ink-3">{format(d, 'EEEEE', { locale: activeDfnLocale() })}</span>
             <span
               className={cn(
                 'relative h-9 w-9 flex items-center justify-center rounded-full text-[14px] font-bold tnum transition-colors',

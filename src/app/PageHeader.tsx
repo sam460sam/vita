@@ -29,7 +29,7 @@ export function PageHeader({ title, subtitle, action, back, large, hideStella }:
         {back && (
           <button
             onClick={() => (typeof back === 'string' ? navigate(back) : navigate(-1))}
-            aria-label="Indietro"
+            aria-label={t('common.back')}
             className="-ml-2 h-10 w-10 flex items-center justify-center rounded-full text-ink-2 hover:bg-section"
           >
             <ChevronLeft size={24} />
