@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "tsc -b --noEmit"
+    "lint": "tsc -b --noEmit",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@capacitor/app": "^8.1.0",
@@ -39,6 +40,7 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
+    "patch-package": "^8.0.1",
     "postcss": "^8.4.47",
     "puppeteer": "^25.1.0",
     "tailwindcss": "^3.4.11",
