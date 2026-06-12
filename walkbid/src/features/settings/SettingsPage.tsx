@@ -4,7 +4,9 @@ import { useT, useI18n } from '@/i18n';
 import { Screen } from '@/app/Screen';
 import { Card, Field, Input, Textarea, Select, Button, useToast } from '@/ui';
 import { readSettings, updateCompany, updateSettings } from '@/services/settings';
+import { exportBackup, importBackup } from '@/services/backup';
 import { BRAND, BRAND_TAGLINE } from '@/config/brand';
+import { Download, Upload } from 'lucide-react';
 import type { Locale } from '@/data/types';
 
 export function SettingsPage() {
@@ -85,6 +87,48 @@ export function SettingsPage() {
                 <option value="es">Español</option>
               </Select>
             </Field>
+          </div>
+        </Card>
+
+        <Card>
+          <div className="p-4">
+            <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-wide text-dust">Backup</h3>
+            <p className="mb-3 text-sm text-dust">
+              {BRAND} keeps everything on this device. Export a .zip (data + photos + signed PDFs) to keep it safe or
+              move to a new phone.
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                variant="secondary"
+                onClick={async () => {
+                  await exportBackup();
+                  toast.show('Backup exported', 'go');
+                }}
+              >
+                <Download size={18} /> Export
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = '.zip,application/zip';
+                  input.onchange = async () => {
+                    const f = input.files?.[0];
+                    if (!f) return;
+                    try {
+                      await importBackup(f);
+                      toast.show('Backup restored', 'go');
+                    } catch (e) {
+                      toast.show((e as Error).message, 'risk');
+                    }
+                  };
+                  input.click();
+                }}
+              >
+                <Upload size={18} /> Restore
+              </Button>
+            </div>
           </div>
         </Card>
 

@@ -77,9 +77,9 @@ export function fromISO(date: string): Date {
   return parseISO(date);
 }
 
-/** US short date e.g. "Jun 12, 2026". */
-export function usDate(d: Date | string = new Date()): string {
-  const date = typeof d === 'string' ? parseISO(d) : d;
+/** US short date e.g. "Jun 12, 2026". Accepts a Date, ISO string, or epoch ms. */
+export function usDate(d: Date | string | number = new Date()): string {
+  const date = typeof d === 'string' ? parseISO(d) : typeof d === 'number' ? new Date(d) : d;
   return format(date, 'MMM d, yyyy');
 }
 
