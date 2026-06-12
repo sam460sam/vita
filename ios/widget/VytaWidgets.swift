@@ -5,8 +5,10 @@
 // (see WIDGETS.md). Both the app target and this widget target must share the
 // App Group "group.app.vita.lifeos".
 //
-// Data comes from the web app, which mirrors values into the shared App Group
-// via @capacitor/preferences (see src/platform/widget.ts):
+// Sizes: Small · Medium · Large (Home) + Circular / Rectangular (Lock Screen).
+// Language: follows the device language (Italian / English) automatically.
+//
+// Data comes from the web app (src/platform/widget.ts):
 //   key "vyta_widget"        → { water: { ml, goalMl }, reminders: [...] }
 //   key "vyta_widget_inbox"  → accumulated ml logged from the widget button
 // ============================================================================
@@ -17,6 +19,18 @@ import AppIntents
 let APP_GROUP = "group.app.vita.lifeos"
 let WIDGET_KEY = "vyta_widget"
 let INBOX_KEY = "vyta_widget_inbox"
+
+// MARK: - Localization (device language)
+
+enum L {
+    static var isIT: Bool { (Locale.current.language.languageCode?.identifier ?? "en") == "it" }
+    static func t(_ it: String, _ en: String) -> String { isIT ? it : en }
+}
+
+func litersStr(_ ml: Int) -> String {
+    let s = String(format: "%.1f", Double(ml) / 1000)
+    return (L.isIT ? s.replacingOccurrences(of: ".", with: ",") : s) + "L"
+}
 
 // MARK: - Shared data
 
@@ -75,7 +89,6 @@ struct VytaProvider: TimelineProvider {
     }
     func getTimeline(in context: Context, completion: @escaping (Timeline<VytaEntry>) -> Void) {
         let entry = VytaEntry(date: Date(), data: readWidgetData())
-        // Refresh roughly every 30 min (WidgetKit budget permitting).
         let next = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
         completion(Timeline(entries: [entry], policy: .after(next)))
     }
@@ -88,40 +101,87 @@ let vBlue  = Color(red: 0.055, green: 0.647, blue: 0.914)   // #0EA5E9
 let vCream = Color(red: 0.973, green: 0.945, blue: 0.902)   // #f8f1e6
 let vInk   = Color(red: 0.165, green: 0.125, blue: 0.094)   // #2a2018
 
+// MARK: - Reusable bits
+
+struct WaterRing: View {
+    let progress: Double
+    let size: CGFloat
+    var body: some View {
+        ZStack {
+            Circle().stroke(vBlue.opacity(0.18), lineWidth: size * 0.12)
+            Circle().trim(from: 0, to: progress)
+                .stroke(vBlue, style: StrokeStyle(lineWidth: size * 0.12, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+            Image(systemName: "drop.fill").foregroundColor(vBlue).font(.system(size: size * 0.34))
+        }
+        .frame(width: size, height: size)
+    }
+}
+
+@ViewBuilder
+func addButton(_ ml: Int, _ label: String) -> some View {
+    if #available(iOS 17.0, *) {
+        Button(intent: LogWaterIntent(ml: ml)) {
+            Label(label, systemImage: "plus").font(.caption).bold().frame(maxWidth: .infinity)
+        }
+        .tint(vBlue)
+        .buttonBorderShape(.capsule)
+    }
+}
+
 // MARK: - Water widget
 
 struct WaterWidgetView: View {
     @Environment(\.widgetFamily) var family
     let data: WidgetData
     var progress: Double { data.water.goalMl > 0 ? min(1, Double(data.water.ml) / Double(data.water.goalMl)) : 0 }
-    var liters: String { String(format: "%.1fL", Double(data.water.ml) / 1000) }
+
+    var header: some View {
+        HStack(spacing: 5) {
+            Image(systemName: "drop.fill").foregroundColor(vBlue)
+            Text(L.t("Acqua", "Water")).font(.caption).bold().foregroundColor(.secondary)
+            Spacer()
+        }
+    }
 
     var body: some View {
         switch family {
         case .accessoryCircular:
-            Gauge(value: progress) { Image(systemName: "drop.fill") }
-                .gaugeStyle(.accessoryCircular)
-        default:
-            VStack(alignment: .leading, spacing: 8) {
+            Gauge(value: progress) { Image(systemName: "drop.fill") }.gaugeStyle(.accessoryCircular)
+
+        case .systemMedium:
+            HStack(spacing: 16) {
+                WaterRing(progress: progress, size: 80)
+                VStack(alignment: .leading, spacing: 4) {
+                    header
+                    Text(litersStr(data.water.ml)).font(.system(size: 28, weight: .heavy)).foregroundColor(vInk)
+                    Text("\(L.t("Obiettivo", "Goal")) \(litersStr(data.water.goalMl))").font(.caption2).foregroundColor(.secondary)
+                    addButton(250, "250 ml")
+                }
+            }.padding()
+
+        case .systemLarge:
+            VStack(alignment: .leading, spacing: 14) {
+                header
                 HStack {
-                    Image(systemName: "drop.fill").foregroundColor(vBlue)
-                    Text("Acqua").font(.caption).bold().foregroundColor(.secondary)
-                    Spacer()
+                    Spacer(); WaterRing(progress: progress, size: 150); Spacer()
                 }
-                Text(liters).font(.system(size: 30, weight: .heavy)).foregroundColor(vInk)
-                Text("\(Int(progress * 100))% di \(String(format: "%.1fL", Double(data.water.goalMl)/1000))")
-                    .font(.caption2).foregroundColor(.secondary)
+                Text(litersStr(data.water.ml) + " / " + litersStr(data.water.goalMl))
+                    .font(.system(size: 26, weight: .heavy)).foregroundColor(vInk).frame(maxWidth: .infinity, alignment: .center)
+                Text("\(Int(progress * 100))% · \(data.water.ml / 200) \(L.t("bicchieri", "glasses"))")
+                    .font(.subheadline).foregroundColor(.secondary).frame(maxWidth: .infinity, alignment: .center)
                 Spacer()
-                if #available(iOS 17.0, *) {
-                    Button(intent: LogWaterIntent(ml: 250)) {
-                        Label("250 ml", systemImage: "plus")
-                            .font(.caption).bold().frame(maxWidth: .infinity)
-                    }
-                    .tint(vBlue)
-                    .buttonBorderShape(.capsule)
-                }
-            }
-            .padding()
+                HStack(spacing: 10) { addButton(250, "250 ml"); addButton(500, "500 ml") }
+            }.padding()
+
+        default: // systemSmall
+            VStack(alignment: .leading, spacing: 6) {
+                header
+                Text(litersStr(data.water.ml)).font(.system(size: 30, weight: .heavy)).foregroundColor(vInk)
+                Text("\(Int(progress * 100))% · \(litersStr(data.water.goalMl))").font(.caption2).foregroundColor(.secondary)
+                Spacer()
+                addButton(250, "250 ml")
+            }.padding()
         }
     }
 }
@@ -135,9 +195,9 @@ struct WaterWidget: Widget {
                 WaterWidgetView(data: entry.data).background(vCream)
             }
         }
-        .configurationDisplayName("Vyta · Acqua")
-        .description("Segna l’acqua di oggi.")
-        .supportedFamilies([.systemSmall, .accessoryCircular])
+        .configurationDisplayName(L.t("Vyta · Acqua", "Vyta · Water"))
+        .description(L.t("Segna l’acqua di oggi.", "Log today’s water."))
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .accessoryCircular])
     }
 }
 
@@ -146,40 +206,45 @@ struct WaterWidget: Widget {
 struct RemindersWidgetView: View {
     @Environment(\.widgetFamily) var family
     let data: WidgetData
+    var title: String { L.t("Promemoria", "Reminders") }
+    var empty: String { L.t("Nessun promemoria", "No reminders") }
+
+    func row(_ r: WidgetReminder) -> some View {
+        HStack(spacing: 8) {
+            Text(r.time).font(.caption).bold().foregroundColor(vGreen).frame(width: 46, alignment: .leading)
+            Text(r.label).font(.caption).foregroundColor(vInk).lineLimit(1)
+            Spacer()
+        }
+    }
+
+    var header: some View {
+        HStack(spacing: 5) {
+            Image(systemName: "bell.fill").foregroundColor(vGreen)
+            Text(title).font(.caption).bold().foregroundColor(.secondary)
+            Spacer()
+        }
+    }
 
     var body: some View {
         switch family {
         case .accessoryRectangular:
             VStack(alignment: .leading, spacing: 2) {
-                Text("Promemoria").font(.caption2).bold()
-                ForEach(data.reminders.prefix(2), id: \.self) { r in
-                    Text("\(r.time)  \(r.label)").font(.caption2).lineLimit(1)
-                }
-                if data.reminders.isEmpty { Text("Nessun promemoria").font(.caption2).foregroundColor(.secondary) }
+                Text(title).font(.caption2).bold()
+                ForEach(data.reminders.prefix(2), id: \.self) { r in Text("\(r.time)  \(r.label)").font(.caption2).lineLimit(1) }
+                if data.reminders.isEmpty { Text(empty).font(.caption2).foregroundColor(.secondary) }
             }
+
         default:
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Image(systemName: "bell.fill").foregroundColor(vGreen)
-                    Text("Promemoria").font(.caption).bold().foregroundColor(.secondary)
-                    Spacer()
-                }
+            let count = family == .systemLarge ? 8 : (family == .systemMedium ? 4 : 3)
+            VStack(alignment: .leading, spacing: family == .systemSmall ? 4 : 8) {
+                header
                 if data.reminders.isEmpty {
-                    Spacer()
-                    Text("Nessun promemoria").font(.subheadline).foregroundColor(.secondary)
-                    Spacer()
+                    Spacer(); Text(empty).font(.subheadline).foregroundColor(.secondary); Spacer()
                 } else {
-                    ForEach(data.reminders.prefix(family == .systemLarge ? 6 : 3), id: \.self) { r in
-                        HStack(spacing: 8) {
-                            Text(r.time).font(.caption).bold().foregroundColor(vGreen).frame(width: 44, alignment: .leading)
-                            Text(r.label).font(.caption).foregroundColor(vInk).lineLimit(1)
-                            Spacer()
-                        }
-                    }
+                    ForEach(data.reminders.prefix(count), id: \.self) { r in row(r) }
                     Spacer()
                 }
-            }
-            .padding()
+            }.padding()
         }
     }
 }
@@ -193,9 +258,9 @@ struct RemindersWidget: Widget {
                 RemindersWidgetView(data: entry.data).background(vCream)
             }
         }
-        .configurationDisplayName("Vyta · Promemoria")
-        .description("I tuoi promemoria del giorno.")
-        .supportedFamilies([.systemSmall, .systemMedium, .accessoryRectangular])
+        .configurationDisplayName(L.t("Vyta · Promemoria", "Vyta · Reminders"))
+        .description(L.t("I tuoi promemoria del giorno.", "Your reminders for the day."))
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .accessoryRectangular])
     }
 }
 
