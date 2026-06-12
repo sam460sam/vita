@@ -15,6 +15,7 @@ import type {
   Note,
   Project,
   Settings,
+  SubscriptionCache,
   Task,
   Transaction,
   WaterLog,
@@ -37,6 +38,7 @@ export class VitaDB extends Dexie {
   weightLogs!: Table<WeightLog, string>;
   homeLayout!: Table<HomeLayout, string>;
   notes!: Table<Note, string>;
+  subscription!: Table<SubscriptionCache, string>;
 
   constructor() {
     super('vita');
@@ -68,6 +70,10 @@ export class VitaDB extends Dexie {
     // v5: native notes (with optional checklist). Additive only.
     this.version(5).stores({
       notes: 'id, pinned, updatedAt',
+    });
+    // v6: cached subscription entitlement (offline-first paywall).
+    this.version(6).stores({
+      subscription: 'id',
     });
   }
 }

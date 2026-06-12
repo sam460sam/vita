@@ -1,6 +1,6 @@
-# Vyta — Rilascio 1.2 (build 34)
+# Vyta — Rilascio 1.2 (build 35)
 
-Branch: `claude/vyta-candy-ui-restyle-hdzg0g` · Versione **1.2** · Build **34**
+Branch: `claude/vyta-candy-ui-restyle-hdzg0g` · Versione **1.2** · Build **35**
 Tutto committato e pushato. Questa release arriva **fino ai widget**; il resto
 (allenamento nativo + Apple Watch) va alla **prossima versione**.
 
@@ -61,7 +61,7 @@ Già generati e **inviati in chat** (salvali dal telefono):
 Per i passaggi dettagliati con verifiche, vedi **GUIDA.md**.
 
 ## 🔑 Chiavi
-- Branch `claude/vyta-candy-ui-restyle-hdzg0g` · **1.2 / build 34**
+- Branch `claude/vyta-candy-ui-restyle-hdzg0g` · **1.2 / build 35**
 - App Group (su entrambi i target): `group.app.vita.lifeos`
 - Bundle: app `app.vita.lifeos` · widget `app.vita.lifeos.VytaWidgets`
 - Aggiorna con `git reset --hard origin/<branch>` (mai `git pull`)

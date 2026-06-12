@@ -1,42 +1,46 @@
 // ============================================================================
-// Vyta subscription configuration (RevenueCat — free up to ~$2.5k/mo revenue).
+// Vyta subscription configuration — NATIVE StoreKit 2 (on-device only).
 //
-// MODEL: hard paywall with a 7-day free trial, then €2,99/month (reinstall-proof).
-//   • On entry, if not subscribed, our paywall screen is shown
-//     ("7 days free, then €2,99/month"). Tapping the CTA starts the purchase;
-//     because the product has a 7-day introductory free trial in App Store
-//     Connect, eligible users get the free week (no charge), then €2,99/mo.
-//   • Apple tracks trial eligibility per Apple ID → reinstalling/cancelling does
-//     NOT grant a new free week.
-//   • While the subscription (incl. the trial) is active → full app.
+// No third-party billing service: verification happens on-device via
+// @squareetlabs/capacitor-subscriptions, so the app stays "Data Not Collected".
 //
-// DORMANT BY DEFAULT: leave the API key EMPTY → no paywall, app fully unlocked
-// (the 1.2 state). Fill the key to turn the subscription on.
-// Keys: RevenueCat → Project settings → API keys (public SDK key, `appl_...`).
+// Products are created in App Store Connect with these exact IDs, each with a
+// 7-day free trial as an Introductory Offer. The web/PWA build has no purchases
+// (everything degrades gracefully).
 // ============================================================================
 
-export const REVENUECAT_API_KEY = {
-  ios: 'appl_OtiEuvtgdEhyxkMVzrNjirFsFEq', // RevenueCat public SDK key (App Store)
-  android: '', // e.g. 'goog_XXXXXXXXXXXXXXXXXXXXXXXX'
-};
+export const PRODUCT_IDS = {
+  monthly: 'vyta_pro_monthly',
+  yearly: 'vyta_pro_yearly',
+} as const;
 
-/** Entitlement identifier configured in RevenueCat (grants full access). */
-export const SUBSCRIPTION_ENTITLEMENT_ID = 'Vyta Pro';
+export type PlanPeriod = 'monthly' | 'yearly';
 
-/**
- * Hard paywall switch.
- *  • true  → after the free trial week the app is gated (must subscribe to keep
- *    using). NO paywall at first launch — the user is free for TRIAL_DAYS days,
- *    then the paywall appears.
- *  • false → the app never gates; the subscription is only offered on the Pro page.
- */
-export const HARD_PAYWALL = true;
+/** All our product IDs (for entitlement matching). */
+export const ALL_PRODUCT_IDS: string[] = [PRODUCT_IDS.monthly, PRODUCT_IDS.yearly];
 
-/** RevenueCat package type for the monthly plan (with the 7-day trial). */
-export const MONTHLY_PACKAGE_TYPE = 'MONTHLY';
-
-/** Free trial length — must match the introductory offer in App Store Connect. */
+/** Free trial length (must match the Introductory Offer in App Store Connect). */
 export const TRIAL_DAYS = 7;
 
-/** Monthly price shown before live store prices load (display only). */
-export const PRICE_FALLBACK = '€2,99';
+/** Yearly savings vs paying monthly (badge). 3,99×12=47,88 → 29,99 ≈ 37% off. */
+export const YEARLY_SAVINGS_PCT = 37;
+
+/** Display prices shown before live store prices load. */
+export const PRICE_FALLBACK: Record<PlanPeriod, string> = {
+  monthly: '€3,99',
+  yearly: '€29,99',
+};
+
+/** Mandatory legal links (Apple requires Terms/EULA + Privacy on the paywall). */
+export const TERMS_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+export const PRIVACY_URL = 'https://sam460sam.github.io/vita/privacy.html';
+
+/**
+ * Modules behind Vyta Pro (the "equilibrata" split). The wellness core
+ * (habits, water, journal, notes, health) stays free.
+ */
+export const PRO_MODULES: string[] = ['finanze', 'obiettivi', 'calendario'];
+
+/** Master switch. Keep true to ship the paywall; flip to false to disable
+ *  gating entirely (emergency unlock) without removing the code. */
+export const PAYWALL_ENABLED = true;

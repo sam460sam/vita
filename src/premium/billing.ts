@@ -1,113 +1,94 @@
 // ============================================================================
-// RevenueCat billing wrapper. Every call is guarded: on web, or when no API key
-// is set (see config.ts), all functions are safe no-ops, so the app keeps
-// building and runs exactly as before. Only with a key does this talk to the store.
+// Native StoreKit 2 billing (via @squareetlabs/capacitor-subscriptions).
+// Verification is fully on-device → the app stays "Data Not Collected".
+// Every call is guarded: on web (or any non-native platform) it's a safe no-op.
 // ============================================================================
 import { Capacitor } from '@capacitor/core';
-import { Purchases } from '@revenuecat/purchases-capacitor';
-import { REVENUECAT_API_KEY, SUBSCRIPTION_ENTITLEMENT_ID, MONTHLY_PACKAGE_TYPE } from './config';
+import { Subscriptions } from '@squareetlabs/capacitor-subscriptions';
+import { PRODUCT_IDS, ALL_PRODUCT_IDS, type PlanPeriod } from './config';
 
-const platformName = Capacitor.getPlatform();
-const apiKey =
-  platformName === 'ios' ? REVENUECAT_API_KEY.ios : platformName === 'android' ? REVENUECAT_API_KEY.android : '';
-
-/** True when real billing is wired (native + an API key is set). */
+/** True only inside the native iOS app (where StoreKit exists). */
 export function isBillingConfigured(): boolean {
-  return Capacitor.isNativePlatform() && apiKey.length > 0;
+  return Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios';
 }
 
 export interface ProPackage {
-  identifier: string;
-  type: string;
-  /** Localized price, e.g. '€2,99'. */
+  period: PlanPeriod;
+  productId: string;
+  /** Localized price string from the store, e.g. '€3,99'. */
   priceString: string;
-  /** Raw RevenueCat package, passed back to purchase(). */
-  raw: unknown;
 }
 
-let configured = false;
-async function ensureConfigured(): Promise<boolean> {
-  if (!isBillingConfigured()) return false;
-  if (configured) return true;
-  try {
-    await Purchases.configure({ apiKey });
-    configured = true;
-    return true;
-  } catch {
-    return false;
-  }
+export interface EntitlementState {
+  isPro: boolean;
+  productId?: string;
+  expiresAt?: number;
 }
 
-function entitlementActive(customerInfo: { entitlements: { active: Record<string, unknown> } }): boolean {
-  return !!customerInfo.entitlements.active[SUBSCRIPTION_ENTITLEMENT_ID];
-}
-
-/** Is the subscription entitlement currently active (incl. during the trial)? */
-export async function isProActive(): Promise<boolean> {
-  if (!(await ensureConfigured())) return false;
-  try {
-    const { customerInfo } = await Purchases.getCustomerInfo();
-    return entitlementActive(customerInfo);
-  } catch {
-    return false;
-  }
-}
-
-/** Available packages from the current offering. */
+/** Fetch both subscription products with their localized prices. */
 export async function getProPackages(): Promise<ProPackage[]> {
-  if (!(await ensureConfigured())) return [];
+  if (!isBillingConfigured()) return [];
+  const out: ProPackage[] = [];
+  for (const [period, productId] of Object.entries(PRODUCT_IDS) as [PlanPeriod, string][]) {
+    try {
+      const res = await Subscriptions.getProductDetails({ productIdentifier: productId });
+      if (res.responseCode === 0 && res.data) {
+        out.push({ period, productId, priceString: res.data.price });
+      }
+    } catch {
+      /* product not available yet */
+    }
+  }
+  return out;
+}
+
+/** Read the current entitlement from StoreKit (on-device verified). */
+export async function getEntitlement(): Promise<EntitlementState> {
+  if (!isBillingConfigured()) return { isPro: false };
   try {
-    const offerings = await Purchases.getOfferings();
-    const pkgs = (offerings.current?.availablePackages ?? []) as Array<{
-      identifier: string;
-      packageType: string;
-      product: { priceString: string };
-    }>;
-    return pkgs.map((p) => ({
-      identifier: p.identifier,
-      type: String(p.packageType),
-      priceString: p.product?.priceString ?? '',
-      raw: p,
-    }));
+    const res = await Subscriptions.getCurrentEntitlements();
+    const txns = res.responseCode === 0 ? res.data ?? [] : [];
+    const now = Date.now();
+    const active = txns
+      .filter((t) => ALL_PRODUCT_IDS.includes(t.productIdentifier))
+      .map((t) => ({ productId: t.productIdentifier, expiresAt: Date.parse(t.expiryDate) }))
+      // keep entitlements that are non-expired (or have no parseable expiry)
+      .filter((t) => !Number.isFinite(t.expiresAt) || t.expiresAt > now)
+      .sort((a, b) => (b.expiresAt || 0) - (a.expiresAt || 0));
+    if (active.length === 0) return { isPro: false };
+    return {
+      isPro: true,
+      productId: active[0].productId,
+      expiresAt: Number.isFinite(active[0].expiresAt) ? active[0].expiresAt : undefined,
+    };
   } catch {
-    return [];
+    return { isPro: false };
   }
 }
 
-/** The monthly package (with the trial), or null. */
-export async function getMonthlyPackage(): Promise<ProPackage | null> {
-  const pkgs = await getProPackages();
-  return pkgs.find((p) => p.type === MONTHLY_PACKAGE_TYPE) ?? pkgs[0] ?? null;
-}
-
-/** Purchase a package. Returns true if the subscription is active afterwards. */
-export async function purchasePackage(pkg: ProPackage): Promise<boolean> {
-  if (!(await ensureConfigured())) return false;
+/** Start a purchase. Returns the resulting entitlement state. */
+export async function purchase(productId: string): Promise<EntitlementState> {
+  if (!isBillingConfigured()) return { isPro: false };
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg.raw as any });
-    return entitlementActive(customerInfo);
+    const res = await Subscriptions.purchaseProduct({ productIdentifier: productId });
+    if (res.responseCode === 0) return await getEntitlement();
+    return { isPro: false };
   } catch {
-    return false;
+    return { isPro: false };
   }
 }
 
-/** Restore previous purchases. Returns true if the subscription is active afterwards. */
-export async function restorePurchases(): Promise<boolean> {
-  if (!(await ensureConfigured())) return false;
-  try {
-    const { customerInfo } = await Purchases.restorePurchases();
-    return entitlementActive(customerInfo);
-  } catch {
-    return false;
-  }
+/** Restore purchases. StoreKit 2 reflects restored subscriptions in the current
+ *  entitlements, so we re-read them. */
+export async function restore(): Promise<EntitlementState> {
+  return getEntitlement();
 }
 
-/** Subscribe to entitlement changes (renewals / expirations). */
-export async function onProChange(cb: (active: boolean) => void): Promise<void> {
-  if (!(await ensureConfigured())) return;
+/** Open the system "Manage Subscriptions" screen. */
+export async function manageSubscriptions(): Promise<void> {
+  if (!isBillingConfigured()) return;
   try {
-    await Purchases.addCustomerInfoUpdateListener((info) => cb(entitlementActive(info)));
+    await Subscriptions.manageSubscriptions();
   } catch {
     /* ignore */
   }

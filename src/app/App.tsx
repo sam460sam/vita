@@ -4,7 +4,6 @@ import { ToastProvider } from '@/ui';
 import { I18nProvider } from '@/i18n';
 import { ThemeProvider } from '@/theme/theme';
 import { PremiumProvider } from '@/premium/premium';
-import { SubscriptionGate } from '@/premium/SubscriptionGate';
 import { QuickAddProvider } from './QuickAdd';
 import { StellaProvider } from '@/features/stella';
 import { Sidebar } from './Sidebar';
@@ -50,7 +49,6 @@ export function App() {
           <HashRouter>
             <QuickAddProvider>
             <StellaProvider>
-              <SubscriptionGate>
               <div className="min-h-screen flex bg-section">
                 <Sidebar />
                 <main className="flex-1 min-w-0">
@@ -85,7 +83,6 @@ export function App() {
               </div>
               <TabBar />
               <GlobalSheets />
-              </SubscriptionGate>
             </StellaProvider>
             </QuickAddProvider>
           </HashRouter>

@@ -270,6 +270,18 @@ export interface Note extends Timestamped {
 }
 
 // ----------------------------------------------------------------------------
+// Subscription (Vyta Pro) — cached entitlement for offline use
+// ----------------------------------------------------------------------------
+export interface SubscriptionCache {
+  id: 'sub'; // singleton
+  isPro: boolean;
+  productId?: string;
+  /** Subscription expiry (epoch ms), if known. */
+  expiresAt?: number;
+  updatedAt: number;
+}
+
+// ----------------------------------------------------------------------------
 // Goals
 // ----------------------------------------------------------------------------
 export type GoalLinkType = 'none' | 'project' | 'habit' | 'milestones';

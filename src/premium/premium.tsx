@@ -1,55 +1,46 @@
 // ============================================================================
-// Subscription gating (RevenueCat).
+// Vyta Pro — subscription state (native StoreKit, on-device, offline-first).
 //
-//   • If RevenueCat is NOT configured (no API key in config.ts) → the app stays
-//     fully unlocked (UNLOCK_ALL_FOR_NOW). Shipping default for 1.2.
-//   • If RevenueCat IS configured → `isPremium` reflects the real "pro"
-//     entitlement; `requiresSubscription` drives the paywall gate, and
-//     purchase()/restore() go through the store (7-day trial → €2,99/mo).
+//  • The entitlement is cached in Dexie, so gating works instantly and offline.
+//  • On launch and every time the app returns to the foreground, we re-check
+//    StoreKit and update the cache.
+//  • On web (or with the paywall disabled) everything degrades gracefully.
 // ============================================================================
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { App as CapApp } from '@capacitor/app';
 import {
   isBillingConfigured,
-  isProActive,
+  getEntitlement,
   getProPackages,
-  purchasePackage as billingPurchase,
-  restorePurchases as billingRestore,
-  onProChange,
+  purchase as billingPurchase,
+  restore as billingRestore,
+  manageSubscriptions,
   type ProPackage,
 } from './billing';
-import { HARD_PAYWALL } from './config';
-import { ensureTrialStarted, isTrialActive, trialDaysLeft } from './trial';
+import { PAYWALL_ENABLED } from './config';
+import { readSubscription, writeSubscription } from '@/data/repo';
 
-export type PremiumFeature = 'finances' | 'goals' | 'calendar' | 'stats';
-
-// While the paywall is not live (no API key), keep the app fully usable.
-const UNLOCK_ALL_FOR_NOW = true;
-
-const STORAGE_KEY = 'vita.premium';
+const DEV_KEY = 'vita.proDev'; // web/dev override to preview Pro features
 
 interface PremiumCtx {
-  isPremium: boolean;
-  can: (feature: PremiumFeature) => boolean;
-  /** True when the app must show the paywall (free week over + not subscribed). */
-  requiresSubscription: boolean;
-  /** True while the free week is still running (app usable, no paywall). */
-  inTrial: boolean;
-  /** Days left in the free week (0 once expired). */
-  trialDaysLeft: number;
-  /** True when RevenueCat is wired in this build. */
+  /** True when the user has full access (subscribed, or gating disabled). */
+  isPro: boolean;
+  /** Still resolving the initial entitlement. */
+  loading: boolean;
+  /** True only in the native iOS app (purchases possible). */
   billingActive: boolean;
-  /** Available subscription packages (empty until billing is configured). */
   packages: ProPackage[];
-  purchase: (pkg: ProPackage) => Promise<boolean>;
+  purchase: (productId: string) => Promise<boolean>;
   restore: () => Promise<boolean>;
-  setPremium: (v: boolean) => void;
+  manage: () => Promise<void>;
+  refresh: () => Promise<void>;
 }
 
 const Ctx = createContext<PremiumCtx | null>(null);
 
-function loadPremium(): boolean {
+function devUnlock(): boolean {
   try {
-    return localStorage.getItem(STORAGE_KEY) === '1';
+    return localStorage.getItem(DEV_KEY) === '1';
   } catch {
     return false;
   }
@@ -57,72 +48,66 @@ function loadPremium(): boolean {
 
 export function PremiumProvider({ children }: { children: ReactNode }) {
   const billingActive = isBillingConfigured();
-  const [premium, setPremiumState] = useState<boolean>(loadPremium);
-  const [subActive, setSubActive] = useState<boolean>(false);
+  const [pro, setPro] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [packages, setPackages] = useState<ProPackage[]>([]);
-  const [billingReady, setBillingReady] = useState<boolean>(false);
+  const mounted = useRef(true);
 
-  const setPremium = useCallback((v: boolean) => {
-    setPremiumState(v);
-    try {
-      localStorage.setItem(STORAGE_KEY, v ? '1' : '0');
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  useEffect(() => {
+  const refresh = useCallback(async () => {
     if (!billingActive) return;
-    let mounted = true;
-    ensureTrialStarted(); // start the free-week clock at first launch
-    (async () => {
-      const [active, pkgs] = await Promise.all([isProActive(), getProPackages()]);
-      if (!mounted) return;
-      setSubActive(active);
-      setPackages(pkgs);
-      setBillingReady(true);
-    })();
-    void onProChange((active) => mounted && setSubActive(active));
-    return () => {
-      mounted = false;
-    };
+    const ent = await getEntitlement();
+    if (!mounted.current) return;
+    setPro(ent.isPro);
+    await writeSubscription({ isPro: ent.isPro, productId: ent.productId, expiresAt: ent.expiresAt });
   }, [billingActive]);
 
-  const inTrial = billingActive && isTrialActive();
-  const daysLeft = billingActive ? trialDaysLeft() : 0;
-  // Full access during the free week OR with an active subscription.
-  const isPremium = billingActive ? subActive || inTrial : UNLOCK_ALL_FOR_NOW || premium;
-  // NO paywall at launch: gate only AFTER the free week, if not subscribed and a
-  // purchasable package exists (fail open otherwise so the user is never trapped).
-  const requiresSubscription =
-    HARD_PAYWALL && billingActive && billingReady && !subActive && !inTrial && packages.length > 0;
+  useEffect(() => {
+    mounted.current = true;
+    (async () => {
+      // 1) Offline-first: use the cached entitlement immediately.
+      const cached = await readSubscription();
+      if (mounted.current && cached) setPro(cached.isPro);
+      // 2) Refresh from StoreKit + load the products (native only).
+      if (billingActive) {
+        await refresh();
+        const pkgs = await getProPackages();
+        if (mounted.current) setPackages(pkgs);
+      }
+      if (mounted.current) setLoading(false);
+    })();
 
-  const purchase = useCallback(async (pkg: ProPackage) => {
-    const ok = await billingPurchase(pkg);
-    if (ok) setSubActive(true);
-    return ok;
+    // Re-check whenever the app comes back to the foreground.
+    const sub = CapApp.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) void refresh();
+    });
+    return () => {
+      mounted.current = false;
+      void sub.then((h) => h.remove());
+    };
+  }, [billingActive, refresh]);
+
+  const purchase = useCallback(async (productId: string) => {
+    const ent = await billingPurchase(productId);
+    if (ent.isPro) {
+      setPro(true);
+      await writeSubscription({ isPro: true, productId: ent.productId, expiresAt: ent.expiresAt });
+    }
+    return ent.isPro;
   }, []);
 
   const restore = useCallback(async () => {
-    const ok = await billingRestore();
-    setSubActive(ok);
-    return ok;
+    const ent = await billingRestore();
+    setPro(ent.isPro);
+    await writeSubscription({ isPro: ent.isPro, productId: ent.productId, expiresAt: ent.expiresAt });
+    return ent.isPro;
   }, []);
 
+  // Gating disabled, or a dev/web preview override → treat as Pro.
+  const isPro = !PAYWALL_ENABLED || devUnlock() || pro;
+
   const value = useMemo<PremiumCtx>(
-    () => ({
-      isPremium,
-      can: () => isPremium,
-      requiresSubscription,
-      inTrial,
-      trialDaysLeft: daysLeft,
-      billingActive,
-      packages,
-      purchase,
-      restore,
-      setPremium,
-    }),
-    [isPremium, requiresSubscription, inTrial, daysLeft, billingActive, packages, purchase, restore, setPremium],
+    () => ({ isPro, loading, billingActive, packages, purchase, restore, manage: manageSubscriptions, refresh }),
+    [isPro, loading, billingActive, packages, purchase, restore, refresh],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
@@ -132,4 +117,9 @@ export function usePremium(): PremiumCtx {
   const ctx = useContext(Ctx);
   if (!ctx) throw new Error('usePremium must be used within PremiumProvider');
   return ctx;
+}
+
+/** Convenience hook: is the user a Vyta Pro subscriber (or unlocked)? */
+export function useIsPro(): boolean {
+  return usePremium().isPro;
 }

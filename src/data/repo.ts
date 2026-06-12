@@ -339,6 +339,17 @@ export function newChecklistItem(text = ''): NoteChecklistItem {
 }
 
 // ---------------------------------------------------------------------------
+// Subscription (Vyta Pro) — cached entitlement for offline-first gating
+// ---------------------------------------------------------------------------
+export async function readSubscription(): Promise<import('./types').SubscriptionCache | null> {
+  return (await db.subscription.get('sub')) ?? null;
+}
+
+export async function writeSubscription(data: { isPro: boolean; productId?: string; expiresAt?: number }): Promise<void> {
+  await db.subscription.put({ id: 'sub', isPro: data.isPro, productId: data.productId, expiresAt: data.expiresAt, updatedAt: now() });
+}
+
+// ---------------------------------------------------------------------------
 // Goals
 // ---------------------------------------------------------------------------
 export async function createGoal(data: Partial<Goal> & { title: string }) {

@@ -20,7 +20,7 @@ let package = Package(
         .package(name: "CapacitorShare", path: "../../../node_modules/@capacitor/share"),
         .package(name: "CapacitorSplashScreen", path: "../../../node_modules/@capacitor/splash-screen"),
         .package(name: "CapacitorStatusBar", path: "../../../node_modules/@capacitor/status-bar"),
-        .package(name: "RevenuecatPurchasesCapacitor", path: "../../../node_modules/@revenuecat/purchases-capacitor"),
+        .package(name: "SquareetlabsCapacitorSubscriptions", path: "../../../node_modules/@squareetlabs/capacitor-subscriptions"),
         .package(name: "CapacitorHealth", path: "../../../node_modules/capacitor-health")
     ],
     targets: [
@@ -37,7 +37,7 @@ let package = Package(
                 .product(name: "CapacitorShare", package: "CapacitorShare"),
                 .product(name: "CapacitorSplashScreen", package: "CapacitorSplashScreen"),
                 .product(name: "CapacitorStatusBar", package: "CapacitorStatusBar"),
-                .product(name: "RevenuecatPurchasesCapacitor", package: "RevenuecatPurchasesCapacitor"),
+                .product(name: "SquareetlabsCapacitorSubscriptions", package: "SquareetlabsCapacitorSubscriptions"),
                 .product(name: "CapacitorHealth", package: "CapacitorHealth")
             ]
         )
