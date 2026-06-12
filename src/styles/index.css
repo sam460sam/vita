@@ -8,10 +8,10 @@
   --c-app: #f8f1e6;
   --c-section: #f1e7d7;
   --c-card: #fffdf8;
-  /* Warm gradient washes for hero surfaces */
-  --c-hero-1: #ffe9d0;
-  --c-hero-2: #ffd9c0;
-  --c-glow: rgba(255, 138, 76, 0.16);
+  /* Warm gradient washes for hero surfaces — soft fresh green */
+  --c-hero-1: #d8f5d4;
+  --c-hero-2: #c2eebd;
+  --c-glow: rgba(34, 197, 94, 0.16);
   /* Text — warm espresso, never a cold pure black */
   --c-ink: #2a2018;
   --c-ink-2: #7c7263;
@@ -46,13 +46,13 @@
   --c-success: #1fb877;
   --c-warning: #ff8a3d;
   --c-danger: #ef5350;
-  /* Signature colors — warm sunset orange is the brand */
-  --c-accent: #ff7a45;
+  /* Signature colors — fresh leaf green is the brand */
+  --c-accent: #16a34a;
   --c-on-accent: #ffffff;
   --c-streak: #ff8a3d; /* flame */
   --c-check: #1fb877; /* completed badge */
-  /* Primary action (buttons / FAB) — warm sunset pill with white text */
-  --c-primary: #ff7a45;
+  /* Primary action (buttons / FAB) — vivid green pill with white text */
+  --c-primary: #16a34a;
   --c-on-primary: #ffffff;
   --c-primary-border: transparent;
   color-scheme: light;
@@ -64,10 +64,10 @@ html.dark {
   --c-app: #16130f;
   --c-section: #100d0a;
   --c-card: #211c17;
-  /* Warm gradient washes for hero surfaces */
-  --c-hero-1: #3a2a1c;
-  --c-hero-2: #2c1f16;
-  --c-glow: rgba(255, 138, 76, 0.12);
+  /* Gradient washes for hero surfaces — deep forest green */
+  --c-hero-1: #21401e;
+  --c-hero-2: #18331a;
+  --c-glow: rgba(45, 212, 90, 0.13);
   /* Text */
   --c-ink: #f6f1e9;
   --c-ink-2: #a89e90;
@@ -102,14 +102,14 @@ html.dark {
   --c-success: #2bd398;
   --c-warning: #ff9d57;
   --c-danger: #f87171;
-  /* Signature colors — warm sunset orange, brighter on dark */
-  --c-accent: #ff8a5a;
-  --c-on-accent: #ffffff;
+  /* Signature colors — bright leaf green on dark */
+  --c-accent: #2dd45a;
+  --c-on-accent: #07260f;
   --c-streak: #ff9d57;
   --c-check: #2bd398;
-  /* Primary action: warm sunset pill, stands out on dark by its FILL. */
-  --c-primary: #ff8a5a;
-  --c-on-primary: #1a1208;
+  /* Primary action: bright green pill, dark text for punch on dark. */
+  --c-primary: #2dd45a;
+  --c-on-primary: #07260f;
   --c-primary-border: transparent;
   color-scheme: dark;
 }

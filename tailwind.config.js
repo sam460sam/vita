@@ -62,7 +62,7 @@ export default {
         card: '0 10px 30px rgba(83,52,20,0.07)',
         'card-hover': '0 16px 40px rgba(83,52,20,0.12)',
         chip: '0 4px 14px rgba(83,52,20,0.06)',
-        fab: '0 12px 30px rgba(255,122,69,0.42)',
+        fab: '0 12px 30px rgba(22,163,74,0.42)',
         nav: '0 8px 30px rgba(83,52,20,0.12)',
         sheet: '0 -8px 40px rgba(40,25,10,0.16)',
       },
