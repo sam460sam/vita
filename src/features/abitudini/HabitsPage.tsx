@@ -1,18 +1,25 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Flame, Plus, Pencil } from 'lucide-react';
+import { Flame, Plus, ChevronRight, BarChart3, Trash2, Check } from 'lucide-react';
+import { startOfWeek, addDays, format } from 'date-fns';
 import { db } from '@/data/db';
-import { toggleHabitLog } from '@/data/repo';
+import { toggleHabitLog, deleteHabit } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
-import { Card, EmptyState, Button, IconButton, IconChip, Icon, StreakBadge, CheckBadge, DateStrip } from '@/ui';
-import { tint } from '@/lib/color';
-import { todayISO } from '@/lib/format';
+import { EmptyState, Button, Icon } from '@/ui';
+import { todayISO, activeDfnLocale } from '@/lib/format';
+import { platform } from '@/platform/platform';
 import { HabitForm } from './HabitForm';
 import { Heatmap } from './Heatmap';
-import { bestStreak, completionRate, currentStreak, frequencyLabel, heatmapData, isDone } from './logic';
+import { currentStreak, heatmapData, isDone } from './logic';
 import type { Habit } from '@/data/types';
 import { useT } from '@/i18n';
+
+/** Which weekdays (0=Sun..6=Sat) a habit is scheduled on. */
+function scheduledOn(h: Habit, dow: number): boolean {
+  if (h.frequency.type === 'specific_days') return h.frequency.days?.includes(dow) ?? false;
+  return true; // daily + times_per_week → any day
+}
 
 export function HabitsPage() {
   const t = useT();
@@ -23,73 +30,123 @@ export function HabitsPage() {
   const today = todayISO();
 
   const active = (habits ?? []).filter((h) => !h.archived);
-  const markedDays = new Set((logs ?? []).filter((l) => l.done).map((l) => l.date));
+  const completedToday = active.filter((h) => isDone(logs ?? [], h.id, today)).length;
+
+  // Localised 2-letter weekday labels, Sunday-first (Su Mo Tu We Th Fr Sa).
+  const weekStart = startOfWeek(new Date(), { weekStartsOn: 0 });
+  const weekdays = Array.from({ length: 7 }, (_, i) => ({ dow: i, label: format(addDays(weekStart, i), 'EEEEEE', { locale: activeDfnLocale() }) }));
+
+  function openNew() {
+    setEditing(null);
+    setFormOpen(true);
+  }
+  async function remove(h: Habit) {
+    if (confirm(t('habits.deleteConfirm', { name: h.name }))) await deleteHabit(h.id);
+  }
 
   return (
     <>
-      <PageHeader
-        title={t('habits.title')}
-        action={
-          <Button size="sm" icon={<Plus size={16} />} onClick={() => { setEditing(null); setFormOpen(true); }}>
-            {t('habits.new')}
-          </Button>
-        }
-      />
+      <PageHeader title={t('habits.title')} />
       <Screen>
-        {active.length > 0 && (
-          <Card className="mb-3" inset={false}>
-            <div className="px-3 py-2.5">
-              <DateStrip selected={today} marked={markedDays} />
+        {/* Stats header */}
+        <div className="bg-card rounded-card shadow-card border border-line/40 dark:border-transparent p-5 mb-3">
+          <h2 className="text-[22px] font-extrabold text-ink tracking-tight">{t('habits.title')}</h2>
+          <p className="text-[13px] text-ink-2 mt-0.5">{t('habits.subtitle')}</p>
+          <div className="flex gap-8 mt-4">
+            <div>
+              <div className="text-[26px] font-extrabold tnum text-ink leading-none">{active.length}</div>
+              <div className="text-[12px] font-semibold text-ink-3 mt-1">{t('habits.totalHabits')}</div>
             </div>
-          </Card>
-        )}
+            <div>
+              <div className="text-[26px] font-extrabold tnum leading-none" style={{ color: 'var(--c-habit)' }}>{completedToday}</div>
+              <div className="text-[12px] font-semibold text-ink-3 mt-1">{t('habits.completedToday')}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Create new habit */}
+        <button
+          onClick={openNew}
+          className="w-full bg-card rounded-card shadow-card border border-line/40 dark:border-transparent p-3.5 mb-3 flex items-center gap-3 active:scale-[0.99] transition-transform"
+        >
+          <span className="h-9 w-9 rounded-full flex items-center justify-center flex-shrink-0 text-white" style={{ background: 'var(--c-habit)' }}>
+            <Plus size={20} />
+          </span>
+          <span className="flex-1 text-left text-[15px] font-bold text-ink">{t('habits.createNew')}</span>
+          <ChevronRight size={18} className="text-ink-3" />
+        </button>
+
         {active.length === 0 ? (
-          <Card>
+          <div className="bg-card rounded-card shadow-card border border-line/40 dark:border-transparent">
             <EmptyState
               icon={<Flame size={22} />}
               title={t('habits.empty.title')}
               description={t('habits.empty.desc')}
-              action={<Button onClick={() => setFormOpen(true)}>{t('habits.empty.cta')}</Button>}
+              action={<Button onClick={openNew}>{t('habits.empty.cta')}</Button>}
             />
-          </Card>
+          </div>
         ) : (
           <div className="space-y-3">
             {active.map((h) => {
               const done = isDone(logs ?? [], h.id, today);
               const streak = currentStreak(h, logs ?? []);
-              const best = bestStreak(h, logs ?? []);
-              const rate = Math.round(completionRate(h, logs ?? []) * 100);
               return (
-                <div
-                  key={h.id}
-                  className="rounded-card p-3.5 shadow-card"
-                  style={{ backgroundColor: tint(h.color) }}
-                >
-                  <div className="flex items-center gap-3">
-                    <IconChip color={h.color} size="md">
-                      <Icon name={h.icon} size={20} strokeWidth={2.25} />
-                    </IconChip>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[15px] font-bold text-ink truncate">{h.name}</div>
-                      <div className="text-[13px] text-ink-2">{frequencyLabel(h, t)}</div>
+                <div key={h.id} className="bg-card rounded-card shadow-card border border-line/40 dark:border-transparent p-3.5">
+                  <div className="flex gap-3.5">
+                    {/* Heatmap (last 7 weeks) */}
+                    <div className="flex-shrink-0">
+                      <Heatmap cells={heatmapData(h, logs ?? [], 49)} color={h.color} />
                     </div>
-                    <div className="flex flex-col items-end gap-1.5">
-                      {streak > 0 && <StreakBadge count={streak} />}
-                      <CheckBadge done={done} onClick={() => toggleHabitLog(h.id, today)} label={h.name} />
+
+                    {/* Right column */}
+                    <div className="min-w-0 flex-1 flex flex-col">
+                      <div className="flex items-start gap-2">
+                        <div className="min-w-0 flex-1 flex items-center gap-1.5">
+                          <span style={{ color: h.color }} className="flex-shrink-0">
+                            <Icon name={h.icon} size={16} strokeWidth={2.5} />
+                          </span>
+                          <span className="text-[15px] font-bold text-ink truncate">{h.name}</span>
+                          {streak > 0 && (
+                            <span className="inline-flex items-center gap-0.5 text-[11px] font-bold text-streak flex-shrink-0">
+                              <Flame size={11} />{streak}
+                            </span>
+                          )}
+                        </div>
+                        <button onClick={() => { setEditing(h); setFormOpen(true); }} aria-label={t('common.edit')} className="h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `color-mix(in srgb, ${h.color} 14%, transparent)`, color: h.color }}>
+                          <BarChart3 size={14} />
+                        </button>
+                        <button onClick={() => remove(h)} aria-label={t('common.delete')} className="h-7 w-7 rounded-full bg-danger/10 text-danger flex items-center justify-center flex-shrink-0">
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+
+                      {/* Weekday circles */}
+                      <div className="flex gap-1 mt-2">
+                        {weekdays.map((w) => {
+                          const on = scheduledOn(h, w.dow);
+                          return (
+                            <span
+                              key={w.dow}
+                              className="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold capitalize"
+                              style={on ? { background: `color-mix(in srgb, ${h.color} 18%, transparent)`, color: h.color } : { background: 'var(--c-section)', color: 'var(--c-ink-3)' }}
+                            >
+                              {w.label}
+                            </span>
+                          );
+                        })}
+                      </div>
+
+                      {/* Check in */}
+                      <button
+                        onClick={() => { platform.haptic(); void toggleHabitLog(h.id, today); }}
+                        className="mt-3 h-10 rounded-full flex items-center justify-center gap-1.5 text-[14px] font-bold transition-colors"
+                        style={done
+                          ? { background: `color-mix(in srgb, ${h.color} 16%, transparent)`, color: h.color }
+                          : { background: h.color, color: '#fff' }}
+                      >
+                        {done ? <><Check size={16} strokeWidth={3} /> {t('habits.checkedToday')}</> : <><Plus size={16} /> {t('habits.checkin')}</>}
+                      </button>
                     </div>
-                  </div>
-
-                  <div className="mt-3">
-                    <Heatmap cells={heatmapData(h, logs ?? [])} color={h.color} />
-                  </div>
-
-                  <div className="flex items-center gap-4 mt-3 pt-3 border-t border-black/5 dark:border-white/5">
-                    <Stat label={t('habits.stat.streak')} value={streak} />
-                    <Stat label={t('habits.stat.record')} value={best} />
-                    <Stat label={t('habits.stat.last30')} value={`${rate}%`} />
-                    <IconButton label={t('common.edit')} onClick={() => { setEditing(h); setFormOpen(true); }} className="ml-auto -mr-1">
-                      <Pencil size={15} />
-                    </IconButton>
                   </div>
                 </div>
               );
@@ -100,14 +157,5 @@ export function HabitsPage() {
 
       <HabitForm open={formOpen} onClose={() => setFormOpen(false)} habit={editing} />
     </>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: number | string }) {
-  return (
-    <div className="flex-1">
-      <div className="text-base font-semibold tnum text-ink">{value}</div>
-      <div className="metric-label mt-0.5">{label}</div>
-    </div>
   );
 }

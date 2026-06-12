@@ -248,6 +248,13 @@ export const it = {
   // Habits
   'habits.title': 'Abitudini',
   'habits.new': 'Nuova',
+  'habits.subtitle': 'Costruisci routine che ti porteranno al successo',
+  'habits.totalHabits': 'Abitudini totali',
+  'habits.completedToday': 'Completate oggi',
+  'habits.createNew': 'Crea nuova abitudine',
+  'habits.checkin': 'Check in',
+  'habits.checkedToday': 'Fatto oggi',
+  'habits.deleteConfirm': 'Eliminare l’abitudine “{name}”?',
   'habits.empty.title': 'Nessuna abitudine',
   'habits.empty.desc': 'Crea la tua prima abitudine e inizia a costruire una streak.',
   'habits.empty.cta': 'Nuova abitudine',

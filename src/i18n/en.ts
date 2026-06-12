@@ -246,6 +246,13 @@ export const en: Record<TKey, string> = {
   // Habits
   'habits.title': 'Habits',
   'habits.new': 'New',
+  'habits.subtitle': 'Build routines that will lead you to success',
+  'habits.totalHabits': 'Total Habits',
+  'habits.completedToday': 'Completed Today',
+  'habits.createNew': 'Create New Habit',
+  'habits.checkin': 'Check in',
+  'habits.checkedToday': 'Done today',
+  'habits.deleteConfirm': 'Delete the habit “{name}”?',
   'habits.empty.title': 'No habits',
   'habits.empty.desc': 'Create your first habit and start building a streak.',
   'habits.empty.cta': 'New habit',
