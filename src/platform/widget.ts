@@ -19,9 +19,15 @@ export interface WidgetReminder {
   time: string; // HH:mm
 }
 
+export interface WidgetTask {
+  title: string;
+  due?: string; // ISO yyyy-MM-dd
+}
+
 export interface WidgetPayload {
-  water: { ml: number; goalMl: number };
+  water: { ml: number; goalMl: number; glassMl: number };
   reminders: WidgetReminder[];
+  tasks: WidgetTask[];
   updatedAt: number;
 }
 

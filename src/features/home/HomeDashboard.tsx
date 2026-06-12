@@ -124,15 +124,24 @@ export function HomeDashboard() {
     return () => document.removeEventListener('visibilitychange', onVisible);
   }, [today]);
 
-  // Mirror water + reminders into the shared App Group so the Home/Lock-Screen
-  // widgets can display them.
+  // Mirror water + reminders + to-dos into the shared App Group so the
+  // Home/Lock-Screen widgets can display them.
   useEffect(() => {
     const reminders = Object.entries(s.reminders ?? {})
       .filter(([, time]) => !!time)
       .map(([kind, time]) => ({ label: t(`reminder.${kind}.title` as TKey), time: time as string }))
       .sort((a, b) => a.time.localeCompare(b.time));
-    void syncWidgetData({ water: { ml: todayWater?.ml ?? 0, goalMl: s.water.dailyGoalMl }, reminders });
-  }, [s, todayWater, t]);
+    const openTasks = (tasks ?? [])
+      .filter((tk) => tk.status !== 'done')
+      .sort((a, b) => (a.dueDate ?? '9999').localeCompare(b.dueDate ?? '9999') || a.order - b.order)
+      .slice(0, 12)
+      .map((tk) => ({ title: tk.title, due: tk.dueDate }));
+    void syncWidgetData({
+      water: { ml: todayWater?.ml ?? 0, goalMl: s.water.dailyGoalMl, glassMl: s.water.glassMl || 200 },
+      reminders,
+      tasks: openTasks,
+    });
+  }, [s, todayWater, tasks, t]);
 
   // Smart notification: (re)schedule the adaptive evening streak nudge whenever
   // today's pending count or the streak changes.
