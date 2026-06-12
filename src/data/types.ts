@@ -101,6 +101,7 @@ export interface Settings {
   water: {
     dailyGoalMl: number; // daily target in ml (e.g. 2000)
     glassMl: number; // size of one "glass" in ml (default 200)
+    reminderEveryMin?: number; // drink-water reminder interval in minutes (undefined/0 = off)
   };
   // Daily reminder times (HH:mm) — empty string = off. Fire as local
   // notifications on the native app; stored regardless on web.

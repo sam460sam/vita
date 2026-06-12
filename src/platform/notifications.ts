@@ -100,6 +100,37 @@ export const notifications = {
     }
   },
 
+  /**
+   * Schedule repeating "drink water" reminders every `everyMin` minutes between
+   * 08:00 and 22:00. Pass undefined/0 to turn them off. Uses a dedicated id
+   * range so it never clashes with the other reminders.
+   */
+  async setWaterInterval(everyMin?: number): Promise<void> {
+    if (!isNative) return;
+    try {
+      const { LocalNotifications } = await import('@capacitor/local-notifications');
+      const base = notifId('reminder:water-interval');
+      // Clear up to 24 previously-scheduled slots.
+      const old = Array.from({ length: 24 }, (_, i) => ({ id: (base + i) % 2_000_000_000 }));
+      await LocalNotifications.cancel({ notifications: old });
+      if (!everyMin || everyMin < 15) return;
+      const slots: { hour: number; minute: number }[] = [];
+      for (let mins = 8 * 60; mins <= 22 * 60 && slots.length < 24; mins += everyMin) {
+        slots.push({ hour: Math.floor(mins / 60), minute: mins % 60 });
+      }
+      await LocalNotifications.schedule({
+        notifications: slots.map((s, i) => ({
+          id: (base + i) % 2_000_000_000,
+          title: 'Vyta',
+          body: '💧',
+          schedule: { on: { hour: s.hour, minute: s.minute }, repeats: true },
+        })),
+      });
+    } catch {
+      /* notifications unavailable */
+    }
+  },
+
   /** Current permission state without prompting. */
   async hasPermission(): Promise<boolean> {
     if (!isNative) return false;

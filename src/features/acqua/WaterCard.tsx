@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Droplet, GlassWater, Minus, Pencil } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Droplet, GlassWater, Minus, ChevronRight } from 'lucide-react';
 import { db } from '@/data/db';
-import { addWaterMl, updateSettings } from '@/data/repo';
-import { Card, Sheet, Field, Input, Button } from '@/ui';
+import { addWaterMl } from '@/data/repo';
+import { Card } from '@/ui';
 import { useT } from '@/i18n';
 import { todayISO } from '@/lib/format';
 import { platform } from '@/platform/platform';
@@ -17,9 +17,9 @@ function formatLiters(ml: number): string {
 
 export function WaterCard({ settings }: { settings: Settings }) {
   const t = useT();
+  const navigate = useNavigate();
   const today = todayISO();
   const log = useLiveQuery(() => db.waterLogs.get(today), [today], undefined);
-  const [editOpen, setEditOpen] = useState(false);
 
   const glassMl = settings.water.glassMl || 200;
   const goalMl = settings.water.dailyGoalMl || 2000;
@@ -55,9 +55,9 @@ export function WaterCard({ settings }: { settings: Settings }) {
           <Droplet size={20} className="absolute inset-0 m-auto" style={{ color: WATER_COLOR }} fill={progress >= 1 ? WATER_COLOR : 'none'} />
         </div>
 
-        <button onClick={() => setEditOpen(true)} className="min-w-0 flex-1 text-left">
+        <button onClick={() => navigate('/acqua')} className="min-w-0 flex-1 text-left">
           <div className="metric-label inline-flex items-center gap-1" style={{ color: WATER_COLOR }}>
-            {t('water.today')} <Pencil size={11} className="opacity-60" />
+            {t('water.today')} <ChevronRight size={12} className="opacity-70" />
           </div>
           <div className="text-xl font-semibold tnum text-ink mt-0.5">
             {formatLiters(ml)} <span className="text-ink-3 text-[15px] font-normal">/ {formatLiters(goalMl)}</span>
@@ -92,39 +92,6 @@ export function WaterCard({ settings }: { settings: Settings }) {
           <Droplet size={17} style={{ color: WATER_COLOR }} /> + {t('water.liter')}
         </button>
       </div>
-
-      <WaterGoalSheet open={editOpen} onClose={() => setEditOpen(false)} goalMl={goalMl} glassMl={glassMl} />
     </Card>
-  );
-}
-
-function WaterGoalSheet({ open, onClose, goalMl, glassMl }: { open: boolean; onClose: () => void; goalMl: number; glassMl: number }) {
-  const t = useT();
-  const [goalL, setGoalL] = useState('2');
-  const [glass, setGlass] = useState('200');
-
-  useEffect(() => {
-    if (open) {
-      setGoalL(String(goalMl / 1000));
-      setGlass(String(glassMl));
-    }
-  }, [open, goalMl, glassMl]);
-
-  async function save() {
-    await updateSettings({
-      water: { dailyGoalMl: Math.round((parseFloat(goalL) || 2) * 1000), glassMl: parseInt(glass) || 200 },
-    });
-    onClose();
-  }
-
-  return (
-    <Sheet open={open} onClose={onClose} title={t('water.title')} footer={<Button block size="lg" onClick={save}>{t('common.save')}</Button>}>
-      <Field label={t('water.goal')}>
-        <Input type="number" inputMode="decimal" value={goalL} onChange={(e) => setGoalL(e.target.value)} />
-      </Field>
-      <Field label={t('water.glassSize')}>
-        <Input type="number" inputMode="numeric" value={glass} onChange={(e) => setGlass(e.target.value)} />
-      </Field>
-    </Sheet>
   );
 }
