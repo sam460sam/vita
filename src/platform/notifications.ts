@@ -70,6 +70,49 @@ export const notifications = {
   },
 
   /**
+   * Schedule a ONE-OFF notification at a specific moment (used by the "smart"
+   * adaptive nudges). Re-scheduling with the same key replaces the previous one;
+   * a past `at` simply cancels it.
+   */
+  async scheduleAt(key: string, title: string, body: string, at: Date): Promise<void> {
+    if (!isNative) return;
+    try {
+      const { LocalNotifications } = await import('@capacitor/local-notifications');
+      const id = notifId(`once:${key}`);
+      await LocalNotifications.cancel({ notifications: [{ id }] });
+      if (at.getTime() <= Date.now()) return;
+      await LocalNotifications.schedule({
+        notifications: [{ id, title, body, schedule: { at } }],
+      });
+    } catch {
+      /* notifications unavailable */
+    }
+  },
+
+  /** Cancel a one-off notification scheduled with {@link scheduleAt}. */
+  async cancelKey(key: string): Promise<void> {
+    if (!isNative) return;
+    try {
+      const { LocalNotifications } = await import('@capacitor/local-notifications');
+      await LocalNotifications.cancel({ notifications: [{ id: notifId(`once:${key}`) }] });
+    } catch {
+      /* noop */
+    }
+  },
+
+  /** Current permission state without prompting. */
+  async hasPermission(): Promise<boolean> {
+    if (!isNative) return false;
+    try {
+      const { LocalNotifications } = await import('@capacitor/local-notifications');
+      const res = await LocalNotifications.checkPermissions();
+      return res.display === 'granted';
+    } catch {
+      return false;
+    }
+  },
+
+  /**
    * Schedule (or cancel) a named daily reminder (water / workout / journal).
    * Stable id per kind so re-scheduling replaces the previous one.
    */

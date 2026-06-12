@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star, ChevronLeft, Sun, Moon } from 'lucide-react';
+import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star, ChevronLeft, Sun, Moon, Bell } from 'lucide-react';
 import { Button, Input } from '@/ui';
 import { StarMascot } from '@/ui/StarMascot';
 import { useI18n, LANGS, type Lang, type TKey } from '@/i18n';
 import { useTheme } from '@/theme/theme';
+import { notifications } from '@/platform/notifications';
 import { createHabit, updateSettings } from '@/data/repo';
 import { RECOMMENDED_HABITS } from '@/features/abitudini/recommended';
 import { ALL_MODULES, type ModuleId } from '@/data/types';
@@ -53,8 +54,8 @@ export function resetOnboarding() {
   }
 }
 
-type Step = 'lang' | 'welcome1' | 'intro' | 'focus' | 'modules' | 'habits' | 'name' | 'aha';
-const STEPS: Step[] = ['lang', 'welcome1', 'intro', 'focus', 'modules', 'habits', 'name', 'aha'];
+type Step = 'lang' | 'welcome1' | 'intro' | 'focus' | 'modules' | 'habits' | 'name' | 'notify' | 'aha';
+const STEPS: Step[] = ['lang', 'welcome1', 'intro', 'focus', 'modules', 'habits', 'name', 'notify', 'aha'];
 
 /** First-run onboarding: language → welcome → focus → sections → habits → name → aha. */
 export function Onboarding({ onDone }: { onDone: () => void }) {
@@ -66,6 +67,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const [modules, setModules] = useState<Set<ModuleId>>(new Set(ALL_MODULES));
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const [customHabits, setCustomHabits] = useState<string[]>([]);
+  const [wantNotif, setWantNotif] = useState(true);
 
   const step = STEPS[stepIdx];
   const isLast = stepIdx === STEPS.length - 1;
@@ -83,17 +85,28 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       if (rec) await createHabit({ name: t(rec.labelKey), color: rec.color, frequency: rec.frequency });
     }
     for (const n of customHabits) await createHabit({ name: n, frequency: { type: 'daily' } });
+    // Opt-in to daily reminders: ask permission + schedule a gentle morning nudge.
+    if (wantNotif) {
+      if (notifications.supported()) await notifications.requestPermission();
+      await notifications.setDailyReminder('motivation', t('reminder.motivation.title'), t('reminder.motivation.body'), '09:00');
+    }
     // Persist chosen interests (in canonical order) alongside name + focus.
     const selected = ALL_MODULES.filter((m) => modules.has(m));
-    await updateSettings({ name: name.trim() || undefined, focus: primaryFocus, enabledModules: selected, moduleOrder: selected });
+    await updateSettings({
+      name: name.trim() || undefined,
+      focus: primaryFocus,
+      enabledModules: selected,
+      moduleOrder: selected,
+      reminders: wantNotif ? { motivation: '09:00' } : {},
+    });
   }
 
   async function next() {
     // Pre-select modules from the chosen focus areas (the user can still tweak).
     if (step === 'focus') setModules(modulesForFocus(focusSet));
-    // Persist everything when leaving the "name" step, so the aha screen and
-    // the app behind it already reflect the user's choices.
-    if (step === 'name') await commit();
+    // Persist everything when leaving the "notify" step (the last choice before
+    // the aha screen), so the app behind it already reflects the user's setup.
+    if (step === 'notify') await commit();
     setStepIdx((i) => Math.min(i + 1, STEPS.length - 1));
   }
 
@@ -202,6 +215,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
             </div>
           </div>
         )}
+        {step === 'notify' && <NotifyStep value={wantNotif} onChange={setWantNotif} />}
         {step === 'aha' && <AhaStep name={name} focus={primaryFocus} habitCount={totalPicked} />}
       </div>
 
@@ -339,6 +353,33 @@ function ModulesStep({ selected, onToggle }: { selected: Set<ModuleId>; onToggle
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function NotifyStep({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
+  const { t } = useI18n();
+  return (
+    <div className="flex flex-col items-center text-center pt-6">
+      <span className="h-24 w-24 rounded-[28px] flex items-center justify-center mb-6 text-primary" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
+        <Bell size={44} />
+      </span>
+      <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.notify.title')}</h1>
+      <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.notify.desc')}</p>
+      <button
+        onClick={() => onChange(!value)}
+        className="w-full max-w-sm mt-7 flex items-center gap-3 px-4 py-4 rounded-card bg-card shadow-chip transition-all active:scale-[0.99]"
+        style={{ boxShadow: value ? '0 0 0 2.5px var(--c-primary), 0 4px 14px rgba(22,163,74,0.18)' : undefined }}
+      >
+        <span className="h-11 w-11 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'color-mix(in srgb, var(--c-primary) 16%, transparent)', color: 'var(--c-primary)' }}>
+          <Bell size={20} />
+        </span>
+        <span className="flex-1 text-left text-[15px] font-bold text-ink">{t('onboard.notify.toggle')}</span>
+        <span className="h-6 w-11 rounded-full relative transition-colors flex-shrink-0" style={{ background: value ? 'var(--c-primary)' : 'var(--c-line)' }}>
+          <span className="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all" style={{ left: value ? '22px' : '2px' }} />
+        </span>
+      </button>
+      <p className="text-[12px] text-ink-3 mt-3 max-w-xs">{t('onboard.notify.hint')}</p>
     </div>
   );
 }

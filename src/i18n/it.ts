@@ -696,6 +696,15 @@ export const it = {
   'reminder.motivation.title': '🌱 Un pensiero per te',
   'reminder.motivation.body': 'Apri Vyta per la frase del giorno e un piccolo passo avanti.',
 
+  // Smart notifications + onboarding opt-in
+  'notify.streak.title': 'Vyta',
+  'notify.streak.bodyStreak': '🔥 Non perdere il tuo streak di {n} giorni! Ti mancano {p} abitudini.',
+  'notify.streak.body': '🌱 Ti mancano {p} abitudini oggi. Un piccolo passo conta.',
+  'onboard.notify.title': 'Resta sulla buona strada',
+  'onboard.notify.desc': 'Un promemoria gentile al mattino e un avviso la sera se rischi di perdere lo streak.',
+  'onboard.notify.toggle': 'Attiva i promemoria giornalieri',
+  'onboard.notify.hint': 'Puoi cambiarli o disattivarli quando vuoi dalle Impostazioni.',
+
   // Personalisation — module descriptions
   'module.abitudini.desc': 'Costruisci routine e streak',
   'module.attivita.desc': 'Allenamenti e anelli attività',
@@ -741,7 +750,12 @@ export const it = {
   'home.routine.tapDone': 'Tocca per completare',
   'home.routine.empty.title': 'Crea la tua routine',
   'home.routine.empty.desc': 'Aggiungi le abitudini da seguire ogni giorno',
+  'home.routine.empty.suggest': 'Inizia da una di queste',
+  'home.routine.allDone': 'Tutte le abitudini fatte! 🌱',
+  'home.routine.atRisk': '🔥 {n} giorni — non mollare',
+  'home.steps.title': 'Passi oggi',
   'home.explore': 'Esplora',
+  'home.habitAdded': 'Abitudine aggiunta',
   'home.editTitle': 'Modifica home',
   'home.editHint': 'Trascina per riordinare · tocca ✕ per rimuovere',
   'home.edit': 'Modifica',

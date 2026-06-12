@@ -1,18 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Quote, ChevronRight, Settings2, Check, Flame, Plus } from 'lucide-react';
+import { Quote, ChevronRight, Settings2, Check, Flame, Plus, Footprints } from 'lucide-react';
 import { subDays, format } from 'date-fns';
-import { ProgressRing, ActivityRings, StarMascot, Icon } from '@/ui';
+import { ProgressRing, ActivityRings, StarMascot, Icon, useToast } from '@/ui';
 import { DateStrip } from '@/ui/DateStrip';
 import { useT, type TKey } from '@/i18n';
 import { db } from '@/data/db';
-import { readSettings, toggleHabitLog } from '@/data/repo';
+import { readSettings, toggleHabitLog, createHabit } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { todayISO, longDate } from '@/lib/format';
 import { computeMomentum, stellaMood, momentumMessageKey, getStreakState } from '@/features/oggi/momentum';
 import { todayRings, ringsToData, mergeHealthRings } from '@/features/attivita/logic';
 import { isScheduled, isDone, currentStreak } from '@/features/abitudini/logic';
+import { RECOMMENDED_HABITS } from '@/features/abitudini/recommended';
 import { useHealthSummary } from '@/platform/health';
 import { dailyAffirmation } from '@/features/oggi/coach';
 import { dayPoints, type LifeData } from '@/features/gamification/logic';
@@ -22,7 +23,11 @@ import { WaterCard } from '@/features/acqua/WaterCard';
 import { useStella } from '@/features/stella';
 import { useNavItems } from '@/app/nav';
 import { platform } from '@/platform/platform';
+import { refreshStreakNudge } from '@/features/notify/smart';
 import type { Habit, HabitLog } from '@/data/types';
+
+const ALLDONE_KEY = 'vita.allhabits.shown';
+const STEPS_GOAL = 8000;
 
 const WIN_KEY = 'vita.dailywin.shown';
 
@@ -39,6 +44,7 @@ export function HomeDashboard() {
   const t = useT();
   const navigate = useNavigate();
   const stella = useStella();
+  const toast = useToast();
   const { modules } = useNavItems();
 
   const settings = useLiveQuery(() => readSettings(), [], undefined);
@@ -103,6 +109,49 @@ export function HomeDashboard() {
 
   const hasData = (habits?.length ?? 0) + (tasks?.length ?? 0) + (workouts?.length ?? 0) + (journals?.length ?? 0) + (weights?.length ?? 0) > 0;
   const doneToday = routine.filter((h) => isDone(logs ?? [], h.id, today)).length;
+  const pending = routine.length - doneToday;
+  const streak = getStreakState().count;
+  const allDone = routine.length > 0 && pending === 0;
+  const steps = healthSummary?.steps ?? 0;
+
+  // Smart notification: (re)schedule the adaptive evening streak nudge whenever
+  // today's pending count or the streak changes.
+  useEffect(() => {
+    void refreshStreakNudge({
+      pending,
+      streak,
+      title: t('notify.streak.title'),
+      bodyStreak: t('notify.streak.bodyStreak'),
+      body: t('notify.streak.body'),
+    });
+  }, [pending, streak, t]);
+
+  // Celebrate (once per day) the moment every habit for today is complete.
+  const celebrated = useRef(false);
+  useEffect(() => {
+    if (!allDone) return;
+    let shown = '';
+    try {
+      shown = localStorage.getItem(ALLDONE_KEY) ?? '';
+    } catch {
+      /* ignore */
+    }
+    if (shown === today || celebrated.current) return;
+    celebrated.current = true;
+    try {
+      localStorage.setItem(ALLDONE_KEY, today);
+    } catch {
+      /* ignore */
+    }
+    platform.haptic();
+    toast.show(t('home.routine.allDone'));
+  }, [allDone, today, t, toast]);
+
+  async function addSuggested(rec: (typeof RECOMMENDED_HABITS)[number]) {
+    platform.haptic();
+    await createHabit({ name: t(rec.labelKey), color: rec.color, icon: rec.icon, frequency: rec.frequency });
+    toast.show(t('home.habitAdded'));
+  }
 
   return (
     <div className="min-h-[100dvh] bg-app">
@@ -169,31 +218,72 @@ export function HomeDashboard() {
           <WaterCard settings={s} />
         </div>
 
+        {/* Steps (from Apple Health, when connected) */}
+        {steps > 0 && (
+          <div className="mt-3 bg-card rounded-card shadow-card border border-line/40 dark:border-transparent p-4">
+            <div className="flex items-center gap-3">
+              <span className="h-11 w-11 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: wash('var(--c-activity)', 16), color: 'var(--c-activity)' }}>
+                <Footprints size={20} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="metric-label">{t('home.steps.title')}</div>
+                <div className="text-xl font-extrabold tnum text-ink leading-tight">
+                  {steps.toLocaleString()} <span className="text-ink-3 text-[13px] font-semibold">/ {STEPS_GOAL.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+            <div className="mt-2.5 h-2 rounded-full bg-section overflow-hidden">
+              <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, (steps / STEPS_GOAL) * 100)}%`, background: 'var(--c-activity)' }} />
+            </div>
+          </div>
+        )}
+
         {/* Today's routine (habits) */}
         <section className="mt-3 bg-card rounded-card shadow-card border border-line/40 dark:border-transparent p-4">
           <div className="flex items-center justify-between mb-3">
             <div>
               <h2 className="text-[16px] font-extrabold text-ink">{t('home.routine.title')}</h2>
-              {routine.length > 0 && (
+              {routine.length > 0 && !allDone && streak >= 2 && pending > 0 ? (
+                <span className="inline-flex items-center gap-1 mt-1 text-[11px] font-bold text-streak bg-streak/10 rounded-full px-2 py-0.5">
+                  {t('home.routine.atRisk', { n: streak })}
+                </span>
+              ) : routine.length > 0 ? (
                 <p className="text-[12px] font-semibold text-ink-3 mt-0.5">{t('home.routine.progress', { done: doneToday, total: routine.length })}</p>
-              )}
+              ) : null}
             </div>
             <Link to="/abitudini" className="text-[13px] font-bold text-primary">{t('home.routine.all')}</Link>
           </div>
 
           {routine.length === 0 ? (
-            <button
-              onClick={() => navigate('/abitudini')}
-              className="w-full flex items-center gap-3 rounded-2xl border-2 border-dashed border-line py-4 px-4 text-left active:scale-[0.99] transition-transform"
-            >
-              <span className="h-10 w-10 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: wash('var(--c-habit)', 16), color: 'var(--c-habit)' }}>
-                <Plus size={20} />
-              </span>
-              <div>
-                <div className="text-[14px] font-bold text-ink">{t('home.routine.empty.title')}</div>
-                <div className="text-[12px] text-ink-2">{t('home.routine.empty.desc')}</div>
+            <div>
+              <button
+                onClick={() => navigate('/abitudini')}
+                className="w-full flex items-center gap-3 rounded-2xl border-2 border-dashed border-line py-4 px-4 text-left active:scale-[0.99] transition-transform"
+              >
+                <span className="h-10 w-10 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: wash('var(--c-habit)', 16), color: 'var(--c-habit)' }}>
+                  <Plus size={20} />
+                </span>
+                <div>
+                  <div className="text-[14px] font-bold text-ink">{t('home.routine.empty.title')}</div>
+                  <div className="text-[12px] text-ink-2">{t('home.routine.empty.desc')}</div>
+                </div>
+              </button>
+              <div className="mt-3">
+                <div className="metric-label mb-2">{t('home.routine.empty.suggest')}</div>
+                <div className="flex flex-wrap gap-2">
+                  {RECOMMENDED_HABITS.slice(0, 4).map((rec) => (
+                    <button
+                      key={rec.id}
+                      onClick={() => addSuggested(rec)}
+                      className="inline-flex items-center gap-1.5 rounded-full px-3 h-9 text-[13px] font-bold active:scale-95 transition-transform"
+                      style={{ background: wash(rec.color, 14), color: rec.color }}
+                    >
+                      <Plus size={14} /> {t(rec.labelKey)}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </button>
+            </div>
           ) : (
             <div className="space-y-1.5">
               {routine.slice(0, 6).map((h) => (

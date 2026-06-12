@@ -693,6 +693,15 @@ export const en: Record<TKey, string> = {
   'reminder.motivation.title': '🌱 A thought for you',
   'reminder.motivation.body': 'Open Vyta for today’s affirmation and one small step forward.',
 
+  // Smart notifications + onboarding opt-in
+  'notify.streak.title': 'Vyta',
+  'notify.streak.bodyStreak': '🔥 Don’t lose your {n}-day streak! You have {p} habits left.',
+  'notify.streak.body': '🌱 You have {p} habits left today. One small step counts.',
+  'onboard.notify.title': 'Stay on track',
+  'onboard.notify.desc': 'A gentle reminder in the morning and a heads-up in the evening if your streak is at risk.',
+  'onboard.notify.toggle': 'Turn on daily reminders',
+  'onboard.notify.hint': 'You can change or turn them off anytime in Settings.',
+
   // Personalisation — module descriptions
   'module.abitudini.desc': 'Build routines and streaks',
   'module.attivita.desc': 'Workouts and activity rings',
@@ -738,6 +747,11 @@ export const en: Record<TKey, string> = {
   'home.routine.tapDone': 'Tap to complete',
   'home.routine.empty.title': 'Build your routine',
   'home.routine.empty.desc': 'Add the habits you want to keep daily',
+  'home.routine.empty.suggest': 'Start with one of these',
+  'home.routine.allDone': 'All habits done! 🌱',
+  'home.routine.atRisk': '🔥 {n}-day streak — keep it up',
+  'home.steps.title': 'Steps today',
+  'home.habitAdded': 'Habit added',
   'home.explore': 'Explore',
   'home.editTitle': 'Edit home',
   'home.editHint': 'Drag to reorder · tap ✕ to remove',
