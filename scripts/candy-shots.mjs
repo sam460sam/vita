@@ -32,7 +32,7 @@ const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setui
 async function run(theme) {
   const page = await browser.newPage();
   await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: theme }]);
-  await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
+  await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 3 });
   page.on('dialog', async (d) => { try { await d.accept(); } catch { /* */ } });
 
   await page.goto(BASE, { waitUntil: 'networkidle2' });
