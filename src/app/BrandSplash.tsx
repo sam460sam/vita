@@ -88,7 +88,8 @@ export function BrandSplash() {
             fontWeight: 900,
             lineHeight: 1,
             position: 'relative',
-            top: 7, // drop "yta" onto the V's baseline so it reads as one word
+            top: 11, // drop "yta" onto the V's baseline so it reads as one word
+            left: -18, // tuck it right up against the V
             opacity: mount < 2 ? 0 : 0.82,
             transition: 'opacity 520ms ease 140ms',
             backgroundImage: `url(${leafTexUrl})`,
