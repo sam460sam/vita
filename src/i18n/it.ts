@@ -598,12 +598,12 @@ export const it = {
   'fast.ended': 'Digiuno completato: {h}h {m}m 💪',
 
   // Panda coach (dashboard speech bubble)
-  'panda.hello': 'Ciao! Sono qui con te. Anche un piccolo passo conta oggi. 🐼',
-  'panda.start': 'Bene, hai iniziato! Continuiamo con calma. 🐼',
-  'panda.good': 'Stai andando alla grande, continua così! 🐼',
-  'panda.great': 'Wow, giornata da campione! Sono fiero di te. 🐼✨',
+  'panda.hello': 'Ciao! Sono qui con te. Anche un piccolo passo conta oggi. 🌱',
+  'panda.start': 'Bene, hai iniziato! Continuiamo con calma. 🌱',
+  'panda.good': 'Stai andando alla grande, continua così! 🌱',
+  'panda.great': 'Wow, giornata da campione! Sono fiero di te. 🌱✨',
   'panda.streak': 'Sei a {n} giorni di fila — non spezziamo la catena! 🔥',
-  'panda.streak.big': '{n} giorni di fila! Sei inarrestabile. 🐼🔥',
+  'panda.streak.big': '{n} giorni di fila! Sei inarrestabile. 🌱🔥',
 
   // Daily affirmations (rotating)
   'affirm.1': 'Ogni piccolo passo costruisce la persona che vuoi diventare.',
@@ -631,7 +631,7 @@ export const it = {
   'rewards.level': 'Livello',
   'rewards.points': '{n} punti totali',
   'rewards.toNext': '{n} punti al prossimo livello',
-  'rewards.pandaIntro': 'Completa le sfide della settimana e sblocca nuovi badge insieme a me! 🐼',
+  'rewards.pandaIntro': 'Completa le sfide della settimana e sblocca nuovi badge insieme a me! 🌱',
   'rewards.challenges': 'Sfide della settimana',
   'rewards.badges': 'Traguardi',
 
@@ -693,7 +693,7 @@ export const it = {
 
   // Motivational reminder
   'settings.reminders.motivation': 'Motivazione',
-  'reminder.motivation.title': '🐼 Un pensiero per te',
+  'reminder.motivation.title': '🌱 Un pensiero per te',
   'reminder.motivation.body': 'Apri Vyta per la frase del giorno e un piccolo passo avanti.',
 
   // Personalisation — module descriptions
@@ -804,7 +804,7 @@ export const it = {
   'onboard.why.2.desc': 'Vedi come migliori giorno dopo giorno, con livelli e traguardi.',
   'onboard.why.3.title': 'Privato e offline',
   'onboard.why.3.desc': 'I tuoi dati restano sul tuo dispositivo. Nessun account richiesto.',
-  'onboard.why.4.title': 'Un panda al tuo fianco',
+  'onboard.why.4.title': 'Un aiutante al tuo fianco',
   'onboard.why.4.desc': 'Ti incoraggia, ti dà consigli e festeggia i tuoi successi.',
 } as const;
 

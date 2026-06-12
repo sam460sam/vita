@@ -595,12 +595,12 @@ export const en: Record<TKey, string> = {
   'fast.ended': 'Fast complete: {h}h {m}m 💪',
 
   // Panda coach (dashboard speech bubble)
-  'panda.hello': 'Hi! I’m here with you. Even a small step counts today. 🐼',
-  'panda.start': 'Nice, you’ve started! Let’s keep going, gently. 🐼',
-  'panda.good': 'You’re doing great, keep it up! 🐼',
-  'panda.great': 'Wow, what a day! I’m proud of you. 🐼✨',
+  'panda.hello': 'Hi! I’m here with you. Even a small step counts today. 🌱',
+  'panda.start': 'Nice, you’ve started! Let’s keep going, gently. 🌱',
+  'panda.good': 'You’re doing great, keep it up! 🌱',
+  'panda.great': 'Wow, what a day! I’m proud of you. 🌱✨',
   'panda.streak': 'You’re on a {n}-day streak — let’s not break the chain! 🔥',
-  'panda.streak.big': '{n} days in a row! You’re unstoppable. 🐼🔥',
+  'panda.streak.big': '{n} days in a row! You’re unstoppable. 🌱🔥',
 
   // Daily affirmations (rotating)
   'affirm.1': 'Every small step builds the person you want to become.',
@@ -628,7 +628,7 @@ export const en: Record<TKey, string> = {
   'rewards.level': 'Level',
   'rewards.points': '{n} total points',
   'rewards.toNext': '{n} points to next level',
-  'rewards.pandaIntro': 'Complete this week’s challenges and unlock new badges with me! 🐼',
+  'rewards.pandaIntro': 'Complete this week’s challenges and unlock new badges with me! 🌱',
   'rewards.challenges': 'This week’s challenges',
   'rewards.badges': 'Achievements',
 
@@ -690,7 +690,7 @@ export const en: Record<TKey, string> = {
 
   // Motivational reminder
   'settings.reminders.motivation': 'Motivation',
-  'reminder.motivation.title': '🐼 A thought for you',
+  'reminder.motivation.title': '🌱 A thought for you',
   'reminder.motivation.body': 'Open Vyta for today’s affirmation and one small step forward.',
 
   // Personalisation — module descriptions
@@ -801,6 +801,6 @@ export const en: Record<TKey, string> = {
   'onboard.why.2.desc': 'See yourself improve day by day, with levels and milestones.',
   'onboard.why.3.title': 'Private and offline',
   'onboard.why.3.desc': 'Your data stays on your device. No account required.',
-  'onboard.why.4.title': 'A panda by your side',
+  'onboard.why.4.title': 'A helper by your side',
   'onboard.why.4.desc': 'It cheers you on, gives tips and celebrates your wins.',
 };

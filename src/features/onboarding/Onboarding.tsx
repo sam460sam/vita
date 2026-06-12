@@ -283,7 +283,7 @@ function IntroStep() {
     { emoji: '🎯', titleKey: 'onboard.why.1.title', descKey: 'onboard.why.1.desc' },
     { emoji: '📈', titleKey: 'onboard.why.2.title', descKey: 'onboard.why.2.desc' },
     { emoji: '🔒', titleKey: 'onboard.why.3.title', descKey: 'onboard.why.3.desc' },
-    { emoji: '🐼', titleKey: 'onboard.why.4.title', descKey: 'onboard.why.4.desc' },
+    { emoji: '✨', titleKey: 'onboard.why.4.title', descKey: 'onboard.why.4.desc' },
   ];
   return (
     <div className="pt-4">
