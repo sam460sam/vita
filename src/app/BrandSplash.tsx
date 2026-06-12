@@ -1,12 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import vLogoUrl from '/vyta-v.png';
+import leafTexUrl from '/leaf-tex.png';
 
-// Wordmark sizing. The "yta" gradient mirrors the V logo's leaf greens so the
-// two read as one identical color.
-const V_H = 74; // logo height (px)
-const FONT = 58; // "yta" font size (px)
-const GAP = 4; // space between V and "yta" (px)
-const YTA_GRADIENT = 'linear-gradient(180deg, #93c24a 0%, #6aa742 48%, #4c9038 100%)';
+// Wordmark sizing. "yta" is filled with the same leaf texture as the V logo, so
+// the letters look cut from the same branched-leaf material — one identical look.
+const V_H = 88; // logo height (px) — larger than the letters, like the sketch
+const FONT = 56; // "yta" font size (px)
+const GAP = 3; // space between V and "yta" (px)
 
 /**
  * Animated brand splash shown only at app launch: the green "V" logo appears
@@ -82,13 +82,16 @@ export function BrandSplash() {
         />
         <span
           ref={ytaRef}
-          className="font-extrabold tracking-tight"
+          className="tracking-tight"
           style={{
             fontSize: FONT,
+            fontWeight: 900,
             lineHeight: 1,
             opacity: mount < 2 ? 0 : 1,
             transition: 'opacity 520ms ease 140ms',
-            backgroundImage: YTA_GRADIENT,
+            backgroundImage: `url(${leafTexUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
             WebkitBackgroundClip: 'text',
             backgroundClip: 'text',
             color: 'transparent',
