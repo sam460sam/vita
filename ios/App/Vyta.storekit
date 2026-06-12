@@ -1,0 +1,79 @@
+{
+  "identifier": "E0A7C4DD-8A48-4BA2-BF75-168C43B97BA7",
+  "nonRenewingSubscriptions": [],
+  "products": [],
+  "settings": {
+    "_applicationInternalID": "6776238780",
+    "_developerTeamID": "",
+    "_failTransactionsEnabled": false,
+    "_lastSynchronizedDate": 0,
+    "_locale": "it_IT",
+    "_storefront": "ITA",
+    "_storeKitErrors": []
+  },
+  "subscriptionGroups": [
+    {
+      "id": "194FE43E-A059-4B6E-888B-6202AFDB8A44",
+      "localizations": [],
+      "name": "Vyta Pro",
+      "subscriptions": [
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "3.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "5B0958B3-D09D-4782-95E9-1B090301ABA7",
+          "introductoryOffer": {
+            "internalID": "1D63E2ED-EA20-4D32-9EBA-91033B559446",
+            "paymentMode": "free",
+            "subscriptionPeriod": "P1W"
+          },
+          "localizations": [
+            {
+              "description": "Sblocca Finanze, Obiettivi e Calendario.",
+              "displayName": "Vyta Pro",
+              "locale": "it_IT"
+            }
+          ],
+          "productID": "vyta_pro_monthly",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Vyta Pro Mensile",
+          "subscriptionGroupID": "194FE43E-A059-4B6E-888B-6202AFDB8A44",
+          "type": "RecurringSubscription",
+          "winbackOffers": []
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "29.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "36176A31-02F4-433F-8BE9-B70818121871",
+          "introductoryOffer": {
+            "internalID": "0A4CCAA1-DA6A-406F-9884-B6985421EF1C",
+            "paymentMode": "free",
+            "subscriptionPeriod": "P1W"
+          },
+          "localizations": [
+            {
+              "description": "Sblocca Finanze, Obiettivi e Calendario. Risparmi il 37%.",
+              "displayName": "Vyta Pro Annuale",
+              "locale": "it_IT"
+            }
+          ],
+          "productID": "vyta_pro_yearly",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "Vyta Pro Annuale",
+          "subscriptionGroupID": "194FE43E-A059-4B6E-888B-6202AFDB8A44",
+          "type": "RecurringSubscription",
+          "winbackOffers": []
+        }
+      ]
+    }
+  ],
+  "version": {
+    "major": 4,
+    "minor": 0
+  }
+}
