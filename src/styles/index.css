@@ -206,33 +206,6 @@ body {
   animation: fade-in 150ms ease-out;
 }
 
-/* Brand splash: V pops in big & alone, settles to wordmark size as "yta" unfolds */
-@keyframes brand-v {
-  0% { transform: scale(0.5); opacity: 0; }
-  18% { transform: scale(1.45); opacity: 1; }
-  48% { transform: scale(1.45); opacity: 1; }
-  66% { transform: scale(1); }
-  100% { transform: scale(1); }
-}
-@keyframes brand-word {
-  0%, 48% { max-width: 0; opacity: 0; transform: translateX(-8px); }
-  70% { opacity: 1; }
-  100% { max-width: 220px; opacity: 1; transform: translateX(0); }
-}
-@keyframes brand-fade {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-.animate-brand-v {
-  animation: brand-v 2.05s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-.animate-brand-word {
-  animation: brand-word 2.05s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-.animate-brand-fade {
-  animation: brand-fade 0.44s ease forwards;
-}
-
 @keyframes stella-float {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(-6px) rotate(2deg); }
