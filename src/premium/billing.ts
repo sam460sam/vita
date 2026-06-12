@@ -42,40 +42,54 @@ export async function getProPackages(): Promise<ProPackage[]> {
   return out;
 }
 
-/** Read the current entitlement from StoreKit (on-device verified). */
+/** Parse the plugin's expiryDate (Date → may arrive as ISO string or epoch
+ *  ms/seconds) into a millisecond timestamp, or undefined if unparseable. */
+function parseExpiry(v: unknown): number | undefined {
+  if (typeof v === 'number') return v < 1e12 ? v * 1000 : v; // seconds → ms
+  if (typeof v === 'string') {
+    const n = Date.parse(v);
+    return Number.isFinite(n) ? n : undefined;
+  }
+  return undefined;
+}
+
+/** Read the current entitlement from StoreKit (on-device verified).
+ *  NOTE: the plugin returns `data` as an OBJECT keyed by transaction id (not an
+ *  array, despite its TS types), so we normalise with Object.values. StoreKit's
+ *  currentEntitlements already contains only active/valid entitlements, so any
+ *  match for our products means the user is Pro. */
 export async function getEntitlement(): Promise<EntitlementState> {
   if (!isBillingConfigured()) return { isPro: false };
   try {
     const res = await Subscriptions.getCurrentEntitlements();
-    const txns = res.responseCode === 0 ? res.data ?? [] : [];
-    const now = Date.now();
+    const raw = res.responseCode === 0 ? (res.data as unknown) : undefined;
+    const txns: Array<{ productIdentifier?: string; expiryDate?: unknown }> = Array.isArray(raw)
+      ? raw
+      : raw && typeof raw === 'object'
+        ? Object.values(raw as Record<string, { productIdentifier?: string; expiryDate?: unknown }>)
+        : [];
     const active = txns
-      .filter((t) => ALL_PRODUCT_IDS.includes(t.productIdentifier))
-      .map((t) => ({ productId: t.productIdentifier, expiresAt: Date.parse(t.expiryDate) }))
-      // keep entitlements that are non-expired (or have no parseable expiry)
-      .filter((t) => !Number.isFinite(t.expiresAt) || t.expiresAt > now)
+      .filter((t) => t?.productIdentifier && ALL_PRODUCT_IDS.includes(t.productIdentifier))
+      .map((t) => ({ productId: t.productIdentifier as string, expiresAt: parseExpiry(t.expiryDate) }))
       .sort((a, b) => (b.expiresAt || 0) - (a.expiresAt || 0));
     if (active.length === 0) return { isPro: false };
-    return {
-      isPro: true,
-      productId: active[0].productId,
-      expiresAt: Number.isFinite(active[0].expiresAt) ? active[0].expiresAt : undefined,
-    };
+    return { isPro: true, productId: active[0].productId, expiresAt: active[0].expiresAt };
   } catch {
     return { isPro: false };
   }
 }
 
-/** Start a purchase. Returns the resulting entitlement state. */
+/** Start a purchase. Returns the resulting entitlement state. After the native
+ *  flow finishes we always re-read the entitlement (StoreKit is the source of
+ *  truth), so "already subscribed" or restored purchases unlock correctly. */
 export async function purchase(productId: string): Promise<EntitlementState> {
   if (!isBillingConfigured()) return { isPro: false };
   try {
-    const res = await Subscriptions.purchaseProduct({ productIdentifier: productId });
-    if (res.responseCode === 0) return await getEntitlement();
-    return { isPro: false };
+    await Subscriptions.purchaseProduct({ productIdentifier: productId });
   } catch {
-    return { isPro: false };
+    /* user cancelled or transient error — still re-check entitlement below */
   }
+  return getEntitlement();
 }
 
 /** Restore purchases. StoreKit 2 reflects restored subscriptions in the current
