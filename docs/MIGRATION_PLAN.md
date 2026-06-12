@@ -2,7 +2,59 @@
 
 _Companion to `docs/AUDIT.md`. Branch `claude/walkbid-phase-0-audit-3c83rm`._
 
-> **Status: Phase 0 — awaiting approval. No feature code written yet.**
+> **Status: Phase 0 — open questions resolved (see “Decisions”). No feature
+> code written yet; awaiting go-ahead to start Phase 1.**
+
+## Decisions (resolved 2026-06-12)
+
+The audit established that this repo is **Vita — Life OS**, a *different,
+existing* project that merely shares WalkBid’s stack. Per your direction:
+
+1. **Host:** WalkBid is a **brand-new, standalone app built from zero** in a new
+   **`walkbid/` subfolder** of this repo. The existing Vita app
+   (everything outside `walkbid/`) is **never touched, modified, or deleted**.
+   The two apps are independent — separate `package.json`, build, Dexie DB,
+   Capacitor project, and assets.
+2. **Not a repurpose/migration.** Option A (gut Vita) and Option B (coexist in
+   one app) from the earlier draft are **rejected**. There is no data or feature
+   migration from Vita — WalkBid starts empty.
+3. **Bundle id:** WalkBid is not yet in App Store Connect → adopt
+   **`com.walkbid.app`**, display name **WalkBid**.
+4. **Old data:** Vita’s `vita` IndexedDB is left alone; WalkBid uses its own new
+   `walkbid` database. Nothing exported, nothing deleted.
+5. **Stack:** WalkBid reuses the same proven tooling choices (React 18 + TS
+   strict + Vite + Tailwind + Dexie + Capacitor) but as a **fresh scaffold**,
+   not by importing Vita’s code. Patterns are referenced; files are not shared.
+
+Everything below that describes editing/removing Vita files is **superseded** by
+the decisions above and kept only as audit context.
+
+## Product inspiration — Handoff Construction Estimator (1Build)
+
+The idea originates from **Handoff** (1Build, Inc.) — the exact app the WalkBid
+spec positions against. Reference screens reviewed; flows worth borrowing
+(layout/interaction only, not branding):
+
+- **AI-drafted estimate** with line items (`qty · $ · unit`), markup shown to the
+  contractor, one-tap **“Convert to”** contract. → M2 + M8 Flow A.
+- **Change order records** ledger: delta-colored rows (+green / −red),
+  Approved/Sent status, **Initial total vs Updated total**. → M3 + M8 Flow B
+  (WalkBid adds on-site signature + SHA-256/geo audit).
+- **Branded proposal PDF** with company logo, license #, client block, signature
+  — “send before you leave the driveway” (our tagline). → M2/M3.
+- **Get-paid** screen (deposit, ACH/card). WalkBid **deliberately differs**:
+  payment *protection* (Zelle/check/ACH + user-pasted link), not a processor,
+  to keep the App Store “Data Not Collected” posture.
+- **Walkthrough capture** — photos while thinking out loud. → M6 + M8 Flow C.
+- Handoff’s **Schedule/“builds itself”** is **out of WalkBid scope** (skip).
+
+**Differentiation preserved:** Handoff is an AI estimator that stops at the
+deposit; WalkBid owns post-contract jobsite execution (signed change orders +
+proof package). We borrow polish and proven layouts, not the positioning.
+
+**Open design point:** Handoff uses a forest-green aesthetic; the WalkBid spec
+specifies dark **asphalt + safety-orange** “Premium Jobsite”. Palette to be
+confirmed before building design tokens (see Phase-1 go-ahead).
 
 ## 0. Premise & the one conflict that matters
 
