@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   WalkBid — Premium Jobsite. Dark-first, industrial, sunlight-legible.
+   ========================================================================== */
+:root {
+  color-scheme: dark;
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #0e1013; /* asphalt */
+  color: #f2f3f5; /* chalk */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* No text inflation, no tap highlight — feels like a native tool. */
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+/* Tabular numerals everywhere money or quantities appear. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* Subtle grain reserved for headers (spec §4). */
+.grain {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+
+/* Hide scrollbars on horizontal strips (photos, milestones). */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Signature canvas should never select text while drawing. */
+.signature-canvas {
+  touch-action: none;
+  user-select: none;
+}
