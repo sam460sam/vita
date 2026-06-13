@@ -1,7 +1,23 @@
 {
   "identifier": "E0A7C4DD-8A48-4BA2-BF75-168C43B97BA7",
   "nonRenewingSubscriptions": [],
-  "products": [],
+  "products": [
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "FEDE5673-7A6D-4831-AE8B-91A7B801F2B8",
+      "localizations": [
+        {
+          "description": "Profilo completo del test della personalità.",
+          "displayName": "Profilo completo",
+          "locale": "it_IT"
+        }
+      ],
+      "productID": "vyta_personality_full",
+      "referenceName": "Vyta Personality Full",
+      "type": "NonConsumable"
+    }
+  ],
   "settings": {
     "_applicationInternalID": "6776238780",
     "_developerTeamID": "",
