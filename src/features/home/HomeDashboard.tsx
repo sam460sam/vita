@@ -15,7 +15,7 @@ import { todayRings, ringsToData, mergeHealthRings } from '@/features/attivita/l
 import { isScheduled, isDone, currentStreak } from '@/features/abitudini/logic';
 import { RECOMMENDED_HABITS } from '@/features/abitudini/recommended';
 import { useHealthSummary } from '@/platform/health';
-import { dailyAffirmation } from '@/features/oggi/coach';
+import { AFFIRMATIONS } from '@/features/oggi/coach';
 import { dayPoints, type LifeData } from '@/features/gamification/logic';
 import { DailyWin } from '@/features/oggi/DailyWin';
 import { useStella } from '@/features/stella';
@@ -61,8 +61,16 @@ export function HomeDashboard() {
   const m = computeMomentum(s, habits ?? [], logs ?? [], tasks ?? [], workouts ?? [], todayWater, journals ?? []);
   const healthSummary = useHealthSummary();
   const rings = mergeHealthRings(todayRings(workouts ?? [], s), healthSummary);
-  const affirmation = t(dailyAffirmation() as TKey);
   const greeting = greetByHour(s.name, t);
+
+  // Motivational phrase rotates every 10s (starts at a day-based offset so it
+  // doesn't always begin from the same one).
+  const [affirmIdx, setAffirmIdx] = useState(() => Math.floor(Date.now() / 86_400_000) % AFFIRMATIONS.length);
+  useEffect(() => {
+    const id = setInterval(() => setAffirmIdx((i) => (i + 1) % AFFIRMATIONS.length), 10_000);
+    return () => clearInterval(id);
+  }, []);
+  const affirmation = t(AFFIRMATIONS[affirmIdx] as TKey);
 
   // Days this week that already have activity (for the date-strip dots).
   const activeDays = useMemo(() => {

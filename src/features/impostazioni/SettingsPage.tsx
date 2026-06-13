@@ -12,6 +12,7 @@ import { useI18n, LANGS, type LangPref, type TKey } from '@/i18n';
 import { useTheme, type ThemePref } from '@/theme/theme';
 import { PersonalizationSection } from '@/features/personalizzazione/PersonalizationSection';
 import { BackupCard } from '@/features/backup';
+import { reminderBody } from '@/features/notify/copy';
 
 export function SettingsPage() {
   const { t, pref, setPref } = useI18n();
@@ -56,7 +57,7 @@ export function SettingsPage() {
     await notifications.setDailyReminder(
       kind,
       t(`reminder.${kind}.title` as TKey),
-      t(`reminder.${kind}.body` as TKey),
+      reminderBody(t, kind),
       time || undefined,
     );
   }

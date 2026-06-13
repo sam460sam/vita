@@ -9,7 +9,7 @@ import { Sheet, Field, Input, Button, Segmented } from '@/ui';
 import { todayISO } from '@/lib/format';
 import { platform } from '@/platform/platform';
 import { notifications } from '@/platform/notifications';
-import { useT } from '@/i18n';
+import { useT, type TKey } from '@/i18n';
 
 const WATER = '#0EA5E9';
 const INTERVALS = [30, 45, 60, 90, 120];
@@ -52,16 +52,18 @@ export function WaterPage() {
   }
 
   const reminderOn = (s.water.reminderEveryMin ?? 0) > 0;
+  // Catchy, rotating bodies for the water pings (localized).
+  const waterTicks = () => Array.from({ length: 8 }, (_, i) => t(`reminder.waterTick.${i + 1}` as TKey));
   async function toggleReminder() {
     const next = reminderOn ? 0 : 60;
     await updateSettings({ water: { ...s.water, reminderEveryMin: next || undefined } });
     if (next && notifications.supported()) await notifications.requestPermission();
-    await notifications.setWaterInterval(next || undefined);
+    await notifications.setWaterInterval(next || undefined, waterTicks());
   }
   async function setInterval(min: number) {
     await updateSettings({ water: { ...s.water, reminderEveryMin: min } });
     if (notifications.supported()) await notifications.requestPermission();
-    await notifications.setWaterInterval(min);
+    await notifications.setWaterInterval(min, waterTicks());
   }
 
   const fmtL = (n: number) => `${n.toFixed(1).replace(/\.0$/, '')} l/d`;

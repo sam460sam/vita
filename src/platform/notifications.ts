@@ -105,7 +105,7 @@ export const notifications = {
    * 08:00 and 22:00. Pass undefined/0 to turn them off. Uses a dedicated id
    * range so it never clashes with the other reminders.
    */
-  async setWaterInterval(everyMin?: number): Promise<void> {
+  async setWaterInterval(everyMin?: number, messages?: string[]): Promise<void> {
     if (!isNative) return;
     try {
       const { LocalNotifications } = await import('@capacitor/local-notifications');
@@ -118,11 +118,13 @@ export const notifications = {
       for (let mins = 8 * 60; mins <= 22 * 60 && slots.length < 24; mins += everyMin) {
         slots.push({ hour: Math.floor(mins / 60), minute: mins % 60 });
       }
+      // Rotate through the catchy messages so consecutive pings differ.
+      const pool = messages && messages.length ? messages : ['💧'];
       await LocalNotifications.schedule({
         notifications: slots.map((s, i) => ({
           id: (base + i) % 2_000_000_000,
           title: 'Vyta',
-          body: '💧',
+          body: pool[i % pool.length],
           schedule: { on: { hour: s.hour, minute: s.minute }, repeats: true },
         })),
       });
