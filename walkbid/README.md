@@ -22,6 +22,8 @@ orders → proof package → payment milestones. Offline-first, phone-first.
   `docs/QA_P2.md` and `docs/AI_PROXY.md`.
 - **Phase 3** — parked (seams only: `src/config/features.ts`,
   `src/services/phase3/`).
+- **Store + site** — App Store assets in `store/` (listing, privacy answers,
+  publish guide, screenshots); marketing + privacy-policy site in `site/`.
 
 ## Stack
 
@@ -57,9 +59,7 @@ asphalt launch screen, all permission strings + export-compliance flag set.
 Full guide and the speech-plugin note: **`docs/NATIVE.md`**. App icon:
 `node scripts/make-icon.mjs`.
 
-## Market & privacy
-
-- **United States storefront only** — configured in App Store Connect, no code
+## Market & privacy- **United States storefront only** — configured in App Store Connect, no code
   change required.
 - **Imperial units** (SF/SY/CY/LF/EA/HR/TON/LS), **USD** via
   `Intl.NumberFormat('en-US')`, US date format.
