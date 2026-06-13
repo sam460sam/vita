@@ -48,12 +48,14 @@ npm run typecheck  # tsc --noEmit
 
 ```bash
 npm run build
-npx cap add ios    # first time
-npx cap sync
+npx cap sync ios   # project already added under ios/
 npx cap open ios
 ```
 
-Bundle id `com.walkbid.app`, display name **WalkBid** (`capacitor.config.ts`).
+Bundle id `com.walkbid.app`, display name **WalkBid**, dark-only, portrait,
+asphalt launch screen, all permission strings + export-compliance flag set.
+Full guide and the speech-plugin note: **`docs/NATIVE.md`**. App icon:
+`node scripts/make-icon.mjs`.
 
 ## Market & privacy
 
