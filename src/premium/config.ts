@@ -42,7 +42,7 @@ export const PRICE_FALLBACK: Record<PlanPeriod, string> = {
 
 /** Mandatory legal links (Apple requires Terms/EULA + Privacy on the paywall). */
 export const TERMS_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
-export const PRIVACY_URL = 'https://sam460sam.github.io/vita/privacy.html';
+export const PRIVACY_URL = 'https://vita-peach.vercel.app/privacy.html';
 
 /**
  * Modules behind Vyta Pro (the "equilibrata" split). The wellness core
