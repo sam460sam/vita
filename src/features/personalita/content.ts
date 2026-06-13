@@ -17,6 +17,8 @@ export interface PTypeText {
   work: string;
   relationships: string;
   famousTraits: string;
+  stress: string;
+  careers: string[];
 }
 
 export interface PType {
@@ -412,6 +414,15 @@ export const TYPES: Record<string, PType> = {
         'Sei leale e profondo, ma selettivo. Apri il tuo mondo interiore a poche persone fidate e apprezzi chi rispetta la tua indipendenza tanto quanto la tua mente.',
       famousTraits:
         'Agli altri appari calmo, riservato e sorprendentemente sicuro. Parli poco, ma quando lo fai le tue parole hanno peso.',
+      stress:
+        'Sotto pressione tendi a chiuderti, a iper-analizzare e a diventare critico verso te stesso e gli altri quando i tuoi piani vengono scompaginati. Ritagliati uno spazio di silenzio per riordinare le idee, poi scegli un solo passo concreto invece di voler controllare tutto.',
+      careers: [
+        'Stratega',
+        'Architetto di sistemi',
+        'Ricercatore',
+        'Analista finanziario',
+        'Consulente strategico',
+      ],
     },
     en: {
       name: 'The Vision Architect',
@@ -435,6 +446,15 @@ export const TYPES: Record<string, PType> = {
         'You are loyal and deep, but selective. You open your inner world to a trusted few and value those who respect your independence as much as your mind.',
       famousTraits:
         'You come across as calm, reserved and surprisingly self-assured. You speak little, but when you do your words carry weight.',
+      stress:
+        'Under pressure you tend to withdraw, over-analyze and turn critical toward yourself and others when your plans are disrupted. Carve out a quiet space to reorder your thoughts, then choose a single concrete step instead of trying to control everything.',
+      careers: [
+        'Strategist',
+        'Systems architect',
+        'Researcher',
+        'Financial analyst',
+        'Strategy consultant',
+      ],
     },
   },
 
@@ -463,6 +483,15 @@ export const TYPES: Record<string, PType> = {
         'Ti leghi a chi sa stimolare la tua mente con conversazioni autentiche. Sei sincero e poco interessato alle convenzioni sociali, e apprezzi partner che rispettano il tuo bisogno di spazio mentale.',
       famousTraits:
         'Sembri distratto e assorto nei tuoi pensieri, ma ti illumini quando una conversazione tocca un’idea che ti incuriosisce davvero.',
+      stress:
+        'Quando la pressione cresce ti rifugi nella testa, rimugini all’infinito e rimandi le decisioni finché la tensione esplode in irritazione. Fissa una scadenza ragionevole e parla con qualcuno di fidato: dare voce ai pensieri li alleggerisce più di mille analisi solitarie.',
+      careers: [
+        'Sviluppatore software',
+        'Data scientist',
+        'Ricercatore',
+        'Analista di sistemi',
+        'Progettista UX',
+      ],
     },
     en: {
       name: 'The Idea Explorer',
@@ -486,6 +515,15 @@ export const TYPES: Record<string, PType> = {
         'You bond with people who stimulate your mind through genuine conversation. You are candid and indifferent to social convention, and you value partners who respect your need for mental space.',
       famousTraits:
         'You seem distracted and lost in thought, yet you light up when a conversation touches an idea that truly intrigues you.',
+      stress:
+        'When pressure builds you retreat into your head, ruminate endlessly and delay decisions until the tension erupts as irritation. Set a reasonable deadline and talk to someone you trust: voicing your thoughts lightens them more than any amount of solitary analysis.',
+      careers: [
+        'Software developer',
+        'Data scientist',
+        'Researcher',
+        'Systems analyst',
+        'UX designer',
+      ],
     },
   },
 
@@ -514,6 +552,15 @@ export const TYPES: Record<string, PType> = {
         'Porti energia e ambizione anche nei rapporti personali. Sei leale e protettivo, e cresci accanto a chi sa tenerti testa e ricordarti il valore della tenerezza.',
       famousTraits:
         'Trasmetti autorità e sicurezza appena entri in una stanza. Le persone tendono a guardare a te per sapere dove andare.',
+      stress:
+        'Sotto pressione diventi più rigido e impaziente, alzi i ritmi e rischi di travolgere chi ti sta intorno pur di tenere il controllo. Fermati a respirare e chiediti cosa serve davvero adesso: delegare e ascoltare ti restituisce più energia del comando forzato.',
+      careers: [
+        'Dirigente d’azienda',
+        'Imprenditore',
+        'Project manager',
+        'Avvocato',
+        'Consulente direzionale',
+      ],
     },
     en: {
       name: 'The Strategic Commander',
@@ -537,6 +584,15 @@ export const TYPES: Record<string, PType> = {
         'You bring energy and ambition to personal bonds too. You are loyal and protective, and you grow beside someone who can stand up to you and remind you of the value of tenderness.',
       famousTraits:
         'You radiate authority and confidence the moment you enter a room. People tend to look to you to learn where to go.',
+      stress:
+        'Under pressure you grow more rigid and impatient, push the pace and risk steamrolling those around you in order to keep control. Pause to breathe and ask what is truly needed now: delegating and listening give you back more energy than forced command.',
+      careers: [
+        'Executive',
+        'Entrepreneur',
+        'Project manager',
+        'Lawyer',
+        'Management consultant',
+      ],
     },
   },
 
@@ -565,6 +621,15 @@ export const TYPES: Record<string, PType> = {
         'Sei stimolante e divertente, attratto da chi sa giocare con le idee insieme a te. Cresci con partner che apprezzano la tua vivacità e non temono un confronto acceso ma affettuoso.',
       famousTraits:
         'Appari spigliato, arguto e un po’ provocatorio. Riesci a rendere interessante qualsiasi conversazione, anche solo per il gusto di vedere dove porta.',
+      stress:
+        'Quando ti senti bloccato o annoiato dalla pressione, ti disperdi tra mille spunti, diventi polemico e rimandi ciò che richiede costanza. Scegli una sola idea e portala a un piccolo risultato concreto: completare qualcosa calma la mente più di un nuovo dibattito.',
+      careers: [
+        'Imprenditore',
+        'Consulente di innovazione',
+        'Esperto di marketing',
+        'Avvocato',
+        'Product manager',
+      ],
     },
     en: {
       name: 'The Provocative Inventor',
@@ -588,6 +653,15 @@ export const TYPES: Record<string, PType> = {
         'You are stimulating and fun, drawn to people who can play with ideas alongside you. You grow with partners who enjoy your liveliness and do not fear a spirited but affectionate debate.',
       famousTraits:
         'You come across as quick-witted, sharp and a little provocative. You can make any conversation interesting, if only to see where it leads.',
+      stress:
+        'When you feel stuck or bored by pressure, you scatter across countless ideas, turn argumentative and put off anything that demands persistence. Pick one idea and carry it to a small concrete result: finishing something calms the mind more than a fresh debate.',
+      careers: [
+        'Entrepreneur',
+        'Innovation consultant',
+        'Marketing strategist',
+        'Lawyer',
+        'Product manager',
+      ],
     },
   },
 
@@ -616,6 +690,15 @@ export const TYPES: Record<string, PType> = {
         'Cerchi legami autentici e profondi, non superficiali. Sei un partner attento e leale, e fiorisci con chi sa raggiungere il tuo mondo interiore e ricambiare la tua dedizione.',
       famousTraits:
         'Sembri tranquillo e gentile, ma chi ti conosce percepisce un’intensità sotto la superficie. Spesso capisci le persone prima che parlino.',
+      stress:
+        'Sotto stress assorbi le tensioni altrui finché ti senti svuotato, poi ti ritiri e rimugini su tutto ciò che non va. Prenditi una pausa di silenzio per separare le tue emozioni da quelle degli altri e confidati con una persona fidata invece di portare il peso da solo.',
+      careers: [
+        'Psicologo',
+        'Counselor',
+        'Scrittore',
+        'Insegnante',
+        'Responsabile di progetti sociali',
+      ],
     },
     en: {
       name: 'The Keeper of Meaning',
@@ -639,6 +722,15 @@ export const TYPES: Record<string, PType> = {
         'You seek authentic, deep bonds rather than shallow ones. You are an attentive and loyal partner, and you flourish with someone who can reach your inner world and return your devotion.',
       famousTraits:
         'You seem quiet and gentle, but those who know you sense an intensity beneath the surface. You often understand people before they speak.',
+      stress:
+        'Under stress you absorb others’ tension until you feel drained, then withdraw and brood over everything that is wrong. Take a quiet break to separate your emotions from other people’s, and confide in someone you trust instead of carrying the weight alone.',
+      careers: [
+        'Psychologist',
+        'Counselor',
+        'Writer',
+        'Teacher',
+        'Social-impact program lead',
+      ],
     },
   },
 
@@ -667,6 +759,15 @@ export const TYPES: Record<string, PType> = {
         'Ami in modo profondo e leale, cercando un’intesa che vada oltre le parole. Sei un partner premuroso e fioriscono con chi accoglie la tua sensibilità senza chiederti di nasconderla.',
       famousTraits:
         'Appari dolce, riservato e un po’ sognante. Dietro la tua calma c’è una vita interiore intensa che condividi solo con chi merita davvero fiducia.',
+      stress:
+        'Quando la realtà tradisce i tuoi ideali ti chiudi, ti senti incompreso e finisci per criticarti con durezza. Concediti di sentire l’emozione senza giudicarla, poi torna a un piccolo gesto creativo o a un valore concreto che puoi onorare oggi.',
+      careers: [
+        'Scrittore',
+        'Counselor',
+        'Designer grafico',
+        'Operatore nel sociale',
+        'Traduttore',
+      ],
     },
     en: {
       name: 'The Earnest Dreamer',
@@ -690,6 +791,15 @@ export const TYPES: Record<string, PType> = {
         'You love deeply and loyally, seeking a connection that goes beyond words. You are a caring partner and flourish with someone who welcomes your sensitivity without asking you to hide it.',
       famousTraits:
         'You appear gentle, reserved and a little dreamy. Behind your calm lies an intense inner life that you share only with those who truly earn your trust.',
+      stress:
+        'When reality betrays your ideals you shut down, feel misunderstood and end up criticizing yourself harshly. Allow yourself to feel the emotion without judging it, then return to a small creative act or a concrete value you can honor today.',
+      careers: [
+        'Writer',
+        'Counselor',
+        'Graphic designer',
+        'Social worker',
+        'Translator',
+      ],
     },
   },
 
@@ -718,6 +828,15 @@ export const TYPES: Record<string, PType> = {
         'Sei un partner devoto e premuroso, attento ai bisogni dell’altro. Cresci accanto a chi ricambia la tua cura e ti aiuta a non dimenticarti di te stesso.',
       famousTraits:
         'Appari aperto, caloroso e profondamente coinvolto. Le persone si sentono viste e apprezzate quando parli con loro.',
+      stress:
+        'Sotto pressione ti carichi dei problemi di tutti, eviti i conflitti e ti senti ferito quando i tuoi sforzi non vengono riconosciuti. Ricorda che non sei responsabile delle emozioni altrui: chiedi esplicitamente ciò di cui hai bisogno e concediti di riposare senza sensi di colpa.',
+      careers: [
+        'Insegnante',
+        'Responsabile risorse umane',
+        'Coach',
+        'Formatore',
+        'Coordinatore di comunità',
+      ],
     },
     en: {
       name: 'The Inspiring Mentor',
@@ -741,6 +860,15 @@ export const TYPES: Record<string, PType> = {
         'You are a devoted, caring partner, attentive to the other’s needs. You grow beside someone who returns your care and helps you not forget yourself.',
       famousTraits:
         'You come across as open, warm and deeply engaged. People feel seen and appreciated when you talk with them.',
+      stress:
+        'Under pressure you take on everyone’s problems, avoid conflict and feel hurt when your efforts go unrecognized. Remember you are not responsible for others’ emotions: ask plainly for what you need and let yourself rest without guilt.',
+      careers: [
+        'Teacher',
+        'Human resources manager',
+        'Coach',
+        'Trainer',
+        'Community coordinator',
+      ],
     },
   },
 
@@ -769,6 +897,15 @@ export const TYPES: Record<string, PType> = {
         'Ami in modo aperto e appassionato, cercando connessioni profonde e autentiche. Cresci con chi condivide la tua voglia di esplorare e ti dà sicurezza senza limitare la tua libertà.',
       famousTraits:
         'Appari solare, espressivo e pieno di vita. La tua energia attira le persone e rende ogni incontro un po’ più luminoso.',
+      stress:
+        'Quando sei sopraffatto ti disperdi tra mille impegni, perdi la concentrazione e oscilli tra entusiasmo e scoraggiamento improvviso. Riduci le opzioni a una priorità per volta e ritagliati momenti di calma: la tua energia torna quando smetti di inseguire tutto insieme.',
+      careers: [
+        'Esperto di comunicazione',
+        'Giornalista',
+        'Imprenditore creativo',
+        'Formatore',
+        'Responsabile marketing',
+      ],
     },
     en: {
       name: 'The Enthusiastic Spirit',
@@ -792,6 +929,15 @@ export const TYPES: Record<string, PType> = {
         'You love openly and passionately, seeking deep and authentic connection. You grow with someone who shares your urge to explore and gives you security without limiting your freedom.',
       famousTraits:
         'You come across as sunny, expressive and full of life. Your energy draws people in and makes every encounter a little brighter.',
+      stress:
+        'When overwhelmed you scatter across countless commitments, lose focus and swing between enthusiasm and sudden discouragement. Narrow your options to one priority at a time and carve out moments of calm: your energy returns when you stop chasing everything at once.',
+      careers: [
+        'Communications specialist',
+        'Journalist',
+        'Creative entrepreneur',
+        'Trainer',
+        'Marketing manager',
+      ],
     },
   },
 
@@ -820,6 +966,15 @@ export const TYPES: Record<string, PType> = {
         'Sei un partner leale e presente, che dimostra affetto con i gesti più che con le parole. Cresci con chi apprezza la tua stabilità e ti incoraggia a esprimere ciò che senti.',
       famousTraits:
         'Appari serio, composto e degno di fiducia. Le persone percepiscono in te una solidità che le fa sentire al sicuro.',
+      stress:
+        'Quando le cose sfuggono al tuo controllo ti irrigidisci, ti aggrappi alle regole e ti carichi di lavoro pur di mettere tutto in ordine. Accetta che non tutto dipende da te e condividi il carico: chiedere aiuto non intacca la tua affidabilità, la rende sostenibile.',
+      careers: [
+        'Contabile',
+        'Revisore',
+        'Responsabile operativo',
+        'Amministratore',
+        'Ufficiale o funzionario pubblico',
+      ],
     },
     en: {
       name: 'The Dependable Pillar',
@@ -843,6 +998,15 @@ export const TYPES: Record<string, PType> = {
         'You are a loyal, present partner who shows affection through deeds more than words. You grow with someone who values your stability and encourages you to express what you feel.',
       famousTraits:
         'You come across as serious, composed and trustworthy. People sense a solidity in you that makes them feel safe.',
+      stress:
+        'When things slip out of your control you stiffen, cling to the rules and pile on work to put everything back in order. Accept that not everything depends on you and share the load: asking for help does not dent your reliability, it makes it sustainable.',
+      careers: [
+        'Accountant',
+        'Auditor',
+        'Operations manager',
+        'Administrator',
+        'Civil servant',
+      ],
     },
   },
 
@@ -871,6 +1035,15 @@ export const TYPES: Record<string, PType> = {
         'Sei un partner devoto e protettivo, che esprime amore con cura quotidiana. Fiorisci accanto a chi riconosce i tuoi gesti e ti ricorda che meriti la stessa attenzione che doni.',
       famousTraits:
         'Appari mite, gentile e affidabile. Le persone si sentono accudite in tua presenza, anche quando non te ne accorgi.',
+      stress:
+        'Sotto pressione ti sovraccarichi per non deludere nessuno, trattieni il malumore e finisci per sentirti dato per scontato. Concediti il permesso di dire di no e di esprimere ciò che provi: prenderti cura di te non è egoismo, è ciò che ti permette di continuare a esserci.',
+      careers: [
+        'Infermiere',
+        'Insegnante',
+        'Assistente amministrativo',
+        'Bibliotecario',
+        'Operatore socio-sanitario',
+      ],
     },
     en: {
       name: 'The Caring Guardian',
@@ -894,6 +1067,15 @@ export const TYPES: Record<string, PType> = {
         'You are a devoted, protective partner who expresses love through daily care. You flourish beside someone who notices your gestures and reminds you that you deserve the attention you give.',
       famousTraits:
         'You come across as mild, kind and dependable. People feel looked after in your presence, even when you do not notice it.',
+      stress:
+        'Under pressure you overload yourself so as not to let anyone down, hold in your frustration and end up feeling taken for granted. Give yourself permission to say no and to voice what you feel: caring for yourself is not selfish, it is what lets you keep showing up.',
+      careers: [
+        'Nurse',
+        'Teacher',
+        'Administrative assistant',
+        'Librarian',
+        'Healthcare support worker',
+      ],
     },
   },
 
@@ -922,6 +1104,15 @@ export const TYPES: Record<string, PType> = {
         'Sei un partner leale e affidabile, che mostra l’affetto costruendo stabilità. Cresci con chi apprezza la tua dedizione e ti aiuta ad ascoltare anche il lato emotivo.',
       famousTraits:
         'Appari sicuro, diretto e organizzato. Le persone sanno esattamente dove ti trovano e si affidano alla tua concretezza.',
+      stress:
+        'Sotto pressione diventi più autoritario e inflessibile, imponi le regole e ti spazientisci con chi non rispetta i tuoi standard. Concediti una pausa per distinguere ciò che puoi controllare da ciò che non dipende da te: ascoltare e delegare ti ridà più efficacia del comando rigido.',
+      careers: [
+        'Direttore operativo',
+        'Responsabile di reparto',
+        'Project manager',
+        'Amministratore',
+        'Responsabile logistica',
+      ],
     },
     en: {
       name: 'The Resolute Organizer',
@@ -945,6 +1136,15 @@ export const TYPES: Record<string, PType> = {
         'You are a loyal, dependable partner who shows affection by building stability. You grow with someone who values your dedication and helps you listen to the emotional side too.',
       famousTraits:
         'You come across as confident, direct and organized. People know exactly where they stand with you and rely on your practicality.',
+      stress:
+        'Under pressure you grow more authoritarian and inflexible, enforce the rules and lose patience with those who fall short of your standards. Take a break to separate what you can control from what does not depend on you: listening and delegating give you back more effectiveness than rigid command.',
+      careers: [
+        'Operations director',
+        'Department manager',
+        'Project manager',
+        'Administrator',
+        'Logistics manager',
+      ],
     },
   },
 
@@ -973,6 +1173,15 @@ export const TYPES: Record<string, PType> = {
         'Sei un partner affettuoso e presente, che ama nutrire i legami con gesti quotidiani. Cresci accanto a chi ricambia la tua cura e ti rassicura del tuo valore.',
       famousTraits:
         'Appari socievole, caloroso e attento. Le persone si sentono accolte e ascoltate quando sono con te.',
+      stress:
+        'Sotto pressione cerchi di accontentare tutti, eviti i conflitti e ti senti ferito quando manca un riconoscimento o un’armonia che davi per scontati. Ricorda che il valore non dipende dall’approvazione altrui: esprimi con chiarezza ciò che provi e affronta le tensioni invece di nasconderle.',
+      careers: [
+        'Infermiere',
+        'Responsabile risorse umane',
+        'Organizzatore di eventi',
+        'Insegnante',
+        'Responsabile relazioni con i clienti',
+      ],
     },
     en: {
       name: 'The Heart of the Community',
@@ -996,6 +1205,15 @@ export const TYPES: Record<string, PType> = {
         'You are an affectionate, present partner who loves to nurture bonds through daily gestures. You grow beside someone who returns your care and reassures you of your worth.',
       famousTraits:
         'You come across as sociable, warm and attentive. People feel welcomed and heard when they are with you.',
+      stress:
+        'Under pressure you try to please everyone, avoid conflict and feel hurt when the recognition or harmony you took for granted is missing. Remember your worth does not depend on others’ approval: state clearly what you feel and face tensions instead of hiding them.',
+      careers: [
+        'Nurse',
+        'Human resources manager',
+        'Event organizer',
+        'Teacher',
+        'Customer relations manager',
+      ],
     },
   },
 
@@ -1024,6 +1242,15 @@ export const TYPES: Record<string, PType> = {
         'Sei un partner leale ma riservato, che mostra affetto con i fatti più che con le parole. Cresci con chi rispetta il tuo bisogno di spazio e libertà.',
       famousTraits:
         'Appari calmo, pratico e un po’ misterioso. Parli poco, ma quando c’è un problema da risolvere sei la persona giusta accanto.',
+      stress:
+        'Sotto pressione ti chiudi, ti distacchi dalle emozioni e reagisci con impulsività o sarcasmo quando ti senti vincolato. Allontanati un momento per scaricare la tensione con un’attività pratica, poi torna e di’ a parole ciò che provi invece di lasciarlo esplodere.',
+      careers: [
+        'Tecnico specializzato',
+        'Ingegnere',
+        'Meccanico',
+        'Pilota',
+        'Analista di sicurezza informatica',
+      ],
     },
     en: {
       name: 'The Practical Solver',
@@ -1047,6 +1274,15 @@ export const TYPES: Record<string, PType> = {
         'You are a loyal but reserved partner who shows affection through deeds more than words. You grow with someone who respects your need for space and freedom.',
       famousTraits:
         'You come across as calm, practical and a little mysterious. You speak little, but when there is a problem to solve you are the right person to have nearby.',
+      stress:
+        'Under pressure you withdraw, detach from your emotions and react with impulsiveness or sarcasm when you feel constrained. Step away for a moment to release the tension through a hands-on activity, then come back and put what you feel into words instead of letting it erupt.',
+      careers: [
+        'Skilled technician',
+        'Engineer',
+        'Mechanic',
+        'Pilot',
+        'Cybersecurity analyst',
+      ],
     },
   },
 
@@ -1075,6 +1311,15 @@ export const TYPES: Record<string, PType> = {
         'Ami in modo tenero e leale, dimostrando affetto con gesti premurosi. Fiorisci accanto a chi rispetta la tua sensibilità e ti dà spazio per essere te stesso.',
       famousTraits:
         'Appari riservato, dolce e tranquillo, ma chi ti conosce scopre una persona appassionata e profondamente fedele a ciò in cui crede.',
+      stress:
+        'Sotto pressione ti chiudi in silenzio, eviti il confronto e assorbi le tensioni finché ti senti sopraffatto e incompreso. Concediti spazio per ritrovare la calma attraverso ciò che ami creare, poi esprimi con dolcezza ciò che provi invece di tenerlo dentro.',
+      careers: [
+        'Artista',
+        'Designer',
+        'Fotografo',
+        'Artigiano',
+        'Operatore del benessere',
+      ],
     },
     en: {
       name: 'The Gentle Artist',
@@ -1098,6 +1343,15 @@ export const TYPES: Record<string, PType> = {
         'You love tenderly and loyally, showing affection through thoughtful gestures. You flourish beside someone who respects your sensitivity and gives you room to be yourself.',
       famousTraits:
         'You come across as reserved, gentle and calm, but those who know you discover a passionate person deeply faithful to what they believe in.',
+      stress:
+        'Under pressure you retreat into silence, avoid confrontation and absorb tension until you feel overwhelmed and misunderstood. Give yourself room to find calm through what you love to create, then gently express what you feel instead of holding it in.',
+      careers: [
+        'Artist',
+        'Designer',
+        'Photographer',
+        'Craftsperson',
+        'Wellness practitioner',
+      ],
     },
   },
 
@@ -1126,6 +1380,15 @@ export const TYPES: Record<string, PType> = {
         'Sei un partner vivace e generoso, che ama condividere esperienze ed emozioni intense. Cresci con chi sa stare al tuo passo e ti invita a fermarti ogni tanto a riflettere.',
       famousTraits:
         'Appari sicuro, spigliato e pieno di vita. Porti energia ovunque vai e sai trasformare un momento qualsiasi in qualcosa di memorabile.',
+      stress:
+        'Sotto pressione ti agiti, agisci d’impulso e cerchi distrazioni o rischi pur di sfuggire alla tensione e alla noia. Fermati a respirare e chiediti quali saranno le conseguenze: incanalare l’energia in un’azione utile ti calma più della fuga.',
+      careers: [
+        'Imprenditore',
+        'Agente di vendita',
+        'Operatore di emergenza',
+        'Trader',
+        'Organizzatore di eventi sportivi',
+      ],
     },
     en: {
       name: 'The Bold of the Moment',
@@ -1149,6 +1412,15 @@ export const TYPES: Record<string, PType> = {
         'You are a lively, generous partner who loves to share experiences and intense emotions. You grow with someone who can keep your pace and invites you to pause now and then to reflect.',
       famousTraits:
         'You come across as confident, easygoing and full of life. You bring energy everywhere you go and can turn an ordinary moment into something memorable.',
+      stress:
+        'Under pressure you grow restless, act on impulse and chase distractions or risks just to escape the tension and boredom. Pause to breathe and ask yourself what the consequences will be: channeling the energy into useful action calms you more than flight.',
+      careers: [
+        'Entrepreneur',
+        'Sales representative',
+        'Emergency responder',
+        'Trader',
+        'Sports event organizer',
+      ],
     },
   },
 
@@ -1177,6 +1449,15 @@ export const TYPES: Record<string, PType> = {
         'Sei un partner affettuoso e divertente, che ama esprimere amore in modo aperto e generoso. Cresci accanto a chi condivide la tua gioia di vivere e ti offre una base sicura.',
       famousTraits:
         'Appari solare, espansivo e travolgente. La tua presenza accende l’atmosfera e fa sentire le persone più leggere e felici.',
+      stress:
+        'Sotto pressione ti distrai per evitare le emozioni difficili, rimandi i problemi e cerchi continue conferme dagli altri. Concediti di fermarti e di sentire ciò che provi: affrontare una difficoltà alla volta ti restituisce più serenità di mille distrazioni.',
+      careers: [
+        'Organizzatore di eventi',
+        'Animatore turistico',
+        'Esperto di vendite',
+        'Educatore dell’infanzia',
+        'Promotore di pubbliche relazioni',
+      ],
     },
     en: {
       name: 'The Spontaneous Entertainer',
@@ -1200,6 +1481,15 @@ export const TYPES: Record<string, PType> = {
         'You are an affectionate, fun partner who loves to express love openly and generously. You grow beside someone who shares your zest for life and offers you a secure base.',
       famousTraits:
         'You come across as sunny, outgoing and irresistible. Your presence lights up the room and makes people feel lighter and happier.',
+      stress:
+        'Under pressure you distract yourself to avoid difficult emotions, put off problems and seek constant reassurance from others. Allow yourself to pause and feel what you are feeling: facing one difficulty at a time gives you back more peace than any amount of distraction.',
+      careers: [
+        'Event organizer',
+        'Hospitality host',
+        'Sales specialist',
+        'Early-childhood educator',
+        'Public relations promoter',
+      ],
     },
   },
 };

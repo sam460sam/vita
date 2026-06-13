@@ -218,6 +218,14 @@ function ResultView({ result, onRetake }: { result: PersonalityResult; onRetake:
               </ul>
             </Section>
             <Section title={t('personality.section.work')} accent={accent}><p className="text-[14px] text-ink leading-relaxed">{tx.work}</p></Section>
+            <Section title={t('personality.section.careers')} accent={accent}>
+              <div className="flex flex-wrap gap-2">
+                {tx.careers.map((c, k) => (
+                  <span key={k} className="text-[13px] font-semibold px-3 py-1.5 rounded-full" style={{ background: `color-mix(in srgb, ${accent} 14%, transparent)`, color: accent }}>{c}</span>
+                ))}
+              </div>
+            </Section>
+            <Section title={t('personality.section.stress')} accent={accent}><p className="text-[14px] text-ink leading-relaxed">{tx.stress}</p></Section>
             <Section title={t('personality.section.relationships')} accent={accent}><p className="text-[14px] text-ink leading-relaxed">{tx.relationships}</p></Section>
             <Section title={t('personality.section.traits')} accent={accent}><p className="text-[14px] text-ink leading-relaxed">{tx.famousTraits}</p></Section>
           </div>

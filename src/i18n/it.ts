@@ -474,6 +474,8 @@ export const it = {
   'personality.section.work': 'Lavoro e carriera',
   'personality.section.relationships': 'Relazioni',
   'personality.section.traits': 'Come ti percepiscono',
+  'personality.section.stress': 'Sotto stress',
+  'personality.section.careers': 'Carriere ideali',
   'personality.restore': 'Ripristina acquisto',
   'personality.purchased': 'Profilo completo sbloccato!',
   'personality.purchaseError': 'Acquisto non riuscito',

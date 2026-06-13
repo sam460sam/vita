@@ -471,6 +471,8 @@ export const en: Record<TKey, string> = {
   'personality.section.work': 'Work & career',
   'personality.section.relationships': 'Relationships',
   'personality.section.traits': 'How you come across',
+  'personality.section.stress': 'Under stress',
+  'personality.section.careers': 'Ideal careers',
   'personality.restore': 'Restore purchase',
   'personality.purchased': 'Full profile unlocked!',
   'personality.purchaseError': 'Purchase failed',
