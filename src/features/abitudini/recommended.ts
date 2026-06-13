@@ -18,5 +18,10 @@ export const RECOMMENDED_HABITS: RecommendedHabit[] = [
   { id: 'meditate', labelKey: 'rec.meditate', icon: 'Brain', color: '#7C3AED', frequency: { type: 'daily' } },
   { id: 'sleep', labelKey: 'rec.sleep', icon: 'Moon', color: '#4F46E5', frequency: { type: 'daily' } },
   { id: 'gym', labelKey: 'rec.gym', icon: 'Dumbbell', color: '#10B981', frequency: { type: 'times_per_week', timesPerWeek: 3 } },
-  { id: 'stretch', labelKey: 'rec.stretch', icon: 'StretchHorizontal', color: '#EC4899', frequency: { type: 'daily' } },
+  { id: 'stretch', labelKey: 'rec.stretch', icon: 'Activity', color: '#EC4899', frequency: { type: 'daily' } },
+  { id: 'fruit', labelKey: 'rec.fruit', icon: 'Apple', color: '#22C55E', frequency: { type: 'daily' } },
+  { id: 'gratitude', labelKey: 'rec.gratitude', icon: 'PenLine', color: '#F59E0B', frequency: { type: 'daily' } },
+  { id: 'sun', labelKey: 'rec.sun', icon: 'Sun', color: '#FBBF24', frequency: { type: 'daily' } },
+  { id: 'coffee', labelKey: 'rec.coffee', icon: 'Coffee', color: '#B45309', frequency: { type: 'daily' } },
 ];
+

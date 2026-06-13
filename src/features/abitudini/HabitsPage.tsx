@@ -3,14 +3,15 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Flame, Plus, ChevronRight, BarChart3, Trash2, Check } from 'lucide-react';
 import { startOfWeek, addDays, format } from 'date-fns';
 import { db } from '@/data/db';
-import { toggleHabitLog, deleteHabit } from '@/data/repo';
+import { toggleHabitLog, deleteHabit, createHabit } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
-import { EmptyState, Button, Icon } from '@/ui';
+import { EmptyState, Button, Icon, useToast } from '@/ui';
 import { todayISO, activeDfnLocale } from '@/lib/format';
 import { platform } from '@/platform/platform';
 import { HabitForm } from './HabitForm';
 import { Heatmap } from './Heatmap';
+import { RECOMMENDED_HABITS } from './recommended';
 import { currentStreak, heatmapData, isDone } from './logic';
 import type { Habit } from '@/data/types';
 import { useT } from '@/i18n';
@@ -23,6 +24,7 @@ function scheduledOn(h: Habit, dow: number): boolean {
 
 export function HabitsPage() {
   const t = useT();
+  const toast = useToast();
   const habits = useLiveQuery(() => db.habits.orderBy('order').toArray(), [], []);
   const logs = useLiveQuery(() => db.habitLogs.toArray(), [], []);
   const [formOpen, setFormOpen] = useState(false);
@@ -31,6 +33,15 @@ export function HabitsPage() {
 
   const active = (habits ?? []).filter((h) => !h.archived);
   const completedToday = active.filter((h) => isDone(logs ?? [], h.id, today)).length;
+
+  // Recommended habits the user hasn't added yet (match by translated name).
+  const existingNames = new Set(active.map((h) => h.name));
+  const suggestions = RECOMMENDED_HABITS.filter((r) => !existingNames.has(t(r.labelKey)));
+  async function addSuggested(rec: (typeof RECOMMENDED_HABITS)[number]) {
+    platform.haptic();
+    await createHabit({ name: t(rec.labelKey), color: rec.color, icon: rec.icon, frequency: rec.frequency });
+    toast.show(t('home.habitAdded'));
+  }
 
   // Localised 2-letter weekday labels, Sunday-first (Su Mo Tu We Th Fr Sa).
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 0 });
@@ -75,6 +86,25 @@ export function HabitsPage() {
           <span className="flex-1 text-left text-[15px] font-bold text-ink">{t('habits.createNew')}</span>
           <ChevronRight size={18} className="text-ink-3" />
         </button>
+
+        {/* Suggested habits — one tap to add */}
+        {suggestions.length > 0 && (
+          <div className="bg-card rounded-card shadow-card border border-line/40 dark:border-transparent p-4 mb-3">
+            <h3 className="text-[13px] font-extrabold uppercase tracking-wide text-ink-3 mb-2.5">{t('habits.suggested')}</h3>
+            <div className="flex flex-wrap gap-2">
+              {suggestions.map((rec) => (
+                <button
+                  key={rec.id}
+                  onClick={() => addSuggested(rec)}
+                  className="inline-flex items-center gap-1.5 rounded-full pl-2.5 pr-3 h-9 text-[13px] font-bold active:scale-95 transition-transform"
+                  style={{ background: `color-mix(in srgb, ${rec.color} 14%, transparent)`, color: rec.color }}
+                >
+                  <Icon name={rec.icon} size={15} strokeWidth={2.5} /> {t(rec.labelKey)}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {active.length === 0 ? (
           <div className="bg-card rounded-card shadow-card border border-line/40 dark:border-transparent">

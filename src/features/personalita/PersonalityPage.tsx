@@ -79,7 +79,7 @@ function TestFlow({ onDone, onCancel }: { onDone: (a: Answers) => void; onCancel
 
   return (
     <div className="min-h-[100dvh] bg-app">
-      <div className="max-w-xl mx-auto px-5 pt-safe-top pb-[calc(40px+env(safe-area-inset-bottom))] min-h-[100dvh] flex flex-col">
+      <div className="max-w-xl mx-auto px-5 pt-safe-top pb-[calc(120px+env(safe-area-inset-bottom))] min-h-[100dvh] flex flex-col">
         {/* Top bar: back + progress */}
         <div className="flex items-center gap-3 h-14 pt-2">
           <button
