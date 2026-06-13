@@ -17,7 +17,8 @@ import type { PersonalityResult } from '@/data/types';
 const GOLD = '#C9A227';
 
 export function PersonalityPage() {
-  const result = useLiveQuery(() => db.personality.get('result'), [], undefined);
+  // `undefined` = still loading; `null` = loaded but no result yet.
+  const result = useLiveQuery(async () => (await db.personality.get('result')) ?? null, [], undefined);
   const [testing, setTesting] = useState(false);
 
   async function finish(answers: Answers) {
