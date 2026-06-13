@@ -5,7 +5,7 @@ import { X, Check, Droplet, ChevronDown } from 'lucide-react';
 import { db } from '@/data/db';
 import { setWaterMl, updateSettings, readSettings } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
-import { Sheet, Field, Input, Button } from '@/ui';
+import { Sheet, Field, Input, Button, Segmented } from '@/ui';
 import { todayISO } from '@/lib/format';
 import { platform } from '@/platform/platform';
 import { notifications } from '@/platform/notifications';
@@ -165,10 +165,15 @@ export function WaterPage() {
   );
 }
 
+/** Extra daily water (ml) by how active the person is — roughly the fluid lost
+ *  through a typical day's exertion at each level. */
+export const ACTIVITY_ML = { sedentary: 0, light: 350, active: 650, intense: 1000 } as const;
+export type ActivityLevel = keyof typeof ACTIVITY_ML;
+
 /** Evidence-based daily water estimate from weight (≈35 ml/kg) with a small
- *  height adjustment. Rounded to 100 ml and clamped to a sensible range. */
-export function recommendedWaterMl(weightKg: number, heightCm: number): number {
-  const base = weightKg * 35 + (heightCm - 170) * 10;
+ *  height adjustment plus an activity bonus. Rounded to 100 ml and clamped. */
+export function recommendedWaterMl(weightKg: number, heightCm: number, activityMl = 0): number {
+  const base = weightKg * 35 + (heightCm - 170) * 10 + activityMl;
   const rounded = Math.round(base / 100) * 100;
   return Math.min(4000, Math.max(1500, rounded));
 }
@@ -177,10 +182,11 @@ function HydrationCalcSheet({ open, onClose, glassMl }: { open: boolean; onClose
   const t = useT();
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
+  const [activity, setActivity] = useState<ActivityLevel>('light');
   const w = parseFloat(weight);
   const h = parseFloat(height);
   const valid = w > 0 && h > 0;
-  const ml = valid ? recommendedWaterMl(w, h) : 0;
+  const ml = valid ? recommendedWaterMl(w, h, ACTIVITY_ML[activity]) : 0;
   const glasses = Math.max(1, Math.round(ml / (glassMl || 200)));
 
   async function apply() {
@@ -201,6 +207,21 @@ function HydrationCalcSheet({ open, onClose, glassMl }: { open: boolean; onClose
       <div className="grid grid-cols-2 gap-3">
         <Field label={t('water.calc.weight')}><Input type="number" inputMode="decimal" value={weight} onChange={(e) => setWeight(e.target.value)} /></Field>
         <Field label={t('water.calc.height')}><Input type="number" inputMode="numeric" value={height} onChange={(e) => setHeight(e.target.value)} /></Field>
+      </div>
+      <div className="mt-3">
+        <Field label={t('water.calc.activity')}>
+          <Segmented
+            className="w-full"
+            value={activity}
+            onChange={(v) => setActivity(v as ActivityLevel)}
+            options={[
+              { value: 'sedentary', label: t('water.calc.act.sedentary') },
+              { value: 'light', label: t('water.calc.act.light') },
+              { value: 'active', label: t('water.calc.act.active') },
+              { value: 'intense', label: t('water.calc.act.intense') },
+            ]}
+          />
+        </Field>
       </div>
       <div className="mt-4 rounded-card p-4" style={{ background: 'color-mix(in srgb, #0EA5E9 12%, transparent)' }}>
         {valid ? (
