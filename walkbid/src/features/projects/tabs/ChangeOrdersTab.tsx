@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { FilePlus2, Plus, Share2, Trash2, PenLine } from 'lucide-react';
 import { EmptyState, Button, Card, Pill, MoneyText } from '@/ui';
 import { MoneyDelta } from '@/ui/MoneyText';
-import { money, usDate } from '@/lib/format';
+import { money, moneyDelta, usDate } from '@/lib/format';
 import { round2 } from '@/services/estimates';
 import { changeOrdersForProject, deleteChangeOrder } from '@/services/changeOrders';
 import { estimateForProject } from '@/services/estimates';
@@ -47,7 +47,7 @@ export function ChangeOrdersTab({ project }: { project: Project }) {
         <EmptyState
           icon={<FilePlus2 size={36} />}
           title="No change orders yet"
-          body="Photograph what changed, price it, and get it signed on the spot."
+          body="Caught extra work? Photograph it, price it, and get it signed before you build it."
           action={<Button onClick={() => setFormOpen(true)}>New change order</Button>}
         />
         {formOpen && <ChangeOrderForm open={formOpen} onClose={() => setFormOpen(false)} project={project} />}
@@ -58,14 +58,26 @@ export function ChangeOrdersTab({ project }: { project: Project }) {
   return (
     <div className="p-4">
       <Card className="mb-4">
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-end justify-between p-4">
           <div>
-            <div className="text-xs uppercase tracking-wide text-muted">Initial total</div>
-            <div className="tnum text-sm text-muted">{money(initial)}</div>
+            <div className="text-eyebrow uppercase text-muted">Initial total</div>
+            <div className="tnum mt-0.5 text-sm text-muted">{money(initial)}</div>
           </div>
-          <div className="text-right">
-            <div className="text-xs uppercase tracking-wide text-muted">Updated total</div>
-            <MoneyText amount={updated} size="md" />
+          <div className="flex flex-col items-end">
+            <div className="text-eyebrow uppercase text-muted">Updated total</div>
+            <div className="mt-0.5 flex items-center gap-2">
+              {signedDelta !== 0 && (
+                <span
+                  className={
+                    'tnum rounded-full px-2 py-0.5 text-xs font-bold ' +
+                    (signedDelta > 0 ? 'bg-accent/15 text-accent' : 'bg-danger/15 text-danger')
+                  }
+                >
+                  {moneyDelta(signedDelta)}
+                </span>
+              )}
+              <MoneyText amount={updated} size="hero" />
+            </div>
           </div>
         </div>
       </Card>

@@ -37,7 +37,7 @@ export async function buildContractPdf({ company, project, client, estimate, ite
   b.divider();
   b.row('Subtotal', money(totals.taxableBase), { bold: true });
   if (estimate.taxRate > 0) b.row(`Sales tax (${round2(estimate.taxRate * 100)}%)`, money(totals.taxAmount), { color: COLORS.dust });
-  b.row('CONTRACT TOTAL', money(totals.total), { size: 12, bold: true, color: COLORS.safety });
+  b.row('CONTRACT TOTAL', money(totals.total), { size: 12, bold: true, color: COLORS.brand });
 
   // Payment schedule (from M4)
   if (payments.length > 0) {

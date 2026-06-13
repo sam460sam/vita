@@ -1,4 +1,5 @@
 // Shared PDF sections: branded header, party blocks, signature/audit block.
+import { rgb } from 'pdf-lib';
 import { COLORS, MARGIN, type PdfBuilder } from './PdfBuilder';
 import { BRAND } from '@/config/brand';
 import { usDate, usDateTime } from '@/lib/format';
@@ -6,24 +7,31 @@ import type { Client, CompanyInfo, Geo } from '@/data/types';
 
 export function brandHeader(b: PdfBuilder, company: CompanyInfo, docTitle: string, ref: { number: string; dateMs: number }) {
   const name = company.name?.trim() || BRAND;
-  // Company (left)
-  b.text(name, { size: 18, bold: true });
-  const lines = [company.licenseNumber ? `License ${company.licenseNumber}` : '', company.address, company.phone, company.email].filter(
-    Boolean,
-  ) as string[];
-  for (const l of lines) b.text(l, { size: 9, color: COLORS.dust });
+  const pageH = b.page.getHeight();
+  const bandH = 66;
 
-  // Doc title + ref (right, drawn at the top of the page)
-  const top = b.page.getHeight() - MARGIN;
-  const titleW = b.bold.widthOfTextAtSize(docTitle.toUpperCase(), 16);
-  b.page.drawText(docTitle.toUpperCase(), { x: b.right - titleW, y: top - 16, size: 16, font: b.bold, color: COLORS.ink });
+  // Full-width deep-green brand band with white company name + doc title.
+  b.page.drawRectangle({ x: 0, y: pageH - bandH, width: b.page.getWidth(), height: bandH, color: COLORS.brand });
+  b.page.drawText(name, { x: MARGIN, y: pageH - 32, size: 18, font: b.bold, color: COLORS.white });
+  if (company.licenseNumber) {
+    b.page.drawText(`License ${company.licenseNumber}`, { x: MARGIN, y: pageH - 48, size: 9, font: b.font, color: rgbWhite(0.82) });
+  }
+  const title = docTitle.toUpperCase();
+  const titleW = b.bold.widthOfTextAtSize(title, 15);
+  b.page.drawText(title, { x: b.right - titleW, y: pageH - 30, size: 15, font: b.bold, color: COLORS.white });
   const meta = `${ref.number}   ${usDate(new Date(ref.dateMs))}`;
   const metaW = b.font.widthOfTextAtSize(meta, 9);
-  b.page.drawText(meta, { x: b.right - metaW, y: top - 32, size: 9, font: b.font, color: COLORS.dust });
+  b.page.drawText(meta, { x: b.right - metaW, y: pageH - 46, size: 9, font: b.font, color: rgbWhite(0.82) });
 
-  b.space(4);
-  b.page.drawRectangle({ x: b.left, y: b.y, width: b.right - b.left, height: 2.5, color: COLORS.safety });
-  b.space(16);
+  // Body resumes below the band; company contact details in muted ink.
+  b.y = pageH - bandH - 16;
+  const contact = [company.address, company.phone, company.email].filter(Boolean) as string[];
+  if (contact.length) b.text(contact.join('  ·  '), { size: 9, color: COLORS.dust });
+  b.space(8);
+}
+
+function rgbWhite(v: number) {
+  return rgb(v, v, v);
 }
 
 export function partyBlock(b: PdfBuilder, label: string, client: Client, siteAddress?: string) {

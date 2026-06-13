@@ -4,11 +4,11 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { MoreVertical, AlertTriangle, MapPin } from 'lucide-react';
 import { useT, type TKey } from '@/i18n';
 import { Screen } from '@/app/Screen';
-import { JobMoneyBar, IconButton, Sheet, Pill, statusTone } from '@/ui';
-import { getProject, setProjectStatus, deleteProject } from '@/services/projects';
+import { JobMoneyBar, IconButton, Sheet, ScrollTabs, type TabDef } from '@/ui';
+import { getProject, deleteProject } from '@/services/projects';
 import { projectSummary, depositUncollected } from '@/services/summary';
 import { db } from '@/data/db';
-import { PROJECT_STATUSES } from '@/data/types';
+import { StagePicker } from './StagePicker';
 import { ProjectForm } from './ProjectForm';
 import { EstimateTab } from './tabs/EstimateTab';
 import { ContractTab } from './tabs/ContractTab';
@@ -18,7 +18,7 @@ import { PaymentsTab } from './tabs/PaymentsTab';
 import { ProofTab } from './tabs/ProofTab';
 
 type TabId = 'estimate' | 'contract' | 'changeOrders' | 'log' | 'payments' | 'proof';
-const TABS: Array<{ id: TabId; key: TKey }> = [
+const TAB_KEYS: Array<{ id: TabId; key: TKey }> = [
   { id: 'estimate', key: 'tab.estimate' },
   { id: 'contract', key: 'tab.contract' },
   { id: 'changeOrders', key: 'tab.changeOrders' },
@@ -41,6 +41,7 @@ export function ProjectDetailPage() {
 
   const tab = (params.get('tab') as TabId) || 'estimate';
   const setTab = (next: TabId) => setParams({ tab: next }, { replace: true });
+  const tabs: TabDef<TabId>[] = TAB_KEYS.map((tb) => ({ id: tb.id, label: t(tb.key) }));
 
   if (project === undefined) return <Screen title="" back flush><div /></Screen>;
   if (project === null) {
@@ -54,29 +55,26 @@ export function ProjectDetailPage() {
       subtitle={summary?.clientName}
       back
       flush
+      grain
       action={
         <IconButton label={t('common.edit')} onClick={() => setMenuOpen(true)}>
           <MoreVertical size={22} />
         </IconButton>
       }
     >
-      {/* Status + JobMoneyBar */}
+      {/* Address · stage chip · JobMoneyBar — tightened (B3) */}
       <div className="border-b border-hairline px-4 pb-4">
-        {project.siteAddress && (
-          <div className="mb-3 flex items-center gap-1 text-sm text-muted">
-            <MapPin size={13} /> {project.siteAddress}
-          </div>
-        )}
-        <JobMoneyBar payments={summary?.payments ?? []} />
-        <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
-          {PROJECT_STATUSES.map((s) => (
-            <button key={s} onClick={() => setProjectStatus(id, s)} className="shrink-0">
-              <Pill tone={project.status === s ? statusTone(s) : 'neutral'} className={project.status === s ? '' : 'opacity-50'}>
-                {t(`status.${s}` as TKey)}
-              </Pill>
-            </button>
-          ))}
+        <div className="mb-3 flex items-center justify-between gap-3">
+          {project.siteAddress ? (
+            <div className="flex min-w-0 items-center gap-1 text-meta text-muted">
+              <MapPin size={13} className="shrink-0" /> <span className="truncate">{project.siteAddress}</span>
+            </div>
+          ) : (
+            <span />
+          )}
+          <StagePicker projectId={id} status={project.status} />
         </div>
+        <JobMoneyBar payments={summary?.payments ?? []} />
       </div>
 
       {/* Deposit protection banner */}
@@ -86,20 +84,9 @@ export function ProjectDetailPage() {
         </div>
       )}
 
-      {/* Tabs */}
-      <div className="no-scrollbar sticky top-0 z-10 flex gap-1 overflow-x-auto border-b border-hairline bg-bg px-2">
-        {TABS.map((tb) => (
-          <button
-            key={tb.id}
-            onClick={() => setTab(tb.id)}
-            className={
-              'shrink-0 whitespace-nowrap px-3 py-3 text-sm font-bold ' +
-              (tab === tb.id ? 'border-b-2 border-accent text-ink' : 'text-muted')
-            }
-          >
-            {t(tb.key)}
-          </button>
-        ))}
+      {/* Tabs — scrollable, edge-faded, auto-centered (no truncation) */}
+      <div className="sticky top-0 z-10">
+        <ScrollTabs tabs={tabs} active={tab} onChange={setTab} />
       </div>
 
       <div className="pb-28">

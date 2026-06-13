@@ -39,7 +39,7 @@ export async function buildEstimatePdf({ company, project, client, estimate, ite
   b.row('Subtotal', money(totals.taxableBase), { bold: true });
   if (estimate.taxRate > 0) b.row(`Sales tax (${round2(estimate.taxRate * 100)}%)`, money(totals.taxAmount), { color: COLORS.dust });
   b.space(2);
-  b.row('TOTAL', money(totals.total), { size: 13, bold: true, color: COLORS.safety });
+  b.row('TOTAL', money(totals.total), { size: 13, bold: true, color: COLORS.brand });
 
   b.space(12);
   if (estimate.validUntil) b.text(`Valid until ${usDate(estimate.validUntil)}`, { size: 9, color: COLORS.dust });

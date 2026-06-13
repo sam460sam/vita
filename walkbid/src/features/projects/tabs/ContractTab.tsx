@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { FileSignature, ShieldCheck, ShieldAlert, Share2, MapPin, Clock, User } from 'lucide-react';
-import { EmptyState, Button, Card, MoneyText } from '@/ui';
+import { FileSignature, ShieldCheck, ShieldAlert, Share2, MapPin, Clock, User, Copy } from 'lucide-react';
+import { EmptyState, Button, Card, MoneyText, useToast } from '@/ui';
 import { usDateTime } from '@/lib/format';
 import { geoLabel } from '@/platform/geo';
+import { haptic } from '@/platform/haptics';
 import { contractForProject, verifyContract, type IntegrityResult } from '@/services/contracts';
 import { estimateForProject } from '@/services/estimates';
 import { getBlob } from '@/services/blobs';
@@ -13,10 +14,22 @@ import { ContractSignSheet } from '@/features/contract/ContractSignSheet';
 import type { Project } from '@/data/types';
 
 export function ContractTab({ project }: { project: Project }) {
+  const toast = useToast();
   const contract = useLiveQuery(() => contractForProject(project.id), [project.id]);
   const estimate = useLiveQuery(() => estimateForProject(project.id), [project.id]);
   const [signOpen, setSignOpen] = useState(false);
   const [integrity, setIntegrity] = useState<IntegrityResult | null>(null);
+
+  async function copyHash() {
+    if (!contract?.sha256) return;
+    try {
+      await navigator.clipboard.writeText(contract.sha256);
+      await haptic('light');
+      toast.show('Fingerprint copied', 'go');
+    } catch {
+      toast.show('Could not copy', 'danger');
+    }
+  }
 
   useEffect(() => {
     if (contract?.status === 'signed') verifyContract(contract).then(setIntegrity);
@@ -46,13 +59,21 @@ export function ContractTab({ project }: { project: Project }) {
 
   return (
     <div className="p-4">
-      {/* Integrity banner */}
-      <Card className={'mb-4 ' + (integrity?.ok ? 'border-accent/40' : 'border-attention/40')}>
+      {/* Integrity banner — verified=green, failed=danger */}
+      <Card className={'mb-4 ' + (integrity?.ok ? 'border-accent/40' : integrity == null ? '' : 'border-danger/50')}>
         <div className="flex items-center gap-3 p-4">
-          {integrity?.ok ? <ShieldCheck className="text-accent" size={28} /> : <ShieldAlert className="text-attention" size={28} />}
+          {integrity?.ok ? (
+            <ShieldCheck className="text-accent" size={28} />
+          ) : (
+            <ShieldAlert className={integrity == null ? 'text-muted' : 'text-danger'} size={28} />
+          )}
           <div>
-            <div className="font-display font-bold text-ink">{integrity == null ? 'Verifying…' : integrity.ok ? 'Integrity verified' : 'Integrity check failed'}</div>
-            <div className="text-xs text-muted">{integrity?.ok ? 'The stored PDF matches its signed fingerprint.' : 'The document may have been altered.'}</div>
+            <div className="font-display text-h2 text-ink">
+              {integrity == null ? 'Verifying…' : integrity.ok ? 'Integrity verified' : 'Integrity check failed'}
+            </div>
+            <div className="text-xs text-muted">
+              {integrity?.ok ? 'The stored PDF matches its signed fingerprint.' : integrity == null ? 'Recomputing the fingerprint…' : 'The document may have been altered.'}
+            </div>
           </div>
         </div>
       </Card>
@@ -60,22 +81,27 @@ export function ContractTab({ project }: { project: Project }) {
       {/* Audit screen */}
       <Card className="mb-4">
         <div className="flex flex-col gap-3 p-4">
-          <h3 className="font-display text-sm font-bold uppercase tracking-wide text-muted">Audit</h3>
+          <h3 className="text-eyebrow uppercase text-muted">Audit</h3>
           <AuditRow icon={<User size={15} />} label="Signed by" value={`${contract.signerName}${contract.signerRole ? ` · ${contract.signerRole}` : ''}`} />
           <AuditRow icon={<Clock size={15} />} label="When" value={contract.signedAt ? usDateTime(contract.signedAt) : '—'} />
           <AuditRow icon={<MapPin size={15} />} label="Where" value={geoLabel(contract.geo)} />
-          <div className="border-t border-hairline pt-3">
-            <div className="text-[11px] font-medium uppercase tracking-wide text-muted">SHA-256 fingerprint</div>
-            <div className="tnum mt-1 break-all font-mono text-[11px] text-ink">{contract.sha256}</div>
-          </div>
+          <button onClick={copyHash} className="border-t border-hairline pt-3 text-left active:opacity-70">
+            <div className="flex items-center gap-2">
+              <span className="text-eyebrow uppercase text-muted">SHA-256 fingerprint</span>
+              <Copy size={12} className="text-muted" />
+            </div>
+            <div className="tnum mt-1 break-all font-mono text-hash text-muted">{contract.sha256}</div>
+          </button>
         </div>
       </Card>
 
       {estimate && (
-        <div className="mb-4 flex items-center justify-between px-1">
-          <span className="text-sm text-muted">Contract total</span>
-          <MoneyText amount={estimate.total} size="md" />
-        </div>
+        <Card className="mb-4">
+          <div className="flex items-center justify-between p-4">
+            <span className="text-eyebrow uppercase text-muted">Contract total</span>
+            <MoneyText amount={estimate.total} size="lg" />
+          </div>
+        </Card>
       )}
 
       <Button className="w-full" onClick={share}>

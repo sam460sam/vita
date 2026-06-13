@@ -116,6 +116,6 @@ export async function buildProofPdf(d: ProofData): Promise<Blob> {
 
 function section(b: PdfBuilder, title: string) {
   b.space(2);
-  b.text(title.toUpperCase(), { size: 9, bold: true, color: COLORS.safety });
+  b.text(title.toUpperCase(), { size: 9, bold: true, color: COLORS.brand });
   b.divider(COLORS.line);
 }

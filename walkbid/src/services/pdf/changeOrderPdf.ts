@@ -34,7 +34,7 @@ export async function buildChangeOrderPdf({ company, project, client, changeOrde
   b.row('CHANGE IN CONTRACT PRICE', money(changeOrder.deltaTotal), {
     size: 12,
     bold: true,
-    color: changeOrder.deltaTotal < 0 ? COLORS.risk : COLORS.safety,
+    color: changeOrder.deltaTotal < 0 ? COLORS.risk : COLORS.brand,
   });
 
   b.space(8);

@@ -47,8 +47,11 @@ export function EstimateTab({ project }: { project: Project }) {
         <div className="text-sm text-muted">
           {estimate.number} · {estimate.status}
         </div>
-        <button onClick={() => setRatesOpen(true)} className="flex items-center gap-1 text-sm font-semibold text-accent">
-          <Percent size={14} /> Tax & markup
+        <button
+          onClick={() => setRatesOpen(true)}
+          className="inline-flex items-center gap-1 rounded-full border border-hairline px-3 py-1.5 text-xs font-semibold text-ink active:bg-surface-2"
+        >
+          <Percent size={13} className="text-muted" /> Tax &amp; markup
         </button>
       </div>
 
@@ -60,8 +63,8 @@ export function EstimateTab({ project }: { project: Project }) {
             {items.map((it) => (
               <button key={it.id} onClick={() => setEditing(it)} className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left active:bg-surface/70">
                 <div className="min-w-0">
-                  <div className="truncate font-semibold text-ink">{it.description}</div>
-                  <div className="tnum text-xs text-muted">
+                  <div className="line-clamp-2 text-[14px] font-semibold leading-snug text-ink">{it.description}</div>
+                  <div className="tnum mt-0.5 text-xs text-muted">
                     {fmtQty(it.qty)} {unitLabel(it.unit)} × {money(it.unitPrice)}
                   </div>
                 </div>
@@ -79,8 +82,8 @@ export function EstimateTab({ project }: { project: Project }) {
             {estimate.markupRate > 0 && <Row label={`${t('common.markup')} (${round2(estimate.markupRate * 100)}%)`} value={money(totals.markupAmount)} muted hint="hidden on client PDF" />}
             {estimate.taxRate > 0 && <Row label={`${t('common.tax')} (${round2(estimate.taxRate * 100)}%)`} value={money(totals.taxAmount)} muted />}
             <div className="mt-1 flex items-center justify-between border-t border-hairline pt-3">
-              <span className="font-display font-bold text-ink">{t('common.total')}</span>
-              <MoneyText amount={totals.total} size="lg" />
+              <span className="font-display text-h2 text-ink">{t('common.total')}</span>
+              <MoneyText amount={totals.total} size="hero" />
             </div>
           </div>
         </Card>
@@ -126,9 +129,11 @@ export function EstimateTab({ project }: { project: Project }) {
 function Row({ label, value, muted, hint }: { label: string; value: string; muted?: boolean; hint?: string }) {
   return (
     <div className="flex items-center justify-between">
-      <span className={muted ? 'text-sm text-muted' : 'text-sm text-ink'}>
+      <span className={muted ? 'flex items-center text-sm text-muted' : 'flex items-center text-sm text-ink'}>
         {label}
-        {hint && <span className="ml-2 text-[11px] text-muted">{hint}</span>}
+        {hint && (
+          <span className="ml-2 rounded-full bg-attention/15 px-2 py-0.5 text-[10px] font-semibold text-attention">{hint}</span>
+        )}
       </span>
       <span className={'tnum ' + (muted ? 'text-muted' : 'font-semibold text-ink')}>{value}</span>
     </div>

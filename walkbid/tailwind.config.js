@@ -31,18 +31,6 @@ export default {
         ink: '#F2F5F1', // warm white — primary text (--text)
         muted: '#9AA79E', // sage gray — secondary (--text-muted)
         faint: '#5E6D64', // captions, disabled (--text-faint)
-
-        // ---- Legacy (removed in the Step C cleanup; kept so the migration
-        // builds at every step) ----
-        asphalt: '#0E1013',
-        graphite: '#16191E',
-        steel: '#262B33',
-        chalk: '#F2F3F5',
-        dust: '#8A9099',
-        safety: '#FF6A00',
-        signal: '#FFC400',
-        go: '#22C55E',
-        risk: '#EF4444',
       },
       borderRadius: {
         // Softer = more premium (up from the old 10px square look).

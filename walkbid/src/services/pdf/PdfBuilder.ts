@@ -1,5 +1,5 @@
 // Lightweight Letter-size PDF builder over pdf-lib. Client documents are
-// printable white pages with black text and a safety-orange brand rule.
+// printable white pages with black body text and a deep-green brand band.
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage, type RGB } from 'pdf-lib';
 
 export const LETTER = { w: 612, h: 792 };
@@ -9,9 +9,11 @@ export const COLORS = {
   ink: rgb(0.08, 0.09, 0.1),
   dust: rgb(0.45, 0.48, 0.52),
   line: rgb(0.85, 0.86, 0.88),
-  safety: rgb(1, 0.416, 0),
-  go: rgb(0.13, 0.77, 0.37),
-  risk: rgb(0.94, 0.27, 0.27),
+  // Brand accent — deep field green #1C6E47.
+  brand: rgb(0.11, 0.431, 0.278),
+  white: rgb(1, 1, 1),
+  go: rgb(0.184, 0.745, 0.478),
+  risk: rgb(0.863, 0.353, 0.294),
 };
 
 export class PdfBuilder {
