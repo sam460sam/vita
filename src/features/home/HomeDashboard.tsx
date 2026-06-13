@@ -251,6 +251,14 @@ export function HomeDashboard() {
           </Link>
         </section>
 
+        {/* Daily phrase — right under the momentum hero */}
+        <section className="mt-3 rounded-card p-4 flex items-center gap-3" style={{ background: wash('var(--c-journal)', 14) }}>
+          <span className="flex-shrink-0 text-journal">
+            <Quote size={20} fill="currentColor" />
+          </span>
+          <p className="text-[14px] font-bold text-ink italic leading-snug">{affirmation}</p>
+        </section>
+
         {/* Steps (from Apple Health, when connected) */}
         {steps > 0 && (
           <div className="mt-3 bg-card rounded-card shadow-card border border-line/40 dark:border-transparent p-4">
@@ -326,30 +334,6 @@ export function HomeDashboard() {
           )}
         </section>
 
-        {/* Daily phrase */}
-        <section className="mt-3 rounded-card p-4 flex items-center gap-3" style={{ background: wash('var(--c-journal)', 14) }}>
-          <span className="flex-shrink-0 text-journal">
-            <Quote size={20} fill="currentColor" />
-          </span>
-          <p className="text-[14px] font-bold text-ink italic leading-snug">{affirmation}</p>
-        </section>
-
-        {/* Widgets promo */}
-        <button
-          onClick={() => setWidgetsOpen(true)}
-          className="mt-3 w-full flex items-center gap-3 rounded-card p-4 text-left active:scale-[0.99] transition-transform"
-          style={{ background: wash('var(--c-habit)', 13) }}
-        >
-          <span className="h-11 w-11 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--c-card)', color: 'var(--c-habit)' }}>
-            <LayoutGrid size={20} />
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="text-[14px] font-extrabold text-ink">{t('home.widgets.title')}</div>
-            <div className="text-[12px] text-ink-2 leading-snug">{t('home.widgets.desc')}</div>
-          </div>
-          <ChevronRight size={18} className="text-ink-3 flex-shrink-0" />
-        </button>
-
         {/* Explore modules */}
         <h2 className="text-[16px] font-extrabold text-ink mt-5 mb-2.5 px-1">{t('home.explore')}</h2>
         <nav className="grid grid-cols-4 gap-2.5">
@@ -371,6 +355,22 @@ export function HomeDashboard() {
             );
           })}
         </nav>
+
+        {/* Widgets promo — moved to the bottom */}
+        <button
+          onClick={() => setWidgetsOpen(true)}
+          className="mt-5 w-full flex items-center gap-3 rounded-card p-4 text-left active:scale-[0.99] transition-transform"
+          style={{ background: wash('var(--c-habit)', 13) }}
+        >
+          <span className="h-11 w-11 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--c-card)', color: 'var(--c-habit)' }}>
+            <LayoutGrid size={20} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="text-[14px] font-extrabold text-ink">{t('home.widgets.title')}</div>
+            <div className="text-[12px] text-ink-2 leading-snug">{t('home.widgets.desc')}</div>
+          </div>
+          <ChevronRight size={18} className="text-ink-3 flex-shrink-0" />
+        </button>
       </div>
 
       {win && <DailyWin streak={win.streak} pointsToday={win.today} pointsYesterday={win.yesterday} onClose={closeWin} />}
