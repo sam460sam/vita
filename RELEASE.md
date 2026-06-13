@@ -1,72 +1,51 @@
-# Vyta — Rilascio 1.2 (build 36)
+# Vyta — Rilascio 1.3 (build 37)
 
-Branch: `claude/vyta-candy-ui-restyle-hdzg0g` · Versione **1.2** · Build **36**
-Tutto committato e pushato. Questa release arriva **fino ai widget**; il resto
-(allenamento nativo + Apple Watch) va alla **prossima versione**.
+Branch: `claude/vyta-candy-ui-restyle-hdzg0g` · Versione **1.3** · Build **37**
 
----
-
-## ✅ Cosa c'è in questa build (lavoro fatto)
-- Redesign completo "Caldo & soft" (palette verde, tema chiaro/scuro)
-- Nuovo **logo a foglia "V"** + **splash animato** V → Vyta
-- Nuovo modulo **Note con checklist**
-- **Home** ridisegnata: saluto, settimana, momentum, "La tua giornata", Esplora
-- **Abitudini** ridisegnate (statistiche, heatmap colorata, giorni settimana, Check in)
-- **Acqua**: nuova schermata "tracking" (gocce, promemoria con intervallo, obiettivo con medie)
-- **Promemoria intelligenti** (avviso serale solo se rischi di perdere lo streak)
-- **Apple Salute**: import allenamenti, passi, calorie → anelli + card Passi
-- **Localizzazione completa IT/EN** (UI, date, dati demo)
-- **3 famiglie di widget** Home + Lock Screen (Piccolo · Medio · Grande), bilingui:
-  - **Acqua** — gocce interattive (tocca una goccia vuota = +1 bicchiere) + 1 L
-  - **Lista** configurabile — Oggi · Settimana · To‑Do
-  - **Abitudini** — heatmap (piccolo) e tracker settimanale (medio/grande)
-
-## 📝 Novità di questa versione (App Store)
+## ✨ Novità 1.3 — testo per App Store ("Novità")
 
 **Italiano**
 ```
-Vyta si rinnova completamente! 🌱
-• Nuovo look caldo e luminoso con il nuovo logo a foglia
-• Splash animato all'avvio
-• Note con checklist
-• Abitudini ridisegnate con heatmap e check-in
-• Nuova schermata Acqua con promemoria e obiettivi
-• Promemoria intelligenti: ti avvisiamo solo se rischi di perdere lo streak
-• Widget per Home e blocco schermo: acqua, lista (oggi/settimana/to-do) e abitudini
-• Connessione ad Apple Salute per allenamenti, anelli e passi
-• Tante rifiniture grafiche e miglioramenti di stabilità
+• Nuovo: Test della personalità — scopri il tuo tipo tra 16 profili. Risultato base gratuito; profilo completo con un acquisto singolo.
+• Acqua: scheda dedicata con calcolatore del fabbisogno giornaliero (peso, altezza, attività).
+• Home riordinata e più pulita, con frasi motivazionali che cambiano di continuo.
+• Notifiche più simpatiche e varie (acqua, allenamento, diario…).
+• Tante piccole migliorie e correzioni; traduzioni complete IT/EN.
 ```
 
 **English**
 ```
-Vyta gets a full refresh! 🌱
-• Warm, brighter new design with our new leaf logo
-• Animated launch splash
-• Notes with checklists
-• Redesigned Habits with heatmaps and check-in
-• New Water screen with reminders and goals
-• Smart reminders: we only nudge you if your streak is at risk
-• Home & Lock Screen widgets: water, list (today/week/to-do) and habits
-• Apple Health connection for workouts, rings and steps
-• Lots of visual polish and stability improvements
+• New: Personality test — discover your type across 16 profiles. Free base result; full profile with a one-time purchase.
+• Water: a dedicated tab with a daily-need calculator (weight, height, activity).
+• Cleaner, reordered Home with motivational quotes that keep rotating.
+• Friendlier, more varied notifications (water, workout, journal…).
+• Many small improvements and fixes; complete IT/EN translations.
 ```
 
-## 🖼️ Screenshot (App Store, 1290×2796 / 6.9")
-Già generati e **inviati in chat** (salvali dal telefono):
-- 5 slide **IT** + 5 slide **EN** (Home, Abitudini/Habits, Note/Notes, Salute/Health, Momentum)
-- 1 slide **"Funzionalità / Features"** con sfondo verde (IT + EN)
+## 🧩 Cosa è cambiato in 1.3
+- **Tab bar**: Oggi · Abitudini · Salute · **Acqua** · **Test** · Altro (Note e Progetti spostati in "Altro").
+- **Test personalità**: 48 domande, 16 tipi MBTI, contenuti originali bilingui; risultato base gratis + profilo completo (Punti di forza, Aree di crescita, Lavoro, Carriere ideali, Sotto stress, Relazioni, Come ti percepiscono) sbloccabile a €3,99 una tantum.
+- **Acqua** come modulo gratuito con calcolatore idratazione (peso + altezza + livello di attività).
+- **Backup** spostato nella pagina "Altro".
+- **Frasi motivazionali**: 20 IT + 20 EN, ruotano ogni 10s.
+- **Notifiche**: testi vari e accattivanti (acqua a intervalli + varianti per ogni tipo).
+- **Fix**: giorni della settimana ora localizzati; heatmap abitudini vuota che si riempie solo con le spunte reali.
 
----
+## 🛒 In-app purchase da allegare alla versione
+- `vyta_pro_monthly` — abbonamento €3,99/mese (Ready to Submit)
+- `vyta_pro_yearly` — abbonamento €29,99/anno (Ready to Submit)
+- `vyta_personality_full` — **non-consumabile €3,99** (DA CREARE su App Store Connect)
 
-Per i passaggi dettagliati con verifiche, vedi **GUIDA.md**.
+## 🖼️ Copertine App Store (1290×2796 / 6.7"–6.9")
+Generate e inviate in chat: 5 slide **IT** + 5 slide **EN** (Home, Test personalità, Acqua, Abitudini, Salute).
+
+## 🔒 Privacy
+Resta **Data Not Collected**: StoreKit nativo on-device, nessun servizio terzo.
 
 ## 🔑 Chiavi
-- Branch `claude/vyta-candy-ui-restyle-hdzg0g` · **1.2 / build 36**
-- App Group (su entrambi i target): `group.app.vita.lifeos`
+- Branch `claude/vyta-candy-ui-restyle-hdzg0g` · **1.3 / build 37**
+- App Group (entrambi i target): `group.app.vita.lifeos`
 - Bundle: app `app.vita.lifeos` · widget `app.vita.lifeos.VytaWidgets`
-- Aggiorna con `git reset --hard origin/<branch>` (mai `git pull`)
+- ⚠️ Aggiornare con `git fetch` + `git checkout origin/<branch> -- <paths>` (MAI `git reset --hard` né `git pull`)
+- ⚠️ Prima dell'Archive: rimuovere `Vyta.storekit` dallo schema (Run → Options → StoreKit Configuration → None)
 - Min iOS del widget: **17.0**
-
-## 🔜 Prossima versione
-- To‑do spuntabili dal widget
-- Allenamento **nativo** (HKWorkoutSession) + **app Apple Watch**
