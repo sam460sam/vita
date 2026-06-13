@@ -12,6 +12,9 @@ void bootstrap();
 void initNative();
 startAiQueueFlush();
 
+// Dev-only demo seeder for marketing screenshots (excluded from prod builds).
+if (import.meta.env.DEV) void import('./services/demoSeed');
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
