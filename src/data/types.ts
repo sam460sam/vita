@@ -26,17 +26,22 @@ export type ModuleId =
   | 'finanze'
   | 'diario'
   | 'note'
+  | 'acqua'
+  | 'personalita'
   | 'obiettivi'
   | 'calendario';
 
 /** All known modules in canonical order — single source of truth.
- *  Core four (abitudini · attivita/salute · note · progetti) lead so they fill
- *  the bottom tab bar; diario and the rest live in "Altro" + the home grid. */
+ *  Core four (abitudini · attivita/salute · acqua · personalita) lead so they
+ *  fill the bottom tab bar; progetti, note, diario and the rest live in "Altro"
+ *  + the home grid. */
 export const ALL_MODULES: ModuleId[] = [
   'abitudini',
   'attivita',
-  'note',
+  'acqua',
+  'personalita',
   'progetti',
+  'note',
   'diario',
   'peso',
   'obiettivi',
@@ -278,6 +283,20 @@ export interface SubscriptionCache {
   productId?: string;
   /** Subscription expiry (epoch ms), if known. */
   expiresAt?: number;
+  updatedAt: number;
+}
+
+// ----------------------------------------------------------------------------
+// Personality test — result + paid full-profile unlock (one-time purchase)
+// ----------------------------------------------------------------------------
+export interface PersonalityResult {
+  id: 'result'; // singleton (latest result)
+  /** 4-letter MBTI-style code, e.g. 'INTJ'. */
+  code: string;
+  /** Raw axis scores (sum of weighted answers) for E/I, S/N, T/F, J/P. */
+  scores: { EI: number; SN: number; TF: number; JP: number };
+  /** Whether the full profile is unlocked (one-time purchase owned). */
+  unlocked: boolean;
   updatedAt: number;
 }
 

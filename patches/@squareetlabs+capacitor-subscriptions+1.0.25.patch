@@ -11,3 +11,18 @@ index ae48933..8c5184f 100644
      ],
      targets: [
          .target(
+diff --git a/node_modules/@squareetlabs/capacitor-subscriptions/ios/Sources/SubscriptionsPlugin/Subscriptions.swift b/node_modules/@squareetlabs/capacitor-subscriptions/ios/Sources/SubscriptionsPlugin/Subscriptions.swift
+index bf5ea87..f744e44 100644
+--- a/node_modules/@squareetlabs/capacitor-subscriptions/ios/Sources/SubscriptionsPlugin/Subscriptions.swift
++++ b/node_modules/@squareetlabs/capacitor-subscriptions/ios/Sources/SubscriptionsPlugin/Subscriptions.swift
+@@ -176,7 +176,9 @@ import UIKit
+                         "originalStartDate": transaction!.originalPurchaseDate,
+                         "originalId": transaction!.originalID,
+                         "transactionId": transaction!.id,
+-                        "expiryDate": transaction!.expirationDate!,
++                        // Non-consumables have no expirationDate (nil) — guard the
++                        // force-unwrap that would otherwise crash. Emit epoch ms (or 0).
++                        "expiryDate": transaction!.expirationDate.map { $0.timeIntervalSince1970 * 1000 } ?? 0,
+                         "purchaseToken": ""
+                     ]
+                     

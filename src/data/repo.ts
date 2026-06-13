@@ -46,11 +46,11 @@ export async function readSettings(): Promise<Settings> {
 
 /** New modules introduced after launch that should auto-enable for existing
  *  users (so they appear without the user re-onboarding). */
-const AUTO_ENABLE_MODULES: ModuleId[] = ['note', 'attivita'];
+const AUTO_ENABLE_MODULES: ModuleId[] = ['note', 'attivita', 'acqua', 'personalita'];
 
 /** One-time nav reorder: bump this when the canonical tab order changes so
  *  existing devices pick it up (their saved moduleOrder predates it). */
-const NAV_ORDER_VERSION = 'v2';
+const NAV_ORDER_VERSION = 'v3';
 const NAV_ORDER_KEY = 'vita.navOrder';
 
 /** Ensure singleton rows exist. Call once at app startup (outside liveQuery). */
@@ -368,6 +368,27 @@ export async function readSubscription(): Promise<import('./types').Subscription
 
 export async function writeSubscription(data: { isPro: boolean; productId?: string; expiresAt?: number }): Promise<void> {
   await db.subscription.put({ id: 'sub', isPro: data.isPro, productId: data.productId, expiresAt: data.expiresAt, updatedAt: now() });
+}
+
+// ---------------------------------------------------------------------------
+// Personality test — latest result + paid full-profile unlock
+// ---------------------------------------------------------------------------
+export async function readPersonalityResult(): Promise<import('./types').PersonalityResult | null> {
+  return (await db.personality.get('result')) ?? null;
+}
+
+export async function writePersonalityResult(data: {
+  code: string;
+  scores: { EI: number; SN: number; TF: number; JP: number };
+  unlocked: boolean;
+}): Promise<void> {
+  await db.personality.put({ id: 'result', code: data.code, scores: data.scores, unlocked: data.unlocked, updatedAt: now() });
+}
+
+/** Flip just the unlock flag (after a successful purchase / restore). */
+export async function setPersonalityUnlocked(unlocked: boolean): Promise<void> {
+  const cur = await db.personality.get('result');
+  if (cur) await db.personality.put({ ...cur, unlocked, updatedAt: now() });
 }
 
 // ---------------------------------------------------------------------------

@@ -1,13 +1,25 @@
 import { useEffect, useState } from 'react';
+import { format, addDays } from 'date-fns';
 import { Sheet, Button, Field, Input, Segmented, useToast } from '@/ui';
 import { cn } from '@/lib/cn';
 import { createHabit, updateHabit, deleteHabit } from '@/data/repo';
 import { notifications } from '@/platform/notifications';
 import type { Habit, HabitFrequencyType } from '@/data/types';
 import { useT } from '@/i18n';
+import { activeDfnLocale } from '@/lib/format';
 
 const COLORS = ['#10B981', '#FF6B57', '#4F46E5', '#F59E0B', '#7C3AED', '#0EA5E9', '#EC4899', '#0A0A0C'];
-const DAYS = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+
+/** Short weekday labels (Sunday-first, index 0 = Sunday) in the active UI
+ *  language — fixes English showing Italian abbreviations. */
+function weekdayLabels(): string[] {
+  const loc = activeDfnLocale();
+  const sunday = new Date(2024, 0, 7); // a known Sunday
+  return Array.from({ length: 7 }, (_, i) => {
+    const s = format(addDays(sunday, i), 'EEE', { locale: loc });
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  });
+}
 
 export function HabitForm({
   open,
@@ -128,7 +140,7 @@ export function HabitForm({
       {freqType === 'specific_days' && (
         <Field label={t('habitForm.days')}>
           <div className="flex gap-1.5">
-            {DAYS.map((d, i) => (
+            {weekdayLabels().map((d, i) => (
               <button
                 key={i}
                 onClick={() => setDays((prev) => (prev.includes(i) ? prev.filter((x) => x !== i) : [...prev, i]))}

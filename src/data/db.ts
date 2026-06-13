@@ -13,6 +13,7 @@ import type {
   HomeLayout,
   JournalEntry,
   Note,
+  PersonalityResult,
   Project,
   Settings,
   SubscriptionCache,
@@ -39,6 +40,7 @@ export class VitaDB extends Dexie {
   homeLayout!: Table<HomeLayout, string>;
   notes!: Table<Note, string>;
   subscription!: Table<SubscriptionCache, string>;
+  personality!: Table<PersonalityResult, string>;
 
   constructor() {
     super('vita');
@@ -74,6 +76,10 @@ export class VitaDB extends Dexie {
     // v6: cached subscription entitlement (offline-first paywall).
     this.version(6).stores({
       subscription: 'id',
+    });
+    // v7: personality test result (singleton row).
+    this.version(7).stores({
+      personality: 'id',
     });
   }
 }

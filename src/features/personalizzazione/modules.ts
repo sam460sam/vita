@@ -3,7 +3,7 @@
 // navigable route. Single source of truth for onboarding, navigation filtering
 // and the widget gallery.
 // ============================================================================
-import { HeartPulse, Scale, CheckSquare, Flame, Wallet, BookHeart, Target, CalendarDays, StickyNote, type LucideIcon } from 'lucide-react';
+import { HeartPulse, Scale, CheckSquare, Flame, Wallet, BookHeart, Target, CalendarDays, StickyNote, Droplet, Drama, type LucideIcon } from 'lucide-react';
 import type { ModuleId } from '@/data/types';
 import { ALL_MODULES } from '@/data/types';
 import type { TKey } from '@/i18n';
@@ -26,6 +26,8 @@ export const MODULE_CATALOG: Record<ModuleId, ModuleDef> = {
   obiettivi: { id: 'obiettivi', to: '/obiettivi', labelKey: 'nav.goals', descKey: 'module.obiettivi.desc', icon: Target, accent: 'var(--c-project)' },
   diario: { id: 'diario', to: '/diario', labelKey: 'nav.journal', shortKey: 'nav.journal.short', descKey: 'module.diario.desc', icon: BookHeart, accent: 'var(--c-journal)' },
   note: { id: 'note', to: '/note', labelKey: 'nav.notes', descKey: 'module.note.desc', icon: StickyNote, accent: 'var(--c-note)' },
+  acqua: { id: 'acqua', to: '/acqua', labelKey: 'nav.water', descKey: 'module.acqua.desc', icon: Droplet, accent: 'var(--c-water)' },
+  personalita: { id: 'personalita', to: '/personalita', labelKey: 'nav.personality', shortKey: 'nav.personality.short', descKey: 'module.personalita.desc', icon: Drama, accent: 'var(--c-personality)' },
   finanze: { id: 'finanze', to: '/finanze', labelKey: 'nav.finances', descKey: 'module.finanze.desc', icon: Wallet, accent: 'var(--c-finance)' },
   calendario: { id: 'calendario', to: '/calendario', labelKey: 'nav.calendar', descKey: 'module.calendario.desc', icon: CalendarDays, accent: 'var(--c-ink-2)' },
 };

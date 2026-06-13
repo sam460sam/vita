@@ -26,6 +26,8 @@
   --c-journal: #f59e0b;
   --c-finance: #9b5de5;
   --c-note: #e0992f; /* honey gold */
+  --c-water: #0ea5e9; /* sky blue */
+  --c-personality: #ec4899; /* rose */
   /* Module card TINTS — soft warm washes for the card background */
   --c-activity-tint: #ffe6db; /* warm coral */
   --c-habit-tint: #d8f2e4; /* soft mint */
@@ -34,6 +36,8 @@
   --c-finance-tint: #efe4fb; /* lilac */
   --c-calendar-tint: #eceef7; /* slate-tint */
   --c-note-tint: #fdf2d4; /* warm cream */
+  --c-water-tint: #d9f0fb; /* pale sky */
+  --c-personality-tint: #fcdcec; /* pale rose */
   /* Module CHIPS — a touch more saturated than the tint, for the icon container */
   --c-activity-chip: #ff8a6e;
   --c-habit-chip: #44c794;
@@ -42,6 +46,8 @@
   --c-finance-chip: #b386ec;
   --c-calendar-chip: #9fa8c9;
   --c-note-chip: #ecc35a;
+  --c-water-chip: #4fc0ee;
+  --c-personality-chip: #f06fb0;
   /* States */
   --c-success: #1fb877;
   --c-warning: #ff8a3d;
@@ -82,6 +88,8 @@ html.dark {
   --c-journal: #fbbf24;
   --c-finance: #b98cf5;
   --c-note: #f5c265;
+  --c-water: #38bdf8;
+  --c-personality: #f472b6;
   /* Module card tints — warm, darkened washes of each hue */
   --c-activity-tint: #32211a;
   --c-habit-tint: #16271f;
@@ -90,6 +98,8 @@ html.dark {
   --c-finance-tint: #281f34;
   --c-calendar-tint: #20222f;
   --c-note-tint: #2d2715;
+  --c-water-tint: #15293a;
+  --c-personality-tint: #321826;
   /* Module chips — vivid on dark */
   --c-activity-chip: #ff8163;
   --c-habit-chip: #2bd398;
@@ -98,6 +108,8 @@ html.dark {
   --c-finance-chip: #b98cf5;
   --c-calendar-chip: #9fa8c9;
   --c-note-chip: #f5c265;
+  --c-water-chip: #38bdf8;
+  --c-personality-chip: #f472b6;
   /* States */
   --c-success: #2bd398;
   --c-warning: #ff9d57;

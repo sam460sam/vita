@@ -18,8 +18,6 @@ import { useHealthSummary } from '@/platform/health';
 import { dailyAffirmation } from '@/features/oggi/coach';
 import { dayPoints, type LifeData } from '@/features/gamification/logic';
 import { DailyWin } from '@/features/oggi/DailyWin';
-import { BackupNudge } from '@/features/backup';
-import { WaterCard } from '@/features/acqua/WaterCard';
 import { useStella } from '@/features/stella';
 import { useNavItems } from '@/app/nav';
 import { platform } from '@/platform/platform';
@@ -108,7 +106,6 @@ export function HomeDashboard() {
     setWin(null);
   }
 
-  const hasData = (habits?.length ?? 0) + (tasks?.length ?? 0) + (workouts?.length ?? 0) + (journals?.length ?? 0) + (weights?.length ?? 0) > 0;
   const doneToday = routine.filter((h) => isDone(logs ?? [], h.id, today)).length;
   const pending = routine.length - doneToday;
   const streak = getStreakState().count;
@@ -219,8 +216,6 @@ export function HomeDashboard() {
           </button>
         </header>
 
-        <BackupNudge hasData={hasData} />
-
         {/* This week */}
         <DateStrip marked={activeDays} className="mt-3 mb-4" />
 
@@ -255,11 +250,6 @@ export function HomeDashboard() {
             </div>
           </Link>
         </section>
-
-        {/* Water */}
-        <div className="mt-3 [&>div]:!mb-0">
-          <WaterCard settings={s} />
-        </div>
 
         {/* Steps (from Apple Health, when connected) */}
         {steps > 0 && (

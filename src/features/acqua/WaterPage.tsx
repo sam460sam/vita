@@ -26,6 +26,7 @@ export function WaterPage() {
   const waters = useLiveQuery(() => db.waterLogs.toArray(), [], []);
 
   const [goalOpen, setGoalOpen] = useState(false);
+  const [calcOpen, setCalcOpen] = useState(false);
 
   const glassMl = s.water.glassMl || 200;
   const goalMl = s.water.dailyGoalMl || 2000;
@@ -147,14 +148,72 @@ export function WaterPage() {
           <Droplet size={90} className="absolute -right-3 -bottom-3 opacity-20" style={{ color: WATER }} fill={WATER} />
         </div>
 
+        {/* Calculator — recommend a daily goal from weight + height */}
+        <button onClick={() => setCalcOpen(true)} className="mt-4 w-full h-12 rounded-full font-bold text-[15px] active:scale-[0.98] transition-transform" style={{ background: 'color-mix(in srgb, #0EA5E9 16%, transparent)', color: WATER }}>
+          {t('water.calc.cta')}
+        </button>
+
         {/* Change goal */}
-        <button onClick={() => setGoalOpen(true)} className="mt-4 w-full h-[52px] rounded-full bg-ink text-app font-bold text-[15px] active:scale-[0.98] transition-transform">
+        <button onClick={() => setGoalOpen(true)} className="mt-3 w-full h-[52px] rounded-full bg-ink text-app font-bold text-[15px] active:scale-[0.98] transition-transform">
           {t('water.screen.changeGoal')}
         </button>
       </div>
 
       <WaterGoalSheet open={goalOpen} onClose={() => setGoalOpen(false)} goalMl={goalMl} glassMl={glassMl} />
+      <HydrationCalcSheet open={calcOpen} onClose={() => setCalcOpen(false)} glassMl={glassMl} />
     </div>
+  );
+}
+
+/** Evidence-based daily water estimate from weight (≈35 ml/kg) with a small
+ *  height adjustment. Rounded to 100 ml and clamped to a sensible range. */
+export function recommendedWaterMl(weightKg: number, heightCm: number): number {
+  const base = weightKg * 35 + (heightCm - 170) * 10;
+  const rounded = Math.round(base / 100) * 100;
+  return Math.min(4000, Math.max(1500, rounded));
+}
+
+function HydrationCalcSheet({ open, onClose, glassMl }: { open: boolean; onClose: () => void; glassMl: number }) {
+  const t = useT();
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
+  const w = parseFloat(weight);
+  const h = parseFloat(height);
+  const valid = w > 0 && h > 0;
+  const ml = valid ? recommendedWaterMl(w, h) : 0;
+  const glasses = Math.max(1, Math.round(ml / (glassMl || 200)));
+
+  async function apply() {
+    if (!valid) return;
+    const s = await readSettings();
+    await updateSettings({ water: { ...s.water, dailyGoalMl: ml } });
+    onClose();
+  }
+
+  return (
+    <Sheet
+      open={open}
+      onClose={onClose}
+      title={t('water.calc.title')}
+      footer={<Button block size="lg" disabled={!valid} onClick={apply}>{t('water.calc.apply')}</Button>}
+    >
+      <p className="text-[13px] text-ink-2 leading-snug mb-4">{t('water.calc.intro')}</p>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label={t('water.calc.weight')}><Input type="number" inputMode="decimal" value={weight} onChange={(e) => setWeight(e.target.value)} /></Field>
+        <Field label={t('water.calc.height')}><Input type="number" inputMode="numeric" value={height} onChange={(e) => setHeight(e.target.value)} /></Field>
+      </div>
+      <div className="mt-4 rounded-card p-4" style={{ background: 'color-mix(in srgb, #0EA5E9 12%, transparent)' }}>
+        {valid ? (
+          <>
+            <div className="text-[18px] font-extrabold text-ink">{t('water.calc.result', { l: (ml / 1000).toFixed(1).replace(/\.0$/, '').replace('.', ',') })}</div>
+            <div className="text-[13px] text-ink-2 mt-1">{t('water.calc.resultHint', { n: glasses, ml: glassMl || 200 })}</div>
+          </>
+        ) : (
+          <div className="text-[13px] text-ink-2">{t('water.calc.fill')}</div>
+        )}
+      </div>
+      <p className="text-[12px] text-ink-3 mt-3 leading-snug">{t('water.calc.note')}</p>
+    </Sheet>
   );
 }
 

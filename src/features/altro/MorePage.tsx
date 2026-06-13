@@ -5,6 +5,7 @@ import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, Divider } from '@/ui';
 import { useT } from '@/i18n';
+import { BackupCard } from '@/features/backup';
 
 export function MorePage() {
   const t = useT();
@@ -55,6 +56,12 @@ export function MorePage() {
             <ChevronRight size={18} className="text-ink-3" />
           </Link>
         </Card>
+
+        {/* Backup & restore (moved here from the Home banner) */}
+        <div className="mt-4">
+          <BackupCard />
+        </div>
+
         <p className="text-center text-[12px] text-ink-3 mt-6">{t('more.tagline')}</p>
       </Screen>
     </>
