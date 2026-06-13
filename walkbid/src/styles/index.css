@@ -3,10 +3,37 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   WalkBid — Premium Jobsite. Dark-first, industrial, sunlight-legible.
+   WalkBid — "Asphalt & Stakes". Premium, calm, layered green-black.
+   Tokens defined once here (CSS vars) + mirrored in tailwind.config.js.
    ========================================================================== */
 :root {
   color-scheme: dark;
+
+  /* Surfaces */
+  --bg: #0a100d;
+  --surface: #111a15;
+  --surface-2: #18241d;
+  --hairline: #233029;
+  --scrim: rgba(0, 0, 0, 0.6);
+
+  /* Brand greens */
+  --brand: #1c6e47;
+  --brand-ink: #0e3a26;
+  --accent: #2fbe7a;
+  --accent-press: #26a268;
+  --on-accent: #06140d;
+
+  /* Semantic */
+  --paid: #2fbe7a;
+  --attention: #e6a23c;
+  --danger: #dc5a4b;
+
+  /* Text */
+  --text: #f2f5f1;
+  --text-muted: #9aa79e;
+  --text-faint: #5e6d64;
+
+  /* Safe areas */
   --safe-top: env(safe-area-inset-top);
   --safe-bottom: env(safe-area-inset-bottom);
 }
@@ -19,12 +46,11 @@ body,
 
 body {
   margin: 0;
-  background: #0e1013; /* asphalt */
-  color: #f2f3f5; /* chalk */
+  background: var(--bg);
+  color: var(--text);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  /* No text inflation, no tap highlight — feels like a native tool. */
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
@@ -36,13 +62,25 @@ body {
   font-feature-settings: 'tnum' 1;
 }
 
-/* Subtle grain reserved for headers (spec §4). */
-.grain {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px);
-  background-size: 3px 3px;
+/* Signature finish: brand gradient + tiling film grain overlay (A5).
+   Apply `.header-grain` to screen/project headers. */
+.header-grain {
+  position: relative;
+  background-image: linear-gradient(180deg, var(--brand-ink) 0%, var(--bg) 78%);
+}
+.header-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/grain.png');
+  background-size: 128px 128px;
+  background-blend-mode: overlay;
+  opacity: 0.04;
+  pointer-events: none;
+  mix-blend-mode: overlay;
 }
 
-/* Hide scrollbars on horizontal strips (photos, milestones). */
+/* Horizontal scroll strips (tabs, photos, milestones) — hide scrollbars. */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -51,7 +89,13 @@ body {
   scrollbar-width: none;
 }
 
-/* Signature canvas should never select text while drawing. */
+/* Edge fade for scrollable tab strips so they read as scrollable, never cut. */
+.edge-fade {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+}
+
+/* Signature canvas — never select text while drawing. */
 .signature-canvas {
   touch-action: none;
   user-select: none;
