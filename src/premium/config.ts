@@ -26,7 +26,7 @@ export const ONE_TIME_PRODUCT_IDS = {
 } as const;
 
 /** Display price shown before the live store price loads. */
-export const PERSONALITY_PRICE_FALLBACK = '€4,99';
+export const PERSONALITY_PRICE_FALLBACK = '€3,99';
 
 /** Free trial length (must match the Introductory Offer in App Store Connect). */
 export const TRIAL_DAYS = 7;
