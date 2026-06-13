@@ -67,7 +67,7 @@ export function HomeDashboard() {
   // doesn't always begin from the same one).
   const [affirmIdx, setAffirmIdx] = useState(() => Math.floor(Date.now() / 86_400_000) % AFFIRMATIONS.length);
   useEffect(() => {
-    const id = setInterval(() => setAffirmIdx((i) => (i + 1) % AFFIRMATIONS.length), 10_000);
+    const id = setInterval(() => setAffirmIdx((i) => (i + 1) % AFFIRMATIONS.length), 20_000);
     return () => clearInterval(id);
   }, []);
   const affirmation = t(AFFIRMATIONS[affirmIdx] as TKey);
