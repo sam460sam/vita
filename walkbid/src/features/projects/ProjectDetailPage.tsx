@@ -4,7 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { MoreVertical, AlertTriangle, MapPin } from 'lucide-react';
 import { useT, type TKey } from '@/i18n';
 import { Screen } from '@/app/Screen';
-import { MilestoneBar, IconButton, Sheet, Pill, statusTone } from '@/ui';
+import { JobMoneyBar, IconButton, Sheet, Pill, statusTone } from '@/ui';
 import { getProject, setProjectStatus, deleteProject } from '@/services/projects';
 import { projectSummary, depositUncollected } from '@/services/summary';
 import { db } from '@/data/db';
@@ -60,14 +60,14 @@ export function ProjectDetailPage() {
         </IconButton>
       }
     >
-      {/* Status + MilestoneBar */}
-      <div className="border-b border-steel px-4 pb-4">
+      {/* Status + JobMoneyBar */}
+      <div className="border-b border-hairline px-4 pb-4">
         {project.siteAddress && (
-          <div className="mb-3 flex items-center gap-1 text-sm text-dust">
+          <div className="mb-3 flex items-center gap-1 text-sm text-muted">
             <MapPin size={13} /> {project.siteAddress}
           </div>
         )}
-        <MilestoneBar payments={summary?.payments ?? []} />
+        <JobMoneyBar payments={summary?.payments ?? []} />
         <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
           {PROJECT_STATUSES.map((s) => (
             <button key={s} onClick={() => setProjectStatus(id, s)} className="shrink-0">
@@ -81,20 +81,20 @@ export function ProjectDetailPage() {
 
       {/* Deposit protection banner */}
       {depositWarn && (
-        <div className="flex items-center gap-2 bg-signal/15 px-4 py-3 text-sm font-semibold text-signal">
+        <div className="flex items-center gap-2 bg-attention/15 px-4 py-3 text-sm font-semibold text-attention">
           <AlertTriangle size={16} /> {t('project.depositWarning')}
         </div>
       )}
 
       {/* Tabs */}
-      <div className="no-scrollbar sticky top-0 z-10 flex gap-1 overflow-x-auto border-b border-steel bg-asphalt px-2">
+      <div className="no-scrollbar sticky top-0 z-10 flex gap-1 overflow-x-auto border-b border-hairline bg-bg px-2">
         {TABS.map((tb) => (
           <button
             key={tb.id}
             onClick={() => setTab(tb.id)}
             className={
               'shrink-0 whitespace-nowrap px-3 py-3 text-sm font-bold ' +
-              (tab === tb.id ? 'border-b-2 border-safety text-chalk' : 'text-dust')
+              (tab === tb.id ? 'border-b-2 border-accent text-ink' : 'text-muted')
             }
           >
             {t(tb.key)}
@@ -115,7 +115,7 @@ export function ProjectDetailPage() {
       <Sheet open={menuOpen} onClose={() => setMenuOpen(false)} title={project.title}>
         <div className="flex flex-col gap-2">
           <button
-            className="min-h-touch rounded-btn border border-steel px-4 text-left font-semibold text-chalk active:bg-steel/60"
+            className="min-h-touch rounded-btn border border-hairline px-4 text-left font-semibold text-ink active:bg-surface-2/60"
             onClick={() => {
               setMenuOpen(false);
               setEditOpen(true);
@@ -124,7 +124,7 @@ export function ProjectDetailPage() {
             {t('project.edit')}
           </button>
           <button
-            className="min-h-touch rounded-btn border border-risk/40 px-4 text-left font-semibold text-risk active:bg-risk/10"
+            className="min-h-touch rounded-btn border border-danger/40 px-4 text-left font-semibold text-danger active:bg-danger/10"
             onClick={async () => {
               if (confirm(t('common.delete') + '?')) {
                 await deleteProject(id);
@@ -154,7 +154,7 @@ function DangerCount({ projectId }: { projectId: string }) {
   }, [projectId]);
   if (!counts) return null;
   return (
-    <p className="px-1 pt-2 text-xs text-dust">
+    <p className="px-1 pt-2 text-xs text-muted">
       {counts.est} estimates · {counts.co} change orders · {counts.ph} photos
     </p>
   );

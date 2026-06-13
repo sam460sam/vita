@@ -90,11 +90,11 @@ export function SignaturePad({ onChange, height = 200, handleRef }: Props & { ha
 
   return (
     <div className="relative">
-      <canvas ref={canvasRef} className="signature-canvas w-full rounded-card border border-steel bg-white" style={{ height }} />
+      <canvas ref={canvasRef} className="signature-canvas w-full rounded-card border border-hairline bg-white" style={{ height }} />
       <button
         type="button"
         onClick={() => handleRef.current?.clear()}
-        className="absolute right-2 top-2 flex items-center gap-1 rounded-btn bg-asphalt/80 px-2 py-1 text-xs font-semibold text-chalk"
+        className="absolute right-2 top-2 flex items-center gap-1 rounded-btn bg-bg/80 px-2 py-1 text-xs font-semibold text-ink"
       >
         <Eraser size={13} /> Clear
       </button>

@@ -60,8 +60,8 @@ export function QtySheet({ open, onClose, unit, title, initialQty = 0, onConfirm
       )}
 
       {showCalc && calc && (
-        <div className="rounded-card border border-steel bg-asphalt p-3">
-          <p className="mb-2 text-xs text-dust">Enter areas in feet (L × W). They’re summed.</p>
+        <div className="rounded-card border border-hairline bg-bg p-3">
+          <p className="mb-2 text-xs text-muted">Enter areas in feet (L × W). They’re summed.</p>
           {rows.map((r, i) => (
             <div key={i} className="mb-2 flex items-center gap-2">
               <Input
@@ -72,7 +72,7 @@ export function QtySheet({ open, onClose, unit, title, initialQty = 0, onConfirm
                 placeholder="L"
                 className="flex-1"
               />
-              <span className="text-dust">×</span>
+              <span className="text-muted">×</span>
               <Input
                 value={r.w || ''}
                 onChange={(e) => setRow(i, { w: Number(e.target.value) })}
@@ -82,13 +82,13 @@ export function QtySheet({ open, onClose, unit, title, initialQty = 0, onConfirm
                 className="flex-1"
               />
               {rows.length > 1 && (
-                <button onClick={() => setRows((p) => p.filter((_, idx) => idx !== i))} className="text-dust" aria-label="Remove">
+                <button onClick={() => setRows((p) => p.filter((_, idx) => idx !== i))} className="text-muted" aria-label="Remove">
                   <Trash2 size={18} />
                 </button>
               )}
             </div>
           ))}
-          <button onClick={() => setRows((p) => [...p, { l: 0, w: 0 }])} className="mb-3 flex items-center gap-1 text-sm font-semibold text-safety">
+          <button onClick={() => setRows((p) => [...p, { l: 0, w: 0 }])} className="mb-3 flex items-center gap-1 text-sm font-semibold text-accent">
             <Plus size={16} /> Add area
           </button>
 
@@ -98,11 +98,11 @@ export function QtySheet({ open, onClose, unit, title, initialQty = 0, onConfirm
             </Field>
           )}
 
-          <div className="flex items-center justify-between border-t border-steel pt-3">
-            <div className="text-sm text-dust">
+          <div className="flex items-center justify-between border-t border-hairline pt-3">
+            <div className="text-sm text-muted">
               {unit === 'cy' ? `${sf} SF × ${depth}in` : 'Total area'}
             </div>
-            <div className="tnum font-display text-lg font-bold text-chalk">
+            <div className="tnum font-display text-lg font-bold text-ink">
               {computed} {unitLabel(unit)}
             </div>
           </div>

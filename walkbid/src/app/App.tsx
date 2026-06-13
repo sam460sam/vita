@@ -19,7 +19,7 @@ export function App() {
         <HashRouter>
           <QuickAddProvider>
             <ErrorBoundary>
-              <Suspense fallback={<div className="min-h-screen bg-asphalt" />}>
+              <Suspense fallback={<div className="min-h-screen bg-bg" />}>
                 <Routes>
                   <Route path="/" element={<Navigate to="/jobs" replace />} />
                   <Route path="/jobs" element={<JobsPage />} />

@@ -27,9 +27,9 @@ export function ContractSignSheet({ open, onClose, project, estimate, onSigned }
   const [busy, setBusy] = useState(false);
 
   async function sign() {
-    if (!signerName.trim()) return toast.show('Signer name ' + t('common.required').toLowerCase(), 'risk');
+    if (!signerName.trim()) return toast.show('Signer name ' + t('common.required').toLowerCase(), 'danger');
     const png = await handle.current?.toPngBlob();
-    if (!png) return toast.show('Please sign above', 'signal');
+    if (!png) return toast.show('Please sign above', 'attention');
     setBusy(true);
     try {
       const geo = await currentGeo();
@@ -39,7 +39,7 @@ export function ContractSignSheet({ open, onClose, project, estimate, onSigned }
       onSigned?.();
       onClose();
     } catch (e) {
-      toast.show((e as Error).message, 'risk');
+      toast.show((e as Error).message, 'danger');
     } finally {
       setBusy(false);
     }
@@ -69,7 +69,7 @@ export function ContractSignSheet({ open, onClose, project, estimate, onSigned }
       <Field label="Signature">
         <SignaturePad handleRef={handle} onChange={setHasInk} />
       </Field>
-      <p className="text-[11px] leading-snug text-dust">{SIGN_BANNER}</p>
+      <p className="text-[11px] leading-snug text-muted">{SIGN_BANNER}</p>
     </Sheet>
   );
 }

@@ -2,14 +2,14 @@ import type { InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes,
 import { cn } from '@/lib/cn';
 
 const base =
-  'w-full rounded-btn border border-steel bg-graphite px-3 text-[16px] text-chalk placeholder:text-dust ' +
-  'focus:border-safety focus:outline-none';
+  'w-full rounded-input border border-hairline bg-surface-2 px-3 text-[16px] text-ink placeholder:text-faint ' +
+  'focus:border-accent focus:outline-none';
 
 export function Label({ children, hint }: { children: ReactNode; hint?: string }) {
   return (
-    <label className="mb-1.5 flex items-center justify-between text-sm font-semibold text-dust">
+    <label className="mb-1.5 flex items-center justify-between text-sm font-semibold text-muted">
       <span>{children}</span>
-      {hint && <span className="text-xs font-normal text-dust/70">{hint}</span>}
+      {hint && <span className="text-xs font-normal text-faint">{hint}</span>}
     </label>
   );
 }

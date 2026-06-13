@@ -53,7 +53,7 @@ export function PlanEditorSheet({
   }
 
   function quickSplit() {
-    if (contractTotal <= 0) return toast.show('No contract total yet', 'signal');
+    if (contractTotal <= 0) return toast.show('No contract total yet', 'attention');
     const deposit = round2(contractTotal * 0.3);
     setRows([
       { label: 'deposit', amount: String(deposit), due: 'signature' },
@@ -85,16 +85,16 @@ export function PlanEditorSheet({
         </BottomBar>
       }
     >
-      <div className="mb-3 flex items-center justify-between rounded-btn border border-steel bg-asphalt px-3 py-2 text-sm">
-        <span className="text-dust">Contract total</span>
-        <span className="tnum font-semibold text-chalk">{money(contractTotal)}</span>
+      <div className="mb-3 flex items-center justify-between rounded-btn border border-hairline bg-bg px-3 py-2 text-sm">
+        <span className="text-muted">Contract total</span>
+        <span className="tnum font-semibold text-ink">{money(contractTotal)}</span>
       </div>
       <Button variant="secondary" className="mb-4 w-full" onClick={quickSplit}>
         <Wand2 size={16} /> 30% deposit + balance
       </Button>
 
       {rows.map((r, i) => (
-        <div key={i} className="mb-3 rounded-card border border-steel bg-asphalt p-3">
+        <div key={i} className="mb-3 rounded-card border border-hairline bg-bg p-3">
           <div className="mb-2 flex items-center justify-between">
             <Select value={r.label} onChange={(e) => set(i, { label: e.target.value as PaymentLabel })} className="!min-h-0 w-auto border-0 bg-transparent px-0 font-display font-bold">
               {(['deposit', 'progress', 'final'] as PaymentLabel[]).map((l) => (
@@ -103,7 +103,7 @@ export function PlanEditorSheet({
                 </option>
               ))}
             </Select>
-            <button onClick={() => setRows((p) => p.filter((_, idx) => idx !== i))} className="text-dust" aria-label="Remove">
+            <button onClick={() => setRows((p) => p.filter((_, idx) => idx !== i))} className="text-muted" aria-label="Remove">
               <Trash2 size={16} />
             </button>
           </div>

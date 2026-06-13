@@ -23,12 +23,12 @@ export function AddLogSheet({ open, onClose, project }: { open: boolean; onClose
 
   async function addPhoto() {
     const p = await takePhoto(project.id, 'diary', entryId);
-    if (!p) toast.show('No photo captured', 'signal');
+    if (!p) toast.show('No photo captured', 'attention');
   }
 
   // Flow C: dictate 30s in English or Spanish → structured English log entry.
   async function summarize() {
-    if (!text.trim()) return toast.show('Dictate or type first', 'signal');
+    if (!text.trim()) return toast.show('Dictate or type first', 'attention');
     setSummarizing(true);
     try {
       const provider = await getProvider();
@@ -36,14 +36,14 @@ export function AddLogSheet({ open, onClose, project }: { open: boolean; onClose
       setText(draft.text || text);
       toast.show('Summarized', 'go');
     } catch (e) {
-      toast.show(e instanceof OfflineQueuedError ? e.message : 'Summarize failed', 'signal');
+      toast.show(e instanceof OfflineQueuedError ? e.message : 'Summarize failed', 'attention');
     } finally {
       setSummarizing(false);
     }
   }
 
   async function save() {
-    if (!text.trim() && photos.length === 0) return toast.show('Add a note or a photo', 'signal');
+    if (!text.trim() && photos.length === 0) return toast.show('Add a note or a photo', 'attention');
     await createDiaryEntry({ id: entryId, projectId: project.id, text, date, photoIds: photos.map((p) => p.id) });
     toast.show('Log saved', 'go');
     onClose();

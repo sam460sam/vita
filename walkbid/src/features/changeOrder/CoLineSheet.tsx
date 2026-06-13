@@ -56,7 +56,7 @@ export function CoLineSheet({ open, onClose, onAdd }: { open: boolean; onClose: 
   return (
     <Sheet open={open} onClose={onClose} title={t('common.add')}>
       <div className="relative mb-3">
-        <Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-dust" />
+        <Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
         <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('common.search')} className="pl-10" autoFocus />
       </div>
       <Button variant="secondary" className="mb-4 w-full" onClick={() => setCustom(true)}>
@@ -64,9 +64,9 @@ export function CoLineSheet({ open, onClose, onAdd }: { open: boolean; onClose: 
       </Button>
       <div className="flex flex-col gap-2">
         {results.map((i) => (
-          <button key={i.id} onClick={() => setPicked(i)} className="flex items-center justify-between gap-3 rounded-btn border border-steel bg-asphalt px-3 py-3 text-left active:bg-steel/60">
-            <span className="truncate font-semibold text-chalk">{i.description[lang] || i.description.en}</span>
-            <span className="tnum shrink-0 text-sm text-chalk">{money(i.unitPrice)}</span>
+          <button key={i.id} onClick={() => setPicked(i)} className="flex items-center justify-between gap-3 rounded-btn border border-hairline bg-bg px-3 py-3 text-left active:bg-surface-2/60">
+            <span className="truncate font-semibold text-ink">{i.description[lang] || i.description.en}</span>
+            <span className="tnum shrink-0 text-sm text-ink">{money(i.unitPrice)}</span>
           </button>
         ))}
       </div>

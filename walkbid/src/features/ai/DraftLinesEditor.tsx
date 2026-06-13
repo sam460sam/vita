@@ -16,11 +16,11 @@ export function DraftLinesEditor({ lines, onChange }: { lines: DraftLine[]; onCh
       {lines.map((l, i) => (
         <div
           key={i}
-          className={'rounded-card border bg-asphalt p-3 ' + (l.needsPricing ? 'border-signal/60' : 'border-steel')}
+          className={'rounded-card border bg-bg p-3 ' + (l.needsPricing ? 'border-attention/60' : 'border-hairline')}
         >
           <div className="mb-2 flex items-center gap-2">
             <Input value={l.description} onChange={(e) => set(i, { description: e.target.value })} className="flex-1" />
-            <button onClick={() => onChange(lines.filter((_, idx) => idx !== i))} className="text-dust" aria-label="Remove">
+            <button onClick={() => onChange(lines.filter((_, idx) => idx !== i))} className="text-muted" aria-label="Remove">
               <Trash2 size={16} />
             </button>
           </div>
@@ -42,13 +42,13 @@ export function DraftLinesEditor({ lines, onChange }: { lines: DraftLine[]; onCh
             />
           </div>
           {l.needsPricing && (
-            <div className="mt-2 flex items-center gap-1 text-xs font-semibold text-signal">
+            <div className="mt-2 flex items-center gap-1 text-xs font-semibold text-attention">
               <AlertTriangle size={12} /> Needs pricing
             </div>
           )}
         </div>
       ))}
-      {lines.length === 0 && <p className="py-4 text-center text-sm text-dust">No lines drafted.</p>}
+      {lines.length === 0 && <p className="py-4 text-center text-sm text-muted">No lines drafted.</p>}
     </div>
   );
 }

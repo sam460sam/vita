@@ -42,28 +42,28 @@ export function PriceBookPage() {
     >
       <div className="p-4">
         <div className="relative mb-4">
-          <Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-dust" />
+          <Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('common.search')} className="pl-10" />
         </div>
 
         <div className="flex flex-col gap-5">
           {groups.map(([trade, rows]) => (
             <section key={trade}>
-              <h3 className="mb-2 font-display text-sm font-bold uppercase tracking-wide text-dust">{trade}</h3>
+              <h3 className="mb-2 font-display text-sm font-bold uppercase tracking-wide text-muted">{trade}</h3>
               <div className="flex flex-col gap-2">
                 {rows.map((i) => (
-                  <Card key={i.id} className="active:bg-graphite/70" onClick={() => { setEditing(i); setFormOpen(true); }}>
+                  <Card key={i.id} className="active:bg-surface/70" onClick={() => { setEditing(i); setFormOpen(true); }}>
                     <div className="flex items-center justify-between gap-3 p-3">
                       <div className="min-w-0">
-                        <div className="truncate font-semibold text-chalk">{i.description[lang] || i.description.en}</div>
-                        <div className="text-xs text-dust">
+                        <div className="truncate font-semibold text-ink">{i.description[lang] || i.description.en}</div>
+                        <div className="text-xs text-muted">
                           {i.code} · {unitLabel(i.unit)}
-                          {i.isDefault && <span className="ml-2 text-signal">edit your prices</span>}
+                          {i.isDefault && <span className="ml-2 text-attention">edit your prices</span>}
                         </div>
                       </div>
                       <div className="text-right">
-                        <MoneyText amount={i.unitPrice} size="sm" />
-                        <div className="text-[11px] text-dust">/{unitLabel(i.unit)}</div>
+                        <MoneyText amount={i.unitPrice} size="md" />
+                        <div className="text-[11px] text-muted">/{unitLabel(i.unit)}</div>
                       </div>
                     </div>
                   </Card>

@@ -3,29 +3,29 @@ import { cn } from '@/lib/cn';
 
 interface Props {
   amount: number;
-  /** Big glanceable headline (whole dollars, display font). */
-  size?: 'sm' | 'md' | 'lg';
+  /** hero = screen totals (biggest), lg = card totals, md = line items. */
+  size?: 'md' | 'lg' | 'hero';
   whole?: boolean;
   className?: string;
 }
 
 const SIZES = {
-  sm: 'text-[15px] font-semibold',
-  md: 'text-xl font-bold',
-  lg: 'text-money',
+  md: 'text-[17px] font-bold',
+  lg: 'text-money-lg',
+  hero: 'text-money-hero',
 } as const;
 
-/** Money is always the biggest thing on a card; tabular figures always. */
+// Money is the hero on a money card; tabular figures always (A4).
 export function MoneyText({ amount, size = 'md', whole = false, className }: Props) {
   return (
-    <span className={cn('tnum font-display text-chalk', SIZES[size], className)}>
+    <span className={cn('tnum font-display text-ink', SIZES[size], className)}>
       {whole ? moneyWhole(amount) : money(amount)}
     </span>
   );
 }
 
-/** Signed delta for change orders: +green / −risk. */
+/** Signed delta for change orders: +green / −danger. */
 export function MoneyDelta({ amount, className }: { amount: number; className?: string }) {
-  const color = amount > 0 ? 'text-go' : amount < 0 ? 'text-risk' : 'text-dust';
+  const color = amount > 0 ? 'text-accent' : amount < 0 ? 'text-danger' : 'text-muted';
   return <span className={cn('tnum font-display font-bold', color, className)}>{moneyDelta(amount)}</span>;
 }

@@ -47,12 +47,12 @@ export function ContractTab({ project }: { project: Project }) {
   return (
     <div className="p-4">
       {/* Integrity banner */}
-      <Card className={'mb-4 ' + (integrity?.ok ? 'border-go/40' : 'border-signal/40')}>
+      <Card className={'mb-4 ' + (integrity?.ok ? 'border-accent/40' : 'border-attention/40')}>
         <div className="flex items-center gap-3 p-4">
-          {integrity?.ok ? <ShieldCheck className="text-go" size={28} /> : <ShieldAlert className="text-signal" size={28} />}
+          {integrity?.ok ? <ShieldCheck className="text-accent" size={28} /> : <ShieldAlert className="text-attention" size={28} />}
           <div>
-            <div className="font-display font-bold text-chalk">{integrity == null ? 'Verifying…' : integrity.ok ? 'Integrity verified' : 'Integrity check failed'}</div>
-            <div className="text-xs text-dust">{integrity?.ok ? 'The stored PDF matches its signed fingerprint.' : 'The document may have been altered.'}</div>
+            <div className="font-display font-bold text-ink">{integrity == null ? 'Verifying…' : integrity.ok ? 'Integrity verified' : 'Integrity check failed'}</div>
+            <div className="text-xs text-muted">{integrity?.ok ? 'The stored PDF matches its signed fingerprint.' : 'The document may have been altered.'}</div>
           </div>
         </div>
       </Card>
@@ -60,20 +60,20 @@ export function ContractTab({ project }: { project: Project }) {
       {/* Audit screen */}
       <Card className="mb-4">
         <div className="flex flex-col gap-3 p-4">
-          <h3 className="font-display text-sm font-bold uppercase tracking-wide text-dust">Audit</h3>
+          <h3 className="font-display text-sm font-bold uppercase tracking-wide text-muted">Audit</h3>
           <AuditRow icon={<User size={15} />} label="Signed by" value={`${contract.signerName}${contract.signerRole ? ` · ${contract.signerRole}` : ''}`} />
           <AuditRow icon={<Clock size={15} />} label="When" value={contract.signedAt ? usDateTime(contract.signedAt) : '—'} />
           <AuditRow icon={<MapPin size={15} />} label="Where" value={geoLabel(contract.geo)} />
-          <div className="border-t border-steel pt-3">
-            <div className="text-[11px] font-medium uppercase tracking-wide text-dust">SHA-256 fingerprint</div>
-            <div className="tnum mt-1 break-all font-mono text-[11px] text-chalk">{contract.sha256}</div>
+          <div className="border-t border-hairline pt-3">
+            <div className="text-[11px] font-medium uppercase tracking-wide text-muted">SHA-256 fingerprint</div>
+            <div className="tnum mt-1 break-all font-mono text-[11px] text-ink">{contract.sha256}</div>
           </div>
         </div>
       </Card>
 
       {estimate && (
         <div className="mb-4 flex items-center justify-between px-1">
-          <span className="text-sm text-dust">Contract total</span>
+          <span className="text-sm text-muted">Contract total</span>
           <MoneyText amount={estimate.total} size="md" />
         </div>
       )}
@@ -90,9 +90,9 @@ export function ContractTab({ project }: { project: Project }) {
 function AuditRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="text-dust">{icon}</span>
-      <span className="w-20 shrink-0 text-xs text-dust">{label}</span>
-      <span className="min-w-0 flex-1 truncate text-sm font-semibold text-chalk">{value}</span>
+      <span className="text-muted">{icon}</span>
+      <span className="w-20 shrink-0 text-xs text-muted">{label}</span>
+      <span className="min-w-0 flex-1 truncate text-sm font-semibold text-ink">{value}</span>
     </div>
   );
 }

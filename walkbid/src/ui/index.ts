@@ -1,7 +1,8 @@
 export { Button, IconButton, BottomBar } from './Button';
 export { Card, CardHeader } from './Card';
 export { MoneyText, MoneyDelta } from './MoneyText';
-export { MilestoneBar } from './MilestoneBar';
+export { JobMoneyBar } from './JobMoneyBar';
+export { ScrollTabs, type TabDef } from './ScrollTabs';
 export { Pill, StatBadge, statusTone } from './Badge';
 export { EmptyState } from './EmptyState';
 export { Field, Label, Input, Textarea, Select } from './Field';

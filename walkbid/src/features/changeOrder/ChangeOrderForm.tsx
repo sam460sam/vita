@@ -41,11 +41,11 @@ export function ChangeOrderForm({ open, onClose, project, onCreated }: Props) {
 
   async function addPhoto() {
     const p = await takePhoto(project.id, 'change_order', coId);
-    if (!p) toast.show('No photo captured', 'signal');
+    if (!p) toast.show('No photo captured', 'attention');
   }
 
   async function draftFromVoice() {
-    if (!description.trim()) return toast.show('Dictate what changed first', 'signal');
+    if (!description.trim()) return toast.show('Dictate what changed first', 'attention');
     setDrafting(true);
     try {
       const provider = await getProvider();
@@ -60,14 +60,14 @@ export function ChangeOrderForm({ open, onClose, project, onCreated }: Props) {
       setLines((prev) => [...prev, ...draft.items.map((l) => ({ description: l.description, qty: l.qty, unit: l.unit, unitPrice: l.unitPrice ?? 0, priceBookId: l.priceBookId ?? undefined }))]);
       toast.show(`Drafted ${draft.items.length} lines`, 'go');
     } catch (e) {
-      toast.show(e instanceof OfflineQueuedError ? e.message : 'Draft failed', 'signal');
+      toast.show(e instanceof OfflineQueuedError ? e.message : 'Draft failed', 'attention');
     } finally {
       setDrafting(false);
     }
   }
 
   async function create() {
-    if (!title.trim()) return toast.show('Add a title', 'signal');
+    if (!title.trim()) return toast.show('Add a title', 'attention');
     const co = await createChangeOrder({
       projectId: project.id,
       title,
@@ -104,27 +104,27 @@ export function ChangeOrderForm({ open, onClose, project, onCreated }: Props) {
           <VoiceCapture value={description} onChange={setDescription} placeholder="Client asked to extend the patio along the east edge…" />
         </Field>
         {showAi && (
-          <Button variant="signal" className="mb-4 w-full" onClick={draftFromVoice} disabled={drafting}>
+          <Button variant="primary" className="mb-4 w-full" onClick={draftFromVoice} disabled={drafting}>
             <Sparkles size={18} /> {drafting ? 'Drafting…' : 'Draft lines from voice'}
           </Button>
         )}
 
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-sm font-semibold text-dust">Line items</span>
+          <span className="text-sm font-semibold text-muted">Line items</span>
           {lines.length > 0 && <MoneyDelta amount={delta} />}
         </div>
         <div className="mb-3 flex flex-col gap-2">
           {lines.map((l, i) => (
-            <div key={i} className="flex items-center justify-between gap-2 rounded-btn border border-steel bg-asphalt px-3 py-2">
+            <div key={i} className="flex items-center justify-between gap-2 rounded-btn border border-hairline bg-bg px-3 py-2">
               <div className="min-w-0">
-                <div className="truncate text-sm font-semibold text-chalk">{l.description}</div>
-                <div className="tnum text-xs text-dust">
+                <div className="truncate text-sm font-semibold text-ink">{l.description}</div>
+                <div className="tnum text-xs text-muted">
                   {fmtQty(l.qty)} {unitLabel(l.unit)} × {money(l.unitPrice)}
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="tnum text-sm font-semibold text-chalk">{money(round2(l.qty * l.unitPrice))}</span>
-                <button onClick={() => setLines((p) => p.filter((_, idx) => idx !== i))} className="text-dust" aria-label="Remove">
+                <span className="tnum text-sm font-semibold text-ink">{money(round2(l.qty * l.unitPrice))}</span>
+                <button onClick={() => setLines((p) => p.filter((_, idx) => idx !== i))} className="text-muted" aria-label="Remove">
                   <Trash2 size={15} />
                 </button>
               </div>

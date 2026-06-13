@@ -21,7 +21,7 @@ export function PhotoThumb({ blobId, className, onClick }: { blobId: string; cla
     };
   }, [blobId]);
   return (
-    <div className={cn('overflow-hidden rounded-card border border-steel bg-graphite', className)} onClick={onClick}>
+    <div className={cn('overflow-hidden rounded-card border border-hairline bg-surface', className)} onClick={onClick}>
       {url && <img src={url} alt="" className="h-full w-full object-cover" />}
     </div>
   );
@@ -40,7 +40,7 @@ export function PhotoStrip({ photos, onAdd, onRemove }: StripProps) {
       {onAdd && (
         <button
           onClick={onAdd}
-          className="flex h-20 w-20 shrink-0 flex-col items-center justify-center gap-1 rounded-card border border-dashed border-steel text-dust active:bg-steel/40"
+          className="flex h-20 w-20 shrink-0 flex-col items-center justify-center gap-1 rounded-card border border-dashed border-hairline text-muted active:bg-surface-2"
         >
           <Camera size={20} />
           <span className="text-[10px] font-semibold">Photo</span>
@@ -52,7 +52,7 @@ export function PhotoStrip({ photos, onAdd, onRemove }: StripProps) {
           {onRemove && (
             <button
               onClick={() => onRemove(p.id)}
-              className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-risk text-white"
+              className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-danger text-white"
               aria-label="Remove"
             >
               <X size={12} />

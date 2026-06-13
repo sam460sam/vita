@@ -47,7 +47,7 @@ export function JobsPage() {
             <section key={g.status}>
               <div className="mb-2 flex items-center gap-2">
                 <Pill tone={statusTone(g.status)}>{t(`status.${g.status}`)}</Pill>
-                <span className="tnum text-xs text-dust">{g.items.length}</span>
+                <span className="tnum text-xs text-muted">{g.items.length}</span>
               </div>
               <div className="flex flex-col gap-2">
                 {g.items.map((s) => (

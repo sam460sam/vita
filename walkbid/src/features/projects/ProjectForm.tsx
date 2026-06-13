@@ -36,13 +36,13 @@ export function ProjectForm({ open, onClose, existing, defaultClientId, onSaved 
       setGeo(g);
       toast.show('Location tagged', 'go');
     } else {
-      toast.show('Location unavailable', 'signal');
+      toast.show('Location unavailable', 'attention');
     }
   }
 
   async function save() {
-    if (!clientId) return toast.show(t('project.client') + ' ' + t('common.required').toLowerCase(), 'risk');
-    if (!title.trim()) return toast.show(t('common.required'), 'risk');
+    if (!clientId) return toast.show(t('project.client') + ' ' + t('common.required').toLowerCase(), 'danger');
+    if (!title.trim()) return toast.show(t('common.required'), 'danger');
     if (existing) {
       await updateProject(existing.id, { clientId, title, siteAddress, geo });
       onSaved?.(existing.id);

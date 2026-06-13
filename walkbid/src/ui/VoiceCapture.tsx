@@ -57,14 +57,14 @@ export function VoiceCapture({ value, onChange, placeholder }: Props) {
           onPointerLeave={() => listening && stop()}
           className={cn(
             'mt-3 flex min-h-touch w-full items-center justify-center gap-2 rounded-btn font-display font-bold transition-colors',
-            listening ? 'bg-risk text-white' : 'bg-safety text-asphalt',
+            listening ? 'bg-danger text-white' : 'bg-accent text-on-accent',
           )}
         >
           {listening ? <Square size={18} /> : <Mic size={18} />}
           {listening ? 'Listening… release to stop' : 'Hold to talk'}
         </button>
       )}
-      {available === false && <p className="mt-2 text-xs text-dust">Voice unavailable — type above.</p>}
+      {available === false && <p className="mt-2 text-xs text-muted">Voice unavailable — type above.</p>}
     </div>
   );
 }

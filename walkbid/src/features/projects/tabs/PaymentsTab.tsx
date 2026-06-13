@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Wallet, Send, Check, RotateCcw, SlidersHorizontal } from 'lucide-react';
-import { EmptyState, Button, Card, MoneyText, MilestoneBar, Pill } from '@/ui';
+import { EmptyState, Button, Card, MoneyText, Pill } from '@/ui';
 import { dueLabel } from '@/lib/format';
 import { paymentsForProject, markPaid, markPending } from '@/services/payments';
 import { paymentLabel, paymentStatusLabel } from '@/services/paymentsLabels';
@@ -12,11 +12,11 @@ import { PlanEditorSheet } from '@/features/payments/PlanEditorSheet';
 import { RequestPaymentSheet } from '@/features/payments/RequestPaymentSheet';
 import type { Payment, PaymentStatus, Project } from '@/data/types';
 
-const TONE: Record<PaymentStatus, 'neutral' | 'safety' | 'go' | 'risk'> = {
+const TONE: Record<PaymentStatus, 'neutral' | 'brand' | 'accent' | 'danger'> = {
   pending: 'neutral',
-  requested: 'safety',
-  paid: 'go',
-  late: 'risk',
+  requested: 'brand',
+  paid: 'accent',
+  late: 'danger',
 };
 
 export function PaymentsTab({ project }: { project: Project }) {
@@ -46,18 +46,14 @@ export function PaymentsTab({ project }: { project: Project }) {
 
   return (
     <div className="p-4">
-      <div className="mb-4">
-        <MilestoneBar payments={payments} />
-      </div>
-
       <div className="mb-4 flex flex-col gap-2">
         {payments.map((p) => (
           <Card key={p.id}>
             <div className="p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="font-display font-bold text-chalk">{paymentLabel(p.label)}</div>
-                  <div className="text-xs text-dust">
+                  <div className="font-display font-bold text-ink">{paymentLabel(p.label)}</div>
+                  <div className="text-xs text-muted">
                     {p.dueRule.type === 'date' ? dueLabel(p.dueRule.date) : p.dueRule.event === 'signature' ? 'On signing' : p.dueRule.event === 'co_signed' ? 'On change order' : 'On completion'}
                   </div>
                 </div>
@@ -86,7 +82,7 @@ export function PaymentsTab({ project }: { project: Project }) {
                     </Button>
                   </>
                 ) : (
-                  <Button variant="ghost" className="text-dust" onClick={() => markPending(p.id)}>
+                  <Button variant="ghost" className="text-muted" onClick={() => markPending(p.id)}>
                     <RotateCcw size={16} /> Undo paid
                   </Button>
                 )}

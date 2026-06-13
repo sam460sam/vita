@@ -50,12 +50,12 @@ function LogEntryCard({ entry }: { entry: DiaryEntry }) {
     <Card>
       <div className="p-4">
         <div className="mb-1 flex items-center justify-between">
-          <span className="font-display text-sm font-bold text-chalk">{usDate(entry.date)}</span>
-          <button onClick={() => deleteDiaryEntry(entry.id)} className="text-dust" aria-label="Delete">
+          <span className="font-display text-sm font-bold text-ink">{usDate(entry.date)}</span>
+          <button onClick={() => deleteDiaryEntry(entry.id)} className="text-muted" aria-label="Delete">
             <Trash2 size={15} />
           </button>
         </div>
-        {entry.text && <p className="whitespace-pre-wrap text-sm text-chalk">{entry.text}</p>}
+        {entry.text && <p className="whitespace-pre-wrap text-sm text-ink">{entry.text}</p>}
         {photos.length > 0 && (
           <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
             {photos.map((p) => (

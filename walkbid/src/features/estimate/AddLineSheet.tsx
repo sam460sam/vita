@@ -38,7 +38,7 @@ export function AddLineSheet({ open, onClose, estimateId }: Props) {
     <>
       <Sheet open={open && !picked && !freeOpen} onClose={onClose} title={t('common.add')}>
         <div className="relative mb-3">
-          <Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-dust" />
+          <Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('common.search')} className="pl-10" autoFocus />
         </div>
         <Button variant="secondary" className="mb-4 w-full" onClick={() => setFreeOpen(true)}>
@@ -49,13 +49,13 @@ export function AddLineSheet({ open, onClose, estimateId }: Props) {
             <button
               key={i.id}
               onClick={() => setPicked(i)}
-              className="flex items-center justify-between gap-3 rounded-btn border border-steel bg-asphalt px-3 py-3 text-left active:bg-steel/60"
+              className="flex items-center justify-between gap-3 rounded-btn border border-hairline bg-bg px-3 py-3 text-left active:bg-surface-2/60"
             >
               <div className="min-w-0">
-                <div className="truncate font-semibold text-chalk">{i.description[lang] || i.description.en}</div>
-                <div className="text-xs text-dust">{i.code} · {unitLabel(i.unit)}</div>
+                <div className="truncate font-semibold text-ink">{i.description[lang] || i.description.en}</div>
+                <div className="text-xs text-muted">{i.code} · {unitLabel(i.unit)}</div>
               </div>
-              <div className="tnum shrink-0 text-sm font-semibold text-chalk">{money(i.unitPrice)}</div>
+              <div className="tnum shrink-0 text-sm font-semibold text-ink">{money(i.unitPrice)}</div>
             </button>
           ))}
         </div>

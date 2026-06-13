@@ -44,10 +44,10 @@ export function EstimateTab({ project }: { project: Project }) {
   return (
     <div className="p-4">
       <div className="mb-3 flex items-center justify-between">
-        <div className="text-sm text-dust">
+        <div className="text-sm text-muted">
           {estimate.number} · {estimate.status}
         </div>
-        <button onClick={() => setRatesOpen(true)} className="flex items-center gap-1 text-sm font-semibold text-safety">
+        <button onClick={() => setRatesOpen(true)} className="flex items-center gap-1 text-sm font-semibold text-accent">
           <Percent size={14} /> Tax & markup
         </button>
       </div>
@@ -56,16 +56,16 @@ export function EstimateTab({ project }: { project: Project }) {
         <EmptyState icon={<FileText size={32} />} title="No lines yet" action={<Button onClick={() => setAddOpen(true)}><Plus size={18} /> Add line</Button>} />
       ) : (
         <Card className="mb-4">
-          <div className="divide-y divide-steel">
+          <div className="divide-y divide-hairline">
             {items.map((it) => (
-              <button key={it.id} onClick={() => setEditing(it)} className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left active:bg-graphite/70">
+              <button key={it.id} onClick={() => setEditing(it)} className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left active:bg-surface/70">
                 <div className="min-w-0">
-                  <div className="truncate font-semibold text-chalk">{it.description}</div>
-                  <div className="tnum text-xs text-dust">
+                  <div className="truncate font-semibold text-ink">{it.description}</div>
+                  <div className="tnum text-xs text-muted">
                     {fmtQty(it.qty)} {unitLabel(it.unit)} × {money(it.unitPrice)}
                   </div>
                 </div>
-                <div className="tnum shrink-0 font-semibold text-chalk">{money(it.total)}</div>
+                <div className="tnum shrink-0 font-semibold text-ink">{money(it.total)}</div>
               </button>
             ))}
           </div>
@@ -78,8 +78,8 @@ export function EstimateTab({ project }: { project: Project }) {
             <Row label={t('common.subtotal')} value={money(totals.base)} />
             {estimate.markupRate > 0 && <Row label={`${t('common.markup')} (${round2(estimate.markupRate * 100)}%)`} value={money(totals.markupAmount)} muted hint="hidden on client PDF" />}
             {estimate.taxRate > 0 && <Row label={`${t('common.tax')} (${round2(estimate.taxRate * 100)}%)`} value={money(totals.taxAmount)} muted />}
-            <div className="mt-1 flex items-center justify-between border-t border-steel pt-3">
-              <span className="font-display font-bold text-chalk">{t('common.total')}</span>
+            <div className="mt-1 flex items-center justify-between border-t border-hairline pt-3">
+              <span className="font-display font-bold text-ink">{t('common.total')}</span>
               <MoneyText amount={totals.total} size="lg" />
             </div>
           </div>
@@ -103,12 +103,12 @@ export function EstimateTab({ project }: { project: Project }) {
             className="mb-2 w-full"
             onClick={async () => {
               const ok = await shareEstimate(estimate);
-              toast.show(ok ? 'Proposal ready' : 'Add company info in Settings', ok ? 'go' : 'signal');
+              toast.show(ok ? 'Proposal ready' : 'Add company info in Settings', ok ? 'go' : 'attention');
             }}
           >
             <Share2 size={18} /> Share proposal PDF
           </Button>
-          <Button variant="signal" className="w-full" onClick={() => setSignOpen(true)}>
+          <Button variant="primary" className="w-full" onClick={() => setSignOpen(true)}>
             <FileSignature size={18} /> Convert to signed contract
           </Button>
         </>
@@ -126,11 +126,11 @@ export function EstimateTab({ project }: { project: Project }) {
 function Row({ label, value, muted, hint }: { label: string; value: string; muted?: boolean; hint?: string }) {
   return (
     <div className="flex items-center justify-between">
-      <span className={muted ? 'text-sm text-dust' : 'text-sm text-chalk'}>
+      <span className={muted ? 'text-sm text-muted' : 'text-sm text-ink'}>
         {label}
-        {hint && <span className="ml-2 text-[11px] text-dust">{hint}</span>}
+        {hint && <span className="ml-2 text-[11px] text-muted">{hint}</span>}
       </span>
-      <span className={'tnum ' + (muted ? 'text-dust' : 'font-semibold text-chalk')}>{value}</span>
+      <span className={'tnum ' + (muted ? 'text-muted' : 'font-semibold text-ink')}>{value}</span>
     </div>
   );
 }

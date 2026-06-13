@@ -24,7 +24,7 @@ export function PriceItemForm({ open, onClose, existing }: Props) {
   const [cost, setCost] = useState(existing?.cost != null ? String(existing.cost) : '');
 
   async function save() {
-    if (!en.trim()) return toast.show(t('common.required'), 'risk');
+    if (!en.trim()) return toast.show(t('common.required'), 'danger');
     const description = { en: en.trim(), es: es.trim() || en.trim() };
     const unitPrice = Number(price) || 0;
     const costN = cost.trim() === '' ? undefined : Number(cost);
@@ -84,7 +84,7 @@ export function PriceItemForm({ open, onClose, existing }: Props) {
       {existing && (
         <Button
           variant="ghost"
-          className="w-full text-risk"
+          className="w-full text-danger"
           onClick={async () => {
             await deletePriceItem(existing.id);
             onClose();

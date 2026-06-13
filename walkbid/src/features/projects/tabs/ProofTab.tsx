@@ -26,7 +26,7 @@ export function ProofTab({ project }: { project: Project }) {
     setBusy(true);
     try {
       const ok = await shareProof(project.id);
-      toast.show(ok ? 'Proof package ready' : 'Add company info in Settings', ok ? 'go' : 'signal');
+      toast.show(ok ? 'Proof package ready' : 'Add company info in Settings', ok ? 'go' : 'attention');
     } finally {
       setBusy(false);
     }
@@ -36,10 +36,10 @@ export function ProofTab({ project }: { project: Project }) {
     <div className="p-4">
       <Card className="mb-4">
         <div className="flex items-start gap-3 p-4">
-          <ShieldCheck className="text-safety" size={28} />
+          <ShieldCheck className="text-accent" size={28} />
           <div>
-            <div className="font-display font-bold text-chalk">Proof package</div>
-            <p className="mt-1 text-sm text-dust">
+            <div className="font-display font-bold text-ink">Proof package</div>
+            <p className="mt-1 text-sm text-muted">
               A single timestamped PDF for disputes, small-claims or lien support — contract, change orders, photos,
               logs, payments and every SHA-256 fingerprint.
             </p>
@@ -49,7 +49,7 @@ export function ProofTab({ project }: { project: Project }) {
 
       {counts && (
         <Card className="mb-4">
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-card bg-steel">
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-card bg-surface-2">
             <Stat label="Contract" value={counts.signed ? 'Signed' : 'Unsigned'} />
             <Stat label="Change orders" value={String(counts.co)} />
             <Stat label="Photos" value={String(counts.ph)} />
@@ -61,7 +61,7 @@ export function ProofTab({ project }: { project: Project }) {
       <Button className="w-full" onClick={generate} disabled={busy}>
         <FileDown size={18} /> {busy ? 'Building…' : 'Generate proof PDF'}
       </Button>
-      <p className="mt-3 px-1 text-center text-xs text-dust">
+      <p className="mt-3 px-1 text-center text-xs text-muted">
         Mechanics-lien deadlines and rules vary by state — informational, not legal advice.
       </p>
     </div>
@@ -70,9 +70,9 @@ export function ProofTab({ project }: { project: Project }) {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-graphite p-4">
-      <div className="text-[11px] uppercase tracking-wide text-dust">{label}</div>
-      <div className="font-display text-lg font-bold text-chalk">{value}</div>
+    <div className="bg-surface p-4">
+      <div className="text-[11px] uppercase tracking-wide text-muted">{label}</div>
+      <div className="font-display text-lg font-bold text-ink">{value}</div>
     </div>
   );
 }

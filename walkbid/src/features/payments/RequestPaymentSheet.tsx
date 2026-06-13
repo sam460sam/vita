@@ -41,7 +41,7 @@ export function RequestPaymentSheet({ open, onClose, payment }: { open: boolean;
         <Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://…" inputMode="url" />
       </Field>
       <Field label="Message preview">
-        <div className="tnum whitespace-pre-wrap rounded-card border border-steel bg-asphalt p-3 text-sm text-chalk">{message}</div>
+        <div className="tnum whitespace-pre-wrap rounded-card border border-hairline bg-bg p-3 text-sm text-ink">{message}</div>
       </Field>
     </Sheet>
   );

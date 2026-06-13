@@ -24,7 +24,7 @@ export function ClientForm({ open, onClose, existing, onSaved }: Props) {
 
   async function save() {
     if (!name.trim()) {
-      toast.show(t('common.required'), 'risk');
+      toast.show(t('common.required'), 'danger');
       return;
     }
     const patch = { name, company, phone, email, address, notes, language };

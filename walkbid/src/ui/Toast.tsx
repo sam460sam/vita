@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
-type ToastTone = 'neutral' | 'go' | 'risk' | 'signal';
+type ToastTone = 'neutral' | 'go' | 'danger' | 'attention';
 interface ToastItem {
   id: number;
   message: string;
@@ -15,10 +15,10 @@ interface ToastCtx {
 const Ctx = createContext<ToastCtx | null>(null);
 
 const TONE_CLASS: Record<ToastTone, string> = {
-  neutral: 'bg-steel text-chalk',
-  go: 'bg-go text-asphalt',
-  risk: 'bg-risk text-white',
-  signal: 'bg-signal text-asphalt',
+  neutral: 'bg-surface-2 text-ink border border-hairline',
+  go: 'bg-accent text-on-accent',
+  danger: 'bg-danger text-white',
+  attention: 'bg-attention text-on-accent',
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -37,7 +37,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <div className="pointer-events-none fixed inset-x-0 bottom-24 z-[60] flex flex-col items-center gap-2 px-4">
         {items.map((t) => (
-          <div key={t.id} className={cn('rounded-btn px-4 py-2.5 text-sm font-semibold shadow-bar', TONE_CLASS[t.tone])}>
+          <div key={t.id} className={cn('rounded-btn px-4 py-2.5 text-sm font-semibold shadow-raise', TONE_CLASS[t.tone])}>
             {t.message}
           </div>
         ))}

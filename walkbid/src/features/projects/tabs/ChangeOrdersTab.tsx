@@ -15,11 +15,11 @@ import { ChangeOrderForm } from '@/features/changeOrder/ChangeOrderForm';
 import { ChangeOrderSignSheet } from '@/features/changeOrder/ChangeOrderSignSheet';
 import type { ChangeOrder, ChangeOrderStatus, Project } from '@/data/types';
 
-const TONE: Record<ChangeOrderStatus, 'neutral' | 'signal' | 'go' | 'risk'> = {
+const TONE: Record<ChangeOrderStatus, 'neutral' | 'attention' | 'accent' | 'danger'> = {
   draft: 'neutral',
-  pending_signature: 'signal',
-  signed: 'go',
-  refused: 'risk',
+  pending_signature: 'attention',
+  signed: 'accent',
+  refused: 'danger',
 };
 const LABEL: Record<ChangeOrderStatus, string> = {
   draft: 'Draft',
@@ -60,11 +60,11 @@ export function ChangeOrdersTab({ project }: { project: Project }) {
       <Card className="mb-4">
         <div className="flex items-center justify-between p-4">
           <div>
-            <div className="text-xs uppercase tracking-wide text-dust">Initial total</div>
-            <div className="tnum text-sm text-dust">{money(initial)}</div>
+            <div className="text-xs uppercase tracking-wide text-muted">Initial total</div>
+            <div className="tnum text-sm text-muted">{money(initial)}</div>
           </div>
           <div className="text-right">
-            <div className="text-xs uppercase tracking-wide text-dust">Updated total</div>
+            <div className="text-xs uppercase tracking-wide text-muted">Updated total</div>
             <MoneyText amount={updated} size="md" />
           </div>
         </div>
@@ -81,11 +81,11 @@ export function ChangeOrdersTab({ project }: { project: Project }) {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-display font-bold text-chalk">{co.number}</span>
+                    <span className="font-display font-bold text-ink">{co.number}</span>
                     <Pill tone={TONE[co.status]}>{LABEL[co.status]}</Pill>
                   </div>
-                  <div className="truncate text-sm text-chalk">{co.title}</div>
-                  <div className="text-xs text-dust">{usDate(co.createdAt)}{co.signedAt ? ` · signed by ${co.signerName}` : ''}</div>
+                  <div className="truncate text-sm text-ink">{co.title}</div>
+                  <div className="text-xs text-muted">{usDate(co.createdAt)}{co.signedAt ? ` · signed by ${co.signerName}` : ''}</div>
                 </div>
                 <MoneyDelta amount={co.deltaTotal} />
               </div>
@@ -93,10 +93,10 @@ export function ChangeOrdersTab({ project }: { project: Project }) {
               <div className="mt-3 flex gap-2">
                 {co.status !== 'signed' ? (
                   <>
-                    <Button variant="signal" className="flex-1" onClick={() => setSigning(co)}>
+                    <Button variant="primary" className="flex-1" onClick={() => setSigning(co)}>
                       <PenLine size={16} /> Sign on site
                     </Button>
-                    <button onClick={() => deleteChangeOrder(co.id)} className="px-3 text-dust" aria-label="Delete">
+                    <button onClick={() => deleteChangeOrder(co.id)} className="px-3 text-muted" aria-label="Delete">
                       <Trash2 size={18} />
                     </button>
                   </>

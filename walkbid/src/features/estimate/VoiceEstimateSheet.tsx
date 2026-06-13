@@ -20,15 +20,15 @@ export function VoiceEstimateSheet({ open, onClose, project, estimateId }: { ope
   const [busy, setBusy] = useState(false);
 
   async function draft() {
-    if (!transcript.trim()) return toast.show('Dictate or type first', 'signal');
+    if (!transcript.trim()) return toast.show('Dictate or type first', 'attention');
     setBusy(true);
     try {
       const provider = await getProvider();
       const result = await provider.draftEstimate({ transcript, priceBook: await listPriceBook(true), locale: lang });
       setLines(result.items);
-      if (result.items.length === 0) toast.show('No lines detected — add manually', 'signal');
+      if (result.items.length === 0) toast.show('No lines detected — add manually', 'attention');
     } catch (e) {
-      toast.show(e instanceof OfflineQueuedError ? e.message : 'Draft failed', 'signal');
+      toast.show(e instanceof OfflineQueuedError ? e.message : 'Draft failed', 'attention');
     } finally {
       setBusy(false);
     }
@@ -64,7 +64,7 @@ export function VoiceEstimateSheet({ open, onClose, project, estimateId }: { ope
     >
       {!lines ? (
         <>
-          <p className="mb-3 text-sm text-dust">Hold the button and describe the job at {project.siteAddress || 'the site'}.</p>
+          <p className="mb-3 text-sm text-muted">Hold the button and describe the job at {project.siteAddress || 'the site'}.</p>
           <VoiceCapture value={transcript} onChange={setTranscript} placeholder="four hundred square feet of pavers, eight inch gravel base, two catch basins, fifty feet of edging…" />
         </>
       ) : (

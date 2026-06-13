@@ -43,7 +43,7 @@ export function EditLineSheet({ open, onClose, item }: { open: boolean; onClose:
       </div>
       <Button
         variant="ghost"
-        className="w-full text-risk"
+        className="w-full text-danger"
         onClick={async () => {
           await deleteItem(item.id);
           onClose();

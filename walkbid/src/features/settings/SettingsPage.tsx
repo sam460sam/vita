@@ -54,7 +54,7 @@ export function SettingsPage() {
       <div className="flex flex-col gap-4 p-4">
         <Card>
           <div className="p-4">
-            <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-wide text-dust">Company</h3>
+            <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-wide text-muted">Company</h3>
             <Field label="Company name">
               <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Elite Hardscapes LLC" />
             </Field>
@@ -89,7 +89,7 @@ export function SettingsPage() {
 
         <Card>
           <div className="p-4">
-            <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-wide text-dust">App</h3>
+            <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-wide text-muted">App</h3>
             <Field label="Language">
               <Select value={lang} onChange={(e) => setLang(e.target.value as Locale)}>
                 <option value="en">English</option>
@@ -101,7 +101,7 @@ export function SettingsPage() {
 
         <Card>
           <div className="p-4">
-            <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-wide text-dust">AI assist</h3>
+            <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-wide text-muted">AI assist</h3>
             <Field label="Mode" hint="voice estimate, change orders & logs">
               <Select value={aiMode} onChange={(e) => setAiMode(e.target.value as 'off' | 'mock' | 'live')}>
                 <option value="off">Off — hide AI</option>
@@ -122,8 +122,8 @@ export function SettingsPage() {
 
         <Card>
           <div className="p-4">
-            <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-wide text-dust">Backup</h3>
-            <p className="mb-3 text-sm text-dust">
+            <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-wide text-muted">Backup</h3>
+            <p className="mb-3 text-sm text-muted">
               {BRAND} keeps everything on this device. Export a .zip (data + photos + signed PDFs) to keep it safe or
               move to a new phone.
             </p>
@@ -150,7 +150,7 @@ export function SettingsPage() {
                       await importBackup(f);
                       toast.show('Backup restored', 'go');
                     } catch (e) {
-                      toast.show((e as Error).message, 'risk');
+                      toast.show((e as Error).message, 'danger');
                     }
                   };
                   input.click();
@@ -163,8 +163,8 @@ export function SettingsPage() {
         </Card>
 
         <Card>
-          <div className="p-4 text-sm text-dust">
-            <p className="font-semibold text-signal">Before you use the contract template</p>
+          <div className="p-4 text-sm text-muted">
+            <p className="font-semibold text-attention">Before you use the contract template</p>
             <p className="mt-1">
               Home-improvement contract requirements vary by state (license display, right-to-cancel notices, etc.).
               Have the template reviewed by a construction attorney before use. {BRAND} does not provide legal advice.
@@ -172,7 +172,7 @@ export function SettingsPage() {
           </div>
         </Card>
 
-        <div className="px-1 text-center text-xs text-dust">
+        <div className="px-1 text-center text-xs text-muted">
           {BRAND} · {BRAND_TAGLINE}
         </div>
       </div>

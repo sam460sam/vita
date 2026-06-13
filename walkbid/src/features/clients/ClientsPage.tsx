@@ -40,14 +40,14 @@ export function ClientsPage() {
       ) : (
         <div className="flex flex-col gap-2 p-4">
           {clients.map((c) => (
-            <Card key={c.id} className="active:bg-graphite/70" onClick={() => { setEditing(c); setFormOpen(true); }}>
+            <Card key={c.id} className="active:bg-surface/70" onClick={() => { setEditing(c); setFormOpen(true); }}>
               <div className="flex items-center gap-3 p-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-steel font-display text-lg font-bold text-chalk">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface-2 font-display text-lg font-bold text-ink">
                   {c.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-display font-bold text-chalk">{c.name}</div>
-                  <div className="flex items-center gap-3 text-sm text-dust">
+                  <div className="truncate font-display font-bold text-ink">{c.name}</div>
+                  <div className="flex items-center gap-3 text-sm text-muted">
                     {c.company && (
                       <span className="flex items-center gap-1 truncate">
                         <Building2 size={13} /> {c.company}
@@ -61,7 +61,7 @@ export function ClientsPage() {
                   </div>
                 </div>
                 {(counts[c.id] ?? 0) > 0 && (
-                  <span className="tnum rounded-full bg-steel px-2 py-0.5 text-xs font-semibold text-dust">
+                  <span className="tnum rounded-full bg-surface-2 px-2 py-0.5 text-xs font-semibold text-muted">
                     {counts[c.id]}
                   </span>
                 )}

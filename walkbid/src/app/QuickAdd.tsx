@@ -55,9 +55,9 @@ export function QuickAddProvider({ children }: { children: ReactNode }) {
               <button
                 key={a.id}
                 onClick={() => setIntent(a.id)}
-                className="flex min-h-touch items-center gap-3 rounded-btn border border-steel bg-asphalt px-4 py-3 text-left text-chalk active:bg-steel/60"
+                className="flex min-h-touch items-center gap-3 rounded-btn border border-hairline bg-bg px-4 py-3 text-left text-ink active:bg-surface-2/60"
               >
-                <span className="text-safety">{a.icon}</span>
+                <span className="text-accent">{a.icon}</span>
                 <span className="font-display font-bold">{a.label}</span>
               </button>
             ))}
@@ -83,10 +83,10 @@ export function QuickAddProvider({ children }: { children: ReactNode }) {
               <button
                 key={p.id}
                 onClick={() => go(p.id)}
-                className="min-h-touch rounded-btn border border-steel bg-asphalt px-4 py-3 text-left active:bg-steel/60"
+                className="min-h-touch rounded-btn border border-hairline bg-bg px-4 py-3 text-left active:bg-surface-2/60"
               >
-                <div className="font-display font-bold text-chalk">{p.title}</div>
-                <div className="truncate text-sm text-dust">{p.siteAddress}</div>
+                <div className="font-display font-bold text-ink">{p.title}</div>
+                <div className="truncate text-sm text-muted">{p.siteAddress}</div>
               </button>
             ))}
           </div>
