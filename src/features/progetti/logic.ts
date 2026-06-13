@@ -44,10 +44,12 @@ export function sortTasks(tasks: Task[]): Task[] {
   });
 }
 
-export const STATUS_COLUMNS: { id: TaskStatus; label: string }[] = [
-  { id: 'todo', label: 'Da fare' },
-  { id: 'doing', label: 'In corso' },
-  { id: 'done', label: 'Fatto' },
+// Column order for the kanban board. Labels are localized in the UI via
+// COLUMN_LABEL_KEYS (kanban.todo/doing/done), not stored here.
+export const STATUS_COLUMNS: { id: TaskStatus }[] = [
+  { id: 'todo' },
+  { id: 'doing' },
+  { id: 'done' },
 ];
 
 export function subtaskProgress(task: Task): { done: number; total: number } {
