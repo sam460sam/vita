@@ -156,6 +156,15 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Claude-like elegant serif for display titles. Body text & numbers keep the
+   rounded sans; only headings get the serif treatment. */
+.display-serif,
+.ob-content h1 {
+  font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Georgia, Cambria, 'Times New Roman', Times, serif;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+}
+
 #root {
   position: absolute;
   inset: 0;

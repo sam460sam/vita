@@ -79,7 +79,7 @@ export function Paywall({ onClose }: { onClose?: () => void }) {
           <span className="inline-flex h-16 w-16 rounded-3xl items-center justify-center" style={{ background: `${GOLD}1f`, color: GOLD }}>
             <Crown size={32} fill={GOLD} />
           </span>
-          <h1 className="text-[26px] font-extrabold text-ink tracking-tight mt-4">{t('paywall.title')}</h1>
+          <h1 className="display-serif text-[27px] font-semibold text-ink tracking-tight mt-4">{t('paywall.title')}</h1>
           <p className="text-[14px] text-ink-2 mt-1.5 leading-snug">{t('paywall.subtitle')}</p>
         </div>
 

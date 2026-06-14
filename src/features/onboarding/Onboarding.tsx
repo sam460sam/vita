@@ -229,7 +229,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         </div>
       </div>
 
-      <div className="relative flex-1 overflow-y-auto px-7">
+      <div className="relative flex-1 overflow-y-auto px-7 ob-content">
         {step === 'lang' && <LanguageStep onPick={(l) => { setPref(l); }} />}
         {step === 'welcome1' && (
           <div className="flex flex-col items-center justify-center text-center min-h-full py-8">
@@ -318,8 +318,11 @@ function FocusStep({ value, onToggle }: { value: Set<Focus>; onToggle: (f: Focus
             <button
               key={o.value}
               onClick={() => onToggle(o.value)}
-              className="w-full flex items-center gap-3 px-4 py-3.5 rounded-card bg-card shadow-chip transition-all text-left active:scale-[0.99]"
-              style={{ boxShadow: on ? `0 0 0 2.5px ${o.color}, 0 4px 14px ${o.color}22` : undefined }}
+              className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all text-left active:scale-[0.99]"
+              style={{
+                background: on ? `color-mix(in srgb, ${o.color} 12%, var(--c-card))` : 'var(--c-card)',
+                boxShadow: on ? `inset 0 0 0 2px ${o.color}` : '0 2px 10px rgba(83,52,20,0.05)',
+              }}
             >
               <span className="h-12 w-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: `color-mix(in srgb, ${o.color} 16%, transparent)`, color: o.color }}>
                 <Icon size={22} />
@@ -328,11 +331,12 @@ function FocusStep({ value, onToggle }: { value: Set<Focus>; onToggle: (f: Focus
                 <div className="text-[15px] font-bold text-ink">{t(o.titleKey)}</div>
                 <div className="text-[13px] text-ink-2">{t(o.descKey)}</div>
               </div>
-              {on && (
-                <span className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: o.color }}>
-                  <Check size={15} className="text-white" strokeWidth={3} />
-                </span>
-              )}
+              <span
+                className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
+                style={{ background: on ? o.color : 'transparent', border: on ? 'none' : '2px solid var(--c-line)' }}
+              >
+                {on && <Check size={15} className="text-white" strokeWidth={3} />}
+              </span>
             </button>
           );
         })}
@@ -341,20 +345,24 @@ function FocusStep({ value, onToggle }: { value: Set<Focus>; onToggle: (f: Focus
   );
 }
 
-/** A single-select list row (used by the personal-question steps). */
+/** A single-select list row (WhatsApp/Instagram-style: tint fill + round check). */
 function ChoiceRow({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center justify-between px-4 h-14 rounded-card bg-card shadow-chip transition-all active:scale-[0.99]"
-      style={{ boxShadow: selected ? '0 0 0 2.5px var(--c-primary), 0 4px 14px rgba(22,163,74,0.18)' : undefined }}
+      className="w-full flex items-center justify-between px-4 h-14 rounded-2xl transition-all active:scale-[0.99]"
+      style={{
+        background: selected ? 'color-mix(in srgb, var(--c-primary) 12%, var(--c-card))' : 'var(--c-card)',
+        boxShadow: selected ? 'inset 0 0 0 2px var(--c-primary)' : '0 2px 10px rgba(83,52,20,0.05)',
+      }}
     >
       <span className="text-[15px] font-semibold text-ink text-left">{label}</span>
-      {selected && (
-        <span className="h-6 w-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-          <Check size={15} className="text-white" strokeWidth={3} />
-        </span>
-      )}
+      <span
+        className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
+        style={{ background: selected ? 'var(--c-primary)' : 'transparent', border: selected ? 'none' : '2px solid var(--c-line)' }}
+      >
+        {selected && <Check size={15} className="text-white" strokeWidth={3} />}
+      </span>
     </button>
   );
 }
@@ -529,8 +537,11 @@ function ModulesStep({ selected, onToggle }: { selected: Set<ModuleId>; onToggle
             <button
               key={m.id}
               onClick={() => onToggle(m.id)}
-              className="flex flex-col items-start gap-2 p-3.5 rounded-card bg-card shadow-chip transition-all text-left relative active:scale-[0.98]"
-              style={{ boxShadow: on ? `0 0 0 2.5px ${m.accent}, 0 4px 14px ${m.accent}22` : undefined }}
+              className="flex flex-col items-start gap-2 p-3.5 rounded-2xl transition-all text-left relative active:scale-[0.98]"
+              style={{
+                background: on ? `color-mix(in srgb, ${m.accent} 12%, var(--c-card))` : 'var(--c-card)',
+                boxShadow: on ? `inset 0 0 0 2px ${m.accent}` : '0 2px 10px rgba(83,52,20,0.05)',
+              }}
             >
               <span className="h-11 w-11 rounded-2xl flex items-center justify-center" style={{ background: `color-mix(in srgb, ${m.accent} 16%, transparent)`, color: m.accent }}>
                 <Icon size={21} />
@@ -561,8 +572,11 @@ function NotifyStep({ value, onChange }: { value: boolean; onChange: (v: boolean
       <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.notify.desc')}</p>
       <button
         onClick={() => onChange(!value)}
-        className="w-full max-w-sm mt-7 flex items-center gap-3 px-4 py-4 rounded-card bg-card shadow-chip transition-all active:scale-[0.99]"
-        style={{ boxShadow: value ? '0 0 0 2.5px var(--c-primary), 0 4px 14px rgba(22,163,74,0.18)' : undefined }}
+        className="w-full max-w-sm mt-7 flex items-center gap-3 px-4 py-4 rounded-2xl transition-all active:scale-[0.99]"
+        style={{
+          background: value ? 'color-mix(in srgb, var(--c-primary) 12%, var(--c-card))' : 'var(--c-card)',
+          boxShadow: value ? 'inset 0 0 0 2px var(--c-primary)' : '0 2px 10px rgba(83,52,20,0.05)',
+        }}
       >
         <span className="h-11 w-11 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'color-mix(in srgb, var(--c-primary) 16%, transparent)', color: 'var(--c-primary)' }}>
           <Bell size={20} />
@@ -620,8 +634,11 @@ function LanguageStep({ onPick }: { onPick: (l: Lang) => void }) {
             <button
               key={l.code}
               onClick={() => onPick(l.code)}
-              className="w-full flex items-center justify-between px-4 h-14 rounded-card bg-card shadow-chip transition-all active:scale-[0.99]"
-              style={{ boxShadow: active ? '0 0 0 2.5px var(--c-primary), 0 4px 14px rgba(255,122,69,0.18)' : undefined }}
+              className="w-full flex items-center justify-between px-4 h-14 rounded-2xl transition-all active:scale-[0.99]"
+              style={{
+                background: active ? 'color-mix(in srgb, var(--c-primary) 12%, var(--c-card))' : 'var(--c-card)',
+                boxShadow: active ? 'inset 0 0 0 2px var(--c-primary)' : '0 2px 10px rgba(83,52,20,0.05)',
+              }}
             >
               <span className="text-[15px] font-semibold text-ink">{l.label}</span>
               {active && (
@@ -670,8 +687,11 @@ function HabitsStep({
             <button
               key={r.id}
               onClick={() => onToggle(r.id)}
-              className="w-full flex items-center gap-3 px-4 h-[60px] rounded-card bg-card shadow-chip transition-all text-left active:scale-[0.99]"
-              style={{ boxShadow: on ? `0 0 0 2.5px ${r.color}, 0 4px 14px ${r.color}22` : undefined }}
+              className="w-full flex items-center gap-3 px-4 h-[60px] rounded-2xl transition-all text-left active:scale-[0.99]"
+              style={{
+                background: on ? `color-mix(in srgb, ${r.color} 12%, var(--c-card))` : 'var(--c-card)',
+                boxShadow: on ? `inset 0 0 0 2px ${r.color}` : '0 2px 10px rgba(83,52,20,0.05)',
+              }}
             >
               <span className="h-9 w-9 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: `color-mix(in srgb, ${r.color} 16%, transparent)` }}>
                 <span className="h-3 w-3 rounded-full" style={{ background: r.color }} />
