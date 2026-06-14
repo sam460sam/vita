@@ -67,7 +67,8 @@ export default {
         sheet: '0 -8px 40px rgba(40,25,10,0.16)',
       },
       fontFamily: {
-        sans: ['ui-rounded', 'SF Pro Rounded', 'Nunito', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['-apple-system', 'system-ui', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        serif: ['ui-serif', 'Iowan Old Style', 'Palatino Linotype', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
       },
       fontVariantNumeric: {
         tabular: 'tabular-nums',

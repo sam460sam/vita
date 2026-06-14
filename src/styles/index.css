@@ -149,20 +149,23 @@ body {
   touch-action: pan-y;
   background: var(--c-app);
   color: var(--c-ink);
-  /* Rounded / geometric sans (SF Rounded on Apple, falls back to system) */
-  font-family: ui-rounded, 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', 'Nunito',
-    system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Clean, neutral sans for body & UI (system fonts → SF on Apple). */
+  font-family: -apple-system, system-ui, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica,
+    Arial, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Claude-like elegant serif for display titles. Body text & numbers keep the
-   rounded sans; only headings get the serif treatment. */
+/* Claude-like elegant serif for display headings. Body text, numbers, buttons
+   and small uppercase labels keep the clean sans. */
+h1,
+h2:not(.metric-label):not(.uppercase),
+h3:not(.uppercase),
 .display-serif,
 .ob-content h1 {
-  font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Georgia, Cambria, 'Times New Roman', Times, serif;
+  font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Georgia, Cambria,
+    'Times New Roman', Times, serif;
   letter-spacing: -0.015em;
-  font-weight: 600;
 }
 
 #root {
