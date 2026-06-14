@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { subDays } from 'date-fns';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { X, Check, Droplet, ChevronDown } from 'lucide-react';
+import { Droplet, ChevronDown } from 'lucide-react';
 import { db } from '@/data/db';
 import { setWaterMl, updateSettings, readSettings } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { Sheet, Field, Input, Button, Segmented } from '@/ui';
+import { PageHeader } from '@/app/PageHeader';
+import { Screen } from '@/app/Screen';
 import { todayISO } from '@/lib/format';
 import { platform } from '@/platform/platform';
 import { notifications } from '@/platform/notifications';
@@ -17,7 +19,6 @@ const INTERVALS = [30, 45, 60, 90, 120];
 /** Full "Water tracking" screen — drop grid + reminder + daily goal stats. */
 export function WaterPage() {
   const t = useT();
-  const navigate = useNavigate();
   const today = todayISO();
 
   const settings = useLiveQuery(() => readSettings(), [], undefined);
@@ -38,13 +39,18 @@ export function WaterPage() {
   const cols = total <= 6 ? total : Math.ceil(total / 2);
   const dropSize = cols <= 5 ? 52 : cols <= 6 ? 46 : 38;
 
-  // Average / minimum / maximum daily intake (l/d) over days with any intake.
+  // Average / minimum / maximum daily intake (l) over the last 30 days that had
+  // any intake — computed from real logs, so it varies with the user's history.
   const stats = useMemo(() => {
-    const days = (waters ?? []).map((w) => w.ml / 1000).filter((v) => v > 0);
-    if (days.length === 0) return { avg: goalMl / 1000, min: goalMl / 1000, max: goalMl / 1000 };
+    const cutoff = todayISO(subDays(new Date(), 30));
+    const days = (waters ?? [])
+      .filter((w) => w.date >= cutoff)
+      .map((w) => w.ml / 1000)
+      .filter((v) => v > 0);
+    if (days.length === 0) return { avg: 0, min: 0, max: 0, n: 0 };
     const avg = days.reduce((a, b) => a + b, 0) / days.length;
-    return { avg, min: Math.min(...days), max: Math.max(...days) };
-  }, [waters, goalMl]);
+    return { avg, min: Math.min(...days), max: Math.max(...days), n: days.length };
+  }, [waters]);
 
   function setGlasses(n: number) {
     platform.haptic();
@@ -69,21 +75,11 @@ export function WaterPage() {
   const fmtL = (n: number) => `${n.toFixed(1).replace(/\.0$/, '')} l/d`;
 
   return (
-    <div className="min-h-[100dvh] bg-app">
-      <div className="max-w-2xl mx-auto px-5 pt-safe-top pb-[calc(108px+env(safe-area-inset-bottom))] min-h-[100dvh] flex flex-col">
-        {/* Top bar */}
-        <div className="flex items-center justify-between h-14 pt-2">
-          <button onClick={() => navigate(-1)} aria-label={t('common.close')} className="h-10 w-10 rounded-full border-2 border-dashed border-line flex items-center justify-center text-ink-2 active:scale-90 transition-transform">
-            <X size={18} />
-          </button>
-          <span className="text-[15px] font-bold text-ink">{t('water.screen.title')}</span>
-          <button onClick={() => navigate(-1)} aria-label={t('common.done')} className="h-10 w-10 rounded-full bg-section flex items-center justify-center text-ink active:scale-90 transition-transform">
-            <Check size={18} />
-          </button>
-        </div>
-
+    <>
+      <PageHeader title={t('water.screen.title')} />
+      <Screen>
         {/* Today */}
-        <div className="mt-4">
+        <div>
           <div className="text-[15px] font-semibold text-ink-2">{t('water.screen.today')}</div>
           <h1 className="text-[34px] font-extrabold text-ink leading-tight mt-1">
             {done} <span className="text-ink-3 font-bold">{t('water.screen.of')}</span> {total} {t('water.screen.glasses')}
@@ -136,16 +132,13 @@ export function WaterPage() {
           </div>
         )}
 
-        {/* push the goal + button toward the bottom so the screen feels full */}
-        <div className="flex-1 min-h-[24px]" />
-
         {/* Daily goal */}
-        <div className="rounded-card p-4 relative overflow-hidden" style={{ background: 'color-mix(in srgb, #0EA5E9 14%, transparent)' }}>
+        <div className="rounded-card p-4 mt-7 relative overflow-hidden" style={{ background: 'color-mix(in srgb, #0EA5E9 14%, transparent)' }}>
           <div className="text-[16px] font-extrabold text-ink">{t('water.screen.dailyGoal', { n: total })}</div>
           <div className="flex gap-6 mt-3">
-            <GoalStat value={fmtL(stats.avg)} label={t('water.screen.average')} />
-            <GoalStat value={fmtL(stats.min)} label={t('water.screen.minimum')} />
-            <GoalStat value={fmtL(stats.max)} label={t('water.screen.maximum')} />
+            <GoalStat value={stats.n ? fmtL(stats.avg) : '—'} label={t('water.screen.average')} />
+            <GoalStat value={stats.n ? fmtL(stats.min) : '—'} label={t('water.screen.minimum')} />
+            <GoalStat value={stats.n ? fmtL(stats.max) : '—'} label={t('water.screen.maximum')} />
           </div>
           <Droplet size={90} className="absolute -right-3 -bottom-3 opacity-20" style={{ color: WATER }} fill={WATER} />
         </div>
@@ -159,11 +152,11 @@ export function WaterPage() {
         <button onClick={() => setGoalOpen(true)} className="mt-3 w-full h-[52px] rounded-full bg-ink text-app font-bold text-[15px] active:scale-[0.98] transition-transform">
           {t('water.screen.changeGoal')}
         </button>
-      </div>
+      </Screen>
 
       <WaterGoalSheet open={goalOpen} onClose={() => setGoalOpen(false)} goalMl={goalMl} glassMl={glassMl} />
       <HydrationCalcSheet open={calcOpen} onClose={() => setCalcOpen(false)} glassMl={glassMl} />
-    </div>
+    </>
   );
 }
 

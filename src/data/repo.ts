@@ -220,6 +220,7 @@ export async function createHabit(data: Partial<Habit> & { name: string }) {
   const habit: Habit = {
     id: uid('hbt_'),
     name: data.name,
+    recId: data.recId,
     color: data.color ?? 'var(--c-habit)',
     icon: data.icon ?? 'CircleCheck',
     frequency: data.frequency ?? { type: 'daily' },

@@ -110,11 +110,12 @@ export async function seedDemoData(name = 'Samuele') {
   await createTask({ title: C.tasksInbox[1], status: 'todo', priority: 'low' });
 
   // -- Habits + logs --------------------------------------------------------
+  // Tie the demo habits to recommended ids so their names follow the app language.
   const habits = [
-    await createHabit({ name: C.habits[0], color: '#0EA5E9', frequency: { type: 'daily' } }),
-    await createHabit({ name: C.habits[1], color: '#F59E0B', frequency: { type: 'daily' } }),
-    await createHabit({ name: C.habits[2], color: '#7C3AED', frequency: { type: 'daily' } }),
-    await createHabit({ name: C.habits[3], color: '#FF6B57', frequency: { type: 'times_per_week', timesPerWeek: 3 } }),
+    await createHabit({ name: C.habits[0], recId: 'water', color: '#0EA5E9', frequency: { type: 'daily' } }),
+    await createHabit({ name: C.habits[1], recId: 'read', color: '#F59E0B', frequency: { type: 'daily' } }),
+    await createHabit({ name: C.habits[2], recId: 'meditate', color: '#7C3AED', frequency: { type: 'daily' } }),
+    await createHabit({ name: C.habits[3], recId: 'gym', color: '#FF6B57', frequency: { type: 'times_per_week', timesPerWeek: 3 } }),
   ];
   // Generate ~45 days of logs with realistic completion rates per habit.
   const completion = [0.92, 0.78, 0.65, 0.5];

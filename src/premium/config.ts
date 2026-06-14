@@ -29,7 +29,7 @@ export const ONE_TIME_PRODUCT_IDS = {
 export const PERSONALITY_PRICE_FALLBACK = '€3,99';
 
 /** Free trial length (must match the Introductory Offer in App Store Connect). */
-export const TRIAL_DAYS = 7;
+export const TRIAL_DAYS = 3;
 
 /** Yearly savings vs paying monthly (badge). 3,99×12=47,88 → 29,99 ≈ 37% off. */
 export const YEARLY_SAVINGS_PCT = 37;

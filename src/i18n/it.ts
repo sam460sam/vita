@@ -840,6 +840,36 @@ export const it = {
   'onboard.notify.desc': 'Un promemoria gentile al mattino e un avviso la sera se rischi di perdere lo streak.',
   'onboard.notify.toggle': 'Attiva i promemoria giornalieri',
   'onboard.notify.hint': 'Puoi cambiarli o disattivarli quando vuoi dalle Impostazioni.',
+  'onboard.notify.trialNote': 'Ti avviseremo quando i {n} giorni di prova stanno per finire.',
+  // Personal questions
+  'onboard.gender.title': 'Come ti identifichi?',
+  'onboard.gender.desc': 'Ci aiuta a personalizzare i consigli. Puoi saltare.',
+  'onboard.gender.male': 'Uomo',
+  'onboard.gender.female': 'Donna',
+  'onboard.gender.other': 'Altro',
+  'onboard.gender.na': 'Preferisco non dirlo',
+  'onboard.goal.title': 'Qual è il tuo obiettivo principale?',
+  'onboard.goal.desc': 'Così Vyta si adatta a ciò che conta davvero per te.',
+  'onboard.goal.feel_better': 'Sentirmi meglio fisicamente',
+  'onboard.goal.get_organized': 'Essere più organizzato',
+  'onboard.goal.reduce_stress': 'Ridurre lo stress',
+  'onboard.goal.build_consistency': 'Costruire costanza e disciplina',
+  'onboard.goal.reach_goal': 'Raggiungere un obiettivo preciso',
+  // Free-trial intro
+  'onboard.trial.title': 'Prova Vyta Pro gratis',
+  'onboard.trial.desc': 'Sblocca tutto per {n} giorni, gratis. Nessun addebito durante la prova.',
+  'onboard.trial.b1': 'Finanze, obiettivi e calendario',
+  'onboard.trial.b2': 'Statistiche avanzate e tutto Vyta Pro',
+  'onboard.trial.b3': 'Disdici quando vuoi prima della fine',
+  'onboard.trial.cta': 'Continua',
+  // Rating
+  'rate.title': 'Ti piace Vyta?',
+  'rate.desc': 'Una tua recensione ci aiuta tantissimo a crescere. Bastano pochi secondi.',
+  'rate.cta': 'Vota su App Store',
+  'more.rate': 'Vota la nostra app',
+  // Trial-ending local notification
+  'reminder.trialEnd.title': 'La tua prova sta per finire',
+  'reminder.trialEnd.body': 'I tuoi {n} giorni gratis di Vyta Pro stanno per terminare — continua a goderti tutte le funzioni.',
 
   // Personalisation — module descriptions
   'module.abitudini.desc': 'Costruisci routine e streak',

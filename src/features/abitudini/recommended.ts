@@ -1,5 +1,5 @@
 import type { TKey } from '@/i18n';
-import type { HabitFrequency } from '@/data/types';
+import type { Habit, HabitFrequency } from '@/data/types';
 
 /** A starter habit the user can opt into during onboarding. */
 export interface RecommendedHabit {
@@ -24,4 +24,22 @@ export const RECOMMENDED_HABITS: RecommendedHabit[] = [
   { id: 'sun', labelKey: 'rec.sun', icon: 'Sun', color: '#FBBF24', frequency: { type: 'daily' } },
   { id: 'coffee', labelKey: 'rec.coffee', icon: 'Coffee', color: '#B45309', frequency: { type: 'daily' } },
 ];
+
+/** Lookup a recommended habit by its id. */
+export const RECOMMENDED_BY_ID: Record<string, RecommendedHabit> = Object.fromEntries(
+  RECOMMENDED_HABITS.map((r) => [r.id, r]),
+);
+
+/**
+ * Display name for a habit. Built-in (recommended) habits carry a `recId` and
+ * re-localize via the i18n key, so their name follows the app language. Habits
+ * the user typed keep their literal name.
+ */
+export function habitDisplayName(habit: Pick<Habit, 'name' | 'recId'>, t: (k: TKey) => string): string {
+  if (habit.recId) {
+    const rec = RECOMMENDED_BY_ID[habit.recId];
+    if (rec) return t(rec.labelKey);
+  }
+  return habit.name;
+}
 

@@ -13,6 +13,7 @@ import { todayISO, longDate } from '@/lib/format';
 import { computeMomentum, stellaMood, momentumMessageKey, getStreakState } from '@/features/oggi/momentum';
 import { todayRings, ringsToData, mergeHealthRings } from '@/features/attivita/logic';
 import { isScheduled, isDone, currentStreak } from '@/features/abitudini/logic';
+import { habitDisplayName } from '@/features/abitudini/recommended';
 import { RECOMMENDED_HABITS } from '@/features/abitudini/recommended';
 import { useHealthSummary } from '@/platform/health';
 import { AFFIRMATIONS } from '@/features/oggi/coach';
@@ -151,7 +152,7 @@ export function HomeDashboard() {
     const habitData = (habits ?? [])
       .filter((h) => !h.archived)
       .slice(0, 6)
-      .map((h) => ({ name: h.name, color: h.color, week: weekDays.map((d) => enc(h, d)), heat: heatDays.map((d) => enc(h, d)) }));
+      .map((h) => ({ name: habitDisplayName(h, t), color: h.color, week: weekDays.map((d) => enc(h, d)), heat: heatDays.map((d) => enc(h, d)) }));
 
     void syncWidgetData({
       water: { ml: todayWater?.ml ?? 0, goalMl: s.water.dailyGoalMl, glassMl: s.water.glassMl || 200 },
@@ -197,7 +198,7 @@ export function HomeDashboard() {
 
   async function addSuggested(rec: (typeof RECOMMENDED_HABITS)[number]) {
     platform.haptic();
-    await createHabit({ name: t(rec.labelKey), color: rec.color, icon: rec.icon, frequency: rec.frequency });
+    await createHabit({ name: t(rec.labelKey), recId: rec.id, color: rec.color, icon: rec.icon, frequency: rec.frequency });
     toast.show(t('home.habitAdded'));
   }
 
@@ -424,7 +425,7 @@ function RoutineRow({ habit, logs, today, t }: { habit: Habit; logs: HabitLog[];
         <Icon name={habit.icon} size={20} />
       </span>
       <div className="min-w-0 flex-1">
-        <div className={done ? 'text-[15px] font-semibold text-ink-3 line-through truncate' : 'text-[15px] font-semibold text-ink truncate'}>{habit.name}</div>
+        <div className={done ? 'text-[15px] font-semibold text-ink-3 line-through truncate' : 'text-[15px] font-semibold text-ink truncate'}>{habitDisplayName(habit, t)}</div>
         <div className="flex items-center gap-1 text-[12px] text-ink-2 mt-0.5">
           {streak > 0 ? (
             <>
@@ -438,7 +439,7 @@ function RoutineRow({ habit, logs, today, t }: { habit: Habit; logs: HabitLog[];
       </div>
       <button
         onClick={toggle}
-        aria-label={habit.name}
+        aria-label={habitDisplayName(habit, t)}
         aria-pressed={done}
         className="h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 transition-transform active:scale-90"
         style={{ background: done ? color : 'transparent', border: done ? 'none' : '2px solid var(--c-line)' }}

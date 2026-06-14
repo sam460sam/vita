@@ -11,7 +11,7 @@ import { todayISO, activeDfnLocale } from '@/lib/format';
 import { platform } from '@/platform/platform';
 import { HabitForm } from './HabitForm';
 import { Heatmap } from './Heatmap';
-import { RECOMMENDED_HABITS } from './recommended';
+import { RECOMMENDED_HABITS, habitDisplayName } from './recommended';
 import { currentStreak, heatmapData, isDone } from './logic';
 import type { Habit } from '@/data/types';
 import { useT } from '@/i18n';
@@ -34,12 +34,13 @@ export function HabitsPage() {
   const active = (habits ?? []).filter((h) => !h.archived);
   const completedToday = active.filter((h) => isDone(logs ?? [], h.id, today)).length;
 
-  // Recommended habits the user hasn't added yet (match by translated name).
-  const existingNames = new Set(active.map((h) => h.name));
-  const suggestions = RECOMMENDED_HABITS.filter((r) => !existingNames.has(t(r.labelKey)));
+  // Recommended habits the user hasn't added yet (match by recId, else name).
+  const existingRecIds = new Set(active.map((h) => h.recId).filter(Boolean));
+  const existingNames = new Set(active.map((h) => habitDisplayName(h, t)));
+  const suggestions = RECOMMENDED_HABITS.filter((r) => !existingRecIds.has(r.id) && !existingNames.has(t(r.labelKey)));
   async function addSuggested(rec: (typeof RECOMMENDED_HABITS)[number]) {
     platform.haptic();
-    await createHabit({ name: t(rec.labelKey), color: rec.color, icon: rec.icon, frequency: rec.frequency });
+    await createHabit({ name: t(rec.labelKey), recId: rec.id, color: rec.color, icon: rec.icon, frequency: rec.frequency });
     toast.show(t('home.habitAdded'));
   }
 
@@ -52,7 +53,7 @@ export function HabitsPage() {
     setFormOpen(true);
   }
   async function remove(h: Habit) {
-    if (confirm(t('habits.deleteConfirm', { name: h.name }))) await deleteHabit(h.id);
+    if (confirm(t('habits.deleteConfirm', { name: habitDisplayName(h, t) }))) await deleteHabit(h.id);
   }
 
   return (
@@ -135,7 +136,7 @@ export function HabitsPage() {
                           <span style={{ color: h.color }} className="flex-shrink-0">
                             <Icon name={h.icon} size={16} strokeWidth={2.5} />
                           </span>
-                          <span className="text-[15px] font-bold text-ink truncate">{h.name}</span>
+                          <span className="text-[15px] font-bold text-ink truncate">{habitDisplayName(h, t)}</span>
                           {streak > 0 && (
                             <span className="inline-flex items-center gap-0.5 text-[11px] font-bold text-streak flex-shrink-0">
                               <Flame size={11} />{streak}

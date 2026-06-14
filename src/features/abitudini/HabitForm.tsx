@@ -5,6 +5,7 @@ import { cn } from '@/lib/cn';
 import { createHabit, updateHabit, deleteHabit } from '@/data/repo';
 import { notifications } from '@/platform/notifications';
 import type { Habit, HabitFrequencyType } from '@/data/types';
+import { habitDisplayName } from './recommended';
 import { useT } from '@/i18n';
 import { activeDfnLocale } from '@/lib/format';
 
@@ -42,7 +43,7 @@ export function HabitForm({
 
   useEffect(() => {
     if (open) {
-      setName(habit?.name ?? '');
+      setName(habit ? habitDisplayName(habit, t) : '');
       setColor(habit?.color ?? COLORS[0]);
       setFreqType(habit?.frequency.type ?? 'daily');
       setTimesPerWeek(String(habit?.frequency.timesPerWeek ?? 3));
@@ -60,7 +61,10 @@ export function HabitForm({
     };
     let habitId: string;
     if (editing && habit) {
-      await updateHabit(habit.id, { name: name.trim(), color, frequency, reminder: reminder || undefined });
+      // If the user renamed a built-in habit, it becomes a custom one (drop recId
+      // so the typed name sticks instead of re-localizing).
+      const recId = habit.recId && name.trim() !== habitDisplayName(habit, t) ? undefined : habit.recId;
+      await updateHabit(habit.id, { name: name.trim(), recId, color, frequency, reminder: reminder || undefined });
       habitId = habit.id;
       toast.show(t('habitForm.updated'));
     } else {

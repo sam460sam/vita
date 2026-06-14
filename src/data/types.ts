@@ -129,6 +129,10 @@ export interface Settings {
   };
   /** What the user mainly wants from Vita (set in onboarding). Drives nudges. */
   focus?: 'health' | 'productivity' | 'wellbeing' | 'all';
+  /** Optional personal details from onboarding (kept on-device only). */
+  gender?: 'male' | 'female' | 'other' | 'na';
+  /** The user's main personal goal/motivation (onboarding). */
+  goal?: 'feel_better' | 'get_organized' | 'reduce_stress' | 'build_consistency' | 'reach_goal';
   /**
    * Personalisation — the modules the user chose as interests, and their order
    * in navigation. `undefined` means "not chosen yet" → treated as all enabled
@@ -186,6 +190,9 @@ export interface HabitFrequency {
 
 export interface Habit extends Timestamped {
   name: string;
+  /** For built-in (recommended) habits: the recommended id, so the name can be
+   *  re-localized on display. Custom habits leave this undefined. */
+  recId?: string;
   color: string;
   icon: string; // lucide icon name
   frequency: HabitFrequency;

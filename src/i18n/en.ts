@@ -837,6 +837,36 @@ export const en: Record<TKey, string> = {
   'onboard.notify.desc': 'A gentle reminder in the morning and a heads-up in the evening if your streak is at risk.',
   'onboard.notify.toggle': 'Turn on daily reminders',
   'onboard.notify.hint': 'You can change or turn them off anytime in Settings.',
+  'onboard.notify.trialNote': 'We’ll let you know when your {n}-day trial is about to end.',
+  // Personal questions
+  'onboard.gender.title': 'How do you identify?',
+  'onboard.gender.desc': 'Helps us tailor tips. You can skip this.',
+  'onboard.gender.male': 'Male',
+  'onboard.gender.female': 'Female',
+  'onboard.gender.other': 'Other',
+  'onboard.gender.na': 'Prefer not to say',
+  'onboard.goal.title': 'What’s your main goal?',
+  'onboard.goal.desc': 'So Vyta adapts to what matters most to you.',
+  'onboard.goal.feel_better': 'Feel better physically',
+  'onboard.goal.get_organized': 'Get more organized',
+  'onboard.goal.reduce_stress': 'Reduce stress',
+  'onboard.goal.build_consistency': 'Build consistency & discipline',
+  'onboard.goal.reach_goal': 'Reach a specific goal',
+  // Free-trial intro
+  'onboard.trial.title': 'Try Vyta Pro free',
+  'onboard.trial.desc': 'Unlock everything for {n} days, free. No charge during the trial.',
+  'onboard.trial.b1': 'Finances, goals and calendar',
+  'onboard.trial.b2': 'Advanced stats and all of Vyta Pro',
+  'onboard.trial.b3': 'Cancel anytime before it ends',
+  'onboard.trial.cta': 'Continue',
+  // Rating
+  'rate.title': 'Enjoying Vyta?',
+  'rate.desc': 'A quick review helps us grow more than you think. It takes seconds.',
+  'rate.cta': 'Rate on the App Store',
+  'more.rate': 'Rate our app',
+  // Trial-ending local notification
+  'reminder.trialEnd.title': 'Your trial is ending soon',
+  'reminder.trialEnd.body': 'Your {n}-day Vyta Pro free trial is about to end — keep enjoying every feature.',
 
   // Personalisation — module descriptions
   'module.abitudini.desc': 'Build routines and streaks',

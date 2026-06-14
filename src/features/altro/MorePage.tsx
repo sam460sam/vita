@@ -6,6 +6,7 @@ import { Screen } from '@/app/Screen';
 import { Card, Divider } from '@/ui';
 import { useT } from '@/i18n';
 import { BackupCard } from '@/features/backup';
+import { RateCard } from '@/features/rating/rating';
 
 export function MorePage() {
   const t = useT();
@@ -56,6 +57,11 @@ export function MorePage() {
             <ChevronRight size={18} className="text-ink-3" />
           </Link>
         </Card>
+
+        {/* Rate the app — links straight to the App Store */}
+        <div className="mt-4">
+          <RateCard />
+        </div>
 
         {/* Backup & restore (moved here from the Home banner) */}
         <div className="mt-4">

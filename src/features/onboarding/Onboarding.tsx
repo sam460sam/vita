@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star, ChevronLeft, Sun, Moon, Bell } from 'lucide-react';
+import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star, ChevronLeft, Sun, Moon, Bell, Crown, UserRound, Target } from 'lucide-react';
 import { Button, Input } from '@/ui';
 import { StarMascot } from '@/ui/StarMascot';
 import { useI18n, LANGS, type Lang, type TKey } from '@/i18n';
@@ -7,8 +7,14 @@ import { useTheme } from '@/theme/theme';
 import { notifications } from '@/platform/notifications';
 import { createHabit, updateSettings } from '@/data/repo';
 import { RECOMMENDED_HABITS } from '@/features/abitudini/recommended';
-import { ALL_MODULES, type ModuleId } from '@/data/types';
+import { ALL_MODULES, type ModuleId, type Settings } from '@/data/types';
 import { MODULE_LIST } from '@/features/personalizzazione/modules';
+import { Paywall } from '@/premium/SubscriptionGate';
+import { TRIAL_DAYS } from '@/premium/config';
+
+const GOLD = '#C9A227';
+type Gender = NonNullable<Settings['gender']>;
+type Goal = NonNullable<Settings['goal']>;
 
 type Focus = 'health' | 'productivity' | 'wellbeing' | 'all';
 
@@ -54,8 +60,13 @@ export function resetOnboarding() {
   }
 }
 
-type Step = 'lang' | 'welcome1' | 'intro' | 'focus' | 'modules' | 'habits' | 'name' | 'notify' | 'aha';
-const STEPS: Step[] = ['lang', 'welcome1', 'intro', 'focus', 'modules', 'habits', 'name', 'notify', 'aha'];
+type Step =
+  | 'lang' | 'welcome1' | 'intro' | 'focus' | 'gender' | 'goal' | 'modules' | 'habits' | 'name' | 'aha'
+  // Mandatory monetization sequence at the end: trial → notify → paywall.
+  | 'trial' | 'notify' | 'paywall';
+const STEPS: Step[] = ['lang', 'welcome1', 'intro', 'focus', 'gender', 'goal', 'modules', 'habits', 'name', 'aha', 'trial', 'notify', 'paywall'];
+/** Steps the user can't skip (the trial/paywall flow). */
+const NO_SKIP: Step[] = ['trial', 'notify', 'paywall'];
 
 /** First-run onboarding: language → welcome → focus → sections → habits → name → aha. */
 export function Onboarding({ onDone }: { onDone: () => void }) {
@@ -68,6 +79,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const [customHabits, setCustomHabits] = useState<string[]>([]);
   const [wantNotif, setWantNotif] = useState(true);
+  const [gender, setGender] = useState<Gender>();
+  const [goal, setGoal] = useState<Goal>();
 
   const step = STEPS[stepIdx];
   const isLast = stepIdx === STEPS.length - 1;
@@ -82,19 +95,26 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
     setCommitted(true);
     for (const id of picked) {
       const rec = RECOMMENDED_HABITS.find((r) => r.id === id);
-      if (rec) await createHabit({ name: t(rec.labelKey), color: rec.color, frequency: rec.frequency });
+      if (rec) await createHabit({ name: t(rec.labelKey), recId: rec.id, icon: rec.icon, color: rec.color, frequency: rec.frequency });
     }
     for (const n of customHabits) await createHabit({ name: n, frequency: { type: 'daily' } });
-    // Opt-in to daily reminders: ask permission + schedule a gentle morning nudge.
+    // Opt-in to daily reminders: ask permission + schedule a gentle morning nudge
+    // and a heads-up shortly before the free trial ends.
     if (wantNotif) {
       if (notifications.supported()) await notifications.requestPermission();
       await notifications.setDailyReminder('motivation', t('reminder.motivation.title'), t('reminder.motivation.body'), '09:00');
+      if (notifications.supported()) {
+        const at = new Date(Date.now() + Math.max(1, TRIAL_DAYS - 1) * 86_400_000);
+        await notifications.scheduleAt('trialEnd', t('reminder.trialEnd.title'), t('reminder.trialEnd.body', { n: TRIAL_DAYS }), at);
+      }
     }
-    // Persist chosen interests (in canonical order) alongside name + focus.
+    // Persist chosen interests (in canonical order) alongside name + focus + personal answers.
     const selected = ALL_MODULES.filter((m) => modules.has(m));
     await updateSettings({
       name: name.trim() || undefined,
       focus: primaryFocus,
+      gender,
+      goal,
       enabledModules: selected,
       moduleOrder: selected,
       reminders: wantNotif ? { motivation: '09:00' } : {},
@@ -153,6 +173,16 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
     onDone();
   }
 
+  // Final step: the paywall takes over the whole screen (its own layout). Closing
+  // it (X) or subscribing both finish onboarding and enter the app.
+  if (step === 'paywall') {
+    return (
+      <div className="fixed inset-0 z-[70] bg-app overflow-y-auto">
+        <Paywall onClose={() => void finish()} />
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 z-[70] bg-app flex flex-col pt-safe-top pb-safe-bottom animate-fade-in overflow-hidden">
       {/* warm sunrise glow */}
@@ -177,7 +207,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
           >
             {resolved === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </button>
-          {step !== 'lang' && (
+          {step !== 'lang' && !NO_SKIP.includes(step) && (
             <button onClick={skip} className="text-[14px] font-semibold text-ink-3 px-3 py-2">
               {t('onboard.skip')}
             </button>
@@ -198,6 +228,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         )}
         {step === 'intro' && <IntroStep />}
         {step === 'focus' && <FocusStep value={focusSet} onToggle={toggleFocus} />}
+        {step === 'gender' && <GenderStep value={gender} onPick={setGender} />}
+        {step === 'goal' && <GoalStep value={goal} onPick={setGoal} />}
         {step === 'modules' && <ModulesStep selected={modules} onToggle={toggleModule} />}
         {step === 'habits' && (
           <HabitsStep picked={picked} onToggle={toggleHabit} customHabits={customHabits} setCustomHabits={setCustomHabits} />
@@ -215,6 +247,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
             </div>
           </div>
         )}
+        {step === 'trial' && <TrialStep />}
         {step === 'notify' && <NotifyStep value={wantNotif} onChange={setWantNotif} />}
         {step === 'aha' && <AhaStep name={name} focus={primaryFocus} habitCount={totalPicked} />}
       </div>
@@ -234,11 +267,13 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         <Button block size="lg" disabled={(step === 'modules' && modules.size === 0) || (step === 'focus' && focusSet.size === 0)} onClick={() => (isLast ? finish() : next())}>
           {isLast
             ? t('onboard.start')
-            : step === 'habits'
-              ? `${t('onboard.next')}${totalPicked ? ` (${totalPicked})` : ''}`
-              : step === 'modules'
-                ? `${t('onboard.next')}${modules.size ? ` (${modules.size})` : ''}`
-                : t('onboard.next')}
+            : step === 'trial'
+              ? t('onboard.trial.cta')
+              : step === 'habits'
+                ? `${t('onboard.next')}${totalPicked ? ` (${totalPicked})` : ''}`
+                : step === 'modules'
+                  ? `${t('onboard.next')}${modules.size ? ` (${modules.size})` : ''}`
+                  : t('onboard.next')}
         </Button>
       </div>
     </div>
@@ -286,6 +321,99 @@ function FocusStep({ value, onToggle }: { value: Set<Focus>; onToggle: (f: Focus
             </button>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+/** A single-select list row (used by the personal-question steps). */
+function ChoiceRow({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center justify-between px-4 h-14 rounded-card bg-card shadow-chip transition-all active:scale-[0.99]"
+      style={{ boxShadow: selected ? '0 0 0 2.5px var(--c-primary), 0 4px 14px rgba(22,163,74,0.18)' : undefined }}
+    >
+      <span className="text-[15px] font-semibold text-ink text-left">{label}</span>
+      {selected && (
+        <span className="h-6 w-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+          <Check size={15} className="text-white" strokeWidth={3} />
+        </span>
+      )}
+    </button>
+  );
+}
+
+const GENDER_OPTS: { value: Gender; key: TKey }[] = [
+  { value: 'male', key: 'onboard.gender.male' },
+  { value: 'female', key: 'onboard.gender.female' },
+  { value: 'other', key: 'onboard.gender.other' },
+  { value: 'na', key: 'onboard.gender.na' },
+];
+
+function GenderStep({ value, onPick }: { value?: Gender; onPick: (g: Gender) => void }) {
+  const { t } = useI18n();
+  return (
+    <div className="flex flex-col items-center text-center pt-6">
+      <span className="h-24 w-24 rounded-[28px] flex items-center justify-center mb-6 text-primary" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
+        <UserRound size={44} />
+      </span>
+      <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.gender.title')}</h1>
+      <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.gender.desc')}</p>
+      <div className="w-full max-w-xs mt-7 space-y-2.5">
+        {GENDER_OPTS.map((o) => (
+          <ChoiceRow key={o.value} label={t(o.key)} selected={value === o.value} onClick={() => onPick(o.value)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const GOAL_OPTS: { value: Goal; key: TKey }[] = [
+  { value: 'feel_better', key: 'onboard.goal.feel_better' },
+  { value: 'get_organized', key: 'onboard.goal.get_organized' },
+  { value: 'reduce_stress', key: 'onboard.goal.reduce_stress' },
+  { value: 'build_consistency', key: 'onboard.goal.build_consistency' },
+  { value: 'reach_goal', key: 'onboard.goal.reach_goal' },
+];
+
+function GoalStep({ value, onPick }: { value?: Goal; onPick: (g: Goal) => void }) {
+  const { t } = useI18n();
+  return (
+    <div className="flex flex-col items-center text-center pt-6">
+      <span className="h-24 w-24 rounded-[28px] flex items-center justify-center mb-6 text-primary" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
+        <Target size={44} />
+      </span>
+      <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.goal.title')}</h1>
+      <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.goal.desc')}</p>
+      <div className="w-full max-w-xs mt-7 space-y-2.5">
+        {GOAL_OPTS.map((o) => (
+          <ChoiceRow key={o.value} label={t(o.key)} selected={value === o.value} onClick={() => onPick(o.value)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TrialStep() {
+  const { t } = useI18n();
+  const bullets: TKey[] = ['onboard.trial.b1', 'onboard.trial.b2', 'onboard.trial.b3'];
+  return (
+    <div className="flex flex-col items-center text-center pt-6">
+      <span className="h-24 w-24 rounded-[28px] flex items-center justify-center mb-6" style={{ background: `${GOLD}1f`, color: GOLD }}>
+        <Crown size={44} fill={GOLD} />
+      </span>
+      <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.trial.title')}</h1>
+      <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.trial.desc', { n: TRIAL_DAYS })}</p>
+      <div className="w-full max-w-xs mt-7 space-y-2.5 text-left">
+        {bullets.map((b) => (
+          <div key={b} className="flex items-center gap-3 bg-card shadow-chip rounded-card px-4 py-3.5">
+            <span className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: GOLD }}>
+              <Check size={14} className="text-white" strokeWidth={3} />
+            </span>
+            <span className="text-[14px] font-semibold text-ink">{t(b)}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -380,6 +508,7 @@ function NotifyStep({ value, onChange }: { value: boolean; onChange: (v: boolean
         </span>
       </button>
       <p className="text-[12px] text-ink-3 mt-3 max-w-xs">{t('onboard.notify.hint')}</p>
+      <p className="text-[12px] font-semibold mt-2 max-w-xs" style={{ color: GOLD }}>{t('onboard.notify.trialNote', { n: TRIAL_DAYS })}</p>
     </div>
   );
 }
