@@ -168,6 +168,16 @@ h3:not(.uppercase),
   letter-spacing: -0.015em;
 }
 
+/* Editorial touch: serif titles read better a little lighter than the default
+   extrabold/bold utilities (these chained selectors out-rank the utility). */
+h1.font-extrabold, h1.font-bold,
+h2.font-extrabold, h2.font-bold,
+h3.font-extrabold, h3.font-bold,
+.display-serif.font-extrabold, .display-serif.font-bold,
+.ob-content h1.font-extrabold, .ob-content h1.font-bold {
+  font-weight: 600;
+}
+
 #root {
   position: absolute;
   inset: 0;
