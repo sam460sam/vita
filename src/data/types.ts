@@ -130,7 +130,7 @@ export interface Settings {
   /** What the user mainly wants from Vita (set in onboarding). Drives nudges. */
   focus?: 'health' | 'productivity' | 'wellbeing' | 'all';
   /** Optional personal details from onboarding (kept on-device only). */
-  gender?: 'male' | 'female' | 'other' | 'na';
+  age?: number;
   /** The user's main personal goal/motivation (onboarding). */
   goal?: 'feel_better' | 'get_organized' | 'reduce_stress' | 'build_consistency' | 'reach_goal';
   /**

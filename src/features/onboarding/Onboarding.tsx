@@ -1,19 +1,20 @@
 import { useState } from 'react';
-import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star, ChevronLeft, Sun, Moon, Bell, Crown, UserRound, Target } from 'lucide-react';
-import { Button, Input } from '@/ui';
+import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star, ChevronLeft, Sun, Moon, Bell, Crown, UserRound, Target, Droplet } from 'lucide-react';
+import { Button, Input, Segmented } from '@/ui';
 import { StarMascot } from '@/ui/StarMascot';
 import { useI18n, LANGS, type Lang, type TKey } from '@/i18n';
 import { useTheme } from '@/theme/theme';
 import { notifications } from '@/platform/notifications';
-import { createHabit, updateSettings } from '@/data/repo';
+import { createHabit, updateSettings, readSettings } from '@/data/repo';
 import { RECOMMENDED_HABITS } from '@/features/abitudini/recommended';
 import { ALL_MODULES, type ModuleId, type Settings } from '@/data/types';
 import { MODULE_LIST } from '@/features/personalizzazione/modules';
 import { Paywall } from '@/premium/SubscriptionGate';
 import { TRIAL_DAYS } from '@/premium/config';
+import { recommendedWaterMl, ACTIVITY_ML, type ActivityLevel } from '@/features/acqua/WaterPage';
 
 const GOLD = '#C9A227';
-type Gender = NonNullable<Settings['gender']>;
+const WATER = '#0EA5E9';
 type Goal = NonNullable<Settings['goal']>;
 
 type Focus = 'health' | 'productivity' | 'wellbeing' | 'all';
@@ -61,10 +62,10 @@ export function resetOnboarding() {
 }
 
 type Step =
-  | 'lang' | 'welcome1' | 'intro' | 'focus' | 'gender' | 'goal' | 'modules' | 'habits' | 'name' | 'aha'
+  | 'lang' | 'welcome1' | 'intro' | 'focus' | 'personal' | 'water' | 'goal' | 'modules' | 'habits' | 'name' | 'aha'
   // Mandatory monetization sequence at the end: trial → notify → paywall.
   | 'trial' | 'notify' | 'paywall';
-const STEPS: Step[] = ['lang', 'welcome1', 'intro', 'focus', 'gender', 'goal', 'modules', 'habits', 'name', 'aha', 'trial', 'notify', 'paywall'];
+const STEPS: Step[] = ['lang', 'welcome1', 'intro', 'focus', 'personal', 'water', 'goal', 'modules', 'habits', 'name', 'aha', 'trial', 'notify', 'paywall'];
 /** Steps the user can't skip (the trial/paywall flow). */
 const NO_SKIP: Step[] = ['trial', 'notify', 'paywall'];
 
@@ -79,8 +80,16 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const [customHabits, setCustomHabits] = useState<string[]>([]);
   const [wantNotif, setWantNotif] = useState(true);
-  const [gender, setGender] = useState<Gender>();
   const [goal, setGoal] = useState<Goal>();
+  // Personal details (strings while editing) + activity level for the water test.
+  const [age, setAge] = useState('');
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
+  const [activity, setActivity] = useState<ActivityLevel>('light');
+
+  const weightNum = parseFloat(weight) || 0;
+  const heightNum = parseFloat(height) || 0;
+  const waterMl = weightNum > 0 && heightNum > 0 ? recommendedWaterMl(weightNum, heightNum, ACTIVITY_ML[activity]) : 0;
 
   const step = STEPS[stepIdx];
   const isLast = stepIdx === STEPS.length - 1;
@@ -108,13 +117,18 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         await notifications.scheduleAt('trialEnd', t('reminder.trialEnd.title'), t('reminder.trialEnd.body', { n: TRIAL_DAYS }), at);
       }
     }
-    // Persist chosen interests (in canonical order) alongside name + focus + personal answers.
+    // Persist chosen interests (in canonical order) alongside name + focus +
+    // personal answers + the calculated water goal. Merge nested objects so we
+    // don't drop defaults (unit, glass size).
     const selected = ALL_MODULES.filter((m) => modules.has(m));
+    const cur = await readSettings();
     await updateSettings({
       name: name.trim() || undefined,
       focus: primaryFocus,
-      gender,
+      age: parseInt(age) || undefined,
       goal,
+      body: { ...cur.body, heightCm: heightNum || cur.body.heightCm, startWeightKg: weightNum || cur.body.startWeightKg },
+      water: waterMl ? { ...cur.water, dailyGoalMl: waterMl } : cur.water,
       enabledModules: selected,
       moduleOrder: selected,
       reminders: wantNotif ? { motivation: '09:00' } : {},
@@ -228,7 +242,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         )}
         {step === 'intro' && <IntroStep />}
         {step === 'focus' && <FocusStep value={focusSet} onToggle={toggleFocus} />}
-        {step === 'gender' && <GenderStep value={gender} onPick={setGender} />}
+        {step === 'personal' && <PersonalStep age={age} setAge={setAge} weight={weight} setWeight={setWeight} height={height} setHeight={setHeight} />}
+        {step === 'water' && <WaterIntroStep weightKg={weightNum} heightCm={heightNum} activity={activity} setActivity={setActivity} ml={waterMl} />}
         {step === 'goal' && <GoalStep value={goal} onPick={setGoal} />}
         {step === 'modules' && <ModulesStep selected={modules} onToggle={toggleModule} />}
         {step === 'habits' && (
@@ -344,26 +359,76 @@ function ChoiceRow({ label, selected, onClick }: { label: string; selected: bool
   );
 }
 
-const GENDER_OPTS: { value: Gender; key: TKey }[] = [
-  { value: 'male', key: 'onboard.gender.male' },
-  { value: 'female', key: 'onboard.gender.female' },
-  { value: 'other', key: 'onboard.gender.other' },
-  { value: 'na', key: 'onboard.gender.na' },
-];
-
-function GenderStep({ value, onPick }: { value?: Gender; onPick: (g: Gender) => void }) {
+function PersonalStep({ age, setAge, weight, setWeight, height, setHeight }: {
+  age: string; setAge: (v: string) => void;
+  weight: string; setWeight: (v: string) => void;
+  height: string; setHeight: (v: string) => void;
+}) {
   const { t } = useI18n();
   return (
     <div className="flex flex-col items-center text-center pt-6">
       <span className="h-24 w-24 rounded-[28px] flex items-center justify-center mb-6 text-primary" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
         <UserRound size={44} />
       </span>
-      <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.gender.title')}</h1>
-      <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.gender.desc')}</p>
-      <div className="w-full max-w-xs mt-7 space-y-2.5">
-        {GENDER_OPTS.map((o) => (
-          <ChoiceRow key={o.value} label={t(o.key)} selected={value === o.value} onClick={() => onPick(o.value)} />
-        ))}
+      <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.personal.title')}</h1>
+      <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.personal.desc')}</p>
+      <div className="w-full max-w-xs mt-7 space-y-3 text-left">
+        <div>
+          <label className="block text-[13px] font-semibold text-ink-2 mb-1.5">{t('onboard.personal.age')}</label>
+          <Input type="number" inputMode="numeric" value={age} onChange={(e) => setAge(e.target.value)} placeholder={t('onboard.personal.agePh')} />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-[13px] font-semibold text-ink-2 mb-1.5">{t('onboard.personal.weight')}</label>
+            <Input type="number" inputMode="decimal" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="70" />
+          </div>
+          <div>
+            <label className="block text-[13px] font-semibold text-ink-2 mb-1.5">{t('onboard.personal.height')}</label>
+            <Input type="number" inputMode="numeric" value={height} onChange={(e) => setHeight(e.target.value)} placeholder="175" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WaterIntroStep({ weightKg, heightCm, activity, setActivity, ml }: {
+  weightKg: number; heightCm: number; activity: ActivityLevel; setActivity: (a: ActivityLevel) => void; ml: number;
+}) {
+  const { t } = useI18n();
+  const hasData = weightKg > 0 && heightCm > 0;
+  const liters = (ml / 1000).toFixed(1).replace(/\.0$/, '').replace('.', ',');
+  const glasses = Math.max(1, Math.round(ml / 200));
+  return (
+    <div className="flex flex-col items-center text-center pt-6">
+      <span className="h-24 w-24 rounded-[28px] flex items-center justify-center mb-6" style={{ background: `${WATER}1f`, color: WATER }}>
+        <Droplet size={44} fill={WATER} />
+      </span>
+      <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.water.title')}</h1>
+      <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.water.desc')}</p>
+
+      {hasData ? (
+        <div className="w-full max-w-xs mt-6 rounded-card p-5" style={{ background: `color-mix(in srgb, ${WATER} 12%, transparent)` }}>
+          <div className="text-[40px] font-extrabold text-ink leading-none tnum">{liters} <span className="text-[20px]">L</span></div>
+          <div className="text-[13px] text-ink-2 mt-1">{t('onboard.water.perDay', { n: glasses })}</div>
+        </div>
+      ) : (
+        <div className="w-full max-w-xs mt-6 rounded-card p-4 bg-card shadow-chip text-[13px] text-ink-2">{t('onboard.water.needData')}</div>
+      )}
+
+      <div className="w-full max-w-xs mt-5 text-left">
+        <label className="block text-[13px] font-semibold text-ink-2 mb-1.5">{t('onboard.water.activity')}</label>
+        <Segmented
+          className="w-full"
+          value={activity}
+          onChange={(v) => setActivity(v as ActivityLevel)}
+          options={[
+            { value: 'sedentary', label: t('water.calc.act.sedentary') },
+            { value: 'light', label: t('water.calc.act.light') },
+            { value: 'active', label: t('water.calc.act.active') },
+            { value: 'intense', label: t('water.calc.act.intense') },
+          ]}
+        />
       </div>
     </div>
   );
