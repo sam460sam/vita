@@ -96,14 +96,14 @@ export function SettingsPage() {
           <Field label={t('settings.name')}>
             <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('settings.namePh')} />
           </Field>
-          <div className="grid grid-cols-3 gap-3">
-            <Field label={t('settings.goal.move')}>
+          <div className="grid grid-cols-3 gap-3 items-end">
+            <Field label={t('settings.goal.move')} labelClassName="text-[12px] leading-tight">
               <Input type="number" inputMode="numeric" value={move} onChange={(e) => setMove(e.target.value)} />
             </Field>
-            <Field label={t('settings.goal.exercise')}>
+            <Field label={t('settings.goal.exercise')} labelClassName="text-[12px] leading-tight">
               <Input type="number" inputMode="numeric" value={exercise} onChange={(e) => setExercise(e.target.value)} />
             </Field>
-            <Field label={t('settings.goal.stand')}>
+            <Field label={t('settings.goal.stand')} labelClassName="text-[12px] leading-tight">
               <Input type="number" inputMode="numeric" value={stand} onChange={(e) => setStand(e.target.value)} />
             </Field>
           </div>
