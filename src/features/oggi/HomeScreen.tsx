@@ -66,18 +66,22 @@ export function HomeScreen() {
 
         {/* Momentum + Vio */}
         <Link to="/recap" className="block">
-          <div className="relative rounded-[26px] bg-card shadow-card px-5 py-4 overflow-hidden active:bg-section transition-colors min-h-[188px]">
+          <div className="rounded-[26px] bg-card shadow-card px-5 py-4 active:bg-section transition-colors">
             <h2 className="display-serif text-[21px] text-ink">Momentum</h2>
-            <div className="flex items-center gap-4 mt-2.5 pr-32">
-              <ProgressRing progress={m.score / 100} size={104} stroke={12} gradient={['#86C45A', '#1E8E4E']}>
-                <div className="flex items-baseline">
-                  <span className="text-[26px] font-extrabold text-ink tnum leading-none">{m.score}</span>
-                  <span className="text-[13px] font-bold text-ink-3"> / 100</span>
-                </div>
-              </ProgressRing>
+            <div className="flex items-center justify-between gap-2 mt-1">
+              <div className="flex-1 flex justify-center">
+                <ProgressRing progress={m.score / 100} size={132} stroke={14} gradient={['#86C45A', '#1E8E4E']}>
+                  <div className="flex items-baseline">
+                    <span className="text-[32px] font-extrabold text-ink tnum leading-none">{m.score}</span>
+                    <span className="text-[14px] font-bold text-ink-3"> / 100</span>
+                  </div>
+                </ProgressRing>
+              </div>
+              <div className="flex-1 flex justify-center">
+                <VioCompanion score={m.score} size={138} animated />
+              </div>
             </div>
-            <p className="text-[14px] text-ink-2 leading-snug mt-3.5 pr-28">{t(momentumMessageKey(m.score) as TKey)}</p>
-            <VioCompanion score={m.score} size={150} animated className="absolute right-1 top-1/2 -translate-y-1/2" />
+            <p className="text-[14px] text-ink-2 mt-2 whitespace-nowrap overflow-hidden text-ellipsis">{t(momentumMessageKey(m.score) as TKey)}</p>
           </div>
         </Link>
 
