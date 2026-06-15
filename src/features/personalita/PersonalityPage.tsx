@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Drama, Check, Lock, Sparkles, ChevronLeft, RotateCcw } from 'lucide-react';
+import { Check, Lock, Sparkles, ChevronLeft, RotateCcw, Plus } from 'lucide-react';
 import { db } from '@/data/db';
-import { writePersonalityResult, setPersonalityUnlocked } from '@/data/repo';
+import { writePersonalityResult, setPersonalityUnlocked, readSettings } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Button, useToast } from '@/ui';
+import { longDate } from '@/lib/format';
 import { useT, useI18n, type TKey } from '@/i18n';
+import vLogo from '/vyta-vmark.png';
+import iconCompass from '/icons3d/compass.png';
 import { platform } from '@/platform/platform';
 import { isBillingConfigured, getPersonalityPrice, ownsPersonality, purchasePersonality } from '@/premium/billing';
 import { PERSONALITY_PRICE_FALLBACK } from '@/premium/config';
@@ -40,22 +44,70 @@ export function PersonalityPage() {
 
 function Intro({ onStart }: { onStart: () => void }) {
   const t = useT();
+  const settings = useLiveQuery(() => readSettings(), [], undefined);
+  const hr = new Date().getHours();
+  const greet = t(hr < 12 ? 'greet.morning' : hr < 18 ? 'greet.afternoon' : 'greet.evening');
+  const greeting = settings?.name ? `${greet}, ${settings.name}` : greet;
+
+  const dims: { key: TKey; level: TKey; pct: number }[] = [
+    { key: 'personality.dim.awareness', level: 'personality.level.high', pct: 88 },
+    { key: 'personality.dim.rhythm', level: 'personality.level.medium', pct: 62 },
+    { key: 'personality.dim.resilience', level: 'personality.level.veryhigh', pct: 95 },
+    { key: 'personality.dim.nature', level: 'personality.level.high', pct: 80 },
+  ];
+
   return (
-    <>
-      <PageHeader title={t('nav.personality')} />
-      <Screen>
-        <div className="flex flex-col items-center text-center pt-8">
-          <span className="h-20 w-20 rounded-3xl flex items-center justify-center" style={{ background: 'var(--c-personality-tint)', color: 'var(--c-personality)' }}>
-            <Drama size={40} />
-          </span>
-          <h1 className="text-[24px] font-extrabold text-ink mt-5">{t('personality.intro.title')}</h1>
-          <p className="text-[14px] text-ink-2 leading-relaxed mt-2 max-w-sm">{t('personality.intro.desc')}</p>
-          <div className="w-full max-w-sm mt-8">
-            <Button block size="lg" onClick={onStart}>{t('personality.intro.start')}</Button>
+    <div className="min-h-[100dvh] bg-app relative overflow-hidden">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[300px]" style={{ background: 'radial-gradient(125% 80% at 50% -12%, color-mix(in srgb, var(--c-hero-2) 45%, transparent), transparent 70%)' }} />
+      <div className="relative max-w-2xl mx-auto px-5 pt-safe-top pb-[calc(116px+env(safe-area-inset-bottom))] animate-rise">
+        {/* Header */}
+        <header className="pt-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-[12.5px] font-semibold text-ink-3 capitalize leading-none">{longDate()}</p>
+              <h2 className="display-serif text-[22px] text-ink leading-tight mt-1.5 truncate">{greeting}</h2>
+            </div>
+            <Link to="/altro" aria-label={t('nav.more')} className="mt-1 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform" style={{ background: '#E8F1E3' }}>
+              <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
+            </Link>
           </div>
+          <h1 className="display-serif text-[30px] text-ink leading-tight mt-1">{t('nav.personality.short')}</h1>
+        </header>
+
+        {/* Hero card */}
+        <div className="relative rounded-[26px] bg-card shadow-card px-5 py-6 mt-4 overflow-hidden min-h-[150px]">
+          <h2 className="display-serif text-[28px] text-ink leading-tight pr-24">{t('personality.discover')}</h2>
+          <img src={iconCompass} alt="" aria-hidden draggable={false} className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 object-contain" />
         </div>
-      </Screen>
-    </>
+
+        {/* CTA */}
+        <button
+          onClick={onStart}
+          className="w-full mt-3 h-[52px] rounded-[18px] text-white font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-card"
+          style={{ background: 'linear-gradient(180deg, #6FBE6F, #2F7D43)' }}
+        >
+          <Plus size={20} strokeWidth={2.6} /> {t('personality.intro.start')}
+        </button>
+
+        {/* Dimensions preview */}
+        <h2 className="display-serif text-[22px] text-ink mt-6 mb-3">{t('personality.preview')}</h2>
+        <div className="space-y-3">
+          {dims.map((d) => (
+            <div key={d.key} className="rounded-[20px] bg-card shadow-card p-4">
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="text-[15px] font-bold text-ink">{t(d.key)}</span>
+                <span className="text-[12.5px] text-ink-3">{t(d.level)}</span>
+              </div>
+              <div className="mt-2.5 h-7 rounded-full bg-section overflow-hidden relative">
+                <div className="h-full rounded-full flex items-center px-3" style={{ width: `${d.pct}%`, background: 'linear-gradient(90deg, #6FBE6F, #2F7D43)' }}>
+                  <span className="text-[12px] font-bold text-white">{d.pct}%</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
