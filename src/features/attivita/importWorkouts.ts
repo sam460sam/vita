@@ -51,7 +51,31 @@ export function toSportId(raw: string): string {
     boxing: 'boxing',
     skiing: 'ski',
     downhillskiing: 'ski',
+    crosscountryskiing: 'ski',
     snowboarding: 'snowboard',
+    flexibility: 'yoga',
+    stretching: 'yoga',
+    cooldown: 'yoga',
+    mindandbody: 'yoga',
+    climbing: 'climbing',
+    golf: 'golf',
+    volleyball: 'volley',
+    badminton: 'badminton',
+    tabletennis: 'pingpong',
+    martialarts: 'martial',
+    kickboxing: 'kickboxing',
+    jumprope: 'cardio',
+    stairclimbing: 'stair',
+    stairs: 'stair',
+    mixedcardio: 'cardio',
+    cardio: 'cardio',
+    skatingsports: 'skating',
+    paddlesports: 'paddle',
+    surfingsports: 'surf',
+    waterpolo: 'waterpolo',
+    rugby: 'rugby',
+    squash: 'squash',
+    pickleball: 'pickleball',
   };
   // Apple types like "HKWorkoutActivityTypeRunning"
   const cleaned = s.replace('hkworkoutactivitytype', '').replace(/[^a-z]/g, '');
@@ -92,7 +116,9 @@ function parseTcx(doc: Document): ParsedWorkout[] {
   doc.querySelectorAll('Activity').forEach((act) => {
     const sport = act.getAttribute('Sport') ?? 'other';
     const id = act.querySelector('Id')?.textContent ?? '';
-    const start = Date.parse(id) || Date.now();
+    // Fall back to the first Lap's StartTime when <Id> is missing/invalid.
+    const lapStart = act.querySelector('Lap')?.getAttribute('StartTime') ?? '';
+    const start = Date.parse(id) || Date.parse(lapStart) || Date.now();
     let durationSec = 0;
     let distanceM = 0;
     let kcal = 0;
@@ -123,17 +149,32 @@ function parseTcx(doc: Document): ParsedWorkout[] {
   return out;
 }
 
+/** Find a heart-rate value inside a trackpoint's extensions (Garmin/Strava use
+ *  namespaced tags like gpxtpx:hr or ns3:hr — match by local name). */
+function gpxHr(pt: Element): number | undefined {
+  for (const el of Array.from(pt.getElementsByTagName('*'))) {
+    if (el.localName?.toLowerCase() === 'hr') {
+      const v = num(el.textContent);
+      if (v) return v;
+    }
+  }
+  return undefined;
+}
+
 function parseGpx(doc: Document): ParsedWorkout[] {
   const pts = Array.from(doc.querySelectorAll('trkpt'));
   if (pts.length < 2) return [];
   let distanceM = 0;
   let prev: { lat: number; lon: number } | null = null;
   const times: number[] = [];
+  const hrs: number[] = [];
   for (const p of pts) {
     const lat = num(p.getAttribute('lat'));
     const lon = num(p.getAttribute('lon'));
     const time = Date.parse(p.querySelector('time')?.textContent ?? '');
     if (Number.isFinite(time)) times.push(time);
+    const hr = gpxHr(p);
+    if (hr) hrs.push(hr);
     if (lat != null && lon != null) {
       if (prev) distanceM += haversine(prev.lat, prev.lon, lat, lon);
       prev = { lat, lon };
@@ -153,6 +194,8 @@ function parseGpx(doc: Document): ParsedWorkout[] {
       durationSec,
       activeKcal: kcal,
       distanceM: Math.round(distanceM),
+      avgHr: hrs.length ? Math.round(hrs.reduce((a, b) => a + b, 0) / hrs.length) : undefined,
+      maxHr: hrs.length ? Math.max(...hrs) : undefined,
       source: 'manual',
     },
   ];
@@ -165,7 +208,9 @@ function parseAppleHealth(doc: Document): ParsedWorkout[] {
     const start = Date.parse((w.getAttribute('startDate') ?? '').replace(' +', '+')) || Date.now();
     let durationSec = (num(w.getAttribute('duration')) ?? 0) * 60; // duration is in minutes
     if ((w.getAttribute('durationUnit') ?? 'min') === 'sec') durationSec = num(w.getAttribute('duration')) ?? 0;
-    const distKm = num(w.getAttribute('totalDistance'));
+    const dist = num(w.getAttribute('totalDistance'));
+    const distUnit = (w.getAttribute('totalDistanceUnit') ?? 'km').toLowerCase();
+    const distM = dist != null ? Math.round(dist * (distUnit.startsWith('mi') ? 1609.34 : 1000)) : undefined;
     const kcal = num(w.getAttribute('totalEnergyBurned'));
     if (durationSec <= 0) return;
     out.push({
@@ -174,7 +219,7 @@ function parseAppleHealth(doc: Document): ParsedWorkout[] {
       durationSec: Math.round(durationSec),
       activeKcal: Math.round(kcal ?? 0),
       totalKcal: kcal ? Math.round(kcal * 1.25) : undefined,
-      distanceM: distKm ? Math.round(distKm * 1000) : undefined,
+      distanceM: distM,
       source: 'healthkit',
     });
   });
