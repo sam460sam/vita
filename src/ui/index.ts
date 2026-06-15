@@ -8,6 +8,7 @@ export { Segmented } from './Segmented';
 export { Field, Label, Input, Textarea, Select } from './Field';
 export { ProgressRing } from './ProgressRing';
 export { Confetti } from './Confetti';
+export { Skeleton, PageSkeleton } from './Skeleton';
 export { ActivityRings, type RingData } from './ActivityRings';
 export { Checkbox } from './Checkbox';
 export { BarChart } from './BarChart';

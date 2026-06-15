@@ -1,6 +1,6 @@
 import { Suspense, lazy, useState } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ToastProvider } from '@/ui';
+import { ToastProvider, PageSkeleton } from '@/ui';
 import { I18nProvider } from '@/i18n';
 import { ThemeProvider } from '@/theme/theme';
 import { PremiumProvider } from '@/premium/premium';
@@ -54,7 +54,7 @@ export function App() {
                 <Sidebar />
                 <main className="flex-1 min-w-0">
                   <RouteErrorBoundary>
-                    <Suspense fallback={<div className="p-8 text-center text-ink-3" />}>
+                    <Suspense fallback={<PageSkeleton />}>
                       <Routes>
                       <Route path="/" element={<Navigate to="/oggi" replace />} />
                       <Route path="/oggi" element={<HomeDashboard />} />

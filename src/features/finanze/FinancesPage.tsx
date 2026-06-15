@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ArrowDownLeft, ArrowUpRight, Plus, Wallet, Pencil, Trash2, Upload, Check } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Plus, Wallet, Pencil, Trash2, Upload, Check, Search, Repeat } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { db } from '@/data/db';
-import { createTransaction, deleteTransaction, readBudget, setBudget, readSettings } from '@/data/repo';
+import { createTransaction, deleteTransaction, readBudget, setBudget, readSettings, materializeRecurring } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { platform } from '@/platform/platform';
 import { PageHeader } from '@/app/PageHeader';
@@ -28,7 +28,12 @@ export function FinancesPage() {
   const [preview, setPreview] = useState<ParsedTx[] | null>(null);
   const [dupes, setDupes] = useState<Set<number>>(new Set());
   const [skip, setSkip] = useState<Set<number>>(new Set());
+  const [query, setQuery] = useState('');
+  const [filterType, setFilterType] = useState<'all' | TxType>('all');
   const toast = useToast();
+
+  // Generate any due recurring occurrences when the page opens.
+  useEffect(() => { void materializeRecurring(); }, []);
 
   async function importCsv() {
     const text = await platform.pickTextFile('.csv,text/csv,text/plain');
@@ -71,6 +76,16 @@ export function FinancesPage() {
   const expense = monthTxs.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
   const balance = income - expense;
   const limit = budget?.monthlyLimit ?? 0;
+
+  const filteredTxs = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return (txs ?? []).filter((tx) => {
+      if (filterType !== 'all' && tx.type !== filterType) return false;
+      if (!q) return true;
+      const cat = t(categoryLabelKey(tx.category)).toLowerCase();
+      return cat.includes(q) || (tx.note ?? '').toLowerCase().includes(q);
+    });
+  }, [txs, query, filterType, t]);
 
   const byCategory = useMemo(() => {
     const m = new Map<string, number>();
@@ -208,8 +223,25 @@ export function FinancesPage() {
               action={<Button onClick={() => setFormOpen(true)}>{t('finances.empty.cta')}</Button>}
             />
           ) : (
-            <div className="divide-y divide-divider">
-              {(txs ?? []).slice(0, 50).map((tx) => (
+            <>
+              <div className="relative mb-2">
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-3 pointer-events-none" />
+                <Input className="!pl-9" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('finances.searchPh')} />
+              </div>
+              <Segmented
+                className="w-full mb-1"
+                value={filterType}
+                onChange={(v) => setFilterType(v as 'all' | TxType)}
+                options={[
+                  { value: 'all', label: t('finances.all') },
+                  { value: 'income', label: t('finances.income') },
+                  { value: 'expense', label: t('finances.expense') },
+                ]}
+              />
+              <div className="divide-y divide-divider">
+              {filteredTxs.length === 0 ? (
+                <p className="text-[13px] text-ink-3 text-center py-6">{t('finances.noResults')}</p>
+              ) : filteredTxs.slice(0, 80).map((tx) => (
                 <div key={tx.id} className="flex items-center gap-3 py-2.5 group">
                   <span
                     className="h-10 w-10 rounded-2xl flex items-center justify-center flex-shrink-0"
@@ -218,7 +250,10 @@ export function FinancesPage() {
                     {tx.type === 'income' ? <ArrowDownLeft size={17} /> : <ArrowUpRight size={17} />}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[15px] text-ink truncate">{t(categoryLabelKey(tx.category))}</div>
+                    <div className="text-[15px] text-ink truncate flex items-center gap-1.5">
+                      {t(categoryLabelKey(tx.category))}
+                      {(tx.recurring || tx.recurOf) && <Repeat size={12} className="text-ink-3 flex-shrink-0" />}
+                    </div>
                     <div className="text-[12px] text-ink-2 truncate">
                       {format(parseISO(tx.date), 'd MMM', { locale: activeDfnLocale() })}
                       {tx.note ? ` · ${tx.note}` : ''}
@@ -233,7 +268,8 @@ export function FinancesPage() {
                   </IconButton>
                 </div>
               ))}
-            </div>
+              </div>
+            </>
           )}
         </Card>
       </Screen>
@@ -297,6 +333,7 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
   const [category, setCategory] = useState<string>(EXPENSE_CATEGORIES[0]);
   const [date, setDate] = useState(todayISO());
   const [note, setNote] = useState('');
+  const [recurring, setRecurring] = useState(false);
   const toast = useToast();
   const t = useT();
 
@@ -309,6 +346,7 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
       setCategory(EXPENSE_CATEGORIES[0]);
       setDate(todayISO());
       setNote('');
+      setRecurring(false);
     }
   }, [open]);
 
@@ -319,7 +357,8 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
   async function save() {
     const amt = parseFloat(amount);
     if (!amt || amt <= 0) return;
-    await createTransaction({ type, amount: amt, category, date, note: note.trim() || undefined });
+    await createTransaction({ type, amount: amt, category, date, note: note.trim() || undefined, recurring: recurring || undefined });
+    if (recurring) await materializeRecurring();
     toast.show(t('txForm.saved'));
     onClose();
   }
@@ -363,6 +402,16 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
       <Field label={t('txForm.note')}>
         <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder={t('txForm.notePh')} />
       </Field>
+      <button
+        onClick={() => setRecurring((v) => !v)}
+        className="w-full flex items-center gap-3 rounded-btn bg-section px-4 py-3 mt-1 active:scale-[0.99] transition-transform"
+      >
+        <span className="flex-1 text-left text-[14px] font-semibold text-ink">{t('txForm.recurring')}</span>
+        <span className="h-6 w-11 rounded-full relative transition-colors flex-shrink-0" style={{ background: recurring ? 'var(--c-primary)' : 'var(--c-line)' }}>
+          <span className="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all" style={{ left: recurring ? '22px' : '2px' }} />
+        </span>
+      </button>
+      <p className="text-[12px] text-ink-3 mt-1.5">{t('txForm.recurringHint')}</p>
     </Sheet>
   );
 }

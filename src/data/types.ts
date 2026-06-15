@@ -345,6 +345,10 @@ export interface Transaction extends Timestamped {
   category: string;
   note?: string;
   date: string; // ISO yyyy-MM-dd
+  /** Marks a monthly recurring template; occurrences are generated from it. */
+  recurring?: boolean;
+  /** For a generated occurrence: the id of the recurring template it came from. */
+  recurOf?: string;
 }
 
 export interface Budget {

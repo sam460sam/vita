@@ -435,11 +435,57 @@ export async function createTransaction(data: Partial<Transaction> & { type: Tra
     category: data.category,
     note: data.note,
     date: data.date,
+    recurring: data.recurring,
+    recurOf: data.recurOf,
     createdAt: t,
     updatedAt: t,
   };
   await db.transactions.put(tx);
   return tx;
+}
+
+/**
+ * Generate missing monthly occurrences for recurring transaction templates,
+ * from the template's month up to the current month. Idempotent (deduped by
+ * template id + month). Returns how many occurrences were created.
+ */
+export async function materializeRecurring(): Promise<number> {
+  const all = await db.transactions.toArray();
+  const templates = all.filter((x) => x.recurring);
+  if (!templates.length) return 0;
+  const t = now();
+  let created = 0;
+  for (const tpl of templates) {
+    const taken = new Set(all.filter((x) => x.recurOf === tpl.id).map((x) => x.date.slice(0, 7)));
+    taken.add(tpl.date.slice(0, 7)); // the template covers its own month
+    const [ty, tm, td] = tpl.date.split('-').map(Number);
+    const cur = new Date();
+    let y = ty;
+    let m = tm; // 1-based
+    // advance one month at a time until we pass the current month
+    for (;;) {
+      m += 1;
+      if (m > 12) { m = 1; y += 1; }
+      if (y > cur.getFullYear() || (y === cur.getFullYear() && m > cur.getMonth() + 1)) break;
+      const key = `${y}-${String(m).padStart(2, '0')}`;
+      if (taken.has(key)) continue;
+      const day = Math.min(td, new Date(y, m, 0).getDate()); // clamp to month length
+      const date = `${key}-${String(day).padStart(2, '0')}`;
+      await db.transactions.put({
+        id: uid('txn_'),
+        type: tpl.type,
+        amount: tpl.amount,
+        category: tpl.category,
+        note: tpl.note,
+        date,
+        recurOf: tpl.id,
+        createdAt: t,
+        updatedAt: t,
+      });
+      created++;
+    }
+  }
+  return created;
 }
 
 export async function deleteTransaction(id: string) {
