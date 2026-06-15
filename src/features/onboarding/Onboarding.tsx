@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star, ChevronLeft, Sun, Moon, Bell, Crown, UserRound, Target, Droplet } from 'lucide-react';
+import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star, ChevronLeft, Sun, Moon, Bell, Crown, Droplet } from 'lucide-react';
 import { Button, Input, Segmented } from '@/ui';
-import { StarMascot } from '@/ui/StarMascot';
 import { useI18n, LANGS, type Lang, type TKey } from '@/i18n';
 import { useTheme } from '@/theme/theme';
 import { notifications } from '@/platform/notifications';
@@ -15,6 +14,15 @@ import { recommendedWaterMl, ACTIVITY_ML, type ActivityLevel } from '@/features/
 
 const GOLD = '#C9A227';
 const WATER = '#0EA5E9';
+import vioWelcome from '/vio/vio-welcome.png';
+import vioBell from '/vio/vio-bell.png';
+import vioCelebrate from '/vio/vio-celebrate.png';
+import iconSun from '/icons3d/sun.png';
+import iconLotus from '/icons3d/lotus.png';
+import iconMoon from '/icons3d/moon.png';
+import iconCompass from '/icons3d/compass.png';
+import iconHabits3d from '/icons3d/habits.png';
+
 type Goal = NonNullable<Settings['goal']>;
 
 type Focus = 'health' | 'productivity' | 'wellbeing' | 'all';
@@ -235,10 +243,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         {step === 'lang' && <LanguageStep onPick={(l) => { setPref(l); }} />}
         {step === 'welcome1' && (
           <div className="flex flex-col items-center justify-center text-center min-h-full py-8">
-            <span className="h-36 w-36 rounded-full flex items-center justify-center mb-2" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
-              <StarMascot size={104} animated />
-            </span>
-            <h1 className="text-[28px] font-extrabold text-ink tracking-tight mt-4">{t('onboard.1.title')}</h1>
+            <img src={vioWelcome} alt="" aria-hidden draggable={false} className="vio-bob w-40 h-40 object-contain mb-2" />
+            <h1 className="display-serif text-[30px] text-ink leading-tight mt-4">{t('onboard.1.title')}</h1>
             <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.1.desc')}</p>
           </div>
         )}
@@ -348,27 +354,6 @@ function FocusStep({ value, onToggle }: { value: Set<Focus>; onToggle: (f: Focus
 }
 
 /** A single-select list row (WhatsApp/Instagram-style: tint fill + round check). */
-function ChoiceRow({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="w-full flex items-center justify-between px-4 h-14 rounded-2xl transition-all active:scale-[0.99]"
-      style={{
-        background: selected ? 'color-mix(in srgb, var(--c-primary) 12%, var(--c-card))' : 'var(--c-card)',
-        boxShadow: selected ? 'inset 0 0 0 2px var(--c-primary)' : '0 2px 10px rgba(83,52,20,0.05)',
-      }}
-    >
-      <span className="text-[15px] font-semibold text-ink text-left">{label}</span>
-      <span
-        className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
-        style={{ background: selected ? 'var(--c-primary)' : 'transparent', border: selected ? 'none' : '2px solid var(--c-line)' }}
-      >
-        {selected && <Check size={15} className="text-white" strokeWidth={3} />}
-      </span>
-    </button>
-  );
-}
-
 function PersonalStep({ age, setAge, weight, setWeight, height, setHeight }: {
   age: string; setAge: (v: string) => void;
   weight: string; setWeight: (v: string) => void;
@@ -377,10 +362,8 @@ function PersonalStep({ age, setAge, weight, setWeight, height, setHeight }: {
   const { t } = useI18n();
   return (
     <div className="flex flex-col items-center text-center pt-6">
-      <span className="h-24 w-24 rounded-[28px] flex items-center justify-center mb-6 text-primary" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
-        <UserRound size={44} />
-      </span>
-      <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.personal.title')}</h1>
+      <img src={vioWelcome} alt="" aria-hidden draggable={false} className="vio-bob w-28 h-28 object-contain mb-3" />
+      <h1 className="display-serif text-[28px] text-ink leading-tight">{t('onboard.personal.title')}</h1>
       <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.personal.desc')}</p>
       <div className="w-full max-w-xs mt-7 space-y-3 text-left">
         <div>
@@ -444,27 +427,38 @@ function WaterIntroStep({ weightKg, heightCm, activity, setActivity, ml }: {
   );
 }
 
-const GOAL_OPTS: { value: Goal; key: TKey }[] = [
-  { value: 'feel_better', key: 'onboard.goal.feel_better' },
-  { value: 'get_organized', key: 'onboard.goal.get_organized' },
-  { value: 'reduce_stress', key: 'onboard.goal.reduce_stress' },
-  { value: 'build_consistency', key: 'onboard.goal.build_consistency' },
-  { value: 'reach_goal', key: 'onboard.goal.reach_goal' },
+const GOAL_OPTS: { value: Goal; key: TKey; icon: string }[] = [
+  { value: 'feel_better', key: 'onboard.goal.feel_better', icon: iconSun },
+  { value: 'get_organized', key: 'onboard.goal.get_organized', icon: iconCompass },
+  { value: 'reduce_stress', key: 'onboard.goal.reduce_stress', icon: iconLotus },
+  { value: 'build_consistency', key: 'onboard.goal.build_consistency', icon: iconHabits3d },
+  { value: 'reach_goal', key: 'onboard.goal.reach_goal', icon: iconMoon },
 ];
 
 function GoalStep({ value, onPick }: { value?: Goal; onPick: (g: Goal) => void }) {
   const { t } = useI18n();
   return (
-    <div className="flex flex-col items-center text-center pt-6">
-      <span className="h-24 w-24 rounded-[28px] flex items-center justify-center mb-6 text-primary" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
-        <Target size={44} />
-      </span>
-      <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.goal.title')}</h1>
-      <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.goal.desc')}</p>
-      <div className="w-full max-w-xs mt-7 space-y-2.5">
-        {GOAL_OPTS.map((o) => (
-          <ChoiceRow key={o.value} label={t(o.key)} selected={value === o.value} onClick={() => onPick(o.value)} />
-        ))}
+    <div className="pt-6">
+      <h1 className="display-serif text-[28px] text-ink leading-tight text-center">{t('onboard.goal.title')}</h1>
+      <p className="text-[15px] text-ink-2 mt-2 max-w-sm mx-auto leading-relaxed text-center">{t('onboard.goal.desc')}</p>
+      <div className="w-full max-w-sm mx-auto mt-7 space-y-2.5">
+        {GOAL_OPTS.map((o) => {
+          const selected = value === o.value;
+          return (
+            <button
+              key={o.value}
+              onClick={() => onPick(o.value)}
+              className="w-full flex items-center gap-3 p-3 rounded-2xl bg-card text-left transition-all active:scale-[0.99]"
+              style={{ boxShadow: selected ? '0 0 0 2.5px #4F9D55, 0 6px 18px rgba(79,157,85,0.18)' : '0 2px 10px rgba(83,52,20,0.05)' }}
+            >
+              <img src={o.icon} alt="" aria-hidden draggable={false} className="h-10 w-10 object-contain flex-shrink-0" />
+              <span className="flex-1 text-[15.5px] font-bold text-ink">{t(o.key)}</span>
+              <span className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: selected ? '#4F9D55' : 'transparent', border: selected ? 'none' : '2px solid var(--c-line)' }}>
+                {selected && <Check size={14} className="text-white" strokeWidth={3} />}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -567,10 +561,8 @@ function NotifyStep({ value, onChange }: { value: boolean; onChange: (v: boolean
   const { t } = useI18n();
   return (
     <div className="flex flex-col items-center text-center pt-6">
-      <span className="h-24 w-24 rounded-[28px] flex items-center justify-center mb-6 text-primary" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
-        <Bell size={44} />
-      </span>
-      <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.notify.title')}</h1>
+      <img src={vioBell} alt="" aria-hidden draggable={false} className="vio-bob w-32 h-32 object-contain mb-3" />
+      <h1 className="display-serif text-[28px] text-ink leading-tight">{t('onboard.notify.title')}</h1>
       <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.notify.desc')}</p>
       <button
         onClick={() => onChange(!value)}
@@ -599,10 +591,8 @@ function AhaStep({ name, focus, habitCount }: { name: string; focus: Focus; habi
   const focusLabel = t(`onboard.focus.${focus}` as TKey);
   return (
     <div className="flex flex-col items-center justify-center text-center min-h-full py-8">
-      <span className="h-36 w-36 rounded-full flex items-center justify-center mb-2" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
-        <StarMascot size={104} mood="starstruck" animated />
-      </span>
-      <h1 className="text-[28px] font-extrabold text-ink tracking-tight mt-4">
+      <img src={vioCelebrate} alt="" aria-hidden draggable={false} className="vio-bob w-40 h-40 object-contain mb-2" />
+      <h1 className="display-serif text-[28px] text-ink leading-tight mt-4">
         {name.trim() ? t('onboard.aha.title', { name: name.trim() }) : t('onboard.aha.titleNoName')}
       </h1>
       <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.aha.desc')}</p>
