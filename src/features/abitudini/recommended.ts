@@ -30,6 +30,26 @@ export const RECOMMENDED_BY_ID: Record<string, RecommendedHabit> = Object.fromEn
   RECOMMENDED_HABITS.map((r) => [r.id, r]),
 );
 
+/** Habit ids to surface first for each onboarding goal. */
+const GOAL_PRIORITY: Record<string, string[]> = {
+  feel_better: ['water', 'move', 'fruit', 'sleep', 'gym', 'stretch'],
+  get_organized: ['read', 'gratitude', 'meditate', 'sleep', 'coffee'],
+  reduce_stress: ['meditate', 'sleep', 'gratitude', 'stretch', 'sun'],
+  build_consistency: ['water', 'read', 'move', 'meditate', 'gym'],
+  reach_goal: ['gym', 'move', 'read', 'water', 'nosmoke'],
+};
+
+/** Recommended habits reordered to put the user's goal-relevant ones first. */
+export function recommendedForGoal(goal?: string): RecommendedHabit[] {
+  const pri = (goal && GOAL_PRIORITY[goal]) || [];
+  if (!pri.length) return RECOMMENDED_HABITS;
+  const rank = (id: string) => {
+    const i = pri.indexOf(id);
+    return i === -1 ? pri.length + 1 : i;
+  };
+  return [...RECOMMENDED_HABITS].sort((a, b) => rank(a.id) - rank(b.id));
+}
+
 /**
  * Display name for a habit. Built-in (recommended) habits carry a `recId` and
  * re-localize via the i18n key, so their name follows the app language. Habits

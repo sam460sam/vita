@@ -6,7 +6,7 @@ import { useI18n, LANGS, type Lang, type TKey } from '@/i18n';
 import { useTheme } from '@/theme/theme';
 import { notifications } from '@/platform/notifications';
 import { createHabit, updateSettings, readSettings } from '@/data/repo';
-import { RECOMMENDED_HABITS } from '@/features/abitudini/recommended';
+import { RECOMMENDED_HABITS, recommendedForGoal } from '@/features/abitudini/recommended';
 import { ALL_MODULES, type ModuleId, type Settings } from '@/data/types';
 import { MODULE_LIST } from '@/features/personalizzazione/modules';
 import { Paywall } from '@/premium/SubscriptionGate';
@@ -247,7 +247,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         {step === 'goal' && <GoalStep value={goal} onPick={setGoal} />}
         {step === 'modules' && <ModulesStep selected={modules} onToggle={toggleModule} />}
         {step === 'habits' && (
-          <HabitsStep picked={picked} onToggle={toggleHabit} customHabits={customHabits} setCustomHabits={setCustomHabits} />
+          <HabitsStep goal={goal} picked={picked} onToggle={toggleHabit} customHabits={customHabits} setCustomHabits={setCustomHabits} />
         )}
         {step === 'name' && (
           <div className="flex flex-col items-center justify-center text-center min-h-full py-8">
@@ -655,11 +655,13 @@ function LanguageStep({ onPick }: { onPick: (l: Lang) => void }) {
 }
 
 function HabitsStep({
+  goal,
   picked,
   onToggle,
   customHabits,
   setCustomHabits,
 }: {
+  goal?: Goal;
   picked: Set<string>;
   onToggle: (id: string) => void;
   customHabits: string[];
@@ -667,6 +669,7 @@ function HabitsStep({
 }) {
   const { t } = useI18n();
   const [draft, setDraft] = useState('');
+  const recs = recommendedForGoal(goal);
 
   function addCustom() {
     const v = draft.trim();
@@ -681,7 +684,7 @@ function HabitsStep({
         <p className="text-[15px] text-ink-2 mt-2 max-w-sm mx-auto leading-relaxed">{t('onboard.habits.desc')}</p>
       </div>
       <div className="space-y-2 max-w-md mx-auto">
-        {RECOMMENDED_HABITS.map((r) => {
+        {recs.map((r) => {
           const on = picked.has(r.id);
           return (
             <button

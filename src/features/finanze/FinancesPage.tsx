@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ArrowDownLeft, ArrowUpRight, Plus, Wallet, Pencil, Trash2, Upload } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Plus, Wallet, Pencil, Trash2, Upload, Check } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { db } from '@/data/db';
 import { createTransaction, deleteTransaction, readBudget, setBudget, readSettings } from '@/data/repo';
@@ -11,9 +11,12 @@ import { Screen } from '@/app/Screen';
 import { Card, CardHeader, EmptyState, Button, Sheet, Field, Input, Select, Segmented, IconButton, Sankey, useToast } from '@/ui';
 import { formatMoney, todayISO, currentMonthKey, monthKey, activeDfnLocale } from '@/lib/format';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, categoryColor, categoryLabelKey } from './categories';
-import { parseBankCsv } from './importCsv';
+import { parseBankCsv, type ParsedTx } from './importCsv';
 import { useT } from '@/i18n';
 import type { TxType } from '@/data/types';
+
+const dupeKey = (x: { date: string; type: string; amount: number; note?: string }) =>
+  `${x.date}|${x.type}|${x.amount}|${(x.note ?? '').toLowerCase()}`;
 
 export function FinancesPage() {
   const t = useT();
@@ -22,6 +25,9 @@ export function FinancesPage() {
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const [formOpen, setFormOpen] = useState(false);
   const [budgetOpen, setBudgetOpen] = useState(false);
+  const [preview, setPreview] = useState<ParsedTx[] | null>(null);
+  const [dupes, setDupes] = useState<Set<number>>(new Set());
+  const [skip, setSkip] = useState<Set<number>>(new Set());
   const toast = useToast();
 
   async function importCsv() {
@@ -32,8 +38,29 @@ export function FinancesPage() {
       toast.show(t('finances.importNone'));
       return;
     }
-    for (const tx of parsed) await createTransaction(tx);
-    toast.show(`${parsed.length} ${t('finances.imported')}`);
+    // Detect rows already in the ledger; pre-exclude them.
+    const existing = new Set((txs ?? []).map(dupeKey));
+    const dup = new Set<number>();
+    parsed.forEach((p, i) => { if (existing.has(dupeKey(p))) dup.add(i); });
+    setDupes(dup);
+    setSkip(new Set(dup));
+    setPreview(parsed);
+  }
+
+  function toggleSkip(i: number) {
+    setSkip((s) => {
+      const n = new Set(s);
+      n.has(i) ? n.delete(i) : n.add(i);
+      return n;
+    });
+  }
+
+  async function confirmImport() {
+    if (!preview) return;
+    const toAdd = preview.filter((_, i) => !skip.has(i));
+    for (const tx of toAdd) await createTransaction(tx);
+    setPreview(null);
+    toast.show(`${toAdd.length} ${t('finances.imported')}`);
   }
 
   const currency = (settings ?? defaultSettings()).currency;
@@ -175,7 +202,7 @@ export function FinancesPage() {
           <CardHeader title={t('finances.movements')} />
           {(txs ?? []).length === 0 ? (
             <EmptyState
-              icon={<Wallet size={22} />}
+              mascot
               title={t('finances.empty.title')}
               description={t('finances.empty.desc')}
               action={<Button onClick={() => setFormOpen(true)}>{t('finances.empty.cta')}</Button>}
@@ -213,6 +240,53 @@ export function FinancesPage() {
 
       <TransactionForm open={formOpen} onClose={() => setFormOpen(false)} />
       <BudgetForm open={budgetOpen} onClose={() => setBudgetOpen(false)} current={limit} />
+
+      {preview && (
+        <Sheet
+          open
+          onClose={() => setPreview(null)}
+          title={t('finances.import.title')}
+          footer={
+            <Button block size="lg" disabled={preview.length - skip.size === 0} onClick={confirmImport}>
+              {t('finances.import.confirm', { n: preview.length - skip.size })}
+            </Button>
+          }
+        >
+          <p className="text-[13px] text-ink-2 mb-3">
+            {t('finances.import.found', { n: preview.length })}
+            {dupes.size > 0 && ` · ${t('finances.import.dupes', { n: dupes.size })}`}
+          </p>
+          <div className="space-y-1.5">
+            {preview.map((p, i) => {
+              const excluded = skip.has(i);
+              return (
+                <button
+                  key={i}
+                  onClick={() => toggleSkip(i)}
+                  className={`flex items-center gap-3 w-full rounded-2xl px-3 py-2.5 transition-all ${excluded ? 'opacity-45' : 'bg-section'}`}
+                >
+                  <span
+                    className="h-5 w-5 rounded-md flex items-center justify-center flex-shrink-0"
+                    style={{ background: excluded ? 'transparent' : 'var(--c-primary)', border: excluded ? '2px solid var(--c-line)' : 'none' }}
+                  >
+                    {!excluded && <Check size={13} className="text-white" strokeWidth={3} />}
+                  </span>
+                  <div className="min-w-0 flex-1 text-left">
+                    <div className="text-[13px] font-semibold text-ink truncate">{p.note || t(categoryLabelKey(p.category))}</div>
+                    <div className="text-[11px] text-ink-3">
+                      {p.date} · {t(categoryLabelKey(p.category))}
+                      {dupes.has(i) && <span className="ml-1.5 text-warning font-bold">· {t('finances.import.duplicate')}</span>}
+                    </div>
+                  </div>
+                  <span className="text-[13px] font-bold tnum flex-shrink-0" style={{ color: p.type === 'income' ? 'var(--c-habit)' : 'var(--c-ink)' }}>
+                    {p.type === 'income' ? '+' : '−'}{formatMoney(p.amount, currency)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </Sheet>
+      )}
     </>
   );
 }

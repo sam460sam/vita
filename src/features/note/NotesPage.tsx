@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Plus, Search, Pin, ListChecks } from 'lucide-react';
+import { Plus, Search, Pin } from 'lucide-react';
 import { db } from '@/data/db';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
@@ -60,7 +60,7 @@ export function NotesPage() {
 
         {filtered.length === 0 ? (
           <EmptyState
-            icon={<ListChecks size={28} />}
+            mascot
             title={query ? t('note.noResults.title') : t('note.empty.title')}
             description={query ? t('note.noResults.desc') : t('note.empty.desc')}
             action={!query ? <Button onClick={openNew} icon={<Plus size={16} />}>{t('note.new')}</Button> : undefined}

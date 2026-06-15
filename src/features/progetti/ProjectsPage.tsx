@@ -105,7 +105,7 @@ export function ProjectsPage() {
         ) : (
           <Card>
             <EmptyState
-              icon={<Plus size={22} />}
+              mascot
               title={t('projects.empty.title')}
               description={t('projects.empty.desc')}
               action={<Button onClick={() => setProjForm(true)}>{t('projects.empty.cta')}</Button>}

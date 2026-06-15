@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Flame, Plus, ChevronRight, BarChart3, Trash2, Check } from 'lucide-react';
 import { startOfWeek, addDays, format } from 'date-fns';
 import { db } from '@/data/db';
-import { toggleHabitLog, deleteHabit, createHabit } from '@/data/repo';
+import { toggleHabitLog, deleteHabit, createHabit, readSettings } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { EmptyState, Button, Icon, useToast } from '@/ui';
@@ -11,7 +11,7 @@ import { todayISO, activeDfnLocale } from '@/lib/format';
 import { platform } from '@/platform/platform';
 import { HabitForm } from './HabitForm';
 import { Heatmap } from './Heatmap';
-import { RECOMMENDED_HABITS, habitDisplayName } from './recommended';
+import { recommendedForGoal, habitDisplayName } from './recommended';
 import { currentStreak, heatmapData, isDone } from './logic';
 import type { Habit } from '@/data/types';
 import { useT } from '@/i18n';
@@ -27,6 +27,7 @@ export function HabitsPage() {
   const toast = useToast();
   const habits = useLiveQuery(() => db.habits.orderBy('order').toArray(), [], []);
   const logs = useLiveQuery(() => db.habitLogs.toArray(), [], []);
+  const settings = useLiveQuery(() => readSettings(), [], undefined);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Habit | null>(null);
   const today = todayISO();
@@ -37,8 +38,8 @@ export function HabitsPage() {
   // Recommended habits the user hasn't added yet (match by recId, else name).
   const existingRecIds = new Set(active.map((h) => h.recId).filter(Boolean));
   const existingNames = new Set(active.map((h) => habitDisplayName(h, t)));
-  const suggestions = RECOMMENDED_HABITS.filter((r) => !existingRecIds.has(r.id) && !existingNames.has(t(r.labelKey)));
-  async function addSuggested(rec: (typeof RECOMMENDED_HABITS)[number]) {
+  const suggestions = recommendedForGoal(settings?.goal).filter((r) => !existingRecIds.has(r.id) && !existingNames.has(t(r.labelKey)));
+  async function addSuggested(rec: (typeof suggestions)[number]) {
     platform.haptic();
     await createHabit({ name: t(rec.labelKey), recId: rec.id, color: rec.color, icon: rec.icon, frequency: rec.frequency });
     toast.show(t('home.habitAdded'));
@@ -111,7 +112,7 @@ export function HabitsPage() {
         {active.length === 0 ? (
           <div className="bg-card rounded-card shadow-card border border-line/40 dark:border-transparent">
             <EmptyState
-              icon={<Flame size={22} />}
+              mascot
               title={t('habits.empty.title')}
               description={t('habits.empty.desc')}
               action={<Button onClick={openNew}>{t('habits.empty.cta')}</Button>}

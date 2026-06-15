@@ -59,7 +59,7 @@ export function GoalsPage() {
         {sorted.length === 0 ? (
           <Card heroAccent="var(--c-project)" heroIcon={<Target size={92} />}>
             <EmptyState
-              icon={<Target size={22} />}
+              mascot
               title={t('goals.empty.title')}
               description={t('goals.empty.desc')}
               action={<Button onClick={() => setFormOpen(true)}>{t('goals.empty.cta')}</Button>}

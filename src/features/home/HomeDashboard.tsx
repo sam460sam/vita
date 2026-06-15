@@ -13,8 +13,7 @@ import { todayISO, longDate } from '@/lib/format';
 import { computeMomentum, stellaMood, momentumMessageKey, getStreakState } from '@/features/oggi/momentum';
 import { todayRings, ringsToData, mergeHealthRings } from '@/features/attivita/logic';
 import { isScheduled, isDone, currentStreak } from '@/features/abitudini/logic';
-import { habitDisplayName } from '@/features/abitudini/recommended';
-import { RECOMMENDED_HABITS } from '@/features/abitudini/recommended';
+import { habitDisplayName, recommendedForGoal } from '@/features/abitudini/recommended';
 import { useHealthSummary } from '@/platform/health';
 import { AFFIRMATIONS } from '@/features/oggi/coach';
 import { dayPoints, type LifeData } from '@/features/gamification/logic';
@@ -268,7 +267,7 @@ export function HomeDashboard() {
     toast.show(t('home.routine.allDone'));
   }, [allDone, today, t, toast]);
 
-  async function addSuggested(rec: (typeof RECOMMENDED_HABITS)[number]) {
+  async function addSuggested(rec: ReturnType<typeof recommendedForGoal>[number]) {
     platform.haptic();
     await createHabit({ name: t(rec.labelKey), recId: rec.id, color: rec.color, icon: rec.icon, frequency: rec.frequency });
     toast.show(t('home.habitAdded'));
@@ -450,7 +449,7 @@ export function HomeDashboard() {
               <div className="mt-3">
                 <div className="metric-label mb-2">{t('home.routine.empty.suggest')}</div>
                 <div className="flex flex-wrap gap-2">
-                  {RECOMMENDED_HABITS.slice(0, 4).map((rec) => (
+                  {recommendedForGoal(s.goal).slice(0, 4).map((rec) => (
                     <button
                       key={rec.id}
                       onClick={() => addSuggested(rec)}

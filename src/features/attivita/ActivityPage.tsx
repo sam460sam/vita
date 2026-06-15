@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Play, Plus, Trash2, Pencil, Scale, ChevronRight, Footprints } from 'lucide-react';
+import { Play, Trash2, Pencil, Scale, ChevronRight, Footprints } from 'lucide-react';
 import { db } from '@/data/db';
 import { deleteWorkout, updateSettings } from '@/data/repo';
 import { readSettings } from '@/data/repo';
@@ -163,7 +163,7 @@ export function ActivityPage() {
             </div>
           ) : (
             <EmptyState
-              icon={<Plus size={22} />}
+              mascot
               title={t('activity.empty.title')}
               description={t('activity.empty.desc')}
               action={<Button onClick={() => setPickerOpen(true)}>{t('activity.empty.cta')}</Button>}
