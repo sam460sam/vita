@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Quote, ChevronRight, Settings2, Check, Flame, Plus, Footprints, LayoutGrid, Droplet, Bell, Sparkles, X } from 'lucide-react';
+import { Quote, ChevronRight, Settings2, Check, Flame, Plus, Footprints, LayoutGrid, Droplet, Bell, Sparkles, X, Wallet, PenLine, ListChecks } from 'lucide-react';
 import { subDays, format, startOfWeek, addDays } from 'date-fns';
-import { ProgressRing, ActivityRings, StarMascot, Icon, useToast, Sheet } from '@/ui';
+import { ProgressRing, ActivityRings, StarMascot, Icon, useToast, Sheet, Confetti } from '@/ui';
 import { DateStrip } from '@/ui/DateStrip';
 import { useT, type TKey } from '@/i18n';
 import { db } from '@/data/db';
@@ -24,14 +24,25 @@ import { useNavItems } from '@/app/nav';
 import { platform } from '@/platform/platform';
 import { refreshStreakNudge } from '@/features/notify/smart';
 import { syncWidgetData, drainWidgetWaterInbox } from '@/platform/widget';
-import type { Habit, HabitLog } from '@/data/types';
+import type { Habit, HabitLog, ModuleId } from '@/data/types';
 
 const ALLDONE_KEY = 'vita.allhabits.shown';
 const STEPS_GOAL = 8000;
 
 const WIN_KEY = 'vita.dailywin.shown';
 const WELCOME_KEY = 'vita.welcomed';
+const CONFETTI_KEY = 'vita.confetti.shown';
 const GOLD = '#C9A227';
+
+/** Quick actions surfaced on Home, filtered to the user's enabled modules. */
+const QUICK_ACTIONS = [
+  { id: 'acqua', to: '/acqua', icon: Droplet, key: 'qa.water' as const, color: '#0EA5E9', instant: true },
+  { id: 'abitudini', to: '/abitudini', icon: Flame, key: 'qa.habit' as const, color: 'var(--c-habit)' },
+  { id: 'finanze', to: '/finanze', icon: Wallet, key: 'qa.expense' as const, color: 'var(--c-finance)' },
+  { id: 'progetti', to: '/progetti', icon: ListChecks, key: 'qa.task' as const, color: 'var(--c-project)' },
+  { id: 'diario', to: '/diario', icon: PenLine, key: 'qa.journal' as const, color: 'var(--c-journal)' },
+  { id: 'attivita', to: '/attivita', icon: Footprints, key: 'qa.workout' as const, color: 'var(--c-activity)' },
+] as const;
 
 /** Goal → personalized greeting line (set during onboarding). */
 const GOAL_LINE: Record<NonNullable<import('@/data/types').Settings['goal']>, TKey> = {
@@ -99,6 +110,30 @@ export function HomeDashboard() {
   function dismissWelcome() {
     try { localStorage.setItem(WELCOME_KEY, '1'); } catch { /* ignore */ }
     setWelcomed(true);
+  }
+
+  // Celebrate a perfect day (momentum 100) once per day.
+  const [confetti, setConfetti] = useState(false);
+  useEffect(() => {
+    if (m.score < 100) return;
+    let shown = '';
+    try { shown = localStorage.getItem(CONFETTI_KEY) ?? ''; } catch { /* ignore */ }
+    if (shown === today) return;
+    setConfetti(true);
+    platform.haptic();
+    try { localStorage.setItem(CONFETTI_KEY, today); } catch { /* ignore */ }
+  }, [m.score, today]);
+
+  // Quick actions, filtered to the modules the user enabled in onboarding.
+  const quickActions = QUICK_ACTIONS.filter((q) => !s.enabledModules || s.enabledModules.includes(q.id as ModuleId)).slice(0, 4);
+  function runQuick(q: (typeof QUICK_ACTIONS)[number]) {
+    platform.haptic();
+    if (q.id === 'acqua') {
+      void addWaterMl(today, s.water.glassMl || 200);
+      toast.show(t('qa.waterDone'));
+    } else {
+      navigate(q.to);
+    }
   }
 
   // Motivational phrase rotates every 10s (starts at a day-based offset so it
@@ -308,8 +343,8 @@ export function HomeDashboard() {
           style={{ background: 'linear-gradient(140deg, var(--c-hero-1) 0%, var(--c-hero-2) 100%)' }}
         >
           <div className="flex items-center gap-4">
-            <ProgressRing progress={animScore / 100} size={76} stroke={8} color="var(--c-primary)">
-              <StarMascot size={48} mood={stellaMood(m.score)} animated={m.score >= 80} />
+            <ProgressRing progress={animScore / 100} size={84} stroke={9} gradient={[GOLD, 'var(--c-primary)']} trackColor="rgba(0,0,0,0.08)">
+              <StarMascot size={52} mood={stellaMood(m.score)} animated={m.score >= 80} />
             </ProgressRing>
             <Link to="/recap" className="min-w-0 flex-1">
               <div className="flex items-center gap-1">
@@ -333,6 +368,26 @@ export function HomeDashboard() {
             </div>
           </Link>
         </section>
+
+        {/* Quick actions — tailored to the user's enabled modules */}
+        {quickActions.length > 0 && (
+          <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar -mx-1 px-1">
+            {quickActions.map((q) => {
+              const Ico = q.icon;
+              return (
+                <button
+                  key={q.id}
+                  onClick={() => runQuick(q)}
+                  className="flex items-center gap-1.5 rounded-full pl-3 pr-3.5 h-10 flex-shrink-0 active:scale-95 transition-transform"
+                  style={{ background: wash(q.color, 15), color: q.color }}
+                >
+                  <Ico size={16} strokeWidth={2.5} />
+                  <span className="text-[13px] font-bold whitespace-nowrap">{t(q.key)}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* Daily phrase — right under the momentum hero */}
         <section className="mt-3 rounded-card p-4 flex items-center gap-3" style={{ background: wash('var(--c-journal)', 14) }}>
@@ -457,6 +512,7 @@ export function HomeDashboard() {
       </div>
 
       {win && <DailyWin streak={win.streak} pointsToday={win.today} pointsYesterday={win.yesterday} onClose={closeWin} />}
+      {confetti && <Confetti onDone={() => setConfetti(false)} />}
 
       <Sheet open={widgetsOpen} onClose={() => setWidgetsOpen(false)} title={t('widgets.sheet.title')}>
         <div className="flex gap-3 mb-4">

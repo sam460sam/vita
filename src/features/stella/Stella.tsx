@@ -1,9 +1,20 @@
 import { createContext, useContext, useState, useRef, useEffect, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { Send, Sparkles } from 'lucide-react';
 import { Sheet, Button } from '@/ui';
 import { useT, type TKey } from '@/i18n';
+import { readSettings } from '@/data/repo';
+import type { Settings } from '@/data/types';
 import { matchTopic, STELLA_TOPICS } from './knowledge';
+
+/** Stella's opening line — personalized by the user's name + onboarding goal. */
+function stellaOpener(s: Settings | undefined, t: (k: TKey, v?: Record<string, string | number>) => string): string {
+  const name = s?.name?.trim();
+  const hello = name ? t('stella.helloName', { name }) : t('stella.hello');
+  const tone = s?.goal ? t(`stella.tone.${s.goal}` as TKey) : t('stella.subtitle');
+  return `${hello} ${tone}`;
+}
 
 /** Iridescent gradient orb — Stella's avatar (candy assistant style). */
 function StellaOrb({ size = 64 }: { size?: number }) {
@@ -62,13 +73,15 @@ function StellaSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const settings = useLiveQuery(() => readSettings(), [], undefined);
+  const opener = stellaOpener(settings, t);
 
   useEffect(() => {
     if (open) {
-      setMessages([{ from: 'stella', text: t('stella.subtitle') }]);
+      setMessages([{ from: 'stella', text: opener }]);
       setInput('');
     }
-  }, [open, t]);
+  }, [open, opener]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
@@ -98,7 +111,7 @@ function StellaSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
                 <StellaOrb size={84} />
               </div>
               <div className="rounded-[20px] rounded-tl-md bg-section px-4 py-3 text-[15px] font-semibold text-ink shadow-chip">
-                {t('stella.subtitle')}
+                {opener}
               </div>
             </div>
           )}

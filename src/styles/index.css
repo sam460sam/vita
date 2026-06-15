@@ -298,3 +298,21 @@ h3.font-extrabold, h3.font-bold,
 html.dark .animate-shimmer::after {
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
 }
+
+/* Full-screen confetti rain (premium celebration) */
+@keyframes confetti-rain {
+  0% { transform: translateY(-12vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(112vh) rotate(720deg); opacity: 0; }
+}
+
+/* Gentle rise-in for page content (premium entrance) */
+@keyframes rise {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: none; }
+}
+.animate-rise {
+  animation: rise 440ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise { animation: none; }
+}
