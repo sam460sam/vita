@@ -2,10 +2,9 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { db } from '@/data/db';
-import { readSettings, toggleHabitLog } from '@/data/repo';
+import { readSettings, toggleHabitLog, setWaterMl } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
-import { ProgressRing, VioCompanion } from '@/ui';
-import { cn } from '@/lib/cn';
+import { ProgressRing, VioCompanion, Icon } from '@/ui';
 import { longDate, todayISO } from '@/lib/format';
 import { platform } from '@/platform/platform';
 import { isScheduled, isDone } from '@/features/abitudini/logic';
@@ -16,8 +15,6 @@ import vLogo from '/vyta-vmark.png';
 import iconHabits from '/icons3d/habits.png';
 import iconWater from '/icons3d/water.png';
 import iconCompass from '/icons3d/compass.png';
-
-const WATER = '#0EA5E9';
 
 /** Home — premium "Today" screen, faithful to the design north-star. */
 export function HomeScreen() {
@@ -59,8 +56,8 @@ export function HomeScreen() {
             <p className="text-[12.5px] font-semibold text-ink-3 capitalize leading-none">{longDate()}</p>
             <h1 className="display-serif text-[30px] text-ink leading-tight mt-1.5 truncate">{greeting}</h1>
           </div>
-          <Link to="/impostazioni" aria-label={t('nav.settings')} className="mt-1 h-11 w-11 rounded-full bg-card shadow-chip flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform">
-            <img src={vLogo} className="h-7 w-7 object-contain" alt="Vyta" draggable={false} />
+          <Link to="/altro" aria-label={t('nav.more')} className="mt-1 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform" style={{ background: '#E8F1E3' }}>
+            <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
           </Link>
         </header>
 
@@ -107,60 +104,66 @@ export function HomeScreen() {
                 <button
                   key={hb.id}
                   onClick={() => { platform.haptic(); void toggleHabitLog(hb.id, today); }}
-                  className={cn('flex items-center gap-3 w-full px-3 py-3 rounded-2xl text-left transition-colors', done ? 'bg-habit/12' : 'active:bg-section')}
+                  className="flex items-center gap-3 w-full px-3 rounded-2xl text-left transition-colors active:opacity-80"
+                  style={{ minHeight: 52, background: done ? '#E8F1E3' : 'transparent' }}
                 >
                   <span
-                    className="h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors"
-                    style={done ? { background: 'var(--c-habit)', borderColor: 'var(--c-habit)' } : { borderColor: 'var(--c-line)' }}
+                    className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors"
+                    style={done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }}
                   >
-                    {done && <Check size={15} className="text-white" strokeWidth={3} />}
+                    {done && <Check size={14} className="text-white" strokeWidth={3} />}
                   </span>
                   <span className="flex-1 min-w-0 text-[15.5px] font-semibold text-ink truncate">{habitDisplayName(hb, t)}</span>
+                  <span className="flex-shrink-0" style={{ color: hb.color }}><Icon name={hb.icon} size={20} strokeWidth={2.4} /></span>
                 </button>
               );
             })
           )}
         </div>
 
-        {/* Water drops tracker */}
-        <Link to="/acqua" className="block mt-4">
-          <div className="rounded-[26px] bg-card shadow-card px-4 py-4 active:bg-section transition-colors">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[14px] font-semibold text-ink">{t('nav.water')}</span>
-              <span className="text-[13px] text-ink-3 tnum">{fmtL(ml / 1000)} / {fmtL(goalMl / 1000)}</span>
-            </div>
-            <WaterDrops total={dropTotal} done={dropDone} />
+        {/* Water drops tracker — tap a drop to set your intake */}
+        <div className="rounded-[26px] bg-card shadow-card px-4 py-4 mt-4">
+          <div className="flex items-center justify-between mb-3">
+            <Link to="/acqua" className="text-[14px] font-semibold text-ink">{t('nav.water')}</Link>
+            <span className="text-[13px] text-ink-3 tnum">{fmtL(ml / 1000)} / {fmtL(goalMl / 1000)}</span>
           </div>
-        </Link>
+          <div className="flex justify-between gap-1">
+            {Array.from({ length: dropTotal }, (_, i) => {
+              const f = i < dropDone;
+              return (
+                <button
+                  key={i}
+                  aria-label={`${i + 1}`}
+                  onClick={() => { platform.haptic(); void setWaterMl(today, (f && i + 1 === dropDone ? i : i + 1) * glassMl); }}
+                  className="active:scale-90 transition-transform"
+                >
+                  <Drop filled={f} />
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-/** A row of teardrop water-glasses with a teal gradient fill, matching the render. */
-function WaterDrops({ total, done }: { total: number; done: number }) {
-  const slot = 30;
+/** A single teardrop water-glass with a teal gradient when filled, matching the render. */
+function Drop({ filled }: { filled: boolean }) {
   return (
-    <svg viewBox={`0 0 ${total * slot} 36`} width="100%" height={34} preserveAspectRatio="xMidYMid meet">
+    <svg width="30" height="34" viewBox="0 0 24 28" aria-hidden>
       <defs>
-        <linearGradient id="wdrop" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#D6F1FF" />
-          <stop offset="100%" stopColor={WATER} />
+        <linearGradient id="wdropG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#A7D2EC" />
+          <stop offset="100%" stopColor="#6BA8D6" />
         </linearGradient>
       </defs>
-      {Array.from({ length: total }, (_, i) => {
-        const f = i < done;
-        return (
-          <path
-            key={i}
-            transform={`translate(${i * slot + slot / 2 - 11}, 3)`}
-            d="M11 0 C11 0 21 13 21 21 a10.5 10.5 0 0 1 -21 0 C0 13 11 0 11 0 Z"
-            fill={f ? 'url(#wdrop)' : 'var(--c-section)'}
-            stroke={f ? WATER : 'var(--c-line)'}
-            strokeWidth="1.3"
-          />
-        );
-      })}
+      <path
+        d="M12 1 C12 1 22 14 22 21 a10 10 0 0 1 -20 0 C2 14 12 1 12 1 Z"
+        fill={filled ? 'url(#wdropG)' : '#E3E0D8'}
+        stroke={filled ? '#6BA8D6' : 'transparent'}
+        strokeWidth="1"
+      />
     </svg>
   );
 }

@@ -2,6 +2,7 @@ import {
   CalendarDays,
   CheckSquare,
   Flame,
+  Leaf,
   Home,
   MoreHorizontal,
   Target,
@@ -53,7 +54,7 @@ export const SECONDARY_NAV: NavItem[] = [
 // Dynamic navigation — built from the user's enabled modules + their order.
 // Home, More and Settings/Recap/Rewards are always present (not "interests").
 // ---------------------------------------------------------------------------
-export const HOME_ITEM: NavItem = { to: '/oggi', labelKey: 'nav.today', icon: Home };
+export const HOME_ITEM: NavItem = { to: '/oggi', labelKey: 'nav.today', icon: Leaf };
 export const MORE_ITEM: NavItem = { to: '/altro', labelKey: 'nav.more', icon: MoreHorizontal };
 
 /**
@@ -96,7 +97,7 @@ export function useNavItems(): NavSet {
   const rest = order.filter((id) => !HERO_MODULES.includes(id)).map(toItem);
   return {
     modules: order.map(toItem),
-    tabs: [HOME_ITEM, ...hero, MORE_ITEM],
+    tabs: [HOME_ITEM, ...hero],
     sidebarPrimary: [HOME_ITEM, ...hero],
     more: [...rest, ...EXTRA_NAV],
   };

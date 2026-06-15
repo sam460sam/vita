@@ -5,7 +5,7 @@
 :root {
   /* ===== Design tokens — single source of truth (Warm & Soft / cozy) ===== */
   /* Surfaces — toasty cream that feels like morning light, not paper-white */
-  --c-app: #f8f1e6;
+  --c-app: #f4efe5;
   --c-section: #f1e7d7;
   --c-card: #fffdf8;
   /* Warm gradient washes for hero surfaces — soft fresh green */

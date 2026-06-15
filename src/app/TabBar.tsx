@@ -45,7 +45,7 @@ function QuickAddButton() {
   );
 }
 
-function TabLink({ to, labelKey, shortKey, icon: Icon, accent }: NavItem) {
+function TabLink({ to, labelKey, shortKey, icon: Icon }: NavItem) {
   const t = useT();
   return (
     <NavLink to={to} className="flex-1 flex flex-col items-center justify-center gap-0.5 min-w-0">
@@ -54,7 +54,7 @@ function TabLink({ to, labelKey, shortKey, icon: Icon, accent }: NavItem) {
           <Icon
             size={23}
             strokeWidth={isActive ? 2.5 : 2}
-            style={{ color: isActive ? accent ?? 'var(--c-ink)' : 'var(--c-ink-3)' }}
+            style={{ color: isActive ? 'var(--c-primary)' : 'var(--c-ink-3)' }}
           />
           <span className={cn('text-[10px] font-semibold truncate max-w-full px-0.5', isActive ? 'text-ink' : 'text-ink-3')}>
             {t(shortKey ?? labelKey)}
