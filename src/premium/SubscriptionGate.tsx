@@ -1,11 +1,10 @@
 import { useState, type ReactNode } from 'react';
-import { Crown, Check, X, Wallet, Target, CalendarDays, BarChart3 } from 'lucide-react';
-import { Button, useToast } from '@/ui';
+import { Check, X } from 'lucide-react';
+import { useToast } from '@/ui';
 import { useT, type TKey } from '@/i18n';
 import { usePremium } from './premium';
-import { PRICE_FALLBACK, TRIAL_DAYS, YEARLY_SAVINGS_PCT, TERMS_URL, PRIVACY_URL, type PlanPeriod } from './config';
-
-const GOLD = '#C9A227';
+import { PRICE_FALLBACK, TRIAL_DAYS, TERMS_URL, PRIVACY_URL, type PlanPeriod } from './config';
+import vioBloom from '/vio/fioritura.png';
 
 /** Wrap a Pro-only area: shows the children when subscribed, else the paywall. */
 export function ProGate({ children }: { children: ReactNode }) {
@@ -56,65 +55,61 @@ export function Paywall({ onClose }: { onClose?: () => void }) {
     if (ok) onClose?.();
   }
 
-  const features: { icon: typeof Wallet; key: TKey; color: string }[] = [
-    { icon: Wallet, key: 'paywall.feature.finances', color: 'var(--c-finance)' },
-    { icon: Target, key: 'paywall.feature.goals', color: 'var(--c-project)' },
-    { icon: CalendarDays, key: 'paywall.feature.calendar', color: 'var(--c-activity)' },
-    { icon: BarChart3, key: 'paywall.feature.stats', color: 'var(--c-habit)' },
-  ];
+  const benefits: TKey[] = ['paywall.benefit.all', 'paywall.benefit.unlimited', 'paywall.benefit.insights', 'paywall.benefit.exclusive'];
 
   return (
     <div className="min-h-[100dvh] bg-app relative overflow-hidden">
-      <div aria-hidden className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-72 w-[140%]" style={{ background: `radial-gradient(ellipse at top, ${GOLD}33, transparent 70%)` }} />
-      <div className="relative max-w-md mx-auto px-6 pt-safe-top pb-[calc(28px+env(safe-area-inset-bottom))] min-h-[100dvh] flex flex-col">
-        <div className="h-12 flex items-center justify-end pt-2">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[300px]" style={{ background: 'radial-gradient(125% 80% at 50% -12%, color-mix(in srgb, var(--c-hero-2) 55%, transparent), transparent 70%)' }} />
+      <div className="relative max-w-md mx-auto px-5 pt-safe-top pb-[calc(24px+env(safe-area-inset-bottom))] min-h-[100dvh] flex flex-col">
+        <div className="h-10 flex items-center justify-end pt-2">
           {onClose && (
-            <button onClick={onClose} aria-label={t('common.close')} className="h-9 w-9 rounded-full bg-section flex items-center justify-center text-ink-2 active:scale-90 transition-transform">
+            <button onClick={onClose} aria-label={t('common.close')} className="h-9 w-9 rounded-full bg-card shadow-chip flex items-center justify-center text-ink-2 active:scale-90 transition-transform">
               <X size={18} />
             </button>
           )}
         </div>
 
-        <div className="text-center mt-2">
-          <span className="inline-flex h-16 w-16 rounded-3xl items-center justify-center" style={{ background: `${GOLD}1f`, color: GOLD }}>
-            <Crown size={32} fill={GOLD} />
-          </span>
-          <h1 className="display-serif text-[27px] font-semibold text-ink tracking-tight mt-4">{t('paywall.title')}</h1>
-          <p className="text-[14px] text-ink-2 mt-1.5 leading-snug">{t('paywall.subtitle')}</p>
+        {/* Header + Vio in bloom */}
+        <div className="relative pr-28">
+          <h1 className="display-serif text-[30px] text-ink leading-tight">{t('paywall.unlockTitle')}</h1>
+          <img src={vioBloom} alt="" aria-hidden draggable={false} className="vio-bob absolute -right-2 -top-4 w-32 h-32 object-contain" />
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-2.5">
-          {features.map((f) => {
-            const Icon = f.icon;
-            return (
-              <div key={f.key} className="flex items-center gap-2 bg-card rounded-2xl shadow-chip px-3 py-2.5">
-                <span style={{ color: f.color }}><Icon size={18} /></span>
-                <span className="text-[13px] font-semibold text-ink">{t(f.key)}</span>
-              </div>
-            );
-          })}
+        {/* Benefits */}
+        <div className="mt-6 space-y-3">
+          {benefits.map((k) => (
+            <div key={k} className="flex items-center gap-3">
+              <span className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#4F9D55' }}>
+                <Check size={15} className="text-white" strokeWidth={3} />
+              </span>
+              <span className="text-[15px] font-medium text-ink">{t(k)}</span>
+            </div>
+          ))}
         </div>
 
-        <div className="mt-5 space-y-2.5">
+        {/* Plans */}
+        <div className="mt-6 space-y-3">
           <PlanCard period="yearly" price={priceOf('yearly')} selected={period === 'yearly'} onSelect={() => setPeriod('yearly')} highlight />
           <PlanCard period="monthly" price={priceOf('monthly')} selected={period === 'monthly'} onSelect={() => setPeriod('monthly')} />
         </div>
 
-        <p className="text-center text-[13px] font-bold mt-4" style={{ color: GOLD }}>
-          {t('paywall.trial', { n: TRIAL_DAYS, price: priceOf(period) })}
-        </p>
-
-        <div className="flex-1 min-h-[12px]" />
+        <div className="flex-1 min-h-[16px]" />
 
         {billingActive ? (
-          <Button block size="lg" disabled={busy} onClick={subscribe} className="!bg-[#C9A227] !text-white">
-            {t('paywall.cta', { n: TRIAL_DAYS })}
-          </Button>
+          <button
+            disabled={busy}
+            onClick={subscribe}
+            className="w-full h-[54px] rounded-[18px] text-white font-bold text-[16px] flex items-center justify-center active:scale-[0.98] transition-transform shadow-card disabled:opacity-60"
+            style={{ background: 'linear-gradient(180deg, #6FBE6F, #2F7D43)' }}
+          >
+            {t('paywall.startTrial')}
+          </button>
         ) : (
           <div className="rounded-card bg-section px-4 py-3 text-center text-[13px] text-ink-2">{t('paywall.web')}</div>
         )}
 
-        <div className="flex items-center justify-center gap-4 mt-3 text-[12px] text-ink-3">
+        <p className="text-center text-[12px] text-ink-2 mt-3">{t('paywall.trust')}</p>
+        <div className="flex items-center justify-center gap-4 mt-2 text-[12px] text-ink-3">
           <button onClick={onRestore} disabled={busy} className="py-1 disabled:opacity-50">{t('paywall.restore')}</button>
           <span>·</span>
           <a href={TERMS_URL} target="_blank" rel="noreferrer" className="py-1">{t('paywall.terms')}</a>
@@ -129,27 +124,28 @@ export function Paywall({ onClose }: { onClose?: () => void }) {
 
 function PlanCard({ period, price, selected, onSelect, highlight }: { period: PlanPeriod; price: string; selected: boolean; onSelect: () => void; highlight?: boolean }) {
   const t = useT();
+  const GREEN = '#4F9D55';
   return (
     <button
       onClick={onSelect}
-      className="w-full rounded-card bg-card p-4 text-left relative transition-all active:scale-[0.99]"
-      style={{ boxShadow: selected ? `0 0 0 2.5px ${GOLD}, 0 6px 18px ${GOLD}22` : '0 4px 14px rgba(83,52,20,0.06)' }}
+      className="w-full rounded-[20px] bg-card p-4 text-left relative transition-all active:scale-[0.99]"
+      style={{ boxShadow: selected ? `0 0 0 2.5px ${GREEN}, 0 6px 18px ${GREEN}22` : '0 4px 14px rgba(83,52,20,0.06)' }}
     >
       {highlight && (
-        <span className="absolute -top-2.5 right-4 text-[10px] font-extrabold text-white px-2.5 py-1 rounded-full" style={{ background: GOLD }}>
+        <span className="absolute -top-2.5 right-4 text-[10px] font-extrabold text-white px-2.5 py-1 rounded-full" style={{ background: GREEN }}>
           {t('paywall.bestValue')}
         </span>
       )}
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="text-[16px] font-extrabold text-ink">{t(period === 'yearly' ? 'paywall.yearly' : 'paywall.monthly')}</div>
-          {period === 'yearly' && <div className="text-[12px] font-bold mt-0.5" style={{ color: GOLD }}>{t('paywall.save', { n: YEARLY_SAVINGS_PCT })}</div>}
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <div className="text-[18px] font-extrabold text-ink">{t(period === 'yearly' ? 'paywall.yearly' : 'paywall.monthly')}</div>
+          <div className="mt-0.5">
+            <span className="text-[18px] font-extrabold text-ink tnum">{price}</span>
+            <span className="text-[13px] font-semibold text-ink-3"> / {t(period === 'yearly' ? 'paywall.perYear' : 'paywall.perMonth')}</span>
+          </div>
+          {period === 'yearly' && <div className="text-[13px] font-semibold mt-0.5" style={{ color: GREEN }}>{t('paywall.withTrial', { n: TRIAL_DAYS })}</div>}
         </div>
-        <div className="text-right">
-          <div className="text-[18px] font-extrabold text-ink tnum">{price}</div>
-          <div className="text-[11px] text-ink-3">{t(period === 'yearly' ? 'paywall.perYear' : 'paywall.perMonth')}</div>
-        </div>
-        <span className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 ml-3" style={{ background: selected ? GOLD : 'transparent', border: selected ? 'none' : '2px solid var(--c-line)' }}>
+        <span className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: selected ? GREEN : 'transparent', border: selected ? 'none' : '2px solid var(--c-line)' }}>
           {selected && <Check size={14} className="text-white" strokeWidth={3} />}
         </span>
       </div>
