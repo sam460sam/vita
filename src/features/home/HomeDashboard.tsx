@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Quote, ChevronRight, Settings2, Check, Flame, Plus, Footprints, LayoutGrid, Droplet, Bell } from 'lucide-react';
+import { Quote, ChevronRight, Settings2, Check, Flame, Plus, Footprints, LayoutGrid, Droplet, Bell, Sparkles, X } from 'lucide-react';
 import { subDays, format, startOfWeek, addDays } from 'date-fns';
 import { ProgressRing, ActivityRings, StarMascot, Icon, useToast, Sheet } from '@/ui';
 import { DateStrip } from '@/ui/DateStrip';
@@ -30,9 +30,37 @@ const ALLDONE_KEY = 'vita.allhabits.shown';
 const STEPS_GOAL = 8000;
 
 const WIN_KEY = 'vita.dailywin.shown';
+const WELCOME_KEY = 'vita.welcomed';
+const GOLD = '#C9A227';
+
+/** Goal → personalized greeting line (set during onboarding). */
+const GOAL_LINE: Record<NonNullable<import('@/data/types').Settings['goal']>, TKey> = {
+  feel_better: 'home.goalline.feel_better',
+  get_organized: 'home.goalline.get_organized',
+  reduce_stress: 'home.goalline.reduce_stress',
+  build_consistency: 'home.goalline.build_consistency',
+  reach_goal: 'home.goalline.reach_goal',
+};
 
 /** Soft translucent wash of any color (hex or CSS var) — works for tiles. */
 const wash = (c: string, pct = 14) => `color-mix(in srgb, ${c} ${pct}%, transparent)`;
+
+/** Animate a number from 0 → target with an ease-out, for a premium count-up. */
+function useCountUp(target: number, ms = 900): number {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - start) / ms);
+      setV(Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, ms]);
+  return v;
+}
 
 /**
  * Home — the flagship. A warm, scrollable "today" canvas: big greeting, this
@@ -63,6 +91,15 @@ export function HomeDashboard() {
   const healthSummary = useHealthSummary();
   const rings = mergeHealthRings(todayRings(workouts ?? [], s), healthSummary);
   const greeting = greetByHour(s.name, t);
+  const animScore = useCountUp(m.score);
+  const goalLine = s.goal ? t(GOAL_LINE[s.goal]) : null;
+  const [welcomed, setWelcomed] = useState(() => {
+    try { return localStorage.getItem(WELCOME_KEY) === '1'; } catch { return true; }
+  });
+  function dismissWelcome() {
+    try { localStorage.setItem(WELCOME_KEY, '1'); } catch { /* ignore */ }
+    setWelcomed(true);
+  }
 
   // Motivational phrase rotates every 10s (starts at a day-based offset so it
   // doesn't always begin from the same one).
@@ -203,8 +240,11 @@ export function HomeDashboard() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-app">
-      <div className="max-w-2xl mx-auto px-4 pt-safe-top pb-[calc(116px+env(safe-area-inset-bottom))]">
+    <div className="min-h-[100dvh] bg-app relative overflow-hidden">
+      {/* Warm ambient hero: soft glow + faint leaf texture behind the top. */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[360px]" style={{ background: 'radial-gradient(125% 80% at 50% -12%, color-mix(in srgb, var(--c-hero-2) 60%, transparent), transparent 70%)' }} />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[360px] opacity-[0.05] bg-center bg-cover" style={{ backgroundImage: "url('/leaf-tex.png')" }} />
+      <div className="relative max-w-2xl mx-auto px-4 pt-safe-top pb-[calc(116px+env(safe-area-inset-bottom))]">
         {/* Greeting header */}
         <header className="flex items-center gap-3 pt-4 pb-1">
           <button onClick={stella.open} aria-label={t('stella.name')} className="flex-shrink-0 active:scale-95 transition-transform">
@@ -215,6 +255,7 @@ export function HomeDashboard() {
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold text-ink-3 capitalize leading-none">{longDate()}</p>
             <h1 className="text-[24px] font-extrabold text-ink leading-tight truncate mt-0.5">{greeting} 👋</h1>
+            {goalLine && <p className="text-[12.5px] text-ink-2 leading-snug truncate mt-0.5">{goalLine}</p>}
           </div>
           <button
             onClick={() => navigate('/impostazioni')}
@@ -225,6 +266,39 @@ export function HomeDashboard() {
           </button>
         </header>
 
+        {/* Personalized welcome — shown once after onboarding. */}
+        {!welcomed && (
+          <section
+            className="mt-3 rounded-card p-4 relative overflow-hidden"
+            style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${GOLD} 18%, var(--c-card)), var(--c-card))`, boxShadow: `0 10px 30px ${GOLD}22` }}
+          >
+            <button onClick={dismissWelcome} aria-label={t('common.close')} className="absolute top-3 right-3 h-7 w-7 rounded-full bg-black/5 flex items-center justify-center text-ink-2 active:scale-90">
+              <X size={15} />
+            </button>
+            <div className="flex items-center gap-2 pr-8">
+              <span className="h-9 w-9 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: `${GOLD}26`, color: GOLD }}>
+                <Sparkles size={18} />
+              </span>
+              <h2 className="text-[17px] font-extrabold text-ink leading-tight">
+                {s.name ? t('home.welcome.title', { name: s.name }) : t('home.welcome.titleNoName')}
+              </h2>
+            </div>
+            <p className="text-[13px] text-ink-2 leading-snug mt-2">{t('home.welcome.desc')}</p>
+            {modules.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-3">
+                {modules.slice(0, 5).map((mod) => (
+                  <span key={mod.to} className="inline-flex items-center gap-1 rounded-full px-2.5 h-7 text-[12px] font-bold" style={{ background: wash(mod.accent ?? 'var(--c-ink-2)', 14), color: mod.accent ?? 'var(--c-ink-2)' }}>
+                    {t(mod.shortKey ?? mod.labelKey)}
+                  </span>
+                ))}
+              </div>
+            )}
+            <button onClick={dismissWelcome} className="mt-4 w-full h-11 rounded-full font-bold text-[15px] text-white active:scale-[0.98] transition-transform" style={{ background: GOLD }}>
+              {t('home.welcome.dismiss')}
+            </button>
+          </section>
+        )}
+
         {/* This week */}
         <DateStrip marked={activeDays} className="mt-3 mb-4" />
 
@@ -234,7 +308,7 @@ export function HomeDashboard() {
           style={{ background: 'linear-gradient(140deg, var(--c-hero-1) 0%, var(--c-hero-2) 100%)' }}
         >
           <div className="flex items-center gap-4">
-            <ProgressRing progress={m.score / 100} size={76} stroke={8} color="var(--c-primary)">
+            <ProgressRing progress={animScore / 100} size={76} stroke={8} color="var(--c-primary)">
               <StarMascot size={48} mood={stellaMood(m.score)} animated={m.score >= 80} />
             </ProgressRing>
             <Link to="/recap" className="min-w-0 flex-1">
@@ -243,7 +317,7 @@ export function HomeDashboard() {
                 <ChevronRight size={16} className="text-ink/40 ml-auto" />
               </div>
               <div className="text-[34px] font-extrabold tnum text-ink leading-none mt-1">
-                {m.score}
+                {animScore}
                 <span className="text-ink/40 text-lg font-bold">/100</span>
               </div>
               <p className="text-[13px] font-medium text-ink/70 leading-snug mt-1 line-clamp-2">{t(momentumMessageKey(m.score) as TKey)}</p>
