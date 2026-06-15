@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 
 import type { TKey } from '@/i18n';
+import type { ModuleId } from '@/data/types';
 import { useModules } from '@/features/personalizzazione/prefs';
 import { MODULE_CATALOG } from '@/features/personalizzazione/modules';
 
@@ -55,6 +56,14 @@ export const SECONDARY_NAV: NavItem[] = [
 export const HOME_ITEM: NavItem = { to: '/oggi', labelKey: 'nav.today', icon: Home };
 export const MORE_ITEM: NavItem = { to: '/altro', labelKey: 'nav.more', icon: MoreHorizontal };
 
+/**
+ * Hero modules — the focused set that always leads the bottom tab bar (in this
+ * order): Habits · Water · Test(Personality). Everything else is "set aside" in
+ * the "More" drawer. This keeps the app from feeling like a sprawling all-in-one
+ * and puts our three strongest pages front and centre.
+ */
+export const HERO_MODULES: ModuleId[] = ['abitudini', 'acqua', 'personalita'];
+
 /** Always-available destinations that are not toggleable interests. */
 export const EXTRA_NAV: NavItem[] = [
   { to: '/recap', labelKey: 'nav.recap', icon: Sparkles, accent: 'var(--c-habit)' },
@@ -65,24 +74,30 @@ export const EXTRA_NAV: NavItem[] = [
 export interface NavSet {
   /** Module destinations in the user's order. */
   modules: NavItem[];
-  /** Bottom tab bar: Home · up to 4 modules · More. */
+  /** Bottom tab bar: Home · hero modules · More. */
   tabs: NavItem[];
-  /** Desktop sidebar primary group: Home + all enabled modules. */
+  /** Desktop sidebar primary group: Home + hero modules. */
   sidebarPrimary: NavItem[];
-  /** "Altro" page list: all enabled modules + extras. */
+  /** "Altro" page list: non-hero modules ("set aside") + extras. */
   more: NavItem[];
 }
 
+const toItem = (id: ModuleId): NavItem => {
+  const d = MODULE_CATALOG[id];
+  return { to: d.to, labelKey: d.labelKey, shortKey: d.shortKey, icon: d.icon, accent: d.accent };
+};
+
 export function useNavItems(): NavSet {
   const { order } = useModules();
-  const modules: NavItem[] = order.map((id) => {
-    const d = MODULE_CATALOG[id];
-    return { to: d.to, labelKey: d.labelKey, shortKey: d.shortKey, icon: d.icon, accent: d.accent };
-  });
+  const enabled = new Set(order);
+  // Hero set leads the tab bar (only those the user still has enabled).
+  const hero = HERO_MODULES.filter((id) => enabled.has(id)).map(toItem);
+  // Everything else keeps the user's order but is pushed into "More".
+  const rest = order.filter((id) => !HERO_MODULES.includes(id)).map(toItem);
   return {
-    modules,
-    tabs: [HOME_ITEM, ...modules.slice(0, 4), MORE_ITEM],
-    sidebarPrimary: [HOME_ITEM, ...modules],
-    more: [...modules, ...EXTRA_NAV],
+    modules: order.map(toItem),
+    tabs: [HOME_ITEM, ...hero, MORE_ITEM],
+    sidebarPrimary: [HOME_ITEM, ...hero],
+    more: [...rest, ...EXTRA_NAV],
   };
 }

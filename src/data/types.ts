@@ -32,9 +32,9 @@ export type ModuleId =
   | 'calendario';
 
 /** All known modules in canonical order — single source of truth.
- *  Core four (abitudini · attivita/salute · acqua · personalita) lead so they
- *  fill the bottom tab bar; progetti, note, diario and the rest live in "Altro"
- *  + the home grid. */
+ *  The hero set (abitudini · acqua · personalita — see HERO_MODULES in nav.ts)
+ *  leads the bottom tab bar; attivita/salute, progetti, note, diario and the
+ *  rest are "set aside" in the "Altro" drawer + the home grid. */
 export const ALL_MODULES: ModuleId[] = [
   'abitudini',
   'attivita',
