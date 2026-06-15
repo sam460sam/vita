@@ -23,6 +23,7 @@ import { useNavItems } from '@/app/nav';
 import { platform } from '@/platform/platform';
 import { refreshStreakNudge } from '@/features/notify/smart';
 import { syncWidgetData, drainWidgetWaterInbox } from '@/platform/widget';
+import { BackupNudge } from '@/features/backup';
 import type { Habit, HabitLog, ModuleId } from '@/data/types';
 
 const ALLDONE_KEY = 'vita.allhabits.shown';
@@ -367,6 +368,9 @@ export function HomeDashboard() {
             </div>
           </Link>
         </section>
+
+        {/* Data-safety reminder (everything is on-device) */}
+        <BackupNudge hasData={(habits?.length ?? 0) + (tasks?.length ?? 0) + (journals?.length ?? 0) + (weights?.length ?? 0) > 0} />
 
         {/* Quick actions — tailored to the user's enabled modules */}
         {quickActions.length > 0 && (

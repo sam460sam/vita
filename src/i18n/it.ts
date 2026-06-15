@@ -891,6 +891,8 @@ export const it = {
   'rate.cta': 'Vota su App Store',
   'more.rate': 'Vota la nostra app',
   // Trial-ending local notification
+  'reminder.recap.title': 'Il tuo riepilogo della settimana 🌟',
+  'reminder.recap.body': 'Vediamo i tuoi progressi: abitudini, attività e umore di questi 7 giorni.',
   'reminder.trialEnd.title': 'La tua prova sta per finire',
   'reminder.trialEnd.body': 'I tuoi {n} giorni gratis di Vyta Pro stanno per terminare — continua a goderti tutte le funzioni.',
 

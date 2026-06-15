@@ -888,6 +888,8 @@ export const en: Record<TKey, string> = {
   'rate.cta': 'Rate on the App Store',
   'more.rate': 'Rate our app',
   // Trial-ending local notification
+  'reminder.recap.title': 'Your week in review 🌟',
+  'reminder.recap.body': 'See your progress: habits, activity and mood over the last 7 days.',
   'reminder.trialEnd.title': 'Your trial is ending soon',
   'reminder.trialEnd.body': 'Your {n}-day Vyta Pro free trial is about to end — keep enjoying every feature.',
 

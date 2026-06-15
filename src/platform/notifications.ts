@@ -164,4 +164,24 @@ export const notifications = {
       /* notifications unavailable */
     }
   },
+
+  /**
+   * Schedule (or cancel with time=undefined) a weekly reminder, e.g. the Sunday
+   * recap. `weekday` is 1=Sunday … 7=Saturday (Capacitor convention).
+   */
+  async setWeeklyReminder(kind: string, weekday: number, title: string, body: string, time?: string): Promise<void> {
+    if (!isNative) return;
+    try {
+      const { LocalNotifications } = await import('@capacitor/local-notifications');
+      const id = notifId(`weekly:${kind}`);
+      await LocalNotifications.cancel({ notifications: [{ id }] });
+      if (!time) return;
+      const [hh, mm] = time.split(':').map(Number);
+      await LocalNotifications.schedule({
+        notifications: [{ id, title, body, schedule: { on: { weekday, hour: hh, minute: mm }, repeats: true } }],
+      });
+    } catch {
+      /* notifications unavailable */
+    }
+  },
 };

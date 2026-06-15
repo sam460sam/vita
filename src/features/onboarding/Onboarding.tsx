@@ -115,6 +115,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       if (notifications.supported()) {
         const at = new Date(Date.now() + Math.max(1, TRIAL_DAYS - 1) * 86_400_000);
         await notifications.scheduleAt('trialEnd', t('reminder.trialEnd.title'), t('reminder.trialEnd.body', { n: TRIAL_DAYS }), at);
+        // Sunday evening weekly recap (weekday 1 = Sunday).
+        await notifications.setWeeklyReminder('recap', 1, t('reminder.recap.title'), t('reminder.recap.body'), '18:00');
       }
     }
     // Persist chosen interests (in canonical order) alongside name + focus +
