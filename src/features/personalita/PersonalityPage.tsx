@@ -91,12 +91,9 @@ function Intro({ onStart }: { onStart: () => void }) {
 
         {/* Dimensions preview */}
         <h2 className="display-serif text-[22px] text-ink mt-6 mb-3">{t('personality.preview')}</h2>
-        <div className="space-y-4">
-          {dims.map((d, i) => (
-            <div key={d.key} className="relative rounded-[20px] bg-card shadow-card p-4">
-              {i % 2 === 0
-                ? <Sprout className="absolute -top-[18px] right-5 w-7" rot={i === 0 ? -8 : 8} flip={i !== 0} />
-                : <Flower className="absolute -top-[22px] right-5 w-8" />}
+        <div className="space-y-3">
+          {dims.map((d) => (
+            <div key={d.key} className="rounded-[20px] bg-card shadow-card p-4">
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-[15px] font-bold text-ink">{t(d.key)}</span>
                 <span className="text-[12.5px] text-ink-3">{t(d.level)}</span>
@@ -172,12 +169,20 @@ function TestFlow({ onDone, onCancel }: { onDone: (a: Answers) => void; onCancel
           <div className="flex-1 h-2 rounded-full bg-section overflow-hidden">
             <div className="h-full rounded-full transition-all" style={{ width: `${Math.round(progress * 100)}%`, background: 'var(--c-personality)' }} />
           </div>
+          <Flower className="w-6 flex-shrink-0" />
         </div>
 
         <p className="text-[12px] font-bold uppercase tracking-wider text-ink-3 mt-6">{t('personality.q.of', { n: i + 1, total: TOTAL_QUESTIONS })}</p>
         <h1 className="text-[22px] font-extrabold text-ink leading-snug mt-2 min-h-[96px]">{lang === 'it' ? q.it : q.en}</h1>
 
-        <div className="flex-1 min-h-[12px]" />
+        {/* Little garden growing inside the questionnaire */}
+        <div className="flex-1 flex items-end justify-center gap-3 min-h-[64px] py-4 opacity-95">
+          <Sprout className="w-7" rot={-9} />
+          <Flower className="w-8" />
+          <Sprout className="w-6" rot={7} flip />
+          <Flower className="w-7" />
+          <Sprout className="w-7" rot={-5} />
+        </div>
 
         {/* Likert 1..5 */}
         <div className="space-y-2.5">
