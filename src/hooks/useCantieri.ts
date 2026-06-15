@@ -1,25 +1,46 @@
-import { useState, useEffect } from 'react';
+/**
+ * Hook offline-first per cantieri e operai.
+ *
+ * Fonte primaria: Dexie (useLiveQuery) → istantaneo, funziona offline.
+ * Fonte secondaria: Supabase Realtime → aggiorna Dexie, che riattiva useLiveQuery.
+ *
+ * Non si legge MAI direttamente da Supabase in questi hook; il sync è gestito
+ * da SyncWorker.initialize() chiamato una sola volta in TeamContext.
+ */
+
+import { useEffect } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { supabase } from '@/lib/supabase';
 import { useTeam } from '@/auth/TeamContext';
-import { rowToCantiere, rowToOperaio, type CantiereRow, type OperaioRow } from '@/data/supabase-cantiere-repo';
+import { db } from '@/data/db';
+import {
+  rowToCantiere,
+  rowToOperaio,
+  type CantiereRow,
+  type OperaioRow,
+} from '@/data/supabase-cantiere-repo';
 import type { Cantiere, Operaio } from '@/data/types';
 
-/** All cantieri for the current team, sorted newest first. Live real-time. */
+// ── useCantieri ────────────────────────────────────────────────────────────
+
+/** Tutti i cantieri del team corrente, ordinati per updatedAt desc. */
 export function useCantieri(): Cantiere[] {
   const { team } = useTeam();
-  const [cantieri, setCantieri] = useState<Cantiere[]>([]);
 
+  // Lettura reattiva da Dexie — si aggiorna ogni volta che Dexie cambia
+  const cantieri = useLiveQuery(
+    async () => {
+      if (!team?.id) return [];
+      const all = await db.cantieri.where('teamId').equals(team.id).toArray();
+      return all.sort((a, b) => b.updatedAt - a.updatedAt);
+    },
+    [team?.id],
+    [],
+  ) ?? [];
+
+  // Realtime Supabase → scrive su Dexie → useLiveQuery si aggiorna da solo
   useEffect(() => {
-    if (!team) return;
-
-    supabase
-      .from('cantieri')
-      .select('*')
-      .eq('team_id', team.id)
-      .order('updated_at', { ascending: false })
-      .then(({ data }) => {
-        setCantieri((data as CantiereRow[] ?? []).map(rowToCantiere));
-      });
+    if (!team?.id) return;
 
     const ch = supabase
       .channel(`cantieri_team_${team.id}`)
@@ -28,13 +49,12 @@ export function useCantieri(): Cantiere[] {
         filter: `team_id=eq.${team.id}`,
       }, (payload) => {
         if (payload.eventType === 'DELETE') {
-          setCantieri((prev) => prev.filter((c) => c.id !== (payload.old as { id: string }).id));
+          db.cantieri.delete((payload.old as { id: string }).id).catch(console.error);
         } else {
-          const updated = rowToCantiere(payload.new as CantiereRow);
-          setCantieri((prev) => {
-            const filtered = prev.filter((c) => c.id !== updated.id);
-            return [updated, ...filtered].sort((a, b) => b.updatedAt - a.updatedAt);
-          });
+          db.cantieri.put({
+            ...rowToCantiere(payload.new as CantiereRow),
+            teamId: team.id,
+          }).catch(console.error);
         }
       })
       .subscribe();
@@ -45,23 +65,24 @@ export function useCantieri(): Cantiere[] {
   return cantieri;
 }
 
-/** Single cantiere by id. Returns undefined while loading, null if not found. */
+// ── useCantiere ────────────────────────────────────────────────────────────
+
+/** Singolo cantiere per id. undefined = caricamento, null = non trovato. */
 export function useCantiere(id: string | undefined): Cantiere | null | undefined {
   const { team } = useTeam();
-  const [cantiere, setCantiere] = useState<Cantiere | null | undefined>(undefined);
 
+  const cantiere = useLiveQuery(
+    async () => {
+      if (!team?.id || !id) return undefined;
+      return (await db.cantieri.get(id)) ?? null;
+    },
+    [team?.id, id],
+    undefined,
+  );
+
+  // Realtime per aggiornamenti in tempo reale del singolo cantiere
   useEffect(() => {
-    if (!team || !id) return;
-
-    supabase
-      .from('cantieri')
-      .select('*')
-      .eq('id', id)
-      .eq('team_id', team.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        setCantiere(data ? rowToCantiere(data as CantiereRow) : null);
-      });
+    if (!team?.id || !id) return;
 
     const ch = supabase
       .channel(`cantiere_${id}`)
@@ -70,9 +91,12 @@ export function useCantiere(id: string | undefined): Cantiere | null | undefined
         filter: `id=eq.${id}`,
       }, (payload) => {
         if (payload.eventType === 'DELETE') {
-          setCantiere(null);
+          db.cantieri.delete(id).catch(console.error);
         } else {
-          setCantiere(rowToCantiere(payload.new as CantiereRow));
+          db.cantieri.put({
+            ...rowToCantiere(payload.new as CantiereRow),
+            teamId: team.id,
+          }).catch(console.error);
         }
       })
       .subscribe();
@@ -83,43 +107,53 @@ export function useCantiere(id: string | undefined): Cantiere | null | undefined
   return cantiere;
 }
 
-/** Operai for the current team. Optionally filtered by ids. */
+// ── useOperai ──────────────────────────────────────────────────────────────
+
+/** Operai del team corrente, opzionalmente filtrati per id. */
 export function useOperai(ids?: string[]): Operaio[] {
   const { team } = useTeam();
-  const [operai, setOperai] = useState<Operaio[]>([]);
 
+  const idsKey = ids?.join(',') ?? '*';
+
+  const operai = useLiveQuery(
+    async () => {
+      if (!team?.id) return [];
+      if (ids !== undefined && ids.length === 0) return [];
+
+      const all = await db.operai.where('teamId').equals(team.id).toArray();
+      const sorted = all.sort((a, b) => a.nome.localeCompare(b.nome, 'it'));
+
+      if (!ids) return sorted;
+      const idSet = new Set(ids);
+      return sorted.filter((o) => idSet.has(o.id));
+    },
+    [team?.id, idsKey],
+    [],
+  ) ?? [];
+
+  // Realtime → aggiorna Dexie → useLiveQuery si riattiva
   useEffect(() => {
-    if (!team) return;
-    if (ids !== undefined && ids.length === 0) {
-      setOperai([]);
-      return;
-    }
-
-    let query = supabase.from('operai').select('*').eq('team_id', team.id);
-    if (ids?.length) query = query.in('id', ids);
-
-    query.order('nome').then(({ data }) => {
-      setOperai((data as OperaioRow[] ?? []).map(rowToOperaio));
-    });
+    if (!team?.id) return;
 
     const ch = supabase
       .channel(`operai_team_${team.id}`)
       .on('postgres_changes', {
         event: '*', schema: 'public', table: 'operai',
         filter: `team_id=eq.${team.id}`,
-      }, () => {
-        // Re-fetch on any change
-        let q = supabase.from('operai').select('*').eq('team_id', team.id);
-        if (ids?.length) q = q.in('id', ids);
-        q.order('nome').then(({ data: d }) => {
-          setOperai((d as OperaioRow[] ?? []).map(rowToOperaio));
-        });
+      }, (payload) => {
+        if (payload.eventType === 'DELETE') {
+          db.operai.delete((payload.old as { id: string }).id).catch(console.error);
+        } else {
+          db.operai.put({
+            ...rowToOperaio(payload.new as OperaioRow),
+            teamId: team.id,
+          }).catch(console.error);
+        }
       })
       .subscribe();
 
     return () => { supabase.removeChannel(ch); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [team?.id, ids?.join(',')]);
+  }, [team?.id]);
 
   return operai;
 }

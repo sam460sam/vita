@@ -305,6 +305,8 @@ export interface CalcoloCemento {
 }
 
 export interface Cantiere extends Timestamped {
+  /** Populated by the sync layer when stored in Dexie cache. Not a business field. */
+  teamId?: string;
   cliente: string;
   telefono?: string;
   indirizzo?: string;
@@ -341,6 +343,8 @@ export interface Cantiere extends Timestamped {
 }
 
 export interface Operaio extends Timestamped {
+  /** Populated by the sync layer when stored in Dexie cache. Not a business field. */
+  teamId?: string;
   nome: string;
   telefono?: string;
   specializzazioni: string[];
@@ -439,6 +443,39 @@ export interface NoteProject {
   cantiereId?: string;      // linked Cantiere (one project per cantiere)
   createdAt: number;
   updatedAt: number;
+}
+
+// ----------------------------------------------------------------------------
+// Offline sync — outbox pattern
+// ----------------------------------------------------------------------------
+export type OutboxTable = 'cantieri' | 'operai' | 'giornale_entries';
+export type OutboxOperation = 'upsert' | 'delete';
+
+export interface OutboxEntry {
+  id: string;
+  table: OutboxTable;
+  operation: OutboxOperation;
+  payload: Record<string, unknown>;
+  teamId: string;
+  createdAt: number;
+  attempts: number;
+  lastError?: string;
+}
+
+// ----------------------------------------------------------------------------
+// Entitlement / piano abbonamento
+// ----------------------------------------------------------------------------
+export type PianoAbbonamento = 'free' | 'pro' | 'founder';
+export type StatoAbbonamento = 'trial' | 'active' | 'past_due' | 'canceled';
+
+export interface Entitlement {
+  teamId: string;
+  piano: PianoAbbonamento;
+  stato: StatoAbbonamento;
+  trialEnd?: string;          // ISO timestamp
+  currentPeriodEnd?: string;  // ISO timestamp
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
 }
 
 // ----------------------------------------------------------------------------

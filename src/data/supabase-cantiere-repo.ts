@@ -1,15 +1,11 @@
 import { supabase } from '@/lib/supabase';
+import { db, uid, now } from './db';
+import { addToOutbox } from './sync';
 import type { Cantiere, Operaio, CalcoloCemento, TipoUso, CantiereStato, PagamentoStato } from './types';
 
-// ── ID helpers ────────────────────────────────────────────────────────────────
+// ── Row types (snake_case ↔ camelCase) ─────────────────────────────────────
 
-export const now = () => Date.now();
-export const uid = (prefix = '') =>
-  prefix + Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 6);
-
-// ── Row types (snake_case ↔ camelCase) ────────────────────────────────────────
-
-interface CantiereRow {
+export interface CantiereRow {
   id: string;
   team_id: string;
   cliente: string;
@@ -46,7 +42,7 @@ interface CantiereRow {
   updated_at: number;
 }
 
-interface OperaioRow {
+export interface OperaioRow {
   id: string;
   team_id: string;
   nome: string;
@@ -59,7 +55,9 @@ interface OperaioRow {
   updated_at: number;
 }
 
-function rowToCantiere(r: CantiereRow): Cantiere {
+// ── Mapping ────────────────────────────────────────────────────────────────
+
+export function rowToCantiere(r: CantiereRow): Cantiere {
   return {
     id: r.id,
     createdAt: r.created_at,
@@ -97,7 +95,7 @@ function rowToCantiere(r: CantiereRow): Cantiere {
   };
 }
 
-function cantiereToRow(c: Cantiere, teamId: string): CantiereRow {
+export function cantiereToRow(c: Cantiere, teamId: string): CantiereRow {
   return {
     id: c.id,
     team_id: teamId,
@@ -136,7 +134,7 @@ function cantiereToRow(c: Cantiere, teamId: string): CantiereRow {
   };
 }
 
-function rowToOperaio(r: OperaioRow): Operaio {
+export function rowToOperaio(r: OperaioRow): Operaio {
   return {
     id: r.id,
     createdAt: r.created_at,
@@ -150,37 +148,131 @@ function rowToOperaio(r: OperaioRow): Operaio {
   };
 }
 
-// ── Cantieri ──────────────────────────────────────────────────────────────────
+// ── Cantieri — offline-first ───────────────────────────────────────────────
 
+/**
+ * Salva un cantiere.
+ * 1. Scrive in Dexie immediatamente (UI aggiornata prima del round-trip).
+ * 2. Prova Supabase. Se offline o errore → aggiunge all'outbox.
+ */
 export async function saveCantiere(
   data: Omit<Cantiere, 'id' | 'createdAt' | 'updatedAt'> & { id?: string },
   teamId: string,
 ): Promise<string> {
   const id = data.id ?? uid('can_');
   const nowMs = now();
-  let createdAt = nowMs;
 
-  if (data.id) {
-    const { data: ex } = await supabase
-      .from('cantieri')
-      .select('created_at')
-      .eq('id', data.id)
-      .maybeSingle();
-    if (ex) createdAt = (ex as { created_at: number }).created_at;
+  // Recupera createdAt esistente dalla cache locale (evita round-trip Supabase)
+  const existing = await db.cantieri.get(id);
+  const createdAt = existing?.createdAt ?? nowMs;
+
+  const full: Cantiere = { ...(data as Cantiere), id, createdAt, updatedAt: nowMs, teamId };
+
+  // 1. Dexie — sempre immediato
+  await db.cantieri.put(full);
+
+  // 2. Supabase — se online
+  const row = cantiereToRow(full, teamId);
+  const rowPayload = row as unknown as Record<string, unknown>;
+  if (navigator.onLine) {
+    const { error } = await supabase.from('cantieri').upsert(row);
+    if (error) {
+      await addToOutbox({ table: 'cantieri', operation: 'upsert', payload: rowPayload, teamId });
+    }
+  } else {
+    await addToOutbox({ table: 'cantieri', operation: 'upsert', payload: rowPayload, teamId });
   }
 
-  const full: Cantiere = { ...(data as Cantiere), id, createdAt, updatedAt: nowMs };
-  const { error } = await supabase
-    .from('cantieri')
-    .upsert(cantiereToRow(full, teamId));
-  if (error) throw error;
   return id;
 }
 
+/**
+ * Elimina un cantiere.
+ * 1. Rimuove da Dexie subito.
+ * 2. Prova Supabase. Se offline → outbox.
+ */
 export async function deleteCantiere(id: string): Promise<void> {
-  const { error } = await supabase.from('cantieri').delete().eq('id', id);
-  if (error) throw error;
+  const cached = await db.cantieri.get(id);
+  const teamId = cached?.teamId;
+
+  await db.cantieri.delete(id);
+
+  if (navigator.onLine) {
+    const { error } = await supabase.from('cantieri').delete().eq('id', id);
+    if (error && teamId) {
+      await addToOutbox({ table: 'cantieri', operation: 'delete', payload: { id }, teamId });
+    }
+  } else if (teamId) {
+    await addToOutbox({ table: 'cantieri', operation: 'delete', payload: { id }, teamId });
+  }
 }
+
+// ── Operai — offline-first ─────────────────────────────────────────────────
+
+export async function getOperaiByIds(ids: string[]): Promise<Operaio[]> {
+  if (!ids.length) return [];
+  return db.operai.where('id').anyOf(ids).toArray();
+}
+
+export async function saveOperaio(
+  data: Omit<Operaio, 'id' | 'createdAt' | 'updatedAt'> & { id?: string },
+  teamId: string,
+): Promise<string> {
+  const id = data.id ?? uid('ope_');
+  const nowMs = now();
+
+  const existing = await db.operai.get(id);
+  const createdAt = existing?.createdAt ?? nowMs;
+
+  const operaio: Operaio = { ...(data as Operaio), id, createdAt, updatedAt: nowMs, teamId };
+
+  // 1. Dexie
+  await db.operai.put(operaio);
+
+  // 2. Supabase
+  const row: OperaioRow = {
+    id,
+    team_id: teamId,
+    nome: data.nome,
+    telefono: data.telefono ?? null,
+    specializzazioni: data.specializzazioni ?? [],
+    valutazione: data.valutazione ?? null,
+    note_private: data.notePrivate ?? null,
+    attivo: data.attivo,
+    created_at: createdAt,
+    updated_at: nowMs,
+  };
+
+  const rowPayload = row as unknown as Record<string, unknown>;
+  if (navigator.onLine) {
+    const { error } = await supabase.from('operai').upsert(row);
+    if (error) {
+      await addToOutbox({ table: 'operai', operation: 'upsert', payload: rowPayload, teamId });
+    }
+  } else {
+    await addToOutbox({ table: 'operai', operation: 'upsert', payload: rowPayload, teamId });
+  }
+
+  return id;
+}
+
+export async function deleteOperaio(id: string): Promise<void> {
+  const cached = await db.operai.get(id);
+  const teamId = cached?.teamId;
+
+  await db.operai.delete(id);
+
+  if (navigator.onLine) {
+    const { error } = await supabase.from('operai').delete().eq('id', id);
+    if (error && teamId) {
+      await addToOutbox({ table: 'operai', operation: 'delete', payload: { id }, teamId });
+    }
+  } else if (teamId) {
+    await addToOutbox({ table: 'operai', operation: 'delete', payload: { id }, teamId });
+  }
+}
+
+// ── Demo seed ──────────────────────────────────────────────────────────────
 
 export async function seedCantieriDemo(teamId: string): Promise<void> {
   const giorni = (n: number) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
@@ -212,57 +304,5 @@ export async function seedCantieriDemo(teamId: string): Promise<void> {
   for (const c of demo) await saveCantiere(c, teamId);
 }
 
-// ── Operai ────────────────────────────────────────────────────────────────────
-
-export async function getOperaiByIds(ids: string[]): Promise<Operaio[]> {
-  if (!ids.length) return [];
-  const { data, error } = await supabase
-    .from('operai')
-    .select('*')
-    .in('id', ids);
-  if (error) throw error;
-  return (data as OperaioRow[]).map(rowToOperaio);
-}
-
-export async function saveOperaio(
-  data: Omit<Operaio, 'id' | 'createdAt' | 'updatedAt'> & { id?: string },
-  teamId: string,
-): Promise<string> {
-  const id = data.id ?? uid('ope_');
-  const nowMs = now();
-  let createdAt = nowMs;
-
-  if (data.id) {
-    const { data: ex } = await supabase
-      .from('operai')
-      .select('created_at')
-      .eq('id', data.id)
-      .maybeSingle();
-    if (ex) createdAt = (ex as { created_at: number }).created_at;
-  }
-
-  const row: OperaioRow = {
-    id, team_id: teamId,
-    nome: data.nome,
-    telefono: data.telefono ?? null,
-    specializzazioni: data.specializzazioni ?? [],
-    valutazione: data.valutazione ?? null,
-    note_private: data.notePrivate ?? null,
-    attivo: data.attivo,
-    created_at: createdAt,
-    updated_at: nowMs,
-  };
-
-  const { error } = await supabase.from('operai').upsert(row);
-  if (error) throw error;
-  return id;
-}
-
-export async function deleteOperaio(id: string): Promise<void> {
-  const { error } = await supabase.from('operai').delete().eq('id', id);
-  if (error) throw error;
-}
-
-// Export row types for the hooks
-export type { CantiereRow, OperaioRow };
-export { rowToCantiere, rowToOperaio };
+// Re-export row types for the hooks
+export type { CantiereRow as CantiereRowType, OperaioRow as OperaioRowType };

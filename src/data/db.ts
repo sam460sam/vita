@@ -17,6 +17,7 @@ import type {
   Note,
   NoteProject,
   Operaio,
+  OutboxEntry,
   Project,
   Settings,
   Task,
@@ -49,6 +50,7 @@ export class VitaDB extends Dexie {
   workProfiles!: Table<WorkProfile, string>;
   notes!: Table<Note, string>;
   noteProjects!: Table<NoteProject, string>;
+  outbox!: Table<OutboxEntry, string>;
 
   constructor() {
     super('vita');
@@ -95,6 +97,14 @@ export class VitaDB extends Dexie {
     this.version(8).stores({
       notes: 'id, projectId, data, inAgenda, cantiereId, updatedAt',
       noteProjects: 'id, cantiereId, updatedAt',
+    });
+    // v9: offline-first — aggiunge teamId agli indici di cantieri/operai per
+    // interrogazioni per-team senza passare per Supabase. Aggiunge la tabella
+    // outbox per la coda di scritture offline.
+    this.version(9).stores({
+      cantieri:       'id, stato, pagamento, dataPrevista, updatedAt, teamId',
+      operai:         'id, attivo, updatedAt, teamId',
+      outbox:         'id, table, teamId, createdAt',
     });
   }
 }

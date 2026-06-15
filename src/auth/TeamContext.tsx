@@ -1,12 +1,17 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from './AuthContext';
+import { syncWorker } from '@/data/sync';
+
+export type MemberRole = 'owner' | 'collaboratore';
 
 export interface Team {
   id: string;
   name: string;
   plan: string;
   trial_ends_at: string;
+  role: MemberRole;
+  app_mode: string;
 }
 
 interface TeamContextValue {
@@ -32,12 +37,21 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     try {
       const { data } = await supabase
         .from('team_members')
-        .select('teams(id, name, plan, trial_ends_at)')
+        .select('role, teams(id, name, plan, trial_ends_at, app_mode)')
         .eq('user_id', user.id)
         .maybeSingle();
 
-      const t = (data as { teams: Team | null } | null)?.teams ?? null;
-      setTeam(t);
+      const row = data as { role: MemberRole; teams: Omit<Team, 'role'> | null } | null;
+      if (row?.teams) {
+        const t: Team = {
+          ...row.teams,
+          app_mode: row.teams.app_mode ?? 'cantieri',
+          role: row.role ?? 'owner',
+        };
+        setTeam(t);
+      } else {
+        setTeam(null);
+      }
     } catch {
       setTeam(null);
     } finally {
@@ -49,6 +63,13 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     loadTeam();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
+
+  // Avvia sync offline-first subito dopo che il team è disponibile
+  useEffect(() => {
+    if (team?.id) {
+      syncWorker.initialize(team.id).catch(console.error);
+    }
+  }, [team?.id]);
 
   return (
     <TeamContext.Provider value={{ team, teamLoading, refreshTeam: loadTeam }}>
