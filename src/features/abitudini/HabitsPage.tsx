@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Plus, Flame, Check } from 'lucide-react';
+import { Plus, Check } from 'lucide-react';
 import { db } from '@/data/db';
 import { toggleHabitLog, createHabit, readSettings } from '@/data/repo';
 import { Icon, useToast } from '@/ui';
@@ -11,7 +11,9 @@ import { recommendedForGoal, habitDisplayName } from './recommended';
 import { currentStreak, isDone, isScheduled } from './logic';
 import type { Habit } from '@/data/types';
 import { useT } from '@/i18n';
+import { Link } from 'react-router-dom';
 import vioPlant from '/vio/vio-celebrate.png';
+import vLogo from '/vyta-vmark.png';
 
 export function HabitsPage() {
   const t = useT();
@@ -48,9 +50,19 @@ export function HabitsPage() {
       <div className="relative max-w-2xl mx-auto px-5 pt-safe-top pb-[calc(116px+env(safe-area-inset-bottom))] animate-rise">
         {/* Header */}
         <header className="pt-5">
-          <p className="text-[12.5px] font-semibold text-ink-3 capitalize leading-none">{longDate()}</p>
-          <h2 className="display-serif text-[22px] text-ink leading-tight mt-1.5">{greeting}</h2>
-          <h1 className="display-serif text-[30px] text-ink leading-tight mt-1">{t('habits.title')}</h1>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-[12.5px] font-semibold text-ink-3 capitalize leading-none">{longDate()}</p>
+              <h2 className="display-serif text-[22px] text-ink leading-tight mt-1.5 truncate">{greeting}</h2>
+            </div>
+            <Link to="/altro" aria-label={t('nav.more')} className="mt-1 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform" style={{ background: '#E8F1E3' }}>
+              <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
+            </Link>
+          </div>
+          <div className="flex items-center gap-2 mt-1">
+            <h1 className="display-serif text-[30px] text-ink leading-tight">{t('habits.title')}</h1>
+            <img src={vLogo} className="h-6 w-6 object-contain opacity-90" alt="" aria-hidden draggable={false} />
+          </div>
         </header>
 
         {/* Stats */}
@@ -75,7 +87,8 @@ export function HabitsPage() {
         {/* New habit */}
         <button
           onClick={openNew}
-          className="w-full mt-3 h-[52px] rounded-2xl bg-primary text-on-primary font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-card"
+          className="w-full mt-3 h-[52px] rounded-[18px] text-white font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-card"
+          style={{ background: 'linear-gradient(180deg, #6FBE6F, #2F7D43)' }}
         >
           <Plus size={20} strokeWidth={2.6} /> {t('habits.newHabit')}
         </button>
@@ -98,16 +111,16 @@ export function HabitsPage() {
               const done = isDone(logs ?? [], hb.id, today);
               const streak = currentStreak(hb, logs ?? []);
               return (
-                <div key={hb.id} className="rounded-[20px] bg-card shadow-card p-3 flex items-center gap-3">
+                <div key={hb.id} className="rounded-2xl bg-card shadow-card p-2.5 flex items-center gap-3">
                   <button onClick={() => { setEditing(hb); setFormOpen(true); }} className="flex items-center gap-3 flex-1 min-w-0 text-left">
-                    <span className="h-11 w-11 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: `color-mix(in srgb, ${hb.color} 16%, transparent)`, color: hb.color }}>
-                      <Icon name={hb.icon} size={22} strokeWidth={2.4} />
+                    <span className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `color-mix(in srgb, ${hb.color} 16%, transparent)`, color: hb.color }}>
+                      <Icon name={hb.icon} size={20} strokeWidth={2.4} />
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-[15.5px] font-bold text-ink truncate">{habitDisplayName(hb, t)}</span>
+                      <span className="block text-[15px] font-bold text-ink truncate">{habitDisplayName(hb, t)}</span>
                       {streak > 0 && (
-                        <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-[12px] font-bold text-streak" style={{ background: 'color-mix(in srgb, var(--c-streak) 14%, transparent)' }}>
-                          <Flame size={12} /> {t('habits.streakDays', { n: streak })}
+                        <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-[12px] font-bold" style={{ background: '#F5E2D2', color: '#C8743C' }}>
+                          {t('habits.streakDays', { n: streak })} 🔥
                         </span>
                       )}
                     </span>
@@ -130,12 +143,12 @@ export function HabitsPage() {
         {suggestions.length > 0 && (
           <>
             <h2 className="display-serif text-[20px] text-ink mt-6 mb-2.5">{t('habits.suggested')}</h2>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex gap-2 overflow-x-auto -mx-5 px-5 pb-1 no-scrollbar">
               {suggestions.map((rec) => (
                 <button
                   key={rec.id}
                   onClick={() => addSuggested(rec)}
-                  className="inline-flex items-center gap-1.5 rounded-full pl-3 pr-3.5 h-10 text-[13.5px] font-bold bg-card shadow-card active:scale-95 transition-transform"
+                  className="inline-flex items-center gap-1.5 rounded-full pl-3 pr-3.5 h-10 text-[13.5px] font-bold bg-card shadow-card active:scale-95 transition-transform flex-shrink-0 whitespace-nowrap"
                   style={{ color: rec.color }}
                 >
                   <Icon name={rec.icon} size={16} strokeWidth={2.5} /> {t(rec.labelKey)}
