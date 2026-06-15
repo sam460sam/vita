@@ -10,7 +10,7 @@ import { Button, useToast } from '@/ui';
 import { longDate } from '@/lib/format';
 import { useT, useI18n, type TKey } from '@/i18n';
 import vLogo from '/vyta-vmark.png';
-import iconCompass from '/icons3d/compass.png';
+import iconCompass from '/icons3d/clipboard.png';
 import { platform } from '@/platform/platform';
 import { isBillingConfigured, getPersonalityPrice, ownsPersonality, purchasePersonality } from '@/premium/billing';
 import { PERSONALITY_PRICE_FALLBACK } from '@/premium/config';

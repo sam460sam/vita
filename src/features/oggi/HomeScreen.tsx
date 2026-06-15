@@ -14,7 +14,7 @@ import { useT, type TKey } from '@/i18n';
 import vLogo from '/vyta-vmark.png';
 import iconHabits from '/icons3d/habits.png';
 import iconWater from '/icons3d/water.png';
-import iconCompass from '/icons3d/compass.png';
+import iconCompass from '/icons3d/clipboard.png';
 
 /** Home — premium "Today" screen, faithful to the design north-star. */
 export function HomeScreen() {
