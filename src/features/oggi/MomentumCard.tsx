@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Flame, ChevronRight } from 'lucide-react';
-import { Card, ProgressRing, StarMascot } from '@/ui';
+import { Card, ProgressRing, VioCompanion } from '@/ui';
 import { useT, type TKey } from '@/i18n';
 import { useStella } from '@/features/stella';
 import type { Momentum } from './momentum';
-import { momentumMessageKey, stellaMood, updateStreak } from './momentum';
+import { momentumMessageKey, updateStreak } from './momentum';
 import { pandaLine } from './coach';
 
 const LEGEND: { key: keyof Momentum['rings']; labelKey: TKey; color: string }[] = [
@@ -19,7 +19,6 @@ const LEGEND: { key: keyof Momentum['rings']; labelKey: TKey; color: string }[] 
 export function MomentumCard({ m }: { m: Momentum }) {
   const t = useT();
   const stella = useStella();
-  const mood = stellaMood(m.score);
   const [streak, setStreak] = useState(0);
   const [burst, setBurst] = useState(false);
   const prevScore = useRef(m.score);
@@ -43,8 +42,8 @@ export function MomentumCard({ m }: { m: Momentum }) {
       {burst && <Confetti />}
       <div className="flex items-center gap-4">
         <button onClick={stella.open} aria-label={t('stella.name')} className="flex-shrink-0 active:scale-95 transition-transform">
-          <ProgressRing progress={m.score / 100} size={72} stroke={7} color="var(--c-habit)">
-            <StarMascot size={46} mood={mood} animated={m.score >= 80} />
+          <ProgressRing progress={m.score / 100} size={76} stroke={7} color="var(--c-habit)">
+            <VioCompanion score={m.score} size={56} animated />
           </ProgressRing>
         </button>
 
@@ -81,7 +80,7 @@ export function MomentumCard({ m }: { m: Momentum }) {
       {/* Panda coach speech bubble */}
       <button onClick={stella.open} className="mt-3 flex items-start gap-2 w-full text-left">
         <span className="flex-shrink-0">
-          <StarMascot size={32} mood={mood} />
+          <VioCompanion score={m.score} size={40} />
         </span>
         <span className="relative flex-1 bg-section rounded-2xl rounded-tl-sm px-3 py-2 text-[13px] text-ink-2 leading-snug">
           {(() => {

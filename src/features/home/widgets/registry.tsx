@@ -14,13 +14,13 @@ import { db } from '@/data/db';
 import { readSettings, addWaterMl, toggleTaskDone, toggleHabitLog } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import type { ModuleId, WidgetInstance, WidgetSize, WidgetType } from '@/data/types';
-import { ActivityRings, ProgressRing, StarMascot, LineChart } from '@/ui';
+import { ActivityRings, ProgressRing, VioCompanion, LineChart } from '@/ui';
 import { useT, type TKey } from '@/i18n';
 import { cn } from '@/lib/cn';
 import { todayISO, formatMoney, longDate } from '@/lib/format';
 import { todayRings, ringsToData } from '@/features/attivita/logic';
 import { currentStreak, pendingToday, isDone, isScheduled } from '@/features/abitudini/logic';
-import { computeMomentum, stellaMood, momentumMessageKey } from '@/features/oggi/momentum';
+import { computeMomentum, momentumMessageKey } from '@/features/oggi/momentum';
 import { dailyAffirmation } from '@/features/oggi/coach';
 import { lifetimePoints, computeLevel } from '@/features/gamification/logic';
 import { FastingCard } from '@/features/digiuno';
@@ -84,8 +84,8 @@ function MomentumWidget({ instance }: WidgetProps) {
     <Frame to="/recap">
       <Head icon={Flame} label={t('momentum.title')} accent="var(--c-habit)" />
       <div className="flex-1 flex items-center gap-3 min-h-0">
-        <ProgressRing progress={m.score / 100} size={big ? 72 : 54} stroke={7} color="var(--c-habit)">
-          <StarMascot size={big ? 44 : 32} mood={stellaMood(m.score)} />
+        <ProgressRing progress={m.score / 100} size={big ? 76 : 56} stroke={7} color="var(--c-habit)">
+          <VioCompanion score={m.score} size={big ? 54 : 40} animated />
         </ProgressRing>
         <div className="min-w-0">
           <div className="text-2xl font-bold tnum text-ink leading-none">{m.score}<span className="text-ink-3 text-sm font-semibold">/100</span></div>

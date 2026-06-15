@@ -248,6 +248,19 @@ h3.font-extrabold, h3.font-bold,
   animation: stella-float 3s ease-in-out infinite;
 }
 
+/* Vio companion — gentle breathing/bob */
+@keyframes vio-bob {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-7%) rotate(1deg); }
+}
+.vio-bob {
+  animation: vio-bob 3.4s ease-in-out infinite;
+  transform-origin: 50% 90%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vio-bob { animation: none; }
+}
+
 @keyframes confetti-fall {
   0% { transform: translateY(0) rotate(0deg); opacity: 1; }
   100% { transform: translateY(360px) rotate(540deg); opacity: 0; }

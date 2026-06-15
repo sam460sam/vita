@@ -15,6 +15,7 @@ export { BarChart } from './BarChart';
 export { LineChart } from './LineChart';
 export { Sankey, type SankeyFlow } from './Sankey';
 export { StarMascot } from './StarMascot';
+export { VioCompanion, vioStageForScore, type VioStage } from './VioCompanion';
 export { Toast, useToast, ToastProvider } from './Toast';
 export { Icon } from './Icon';
 export { IconChip } from './IconChip';
