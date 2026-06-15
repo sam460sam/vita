@@ -146,13 +146,20 @@ export function computeAchievements(d: LifeData): Achievement[] {
   return [
     ach('firstStep', '🌱', days, 1),
     ach('firstWeek', '🏆', days, 7),
+    ach('month', '📅', days, 30),
     ach('streak30', '🔥', bestHabitStreak, 30),
+    ach('streak60', '👑', bestHabitStreak, 60),
     ach('morningMaster', '🌅', morning, 5),
     ach('hydrated', '💧', hydratedDays, 7),
+    ach('hydroHero', '🌊', hydratedDays, 30),
     ach('bookworm', '📖', journals, 10),
+    ach('scribe', '✍️', journals, 30),
     ach('athlete', '🏃', workouts, 20),
+    ach('marathoner', '🥇', workouts, 50),
+    ach('weighIn', '⚖️', d.weights.length, 10),
     ach('centurion', '💯', habitDone, 100),
     ach('taskMaster', '✅', tasksDone, 50),
+    ach('taskTitan', '🚀', tasksDone, 200),
   ];
 }
 
@@ -184,6 +191,8 @@ export function computeChallenges(d: LifeData): Challenge[] {
   const workoutsThisWeek = d.workouts.filter((w) => w.startedAt >= from).length;
   const journalThisWeek = d.journals.filter((j) => week.has(j.date)).length;
   const tasksThisWeek = d.tasks.filter((t) => t.status === 'done' && t.completedAt && t.completedAt >= from).length;
+  const weightThisWeek = d.weights.filter((w) => week.has(w.date)).length;
+  const morningThisWeek = d.workouts.filter((w) => w.startedAt >= from && new Date(w.startedAt).getHours() < 9).length;
 
   const make = (id: string, emoji: string, value: number, target: number): Challenge => ({
     id,
@@ -200,6 +209,8 @@ export function computeChallenges(d: LifeData): Challenge[] {
     make('active', '🏃', workoutsThisWeek, 3),
     make('journaling', '📖', journalThisWeek, 4),
     make('focus', '✅', tasksThisWeek, 10),
+    make('weighIn', '⚖️', weightThisWeek, 2),
+    make('earlyWeek', '🌅', morningThisWeek, 2),
   ];
 }
 
