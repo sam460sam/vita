@@ -34,6 +34,8 @@ export function HomeScreen() {
   const hr = new Date().getHours();
   const greet = t(hr < 12 ? 'greet.morning' : hr < 18 ? 'greet.afternoon' : 'greet.evening');
   const greeting = s.name ? `${greet}, ${s.name}` : greet;
+  // Vio mood: sleepy at night · happy on a great day · gently waiting when very low.
+  const vioMood = hr >= 21 || hr < 6 ? 'sleepy' : m.score >= 80 ? 'happy' : m.score <= 10 ? 'waiting' : undefined;
 
   const active = (habits ?? []).filter((x) => !x.archived);
   const todays = active.filter((x) => isScheduled(x, today));
@@ -75,7 +77,7 @@ export function HomeScreen() {
                 </ProgressRing>
               </div>
               <div className="flex-1 flex justify-center">
-                <VioCompanion score={m.score} size={138} animated />
+                <VioCompanion score={m.score} mood={vioMood} size={138} animated />
               </div>
             </div>
             <p className="text-[14px] text-ink-2 mt-2 whitespace-nowrap overflow-hidden text-ellipsis">{t(momentumMessageKey(m.score) as TKey)}</p>

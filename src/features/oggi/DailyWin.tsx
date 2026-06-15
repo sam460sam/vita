@@ -28,7 +28,7 @@ export function DailyWin({ streak, pointsToday, pointsYesterday, onClose }: Dail
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-center">
-          <VioCompanion stage="fioritura" size={132} animated />
+          <VioCompanion mood="happy" size={132} animated />
         </div>
         <h2 className="text-2xl font-bold text-ink mt-2">{t('win.title')}</h2>
         <p className="text-[15px] text-ink-2 mt-1">{t('win.subtitle')}</p>
