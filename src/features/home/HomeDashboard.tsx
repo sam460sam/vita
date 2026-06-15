@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Quote, ChevronRight, Settings2, Check, Flame, Plus, Footprints, LayoutGrid, Droplet, Bell, Sparkles, X, Wallet, PenLine, ListChecks } from 'lucide-react';
+import { Quote, ChevronRight, Settings2, Check, Flame, Plus, Footprints, LayoutGrid, Droplet, Bell, Sparkles, X, Wallet, PenLine, ListChecks, Search } from 'lucide-react';
 import { subDays, format, startOfWeek, addDays } from 'date-fns';
 import { ProgressRing, ActivityRings, StarMascot, Icon, useToast, Sheet, Confetti } from '@/ui';
 import { DateStrip } from '@/ui/DateStrip';
@@ -292,13 +292,22 @@ export function HomeDashboard() {
             <h1 className="text-[24px] font-extrabold text-ink leading-tight truncate mt-0.5">{greeting} 👋</h1>
             {goalLine && <p className="text-[12.5px] text-ink-2 leading-snug truncate mt-0.5">{goalLine}</p>}
           </div>
-          <button
-            onClick={() => navigate('/impostazioni')}
-            aria-label={t('nav.settings')}
-            className="h-11 w-11 flex-shrink-0 rounded-full bg-card shadow-chip flex items-center justify-center text-ink-2 active:scale-90 transition-transform"
-          >
-            <Settings2 size={20} />
-          </button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => navigate('/cerca')}
+              aria-label={t('search.title')}
+              className="h-11 w-11 rounded-full bg-card shadow-chip flex items-center justify-center text-ink-2 active:scale-90 transition-transform"
+            >
+              <Search size={20} />
+            </button>
+            <button
+              onClick={() => navigate('/impostazioni')}
+              aria-label={t('nav.settings')}
+              className="h-11 w-11 rounded-full bg-card shadow-chip flex items-center justify-center text-ink-2 active:scale-90 transition-transform"
+            >
+              <Settings2 size={20} />
+            </button>
+          </div>
         </header>
 
         {/* Personalized welcome — shown once after onboarding. */}

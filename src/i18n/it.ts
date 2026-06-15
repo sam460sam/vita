@@ -981,6 +981,12 @@ export const it = {
   'home.goalline.reach_goal': 'Ogni giorno un po\' più vicino al traguardo. 🎯',
   // Quick actions
   'home.quick': 'Azioni rapide',
+  'search.title': 'Cerca',
+  'search.ph': 'Cerca in tutta l\'app…',
+  'search.start': 'Cerca abitudini, task, note, diario, progetti, obiettivi e movimenti.',
+  'search.noResults': 'Nessun risultato',
+  'search.noResultsDesc': 'Prova con un\'altra parola.',
+  'search.tasks': 'Task',
   'qa.water': 'Bevi acqua',
   'qa.waterDone': '+1 bicchiere 💧',
   'qa.habit': 'Nuova abitudine',

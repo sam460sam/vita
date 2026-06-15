@@ -979,6 +979,12 @@ export const en: Record<TKey, string> = {
   'home.goalline.reach_goal': 'Every day a little closer to your goal. 🎯',
   // Quick actions
   'home.quick': 'Quick actions',
+  'search.title': 'Search',
+  'search.ph': 'Search across the app…',
+  'search.start': 'Search habits, tasks, notes, journal, projects, goals and transactions.',
+  'search.noResults': 'No results',
+  'search.noResultsDesc': 'Try another word.',
+  'search.tasks': 'Tasks',
   'qa.water': 'Drink water',
   'qa.waterDone': '+1 glass 💧',
   'qa.habit': 'New habit',

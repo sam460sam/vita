@@ -36,6 +36,7 @@ const WeightPage = lazy(() => import('@/features/peso').then((m) => ({ default: 
 const BmiPage = lazy(() => import('@/features/peso').then((m) => ({ default: m.BmiPage })));
 const RecapPage = lazy(() => import('@/features/recap').then((m) => ({ default: m.RecapPage })));
 const GamificationPage = lazy(() => import('@/features/gamification').then((m) => ({ default: m.GamificationPage })));
+const SearchPage = lazy(() => import('@/features/cerca/SearchPage').then((m) => ({ default: m.SearchPage })));
 
 export function App() {
   const [onboarded, setOnboarded] = useState(hasOnboarded());
@@ -77,6 +78,7 @@ export function App() {
                       <Route path="/altro" element={<MorePage />} />
                       <Route path="/pro" element={<ProPage />} />
                       <Route path="/impostazioni" element={<SettingsPage />} />
+                      <Route path="/cerca" element={<SearchPage />} />
                       <Route path="*" element={<Navigate to="/oggi" replace />} />
                       </Routes>
                     </Suspense>
