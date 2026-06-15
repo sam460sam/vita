@@ -5,6 +5,38 @@ export default {
   theme: {
     extend: {
       colors: {
+        /* Concrete scale */
+        cement: {
+          50:  '#F7F6F4',
+          100: '#EDEAE5',
+          200: '#D9D4CC',
+          300: '#C2BAB0',
+          400: '#A8A098',
+          500: '#8B8278',
+          600: '#6E6560',
+          700: '#514A45',
+          800: '#352F2B',
+          900: '#1C1714',
+          950: '#0E0C0A',
+        },
+        /* Signaling colors */
+        getto:  'var(--getto)',
+        hazard: 'var(--hazard)',
+        rebar:  'var(--rebar)',
+        steel:  'var(--steel)',
+
+        /* Surfaces */
+        bg:        'var(--bg)',
+        'surface-1': 'var(--surface-1)',
+        'surface-2': 'var(--surface-2)',
+        hairline:  'var(--hairline)',
+
+        /* Text */
+        'text-1': 'var(--text-1)',
+        'text-2': 'var(--text-2)',
+        'text-3': 'var(--text-3)',
+
+        /* Backward-compat aliases */
         app:      'var(--c-app)',
         section:  'var(--c-section)',
         card:     'var(--c-card)',
@@ -38,17 +70,28 @@ export default {
       borderRadius: {
         card: '14px',
         btn:  '10px',
+        sm:   '10px',
+        md:   '14px',
+        lg:   '18px',
+        xl:   '22px',
       },
       boxShadow: {
-        card:       '0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04)',
-        'card-md':  '0 4px 16px rgba(0,0,0,0.10)',
+        card:       'var(--slab-base)',
+        'card-md':  'var(--slab-raised)',
+        'card-glass': 'var(--slab-glass)',
+        slab:       'var(--slab-base)',
+        'slab-raised': 'var(--slab-raised)',
+        'slab-glass':  'var(--slab-glass)',
         sheet:      '0 -8px 40px rgba(0,0,0,0.18)',
         'glow-sm':  '0 4px 16px rgba(245,81,0,0.32)',
         'glow-md':  '0 6px 24px rgba(245,81,0,0.40)',
+        'glow-rebar': '0 4px 14px rgba(31,155,78,0.32)',
+        'glow-steel': '0 4px 14px rgba(26,111,202,0.32)',
       },
       fontFamily: {
-        sans:    ['-apple-system','BlinkMacSystemFont','Inter','system-ui','sans-serif'],
-        display: ['Space Grotesk','-apple-system','BlinkMacSystemFont','system-ui','sans-serif'],
+        sans:    ['"Geist Variable"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        mono:    ['"Geist Mono Variable"', '"Geist Mono"', 'ui-monospace', '"SF Mono"', 'Menlo', 'monospace'],
+        display: ['"Geist Variable"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
       },
       spacing: {
         'safe-top':    'env(safe-area-inset-top)',

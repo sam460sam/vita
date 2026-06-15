@@ -56,27 +56,34 @@ export function CantieriTabBar() {
             <Link
               key={to}
               to={to}
-              className="flex-1 flex flex-col items-center pt-2 pb-1 gap-0.5 min-w-0"
+              className="relative flex-1 flex flex-col items-center pt-2 pb-1 gap-0.5 min-w-0 press"
             >
-              {/* Icon in pill container */}
+              {/* Active indicator bar at top */}
+              {active && (
+                <span
+                  className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2.5px] rounded-full"
+                  style={{ background: 'var(--hazard)' }}
+                />
+              )}
+
+              {/* Icon */}
               <div
                 className={cn(
-                  'flex items-center justify-center w-12 h-8 rounded-2xl transition-all duration-200',
-                  active ? 'bg-primary/10' : '',
+                  'flex items-center justify-center w-12 h-8 rounded-xl transition-all duration-200',
+                  active ? 'bg-getto/10' : '',
                 )}
               >
                 <Icon
                   size={active ? 22 : 21}
                   strokeWidth={active ? 2.4 : 1.7}
-                  style={{ color: active ? 'var(--c-primary)' : 'var(--c-ink-3)' }}
+                  style={{ color: active ? 'var(--hazard)' : 'var(--cement-400)' }}
                 />
               </div>
+
+              {/* Label */}
               <span
-                className={cn(
-                  'text-[10px] font-bold tracking-wide transition-colors duration-200',
-                  active ? '' : 'text-ink-3',
-                )}
-                style={active ? { color: 'var(--c-primary)' } : undefined}
+                className="text-[10px] font-bold tracking-wide transition-colors duration-200"
+                style={{ color: active ? 'var(--hazard)' : 'var(--cement-400)' }}
               >
                 {label}
               </span>

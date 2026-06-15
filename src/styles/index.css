@@ -1,145 +1,206 @@
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ============================================================
-   GETTO — Design System v2
-   Construction Orange · Deep Concrete Dark · Pro Toolkit
+   MATERIALE — Design System
+   Concrete · Steel · Precision Construction Tool
    ============================================================ */
+
+/* ── Concrete scale ───────────────────────────────────────── */
 :root {
-  /* --- Surfaces --- */
-  --c-app:     #F0F0F5;
-  --c-section: #E4E4EC;
-  --c-card:    #FFFFFF;
+  --cement-50:  #F7F6F4;
+  --cement-100: #EDEAE5;
+  --cement-200: #D9D4CC;
+  --cement-300: #C2BAB0;
+  --cement-400: #A8A098;
+  --cement-500: #8B8278;
+  --cement-600: #6E6560;
+  --cement-700: #514A45;
+  --cement-800: #352F2B;
+  --cement-900: #1C1714;
+  --cement-950: #0E0C0A;
+}
 
-  /* --- Text --- */
-  --c-ink:   #0A0A18;
-  --c-ink-2: #525268;
-  --c-ink-3: #9898B0;
+/* ── Light mode ───────────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --bg:        #EDE9E3;
+  --surface-1: #F8F6F2;
+  --surface-2: #E2DDD7;
+  --hairline:  rgba(28,23,20,0.09);
+  --divider:   rgba(28,23,20,0.05);
 
-  /* --- Borders --- */
-  --c-line:    rgba(10,10,24,0.10);
-  --c-divider: rgba(10,10,24,0.05);
+  /* Text */
+  --text-1: #1C1714;
+  --text-2: #6E6560;
+  --text-3: #A8A098;
 
-  /* --- Module accents --- */
+  /* 4 signaling colors */
+  --getto:  #F55100;   /* construction orange — primary CTA */
+  --hazard: #EF6A1E;   /* amber — active states */
+  --rebar:  #1F9B4E;   /* rebar green — success */
+  --steel:  #1A6FCA;   /* structural steel — info */
+
+  /* Semantic */
+  --c-success: #1F9B4E;
+  --c-warning: #C47800;
+  --c-danger:  #CC2B2B;
+
+  /* Backward-compat aliases (keep old var names so existing components work) */
+  --c-app:               var(--bg);
+  --c-section:           var(--surface-2);
+  --c-card:              var(--surface-1);
+  --c-ink:               var(--text-1);
+  --c-ink-2:             var(--text-2);
+  --c-ink-3:             var(--text-3);
+  --c-line:              var(--hairline);
+  --c-divider:           var(--divider);
+  --c-primary:           var(--getto);
+  --c-on-primary:        #FFFFFF;
+  --c-primary-border:    transparent;
+  --c-accent-soft-bg:    rgba(245,81,0,0.10);
+  --c-accent-soft-ink:   #B03800;
+
   --c-activity: #E8A020;
   --c-habit:    #10b981;
   --c-project:  #4f46e5;
   --c-journal:  #f59e0b;
   --c-finance:  #7c3aed;
-  --c-ore:      #2563eb;
+  --c-ore:      #1A6FCA;
   --c-note:     #7c3aed;
 
-  /* --- Semantic states --- */
-  --c-success: #16a34a;
-  --c-warning: #D97706;
-  --c-danger:  #DC2626;
-
-  /* --- Work-day type colors --- */
-  --c-wd-lavorativa: #16a34a;
+  --c-wd-lavorativa: #1F9B4E;
   --c-wd-festiva:    #dc2626;
   --c-wd-malattia:   #ea580c;
   --c-wd-infortunio: #7c3aed;
-  --c-wd-ferie:      #2563eb;
+  --c-wd-ferie:      #1A6FCA;
   --c-wd-permesso:   #ca8a04;
 
-  /* --- Primary action — Construction Orange --- */
-  --c-primary:        #F55100;
-  --c-on-primary:     #FFFFFF;
-  --c-primary-border: transparent;
-
-  /* --- Soft accent chip --- */
-  --c-accent-soft-bg:  rgba(245,81,0,0.10);
-  --c-accent-soft-ink: #B03800;
-
-  /* --- Cantiere status colors --- */
   --c-stato-preventivo:  #7C3AED;
-  --c-stato-confermato:  #2563EB;
+  --c-stato-confermato:  #1A6FCA;
   --c-stato-in-corso:    #F55100;
-  --c-stato-completato:  #16A34A;
-  --c-stato-contestato:  #DC2626;
+  --c-stato-completato:  #1F9B4E;
+  --c-stato-contestato:  #CC2B2B;
 
-  /* --- Hazard stripe (in_corso) --- */
   --hazard-stripe: repeating-linear-gradient(
     -45deg,
-    #F55100 0px,
-    #F55100 5px,
-    #1a0800 5px,
-    #1a0800 10px
+    #F55100 0px, #F55100 5px,
+    #2A1200 5px, #2A1200 10px
   );
+
+  /* Slab elevation (inset top highlight = material feel) */
+  --slab-base:   0 1px 3px rgba(0,0,0,0.07), 0 1px 8px rgba(0,0,0,0.04),
+                 inset 0 1px 0 rgba(255,255,255,0.75);
+  --slab-raised: 0 4px 16px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.06),
+                 inset 0 1px 0 rgba(255,255,255,0.70);
+  --slab-glass:  0 8px 32px rgba(0,0,0,0.12),
+                 inset 0 1px 0 rgba(255,255,255,0.40);
 
   color-scheme: light;
 }
 
-/* ============================================================
-   DARK CONCRETE — premium near-black with vibrant orange
-   ============================================================ */
+/* ── Dark mode ────────────────────────────────────────────── */
 html.dark {
-  --c-app:     #070710;
-  --c-section: #0D0D1C;
-  --c-card:    #111120;
+  --bg:        #0D0B09;
+  --surface-1: #181410;
+  --surface-2: #231F1A;
+  --hairline:  rgba(255,255,255,0.07);
+  --divider:   rgba(255,255,255,0.03);
 
-  --c-ink:   #EEEEF8;
-  --c-ink-2: #8080A0;
-  --c-ink-3: #484860;
+  --text-1: #F0EDE7;
+  --text-2: #8B8278;
+  --text-3: #514A45;
 
-  --c-line:    rgba(255,255,255,0.07);
-  --c-divider: rgba(255,255,255,0.03);
+  --getto:  #FF6820;
+  --hazard: #FF8A3D;
+  --rebar:  #24C95E;
+  --steel:  #3D90E3;
+
+  --c-success: #24C95E;
+  --c-warning: #FBBF24;
+  --c-danger:  #F43F5E;
+
+  --c-app:               var(--bg);
+  --c-section:           var(--surface-2);
+  --c-card:              var(--surface-1);
+  --c-ink:               var(--text-1);
+  --c-ink-2:             var(--text-2);
+  --c-ink-3:             var(--text-3);
+  --c-line:              var(--hairline);
+  --c-divider:           var(--divider);
+  --c-primary:           var(--getto);
+  --c-on-primary:        #FFFFFF;
+  --c-primary-border:    transparent;
+  --c-accent-soft-bg:    rgba(255,104,32,0.15);
+  --c-accent-soft-ink:   #FF9060;
 
   --c-activity: #FFAA33;
   --c-habit:    #34d399;
   --c-project:  #818cf8;
   --c-journal:  #fbbf24;
   --c-finance:  #c084fc;
-  --c-ore:      #60a5fa;
+  --c-ore:      #3D90E3;
   --c-note:     #a78bfa;
-
-  --c-success: #22c55e;
-  --c-warning: #FBBF24;
-  --c-danger:  #F43F5E;
 
   --c-wd-lavorativa: #4ade80;
   --c-wd-festiva:    #f87171;
   --c-wd-malattia:   #fb923c;
   --c-wd-infortunio: #c4b5fd;
-  --c-wd-ferie:      #60a5fa;
+  --c-wd-ferie:      #3D90E3;
   --c-wd-permesso:   #fde047;
 
-  --c-primary:        #FF6820;
-  --c-on-primary:     #FFFFFF;
-  --c-primary-border: transparent;
-
-  --c-accent-soft-bg:  rgba(255,104,32,0.15);
-  --c-accent-soft-ink: #FF9060;
-
   --c-stato-preventivo:  #A78BFA;
-  --c-stato-confermato:  #60A5FA;
+  --c-stato-confermato:  #3D90E3;
   --c-stato-in-corso:    #FF6820;
-  --c-stato-completato:  #22C55E;
+  --c-stato-completato:  #24C95E;
   --c-stato-contestato:  #F87171;
 
   --hazard-stripe: repeating-linear-gradient(
     -45deg,
-    #FF6820 0px,
-    #FF6820 5px,
-    #070710 5px,
-    #070710 10px
+    #FF6820 0px, #FF6820 5px,
+    #0D0B09 5px, #0D0B09 10px
   );
+
+  --slab-base:   0 1px 3px rgba(0,0,0,0.35), 0 1px 8px rgba(0,0,0,0.25),
+                 inset 0 1px 0 rgba(255,255,255,0.05);
+  --slab-raised: 0 4px 16px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.30),
+                 inset 0 1px 0 rgba(255,255,255,0.06);
+  --slab-glass:  0 8px 32px rgba(0,0,0,0.55),
+                 inset 0 1px 0 rgba(255,255,255,0.08);
 
   color-scheme: dark;
 }
 
-/* ============================================================
-   TYPOGRAPHY — Space Grotesk display
-   ============================================================ */
+/* ── Typography ───────────────────────────────────────────── */
 :root {
-  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-sans:    'Geist Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:    'Geist Mono Variable', 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-display: var(--font-sans);
 }
+
 .font-display {
   font-family: var(--font-display);
   letter-spacing: -0.025em;
 }
+.font-mono, .tnum {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
 
+.metric-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
 * {
   -webkit-tap-highlight-color: transparent;
 }
@@ -150,29 +211,29 @@ html, body, #root {
 
 body {
   margin: 0;
-  background: var(--c-app);
-  color: var(--c-ink);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overscroll-behavior-y: none;
 }
 
-.tnum {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum';
-}
-
-.metric-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-ink-3);
+/* Cement grain overlay — subtle tactile texture */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
 }
 
 :focus-visible {
-  outline: 2px solid var(--c-primary);
+  outline: 2px solid var(--getto);
   outline-offset: 2px;
   border-radius: 6px;
 }
@@ -181,106 +242,118 @@ body {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
+.no-scrollbar::-webkit-scrollbar { display: none; }
 
-/* ============================================================
-   PRIMARY BUTTON — construction orange gradient + glow
-   ============================================================ */
+/* ── Primary button ───────────────────────────────────────── */
 .btn-primary {
   background: linear-gradient(135deg, #FF7030 0%, #F55100 55%, #D94000 100%);
-  box-shadow: 0 4px 16px rgba(245,81,0,0.38), 0 1px 2px rgba(0,0,0,0.14);
+  box-shadow: 0 4px 16px rgba(245,81,0,0.36), 0 1px 2px rgba(0,0,0,0.14),
+              inset 0 1px 0 rgba(255,255,255,0.18);
   color: #FFFFFF;
   border: none;
   transition: opacity 0.12s, transform 0.12s, box-shadow 0.12s;
 }
 html.dark .btn-primary {
   background: linear-gradient(135deg, #FF8040 0%, #FF6820 50%, #F55100 100%);
-  box-shadow: 0 4px 20px rgba(255,104,32,0.42), 0 1px 3px rgba(0,0,0,0.35);
-  color: #FFFFFF;
+  box-shadow: 0 4px 20px rgba(255,104,32,0.40), 0 1px 3px rgba(0,0,0,0.35),
+              inset 0 1px 0 rgba(255,255,255,0.10);
 }
-.btn-primary:hover  { opacity: 0.92; }
-.btn-primary:active { opacity: 0.82; transform: scale(0.980); box-shadow: 0 2px 8px rgba(245,81,0,0.22); }
+.btn-primary:hover    { opacity: 0.92; }
+.btn-primary:active   { opacity: 0.84; transform: scale(0.985);
+                        box-shadow: 0 2px 8px rgba(245,81,0,0.22); }
 .btn-primary:disabled { opacity: 0.38; pointer-events: none; box-shadow: none; }
 
-/* ============================================================
-   GHOST / SECONDARY BUTTON
-   ============================================================ */
+/* ── Ghost / secondary button ─────────────────────────────── */
 .btn-ghost {
-  background: var(--c-section);
-  color: var(--c-ink);
-  border: 1px solid var(--c-line);
+  background: var(--surface-1);
+  color: var(--text-1);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--slab-base);
   transition: opacity 0.12s, transform 0.12s;
 }
-.btn-ghost:active { opacity: 0.7; transform: scale(0.980); }
+.btn-ghost:active   { opacity: 0.7; transform: scale(0.985); }
 .btn-ghost:disabled { opacity: 0.38; pointer-events: none; }
 
-/* ============================================================
-   GLASS SURFACES
-   ============================================================ */
+/* ── Glass surfaces ───────────────────────────────────────── */
 .header-glass {
-  background: rgba(240,240,245,0.90);
+  background: rgba(240,237,231,0.92);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 html.dark .header-glass {
-  background: rgba(7,7,16,0.94);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  background: rgba(13,11,9,0.94);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
 }
 
 .tabbar-glass {
-  background: rgba(240,240,245,0.95);
+  background: rgba(237,233,227,0.96);
   backdrop-filter: blur(24px) saturate(200%);
   -webkit-backdrop-filter: blur(24px) saturate(200%);
 }
 html.dark .tabbar-glass {
-  background: rgba(7,7,16,0.98);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  background: rgba(13,11,9,0.97);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
 }
 
 .sheet-surface {
-  background: #FFFFFF;
+  background: var(--surface-1);
 }
 html.dark .sheet-surface {
-  background: #141426;
+  background: #1A1612;
 }
 
-/* ============================================================
-   CANTIERE STATUS CARDS
-   ============================================================ */
+/* ── Cantiere status / hazard ─────────────────────────────── */
 .hazard-stripe-top {
   background: var(--hazard-stripe);
   height: 4px;
   flex-shrink: 0;
 }
-
 .kpi-tile-accent {
   height: 3px;
   border-radius: 3px 3px 0 0;
   margin: -1px -1px 0 -1px;
 }
-
-/* Status left rail on cards */
 .status-rail {
   width: 3px;
-  border-radius: 0 0 0 0;
+  border-radius: 0;
   flex-shrink: 0;
   align-self: stretch;
 }
 
-/* ============================================================
-   DASHBOARD STATS CARD
-   ============================================================ */
+/* ── Slab cards ───────────────────────────────────────────── */
+.slab {
+  box-shadow: var(--slab-base);
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+}
+.slab-raised {
+  box-shadow: var(--slab-raised);
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+}
+.slab-glass {
+  box-shadow: var(--slab-glass);
+  background: rgba(248,246,242,0.70);
+  border: 1px solid rgba(255,255,255,0.30);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+html.dark .slab-glass {
+  background: rgba(24,20,16,0.70);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ── Dashboard stat card ──────────────────────────────────── */
 .stat-card {
-  background: var(--c-card);
-  border: 1px solid var(--c-line);
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
   border-radius: 16px;
   padding: 14px 16px 16px;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--slab-base);
 }
 .stat-card-glow {
   position: absolute;
@@ -289,12 +362,21 @@ html.dark .sheet-surface {
   border-radius: inherit;
 }
 
-/* ============================================================
-   ANIMATIONS
-   ============================================================ */
+/* ── Press effect ─────────────────────────────────────────── */
+.press {
+  transition: transform 0.10s cubic-bezier(0.2,0,0,1);
+}
+.press:active {
+  transform: scale(0.985);
+}
+@media (prefers-reduced-motion: reduce) {
+  .press:active { transform: none; }
+}
+
+/* ── Animations ───────────────────────────────────────────── */
 @keyframes sheet-in {
   from { transform: translateY(100%); }
-  to   { transform: translateY(0);    }
+  to   { transform: translateY(0); }
 }
 @keyframes fade-in {
   from { opacity: 0; }
@@ -314,24 +396,36 @@ html.dark .sheet-surface {
   to   { transform: translateX(0);    opacity: 1; }
 }
 @keyframes stella-float {
-  0%, 100% { transform: translateY(0)   rotate(0deg);  }
+  0%, 100% { transform: translateY(0) rotate(0deg); }
   50%       { transform: translateY(-6px) rotate(2deg); }
 }
 @keyframes pulse-orange {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.6; }
 }
-
-.animate-sheet-in      { animation: sheet-in      250ms cubic-bezier(0.32,0.72,0,1);  }
-.animate-fade-in       { animation: fade-in        180ms ease-out;                      }
-.animate-slide-up      { animation: slide-up       220ms ease-out;                      }
-.animate-pop           { animation: pop            320ms cubic-bezier(0.32,0.72,0,1);   }
-.animate-slide-in-right{ animation: slide-in-right 200ms ease-out;                      }
-.animate-stella-float  { animation: stella-float   3s ease-in-out infinite;             }
-.animate-pulse-orange  { animation: pulse-orange   2s ease-in-out infinite;             }
-.animate-wiggle        { animation: wiggle         0.28s ease-in-out infinite;           }
-
 @keyframes wiggle {
   0%, 100% { transform: rotate(-1deg); }
   50%       { transform: rotate(1deg); }
+}
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-sheet-in       { animation: sheet-in       250ms cubic-bezier(0.32,0.72,0,1); }
+.animate-fade-in        { animation: fade-in         180ms ease-out; }
+.animate-slide-up       { animation: slide-up        220ms ease-out; }
+.animate-pop            { animation: pop             320ms cubic-bezier(0.32,0.72,0,1); }
+.animate-slide-in-right { animation: slide-in-right  200ms ease-out; }
+.animate-stella-float   { animation: stella-float    3s ease-in-out infinite; }
+.animate-pulse-orange   { animation: pulse-orange    2s ease-in-out infinite; }
+.animate-wiggle         { animation: wiggle          0.28s ease-in-out infinite; }
+.animate-count-up       { animation: count-up        600ms cubic-bezier(0.2,0,0,1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sheet-in, .animate-fade-in, .animate-slide-up,
+  .animate-pop, .animate-slide-in-right, .animate-stella-float,
+  .animate-pulse-orange, .animate-wiggle, .animate-count-up {
+    animation: none !important;
+  }
 }

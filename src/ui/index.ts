@@ -1,5 +1,7 @@
 export { Button, IconButton } from './Button';
-export { Card, CardHeader, StatTile } from './Card';
+export { Card, CardHeader, StatTile, Stat } from './Card';
+export { Chip } from './Chip';
+export { SectionLabel } from './SectionLabel';
 export { ListRow, Divider } from './ListRow';
 export { Pill, PriorityBadge } from './Pill';
 export { EmptyState } from './EmptyState';
