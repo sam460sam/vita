@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
 import { subDays } from 'date-fns';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Droplet, ChevronDown } from 'lucide-react';
+import { Droplet, ChevronDown, Bell } from 'lucide-react';
 import { db } from '@/data/db';
 import { setWaterMl, updateSettings, readSettings } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
-import { Sheet, Field, Input, Button, Segmented } from '@/ui';
+import { Sheet, Field, Input, Button, Segmented, Card, VioCompanion } from '@/ui';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { todayISO } from '@/lib/format';
@@ -15,8 +15,9 @@ import { useT, type TKey } from '@/i18n';
 
 const WATER = '#0EA5E9';
 const INTERVALS = [30, 45, 60, 90, 120];
+const QUICK = [250, 500, 750] as const; // ml — glass · big glass · bottle
 
-/** Full "Water tracking" screen — drop grid + reminder + daily goal stats. */
+/** Full "Water tracking" screen — glass hero + quick-add + weekly stats + reminder. */
 export function WaterPage() {
   const t = useT();
   const today = todayISO();
@@ -32,12 +33,7 @@ export function WaterPage() {
   const glassMl = s.water.glassMl || 200;
   const goalMl = s.water.dailyGoalMl || 2000;
   const ml = log?.ml ?? 0;
-  const total = Math.max(1, Math.round(goalMl / glassMl));
-  const done = Math.round(ml / glassMl);
-  const left = Math.max(0, total - done);
-  // Balanced columns so drops sit symmetrically (e.g. 10 → 5×2, 15 → 8+7).
-  const cols = total <= 6 ? total : Math.ceil(total / 2);
-  const dropSize = cols <= 5 ? 52 : cols <= 6 ? 46 : 38;
+  const pct = Math.min(100, Math.round((ml / goalMl) * 100));
 
   // Average / minimum / maximum daily intake (l) over the last 30 days that had
   // any intake — computed from real logs, so it varies with the user's history.
@@ -52,13 +48,12 @@ export function WaterPage() {
     return { avg, min: Math.min(...days), max: Math.max(...days), n: days.length };
   }, [waters]);
 
-  function setGlasses(n: number) {
+  function add(deltaMl: number) {
     platform.haptic();
-    void setWaterMl(today, Math.max(0, n) * glassMl);
+    void setWaterMl(today, Math.max(0, ml + deltaMl));
   }
 
   const reminderOn = (s.water.reminderEveryMin ?? 0) > 0;
-  // Catchy, rotating bodies for the water pings (localized).
   const waterTicks = () => Array.from({ length: 8 }, (_, i) => t(`reminder.waterTick.${i + 1}` as TKey));
   async function toggleReminder() {
     const next = reminderOn ? 0 : 60;
@@ -72,83 +67,85 @@ export function WaterPage() {
     await notifications.setWaterInterval(min, waterTicks());
   }
 
-  const fmtL = (n: number) => `${n.toFixed(1).replace(/\.0$/, '')} l/d`;
+  const fmtL = (n: number) => `${n.toFixed(1).replace(/\.0$/, '')} L`;
 
   return (
     <>
-      <PageHeader title={t('water.screen.title')} />
+      <PageHeader title={t('nav.water')} />
       <Screen>
-        {/* Today */}
-        <div>
-          <div className="text-[15px] font-semibold text-ink-2">{t('water.screen.today')}</div>
-          <h1 className="text-[34px] font-extrabold text-ink leading-tight mt-1">
-            {done} <span className="text-ink-3 font-bold">{t('water.screen.of')}</span> {total} {t('water.screen.glasses')}
-          </h1>
-          <p className="text-[13px] text-ink-2 leading-snug mt-1.5 max-w-md">
-            {t('water.screen.sub', { name: s.name || t('water.screen.you'), done, total, left })}
-          </p>
-        </div>
+        {/* Hero — glass + today's litres + Vio */}
+        <Card className="flex items-center gap-4 overflow-hidden">
+          <WaterGlass pct={pct} />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-end gap-1.5">
+              <span className="text-[34px] font-extrabold text-ink leading-none tnum">{fmtL(ml / 1000)}</span>
+              <span className="text-[17px] font-bold text-ink-3 mb-0.5">/ {fmtL(goalMl / 1000)}</span>
+            </div>
+            <div className="text-[14px] font-semibold text-ink-2 mt-1.5">{t('water.hydrationToday')}</div>
+            <div className="mt-2 h-2 rounded-full bg-section overflow-hidden">
+              <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: WATER }} />
+            </div>
+          </div>
+          <VioCompanion score={Math.max(8, pct)} size={76} animated className="-mr-1 self-end" />
+        </Card>
 
-        {/* Drops grid */}
-        <div className="mt-6 grid gap-3.5 justify-items-center" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
-          {Array.from({ length: total }, (_, i) => {
-            const filled = i < done;
-            const isLastFilled = i + 1 === done;
-            return (
-              <button
-                key={i}
-                onClick={() => setGlasses(isLastFilled ? i : i + 1)}
-                aria-label={`${i + 1}`}
-                className="relative flex items-center justify-center active:scale-90 transition-transform"
-              >
-                <Droplet size={dropSize} strokeWidth={1.5} style={{ color: WATER }} fill={filled ? WATER : `${WATER}22`} />
-                {!filled && <span className="absolute font-bold" style={{ color: WATER, fontSize: dropSize * 0.4 }}>+</span>}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Notification */}
-        <h2 className="text-[18px] font-extrabold text-ink mt-7">{t('water.screen.notification')}</h2>
-        <button onClick={toggleReminder} className="mt-3 flex items-center gap-3 w-full">
-          <span className="h-7 w-12 rounded-full relative transition-colors flex-shrink-0" style={{ background: reminderOn ? 'var(--c-primary)' : 'var(--c-line)' }}>
-            <span className="absolute top-0.5 h-6 w-6 rounded-full bg-white shadow-sm transition-all" style={{ left: reminderOn ? '22px' : '2px' }} />
-          </span>
-          <span className="text-[15px] font-semibold text-ink">{t('water.screen.remind')}</span>
-        </button>
-
-        {reminderOn && (
-          <div className="relative mt-3">
-            <select
-              value={s.water.reminderEveryMin ?? 60}
-              onChange={(e) => setInterval(parseInt(e.target.value))}
-              className="appearance-none w-full h-12 rounded-btn bg-section text-ink text-[15px] font-medium px-4 pr-10"
+        {/* Quick add */}
+        <h2 className="text-[17px] font-extrabold text-ink mt-6 mb-3">{t('water.quickAdd')}</h2>
+        <div className="grid grid-cols-3 gap-3">
+          {QUICK.map((q, i) => (
+            <button
+              key={q}
+              onClick={() => add(q)}
+              className="rounded-card bg-card border border-line/70 dark:border-white/5 py-4 flex flex-col items-center gap-1.5 active:scale-95 transition-transform shadow-chip"
             >
-              {INTERVALS.map((m) => (
-                <option key={m} value={m}>{t('water.screen.every', { n: m })}</option>
-              ))}
-            </select>
-            <ChevronDown size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-2 pointer-events-none" />
-          </div>
-        )}
-
-        {/* Daily goal */}
-        <div className="rounded-card p-4 mt-7 relative overflow-hidden" style={{ background: 'color-mix(in srgb, #0EA5E9 14%, transparent)' }}>
-          <div className="text-[16px] font-extrabold text-ink">{t('water.screen.dailyGoal', { n: total })}</div>
-          <div className="flex gap-6 mt-3">
-            <GoalStat value={stats.n ? fmtL(stats.avg) : '—'} label={t('water.screen.average')} />
-            <GoalStat value={stats.n ? fmtL(stats.min) : '—'} label={t('water.screen.minimum')} />
-            <GoalStat value={stats.n ? fmtL(stats.max) : '—'} label={t('water.screen.maximum')} />
-          </div>
-          <Droplet size={90} className="absolute -right-3 -bottom-3 opacity-20" style={{ color: WATER }} fill={WATER} />
+              <Droplet size={i === 2 ? 30 : 24} strokeWidth={2} style={{ color: WATER }} fill={`${WATER}22`} />
+              <span className="text-[14px] font-bold text-ink">{i === 2 ? t('water.bottle') : `${q} ml`}</span>
+              {i === 2 && <span className="text-[11px] text-ink-3 -mt-1">{q} ml</span>}
+            </button>
+          ))}
         </div>
 
-        {/* Calculator — recommend a daily goal from weight + height */}
-        <button onClick={() => setCalcOpen(true)} className="mt-4 w-full h-12 rounded-full font-bold text-[15px] active:scale-[0.98] transition-transform" style={{ background: 'color-mix(in srgb, #0EA5E9 16%, transparent)', color: WATER }}>
+        {/* Weekly stats */}
+        <div className="grid grid-cols-3 gap-3 mt-4">
+          <WeekStat value={stats.n ? fmtL(stats.avg) : '—'} label={t('water.screen.average')} weekly={t('water.weekly')} />
+          <WeekStat value={stats.n ? fmtL(stats.min) : '—'} label={t('water.screen.minimum')} weekly={t('water.weekly')} />
+          <WeekStat value={stats.n ? fmtL(stats.max) : '—'} label={t('water.screen.maximum')} weekly={t('water.weekly')} />
+        </div>
+
+        {/* Reminder card */}
+        <Card className="mt-4">
+          <button onClick={toggleReminder} className="flex items-center gap-3 w-full">
+            <span className="h-10 w-10 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: `${WATER}1f`, color: WATER }}>
+              <Bell size={18} />
+            </span>
+            <span className="flex-1 text-left">
+              <span className="block text-[15px] font-semibold text-ink">{t('water.reminderTitle')}</span>
+              <span className="block text-[12px] text-ink-2">{t('water.screen.remind')}</span>
+            </span>
+            <span className="h-7 w-12 rounded-full relative transition-colors flex-shrink-0" style={{ background: reminderOn ? WATER : 'var(--c-line)' }}>
+              <span className="absolute top-0.5 h-6 w-6 rounded-full bg-white shadow-sm transition-all" style={{ left: reminderOn ? '22px' : '2px' }} />
+            </span>
+          </button>
+          {reminderOn && (
+            <div className="relative mt-3">
+              <select
+                value={s.water.reminderEveryMin ?? 60}
+                onChange={(e) => setInterval(parseInt(e.target.value))}
+                className="appearance-none w-full h-12 rounded-btn bg-section text-ink text-[15px] font-medium px-4 pr-10"
+              >
+                {INTERVALS.map((m) => (
+                  <option key={m} value={m}>{t('water.screen.every', { n: m })}</option>
+                ))}
+              </select>
+              <ChevronDown size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-2 pointer-events-none" />
+            </div>
+          )}
+        </Card>
+
+        {/* Secondary actions */}
+        <button onClick={() => setCalcOpen(true)} className="mt-4 w-full h-12 rounded-full font-bold text-[15px] active:scale-[0.98] transition-transform" style={{ background: `${WATER}29`, color: WATER }}>
           {t('water.calc.cta')}
         </button>
-
-        {/* Change goal */}
         <button onClick={() => setGoalOpen(true)} className="mt-3 w-full h-[52px] rounded-full bg-ink text-app font-bold text-[15px] active:scale-[0.98] transition-transform">
           {t('water.screen.changeGoal')}
         </button>
@@ -157,6 +154,39 @@ export function WaterPage() {
       <WaterGoalSheet open={goalOpen} onClose={() => setGoalOpen(false)} goalMl={goalMl} glassMl={glassMl} />
       <HydrationCalcSheet open={calcOpen} onClose={() => setCalcOpen(false)} glassMl={glassMl} />
     </>
+  );
+}
+
+/** A simple CSS glass that fills up to `pct`%. */
+function WaterGlass({ pct }: { pct: number }) {
+  return (
+    <div className="relative flex-shrink-0" style={{ width: 78, height: 104 }}>
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{ clipPath: 'polygon(12% 0,88% 0,80% 100%,20% 100%)', background: `${WATER}12` }}
+      >
+        <div
+          className="absolute inset-x-0 bottom-0 transition-all duration-700"
+          style={{ height: `${Math.max(4, pct)}%`, background: `linear-gradient(180deg, ${WATER}cc, ${WATER})` }}
+        >
+          <div className="absolute -top-1.5 inset-x-0 h-3 rounded-[50%]" style={{ background: '#7DD3FC' }} />
+        </div>
+      </div>
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ clipPath: 'polygon(12% 0,88% 0,80% 100%,20% 100%)', boxShadow: `inset 0 0 0 3px ${WATER}59` }}
+      />
+    </div>
+  );
+}
+
+function WeekStat({ value, label, weekly }: { value: string; label: string; weekly: string }) {
+  return (
+    <div className="rounded-card bg-card border border-line/70 dark:border-white/5 p-3 text-center shadow-chip">
+      <div className="text-[18px] font-extrabold text-ink tnum leading-none">{value}</div>
+      <div className="text-[10px] font-bold uppercase tracking-wide text-ink-3 mt-1.5">{label}</div>
+      <div className="text-[10px] text-ink-3">{weekly}</div>
+    </div>
   );
 }
 
@@ -230,15 +260,6 @@ function HydrationCalcSheet({ open, onClose, glassMl }: { open: boolean; onClose
       </div>
       <p className="text-[12px] text-ink-3 mt-3 leading-snug">{t('water.calc.note')}</p>
     </Sheet>
-  );
-}
-
-function GoalStat({ value, label }: { value: string; label: string }) {
-  return (
-    <div>
-      <div className="text-[15px] font-extrabold text-ink tnum leading-none">{value}</div>
-      <div className="text-[10px] font-bold uppercase tracking-wide text-ink-2 mt-1">{label}</div>
-    </div>
   );
 }
 
