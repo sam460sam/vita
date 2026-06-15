@@ -71,9 +71,12 @@ export function FinancesPage() {
         }
       />
       <Screen>
-        {/* Balance */}
-        <Card className="mb-4">
-          <div className="text-center py-2">
+        {/* Balance hero */}
+        <div
+          className="rounded-card shadow-card mb-4 relative overflow-hidden"
+          style={{ background: `linear-gradient(150deg, color-mix(in srgb, ${balance < 0 ? 'var(--c-danger)' : 'var(--c-habit)'} 20%, var(--c-card)), var(--c-card) 80%)` }}
+        >
+          <div className="text-center py-5 px-4 relative">
             <div className="metric-label capitalize">{format(new Date(), 'MMMM yyyy', { locale: activeDfnLocale() })}</div>
             <div className="text-4xl font-semibold tnum text-ink mt-1" style={{ color: balance < 0 ? 'var(--c-danger)' : undefined }}>
               {formatMoney(balance, currency)}
@@ -93,7 +96,8 @@ export function FinancesPage() {
               </div>
             </div>
           </div>
-        </Card>
+          <Wallet size={92} className="absolute -right-4 -bottom-5 opacity-[0.08]" style={{ color: balance < 0 ? 'var(--c-danger)' : 'var(--c-habit)' }} />
+        </div>
 
         {/* Budget */}
         <Card className="mb-4" onClick={() => setBudgetOpen(true)}>

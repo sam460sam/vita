@@ -60,8 +60,8 @@ export function HabitsPage() {
     <>
       <PageHeader title={t('habits.title')} />
       <Screen>
-        {/* Stats header */}
-        <div className="bg-card rounded-card shadow-card border border-line/40 dark:border-transparent p-5 mb-3">
+        {/* Stats hero */}
+        <div className="rounded-card shadow-card p-5 mb-3 relative overflow-hidden" style={{ background: 'linear-gradient(140deg, color-mix(in srgb, var(--c-habit) 20%, var(--c-card)), var(--c-card) 78%)' }}>
           <h2 className="text-[22px] font-extrabold text-ink tracking-tight">{t('habits.title')}</h2>
           <p className="text-[13px] text-ink-2 mt-0.5">{t('habits.subtitle')}</p>
           <div className="flex gap-8 mt-4">
@@ -74,6 +74,7 @@ export function HabitsPage() {
               <div className="text-[12px] font-semibold text-ink-3 mt-1">{t('habits.completedToday')}</div>
             </div>
           </div>
+          <Flame size={96} className="absolute -right-3 -bottom-5 opacity-[0.09] text-habit" />
         </div>
 
         {/* Create new habit */}

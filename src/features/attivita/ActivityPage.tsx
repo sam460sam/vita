@@ -73,8 +73,8 @@ export function ActivityPage() {
         }
       />
       <Screen>
-        {/* Rings */}
-        <Card className="flex flex-col items-center pt-6 pb-5 mb-4 relative">
+        {/* Rings hero */}
+        <div className="rounded-card shadow-card flex flex-col items-center pt-6 pb-5 px-4 mb-4 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, color-mix(in srgb, var(--c-activity) 18%, var(--c-card)), var(--c-card) 80%)' }}>
           <IconButton label={t('common.edit')} className="absolute top-2 right-2" onClick={() => setGoalsOpen(true)}>
             <Pencil size={16} />
           </IconButton>
@@ -84,7 +84,7 @@ export function ActivityPage() {
             <RingStat label={t('activity.ring.exercise')} value={rings.exercise.value} goal={rings.exercise.goal} unit={t('activity.unit.min')} color="var(--c-habit)" />
             <RingStat label={t('activity.ring.stand')} value={rings.stand.value} goal={rings.stand.goal} unit={t('activity.unit.hours')} color="var(--c-project)" />
           </div>
-        </Card>
+        </div>
 
         {/* Steps (from Apple Health / Health Connect when connected) */}
         {weekSteps && weekSteps.some((d) => d.value > 0) && <StepsCard data={weekSteps} />}
