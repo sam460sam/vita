@@ -963,7 +963,7 @@ export const it = {
 
   // Home / widgets
   'home.routine.title': 'La tua giornata',
-  'home.tile.todo': '{n} oggi',
+  'home.tile.todo': '{n} Oggi',
   'home.tile.ready': 'Pronto',
   'home.routine.progress': '{done} di {total} completati',
   'home.routine.all': 'Vedi tutte',
