@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Clock, StickyNote, Factory, Info, Shield, LogOut, ChevronRight, type LucideIcon } from 'lucide-react';
+import { Clock, StickyNote, Factory, Info, Shield, LogOut, ChevronRight, CloudSun, BarChart2, type LucideIcon } from 'lucide-react';
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { useTeam } from '@/auth/TeamContext';
@@ -96,6 +96,20 @@ export function AltroPage() {
 
         <Section title="Strumenti">
           <LinkRow
+            icon={BarChart2}
+            label="Cruscotto finanziario"
+            sub="Incassato, da riscuotere, scaduti"
+            onClick={() => navigate('/finanze')}
+            accent="var(--c-success)"
+          />
+          <LinkRow
+            icon={CloudSun}
+            label="Meteo getto"
+            sub="Condizioni ottimali per il calcestruzzo"
+            onClick={() => navigate('/meteo')}
+            accent="var(--c-stato-confermato)"
+          />
+          <LinkRow
             icon={Clock}
             label="Ore lavoro"
             sub="Traccia le ore della giornata"
@@ -112,7 +126,7 @@ export function AltroPage() {
           <LinkRow
             icon={Factory}
             label="Impianti cemento"
-            sub="Directory fornitori locali"
+            sub="Directory fornitori — ordine WhatsApp"
             onClick={() => navigate('/cantiere/impianti')}
             accent="var(--c-ink-2)"
           />

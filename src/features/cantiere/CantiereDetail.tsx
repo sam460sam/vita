@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useParams } from 'react-router-dom';
-import { Phone, MapPin, Calendar, Edit3, Camera, PenTool, FileText, Share2, StickyNote, Plus } from 'lucide-react';
+import { Phone, MapPin, Calendar, Edit3, Camera, PenTool, FileText, Share2, StickyNote, Plus, TrendingUp, TrendingDown, Send } from 'lucide-react';
 import { CantierePageHeader as PageHeader } from './CantierePageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, CardHeader, Button } from '@/ui';
@@ -13,6 +13,7 @@ import { VerbaleSheet } from './VerbaleSheet';
 import { condividiVerbale } from './generateVerbale';
 import { ContrattoSheet } from './ContrattoSheet';
 import { condividiContratto } from './generateContratto';
+import { condividiPreventivo } from './generatePreventivo';
 import { GiornaledCantiere } from './GiornaledCantiere';
 import { PhotoAnnotator } from './PhotoAnnotator';
 import { saveCantiere } from '@/data/cantiere-repo';
@@ -30,6 +31,7 @@ export function CantiereDetail() {
   const [pdfLoading, setPdfLoading] = useState(false);
   const [contrattoOpen, setContrattoOpen] = useState(false);
   const [contrattoPdfLoading, setContrattoPdfLoading] = useState(false);
+  const [preventivoPdfLoading, setPreventivoPdfLoading] = useState(false);
   const [annotatePhoto, setAnnotatePhoto] = useState<{ index: number; src: string } | null>(null);
   const [noteSheetOpen, setNoteSheetOpen] = useState(false);
   const [editNote, setEditNote] = useState<Note | null>(null);
@@ -66,6 +68,13 @@ export function CantiereDetail() {
     setContrattoPdfLoading(true);
     try { await condividiContratto(cantiere, team?.name ?? 'Impresa Edile'); }
     finally { setContrattoPdfLoading(false); }
+  }
+
+  async function inviaPreventivoPdf() {
+    if (!cantiere) return;
+    setPreventivoPdfLoading(true);
+    try { await condividiPreventivo(cantiere, team?.name ?? 'Impresa Edile'); }
+    finally { setPreventivoPdfLoading(false); }
   }
 
   const sInfo = statoInfo(cantiere.stato);
@@ -162,6 +171,91 @@ export function CantiereDetail() {
             )}
           </div>
         </Card>
+
+        {/* Preventivo PDF — only when stato=preventivo */}
+        {cantiere.stato === 'preventivo' && (
+          <Card className="mb-4">
+            <CardHeader title="Preventivo" />
+            <p className="text-[13px] text-ink-2 mb-3">
+              Genera il PDF del preventivo da inviare al cliente prima di confermare il lavoro.
+            </p>
+            <Button
+              onClick={inviaPreventivoPdf}
+              disabled={preventivoPdfLoading}
+              variant="primary"
+            >
+              {preventivoPdfLoading ? (
+                'Generazione…'
+              ) : (
+                <>
+                  <Send size={15} className="mr-1.5" />
+                  {typeof navigator !== 'undefined' && 'canShare' in navigator ? 'Invia preventivo' : 'Scarica preventivo'}
+                </>
+              )}
+            </Button>
+          </Card>
+        )}
+
+        {/* Margine reale — only when costs are entered */}
+        {(cantiere.costoMateriali != null || cantiere.costoManodopera != null || cantiere.costoAltri != null) && (() => {
+          const totCosti = (cantiere.costoMateriali ?? 0) + (cantiere.costoManodopera ?? 0) + (cantiere.costoAltri ?? 0);
+          const margine = cantiere.importo - totCosti;
+          const percMargine = cantiere.importo > 0 ? (margine / cantiere.importo) * 100 : 0;
+          const margineColor = percMargine >= 40 ? 'var(--c-success)' : percMargine >= 20 ? 'var(--c-warning)' : 'var(--c-danger)';
+          const MargineIcon = margine >= 0 ? TrendingUp : TrendingDown;
+          return (
+            <Card className="mb-4">
+              <CardHeader title="Analisi margine" />
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                  <div className="text-[11px] text-ink-3 uppercase tracking-wide">Ricavo</div>
+                  <div className="font-display font-bold text-[16px] tnum">{formatEuro(cantiere.importo)}</div>
+                </div>
+                <div>
+                  <div className="text-[11px] text-ink-3 uppercase tracking-wide">Tot. costi</div>
+                  <div className="font-display font-bold text-[16px] tnum">{formatEuro(totCosti)}</div>
+                </div>
+              </div>
+              <div
+                className="flex items-center justify-between rounded-xl p-3"
+                style={{ background: margineColor + '14' }}
+              >
+                <div className="flex items-center gap-2">
+                  <MargineIcon size={18} style={{ color: margineColor }} />
+                  <div>
+                    <div className="text-[11px] text-ink-3 uppercase tracking-wide">Margine</div>
+                    <div className="font-display font-bold text-[18px] tnum" style={{ color: margineColor }}>
+                      {formatEuro(margine)}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-display font-extrabold text-[28px] tnum" style={{ color: margineColor }}>
+                    {percMargine.toFixed(0)}%
+                  </div>
+                </div>
+              </div>
+              {[
+                { label: 'Materiali', val: cantiere.costoMateriali },
+                { label: 'Manodopera', val: cantiere.costoManodopera },
+                { label: 'Altri costi', val: cantiere.costoAltri },
+              ].filter((r) => r.val != null).length > 0 && (
+                <div className="mt-3 pt-3 border-t border-line/50 space-y-1.5">
+                  {[
+                    { label: 'Materiali', val: cantiere.costoMateriali },
+                    { label: 'Manodopera', val: cantiere.costoManodopera },
+                    { label: 'Altri', val: cantiere.costoAltri },
+                  ].filter((r) => r.val != null).map(({ label, val }) => (
+                    <div key={label} className="flex justify-between text-[13px]">
+                      <span className="text-ink-3">{label}</span>
+                      <span className="font-medium tnum">{formatEuro(val!)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          );
+        })()}
 
         {/* Cement calculator */}
         <CementoCalc cantiere={cantiere} />

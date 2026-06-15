@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Calculator, ChevronLeft, ChevronRight, AlertTriangle, Phone, MapPin, Copy, Check } from 'lucide-react';
+import { Calculator, ChevronLeft, ChevronRight, AlertTriangle, Phone, MapPin, Copy, Check, MessageCircle } from 'lucide-react';
 import { Sheet, Field, Input, Select } from '@/ui';
 import {
   IMPIANTI_VENETO,
@@ -273,18 +273,30 @@ export function OrdineCalcSheet({ open, onClose, provinciaIniziale }: Props) {
         {messaggio}
       </div>
 
-      <button
-        onClick={copiaMessaggio}
-        className={`w-full h-13 py-4 rounded-2xl text-[16px] font-semibold flex items-center justify-center gap-2 transition-colors ${
-          copiato ? 'bg-section text-ink-2 border border-line' : 'bg-primary text-on-primary'
-        }`}
-      >
-        {copiato ? <Check size={18} /> : <Copy size={18} />}
-        {copiato ? 'Copiato!' : 'Copia messaggio'}
-      </button>
+      <div className="flex flex-col gap-2">
+        <a
+          href={`https://wa.me/?text=${encodeURIComponent(messaggio)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full py-4 rounded-2xl text-[16px] font-semibold flex items-center justify-center gap-2 bg-[#25D366] text-white active:opacity-90 transition-opacity"
+        >
+          <MessageCircle size={18} />
+          Invia su WhatsApp
+        </a>
+
+        <button
+          onClick={copiaMessaggio}
+          className={`w-full py-3.5 rounded-2xl text-[15px] font-semibold flex items-center justify-center gap-2 transition-colors ${
+            copiato ? 'bg-section text-ink-2 border border-line' : 'bg-card text-ink-2 border border-line'
+          }`}
+        >
+          {copiato ? <Check size={16} /> : <Copy size={16} />}
+          {copiato ? 'Copiato!' : 'Copia testo'}
+        </button>
+      </div>
 
       <p className="text-[11px] text-ink-3 mt-2 text-center leading-relaxed">
-        Incollalo su WhatsApp, SMS o email — già pronto per {impianto.nome}.
+        Il messaggio è già pronto per {impianto.nome} — scegli come inviarlo.
       </p>
     </Sheet>
   );

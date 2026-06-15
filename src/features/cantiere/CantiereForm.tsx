@@ -60,6 +60,9 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
         firmaCliente: cantiere.firmaCliente,
         operaiIds: cantiere.operaiIds,
         additivi: cantiere.additivi,
+        costoMateriali: cantiere.costoMateriali,
+        costoManodopera: cantiere.costoManodopera,
+        costoAltri: cantiere.costoAltri,
       });
     } else {
       setForm({ ...DEFAULT });
@@ -253,6 +256,44 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
           placeholder="Informazioni aggiuntive…"
         />
       </Field>
+
+      <div className="pt-1">
+        <p className="text-[11px] font-black text-ink-3 uppercase tracking-[0.08em] mb-3">
+          Costi reali — per analisi margine (opzionale)
+        </p>
+        <div className="grid grid-cols-3 gap-2">
+          <Field label="Materiali (€)">
+            <Input
+              type="number"
+              min={0}
+              value={form.costoMateriali ?? ''}
+              onChange={(e) => set('costoMateriali', e.target.value ? Number(e.target.value) : undefined)}
+              placeholder="0"
+              className="text-center"
+            />
+          </Field>
+          <Field label="Manodopera (€)">
+            <Input
+              type="number"
+              min={0}
+              value={form.costoManodopera ?? ''}
+              onChange={(e) => set('costoManodopera', e.target.value ? Number(e.target.value) : undefined)}
+              placeholder="0"
+              className="text-center"
+            />
+          </Field>
+          <Field label="Altri (€)">
+            <Input
+              type="number"
+              min={0}
+              value={form.costoAltri ?? ''}
+              onChange={(e) => set('costoAltri', e.target.value ? Number(e.target.value) : undefined)}
+              placeholder="0"
+              className="text-center"
+            />
+          </Field>
+        </div>
+      </div>
     </Sheet>
   );
 }

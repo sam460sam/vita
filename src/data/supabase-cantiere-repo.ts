@@ -39,6 +39,9 @@ interface CantiereRow {
   contratto_firma_cliente: string | null;
   contratto_timestamp: string | null;
   contratto_cliente_nome: string | null;
+  costo_materiali: number | null;
+  costo_manodopera: number | null;
+  costo_altri: number | null;
   created_at: number;
   updated_at: number;
 }
@@ -88,6 +91,9 @@ function rowToCantiere(r: CantiereRow): Cantiere {
     contrattoFirmaCliente: r.contratto_firma_cliente ?? undefined,
     contrattoTimestamp: r.contratto_timestamp ?? undefined,
     contrattoClienteNome: r.contratto_cliente_nome ?? undefined,
+    costoMateriali: r.costo_materiali ?? undefined,
+    costoManodopera: r.costo_manodopera ?? undefined,
+    costoAltri: r.costo_altri ?? undefined,
   };
 }
 
@@ -122,6 +128,9 @@ function cantiereToRow(c: Cantiere, teamId: string): CantiereRow {
     contratto_firma_cliente: c.contrattoFirmaCliente ?? null,
     contratto_timestamp: c.contrattoTimestamp ?? null,
     contratto_cliente_nome: c.contrattoClienteNome ?? null,
+    costo_materiali: c.costoMateriali ?? null,
+    costo_manodopera: c.costoManodopera ?? null,
+    costo_altri: c.costoAltri ?? null,
     created_at: c.createdAt,
     updated_at: c.updatedAt,
   };

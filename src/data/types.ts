@@ -334,6 +334,10 @@ export interface Cantiere extends Timestamped {
   contrattoFirmaCliente?: string;   // base64 PNG canvas signature
   contrattoTimestamp?: string;      // ISO datetime of contract signing
   contrattoClienteNome?: string;    // confirmed client name at contract signing
+  // Real cost tracking (for margin analysis)
+  costoMateriali?: number;          // €  concrete, additives, etc.
+  costoManodopera?: number;         // €  labour
+  costoAltri?: number;              // €  machinery rental, misc
 }
 
 export interface Operaio extends Timestamped {

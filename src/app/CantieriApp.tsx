@@ -26,6 +26,8 @@ const TerminiPage = lazy(() => import('@/features/cantiere/TerminiPage').then((m
 const InfoPage    = lazy(() => import('@/features/cantiere/InfoPage').then((m)    => ({ default: m.InfoPage })));
 const OrePage     = lazy(() => import('@/features/ore/OrePage').then((m)     => ({ default: m.OrePage })));
 const NotePage    = lazy(() => import('@/features/note/NotePage').then((m)    => ({ default: m.NotePage })));
+const MeteoPage   = lazy(() => import('@/features/cantiere/MeteoPage').then((m)   => ({ default: m.MeteoPage })));
+const FinanzePage = lazy(() => import('@/features/cantiere/FinanzePage').then((m) => ({ default: m.FinanzePage })));
 
 function Spinner() {
   return (
@@ -66,6 +68,8 @@ function AppShell() {
               <Route path="/altro" element={<AltroPage />} />
 
               {/* Secondary */}
+              <Route path="/meteo" element={<MeteoPage />} />
+              <Route path="/finanze" element={<FinanzePage />} />
               <Route path="/ore/*" element={<OrePage />} />
               <Route path="/note/*" element={<NotePage />} />
               <Route path="/info" element={<InfoPage />} />

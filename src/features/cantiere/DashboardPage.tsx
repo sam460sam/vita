@@ -16,6 +16,7 @@ import {
   promemoriaPagamenti,
   etichettaScadenza,
 } from './logic';
+import { MeteoWidget } from './MeteoWidget';
 
 // ── Greeting ──────────────────────────────────────────────────
 
@@ -269,6 +270,9 @@ export function DashboardPage() {
             color={completatiMese > 0 ? 'green' : 'gray'}
           />
         </div>
+
+        {/* ── Meteo getto ── */}
+        <MeteoWidget />
 
         {/* ── Allerte pagamenti ── */}
         {allerte.length > 0 && (
