@@ -111,27 +111,36 @@ function Intro({ onStart }: { onStart: () => void }) {
   );
 }
 
-/** Small faceless sprout decoration (two leaves on a stem). */
-function Sprout({ className, rot = 0, flip }: { className?: string; rot?: number; flip?: boolean }) {
+/** Small faceless sprout decoration (two leaves on a stem). `outline` = sketchy line-art. */
+function Sprout({ className, rot = 0, flip, outline }: { className?: string; rot?: number; flip?: boolean; outline?: boolean }) {
+  const lf = outline ? 'none' : '#74C06A';
+  const rf = outline ? 'none' : '#8FCB5E';
+  const st = outline ? '#6FA85E' : 'none';
+  const sw = outline ? 2 : 0;
   return (
     <svg viewBox="0 0 44 56" className={className} style={{ transform: `rotate(${rot}deg)${flip ? ' scaleX(-1)' : ''}` }} aria-hidden>
-      <line x1="22" y1="56" x2="22" y2="24" stroke="#3E8E4E" strokeWidth="3.5" strokeLinecap="round" />
-      <path d="M22 36 C9 35 4 23 6 14 C18 15 25 26 22 36 Z" fill="#74C06A" />
-      <path d="M22 30 C35 29 40 17 38 8 C26 9 19 20 22 30 Z" fill="#8FCB5E" />
+      <line x1="22" y1="56" x2="22" y2="24" stroke={outline ? '#6FA85E' : '#3E8E4E'} strokeWidth={outline ? 2 : 3.5} strokeLinecap="round" />
+      <path d="M22 36 C9 35 4 23 6 14 C18 15 25 26 22 36 Z" fill={lf} stroke={st} strokeWidth={sw} />
+      <path d="M22 30 C35 29 40 17 38 8 C26 9 19 20 22 30 Z" fill={rf} stroke={st} strokeWidth={sw} />
     </svg>
   );
 }
 
-/** Small faceless flower decoration. */
-function Flower({ className }: { className?: string }) {
+/** Small faceless flower decoration. `outline` = sketchy line-art. */
+function Flower({ className, outline }: { className?: string; outline?: boolean }) {
+  const pf = outline ? 'none' : '#F4A8C0';
+  const cf = outline ? 'none' : '#FFD66B';
+  const lf = outline ? 'none' : '#74C06A';
+  const st = outline ? '#6FA85E' : 'none';
+  const sw = outline ? 2 : 0;
   return (
     <svg viewBox="0 0 48 56" className={className} aria-hidden>
-      <line x1="24" y1="56" x2="24" y2="28" stroke="#3E8E4E" strokeWidth="3.5" strokeLinecap="round" />
-      <path d="M24 40 C14 40 10 32 12 26 C20 26 26 33 24 40 Z" fill="#74C06A" />
+      <line x1="24" y1="56" x2="24" y2="28" stroke={outline ? '#6FA85E' : '#3E8E4E'} strokeWidth={outline ? 2 : 3.5} strokeLinecap="round" />
+      <path d="M24 40 C14 40 10 32 12 26 C20 26 26 33 24 40 Z" fill={lf} stroke={st} strokeWidth={sw} />
       {[0, 72, 144, 216, 288].map((a) => (
-        <ellipse key={a} cx="24" cy="14" rx="6" ry="10" fill="#F4A8C0" transform={`rotate(${a} 24 22)`} />
+        <ellipse key={a} cx="24" cy="14" rx="6" ry="10" fill={pf} stroke={outline ? '#E68DAE' : 'none'} strokeWidth={sw} transform={`rotate(${a} 24 22)`} />
       ))}
-      <circle cx="24" cy="22" r="5.5" fill="#FFD66B" />
+      <circle cx="24" cy="22" r="5.5" fill={cf} stroke={outline ? '#E0B84E' : 'none'} strokeWidth={sw} />
     </svg>
   );
 }
@@ -155,8 +164,19 @@ function TestFlow({ onDone, onCancel }: { onDone: (a: Answers) => void; onCancel
   }
 
   return (
-    <div className="min-h-[100dvh] bg-app">
-      <div className="max-w-xl mx-auto px-5 pt-safe-top pb-[calc(120px+env(safe-area-inset-bottom))] min-h-[100dvh] flex flex-col">
+    <div className="min-h-[100dvh] bg-app relative overflow-hidden">
+      {/* Sprouts & flowers scattered across the screen */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-0" style={{ opacity: 0.3 }}>
+        <Sprout outline className="absolute left-[7%] top-[16%] w-16" rot={-22} />
+        <Flower outline className="absolute right-[12%] top-[10%] w-12" />
+        <Sprout outline className="absolute right-[8%] top-[34%] w-20" rot={18} flip />
+        <Flower outline className="absolute left-[10%] top-[48%] w-16" />
+        <Sprout outline className="absolute left-[16%] top-[70%] w-14" rot={10} />
+        <Sprout outline className="absolute right-[14%] top-[60%] w-12" rot={-14} flip />
+        <Flower outline className="absolute right-[20%] top-[80%] w-11" />
+        <Sprout outline className="absolute left-[6%] top-[88%] w-12" rot={-6} />
+      </div>
+      <div className="relative z-10 max-w-xl mx-auto px-5 pt-safe-top pb-[calc(120px+env(safe-area-inset-bottom))] min-h-[100dvh] flex flex-col">
         {/* Top bar: back + progress */}
         <div className="flex items-center gap-3 h-14 pt-2">
           <button
@@ -169,20 +189,12 @@ function TestFlow({ onDone, onCancel }: { onDone: (a: Answers) => void; onCancel
           <div className="flex-1 h-2 rounded-full bg-section overflow-hidden">
             <div className="h-full rounded-full transition-all" style={{ width: `${Math.round(progress * 100)}%`, background: 'var(--c-personality)' }} />
           </div>
-          <Flower className="w-6 flex-shrink-0" />
         </div>
 
         <p className="text-[12px] font-bold uppercase tracking-wider text-ink-3 mt-6">{t('personality.q.of', { n: i + 1, total: TOTAL_QUESTIONS })}</p>
         <h1 className="text-[22px] font-extrabold text-ink leading-snug mt-2 min-h-[96px]">{lang === 'it' ? q.it : q.en}</h1>
 
-        {/* Little garden growing inside the questionnaire */}
-        <div className="flex-1 flex items-end justify-center gap-3 min-h-[64px] py-4 opacity-95">
-          <Sprout className="w-7" rot={-9} />
-          <Flower className="w-8" />
-          <Sprout className="w-6" rot={7} flip />
-          <Flower className="w-7" />
-          <Sprout className="w-7" rot={-5} />
-        </div>
+        <div className="flex-1 min-h-[12px]" />
 
         {/* Likert 1..5 */}
         <div className="space-y-2.5">
