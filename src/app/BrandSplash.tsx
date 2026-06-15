@@ -6,9 +6,9 @@ import wordmarkUrl from '/vyta-wordmark.png';
 // still plays the V alone first: it pops in centered, slides left to where the
 // wordmark's own V sits, then crossfades into the complete wordmark.
 const WM_H = 104; // wordmark display height (px)
-const WM_W = Math.round(WM_H * 1.93); // wordmark aspect ≈ 430×223
+const WM_W = Math.round(WM_H * 2.21); // wordmark aspect ≈ 899×406 (botanical "Vyta")
 const V_H = 102; // standalone V display height (matches the wordmark's V)
-const V_LEFT = Math.round(WM_W * 0.21); // the wordmark V's center, from its left
+const V_LEFT = Math.round(WM_W * 0.192); // the wordmark V's center, from its left
 const START_SHIFT = Math.round(WM_W / 2 - V_LEFT); // start = viewport center
 
 export function BrandSplash() {
