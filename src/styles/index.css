@@ -3,22 +3,23 @@
 @tailwind utilities;
 
 /* ============================================================
-   CALCESTRUZZO — design tokens. Amber segnaletica + dark concrete.
+   GETTO — Design System v2
+   Construction Orange · Deep Concrete Dark · Pro Toolkit
    ============================================================ */
 :root {
-  /* --- Surfaces (cool-neutral light) --- */
-  --c-app:     #f2f2f6;
-  --c-section: #e8e8ed;
-  --c-card:    #ffffff;
+  /* --- Surfaces --- */
+  --c-app:     #F0F0F5;
+  --c-section: #E4E4EC;
+  --c-card:    #FFFFFF;
 
   /* --- Text --- */
-  --c-ink:   #0e0e1a;
-  --c-ink-2: #5a5a7c;
-  --c-ink-3: #9898b8;
+  --c-ink:   #0A0A18;
+  --c-ink-2: #525268;
+  --c-ink-3: #9898B0;
 
   /* --- Borders --- */
-  --c-line:    rgba(14,14,26,0.09);
-  --c-divider: rgba(14,14,26,0.05);
+  --c-line:    rgba(10,10,24,0.10);
+  --c-divider: rgba(10,10,24,0.05);
 
   /* --- Module accents --- */
   --c-activity: #E8A020;
@@ -31,8 +32,8 @@
 
   /* --- Semantic states --- */
   --c-success: #16a34a;
-  --c-warning: #d97706;
-  --c-danger:  #dc2626;
+  --c-warning: #D97706;
+  --c-danger:  #DC2626;
 
   /* --- Work-day type colors --- */
   --c-wd-lavorativa: #16a34a;
@@ -42,50 +43,50 @@
   --c-wd-ferie:      #2563eb;
   --c-wd-permesso:   #ca8a04;
 
-  /* --- Primary action — amber segnaletica --- */
-  --c-primary:        #E8A020;
-  --c-on-primary:     #ffffff;
+  /* --- Primary action — Construction Orange --- */
+  --c-primary:        #F55100;
+  --c-on-primary:     #FFFFFF;
   --c-primary-border: transparent;
 
-  /* --- Soft chip --- */
-  --c-accent-soft-bg:  rgba(232,160,32,0.12);
-  --c-accent-soft-ink: #92600A;
+  /* --- Soft accent chip --- */
+  --c-accent-soft-bg:  rgba(245,81,0,0.10);
+  --c-accent-soft-ink: #B03800;
 
-  /* --- Cantiere status left-border accents --- */
-  --c-stato-preventivo:  #6366f1;
-  --c-stato-confermato:  #2563eb;
-  --c-stato-in-corso:    #16a34a;
-  --c-stato-completato:  #6b7280;
-  --c-stato-contestato:  #dc2626;
+  /* --- Cantiere status colors --- */
+  --c-stato-preventivo:  #7C3AED;
+  --c-stato-confermato:  #2563EB;
+  --c-stato-in-corso:    #F55100;
+  --c-stato-completato:  #16A34A;
+  --c-stato-contestato:  #DC2626;
 
-  /* --- Hazard stripe (in_corso card top border) --- */
+  /* --- Hazard stripe (in_corso) --- */
   --hazard-stripe: repeating-linear-gradient(
     -45deg,
-    #E8A020 0px,
-    #E8A020 4px,
-    #1a1200 4px,
-    #1a1200 8px
+    #F55100 0px,
+    #F55100 5px,
+    #1a0800 5px,
+    #1a0800 10px
   );
 
   color-scheme: light;
 }
 
 /* ============================================================
-   DARK CALCESTRUZZO — deep concrete black, vibrant amber
+   DARK CONCRETE — premium near-black with vibrant orange
    ============================================================ */
 html.dark {
-  --c-app:     #0C0C10;
-  --c-section: #14141A;
-  --c-card:    #1C1C26;
+  --c-app:     #070710;
+  --c-section: #0D0D1C;
+  --c-card:    #111120;
 
-  --c-ink:   #f0f0ff;
-  --c-ink-2: #7878a8;
-  --c-ink-3: #48486a;
+  --c-ink:   #EEEEF8;
+  --c-ink-2: #8080A0;
+  --c-ink-3: #484860;
 
-  --c-line:    rgba(255,255,255,0.08);
-  --c-divider: rgba(255,255,255,0.04);
+  --c-line:    rgba(255,255,255,0.07);
+  --c-divider: rgba(255,255,255,0.03);
 
-  --c-activity: #F5B840;
+  --c-activity: #FFAA33;
   --c-habit:    #34d399;
   --c-project:  #818cf8;
   --c-journal:  #fbbf24;
@@ -94,8 +95,8 @@ html.dark {
   --c-note:     #a78bfa;
 
   --c-success: #22c55e;
-  --c-warning: #fbbf24;
-  --c-danger:  #f43f5e;
+  --c-warning: #FBBF24;
+  --c-danger:  #F43F5E;
 
   --c-wd-lavorativa: #4ade80;
   --c-wd-festiva:    #f87171;
@@ -104,25 +105,25 @@ html.dark {
   --c-wd-ferie:      #60a5fa;
   --c-wd-permesso:   #fde047;
 
-  --c-primary:        #F5B840;
-  --c-on-primary:     #1a0800;
+  --c-primary:        #FF6820;
+  --c-on-primary:     #FFFFFF;
   --c-primary-border: transparent;
 
-  --c-accent-soft-bg:  rgba(245,184,64,0.14);
-  --c-accent-soft-ink: #fcd34d;
+  --c-accent-soft-bg:  rgba(255,104,32,0.15);
+  --c-accent-soft-ink: #FF9060;
 
-  --c-stato-preventivo:  #818cf8;
-  --c-stato-confermato:  #60a5fa;
-  --c-stato-in-corso:    #4ade80;
-  --c-stato-completato:  #6b7280;
-  --c-stato-contestato:  #f87171;
+  --c-stato-preventivo:  #A78BFA;
+  --c-stato-confermato:  #60A5FA;
+  --c-stato-in-corso:    #FF6820;
+  --c-stato-completato:  #22C55E;
+  --c-stato-contestato:  #F87171;
 
   --hazard-stripe: repeating-linear-gradient(
     -45deg,
-    #F5B840 0px,
-    #F5B840 4px,
-    #0C0C10 4px,
-    #0C0C10 8px
+    #FF6820 0px,
+    #FF6820 5px,
+    #070710 5px,
+    #070710 10px
   );
 
   color-scheme: dark;
@@ -136,7 +137,7 @@ html.dark {
 }
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 * {
@@ -164,8 +165,8 @@ body {
 
 .metric-label {
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.07em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--c-ink-3);
 }
@@ -185,58 +186,70 @@ body {
 }
 
 /* ============================================================
-   PRIMARY BUTTON — amber gradient + glow
+   PRIMARY BUTTON — construction orange gradient + glow
    ============================================================ */
 .btn-primary {
-  background: linear-gradient(135deg, #F5B840 0%, #E8A020 55%, #c87d10 100%);
-  box-shadow: 0 4px 14px rgba(232,160,32,0.32), 0 1px 2px rgba(0,0,0,0.12);
-  color: #ffffff;
+  background: linear-gradient(135deg, #FF7030 0%, #F55100 55%, #D94000 100%);
+  box-shadow: 0 4px 16px rgba(245,81,0,0.38), 0 1px 2px rgba(0,0,0,0.14);
+  color: #FFFFFF;
   border: none;
   transition: opacity 0.12s, transform 0.12s, box-shadow 0.12s;
 }
 html.dark .btn-primary {
-  background: linear-gradient(135deg, #fcd34d 0%, #F5B840 50%, #E8A020 100%);
-  box-shadow: 0 4px 18px rgba(245,184,64,0.38), 0 1px 3px rgba(0,0,0,0.30);
-  color: #1a0800;
+  background: linear-gradient(135deg, #FF8040 0%, #FF6820 50%, #F55100 100%);
+  box-shadow: 0 4px 20px rgba(255,104,32,0.42), 0 1px 3px rgba(0,0,0,0.35);
+  color: #FFFFFF;
 }
-.btn-primary:hover  { opacity: 0.93; }
-.btn-primary:active { opacity: 0.84; transform: scale(0.982); box-shadow: 0 2px 8px rgba(232,160,32,0.22); }
-.btn-primary:disabled { opacity: 0.42; pointer-events: none; box-shadow: none; }
+.btn-primary:hover  { opacity: 0.92; }
+.btn-primary:active { opacity: 0.82; transform: scale(0.980); box-shadow: 0 2px 8px rgba(245,81,0,0.22); }
+.btn-primary:disabled { opacity: 0.38; pointer-events: none; box-shadow: none; }
+
+/* ============================================================
+   GHOST / SECONDARY BUTTON
+   ============================================================ */
+.btn-ghost {
+  background: var(--c-section);
+  color: var(--c-ink);
+  border: 1px solid var(--c-line);
+  transition: opacity 0.12s, transform 0.12s;
+}
+.btn-ghost:active { opacity: 0.7; transform: scale(0.980); }
+.btn-ghost:disabled { opacity: 0.38; pointer-events: none; }
 
 /* ============================================================
    GLASS SURFACES
    ============================================================ */
 .header-glass {
-  background: rgba(242,242,246,0.88);
+  background: rgba(240,240,245,0.90);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 html.dark .header-glass {
-  background: rgba(12,12,16,0.92);
+  background: rgba(7,7,16,0.94);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
 }
 
 .tabbar-glass {
-  background: rgba(242,242,246,0.92);
+  background: rgba(240,240,245,0.95);
   backdrop-filter: blur(24px) saturate(200%);
   -webkit-backdrop-filter: blur(24px) saturate(200%);
 }
 html.dark .tabbar-glass {
-  background: rgba(12,12,16,0.96);
+  background: rgba(7,7,16,0.98);
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
 }
 
 .sheet-surface {
-  background: #ffffff;
+  background: #FFFFFF;
 }
 html.dark .sheet-surface {
-  background: #16161E;
+  background: #141426;
 }
 
 /* ============================================================
-   HAZARD STRIPE — top border on in_corso cantiere cards
+   CANTIERE STATUS CARDS
    ============================================================ */
 .hazard-stripe-top {
   background: var(--hazard-stripe);
@@ -244,13 +257,36 @@ html.dark .sheet-surface {
   flex-shrink: 0;
 }
 
-/* ============================================================
-   KPI TILE TOP ACCENT LINE
-   ============================================================ */
 .kpi-tile-accent {
   height: 3px;
   border-radius: 3px 3px 0 0;
   margin: -1px -1px 0 -1px;
+}
+
+/* Status left rail on cards */
+.status-rail {
+  width: 3px;
+  border-radius: 0 0 0 0;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+/* ============================================================
+   DASHBOARD STATS CARD
+   ============================================================ */
+.stat-card {
+  background: var(--c-card);
+  border: 1px solid var(--c-line);
+  border-radius: 16px;
+  padding: 14px 16px 16px;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card-glow {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  border-radius: inherit;
 }
 
 /* ============================================================
@@ -265,7 +301,7 @@ html.dark .sheet-surface {
   to   { opacity: 1; }
 }
 @keyframes slide-up {
-  from { transform: translateY(10px); opacity: 0; }
+  from { transform: translateY(12px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
 }
 @keyframes pop {
@@ -273,18 +309,29 @@ html.dark .sheet-surface {
   60%  { transform: scale(1.04); opacity: 1; }
   100% { transform: scale(1);    opacity: 1; }
 }
+@keyframes slide-in-right {
+  from { transform: translateX(16px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
 @keyframes stella-float {
   0%, 100% { transform: translateY(0)   rotate(0deg);  }
   50%       { transform: translateY(-6px) rotate(2deg); }
 }
+@keyframes pulse-orange {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+.animate-sheet-in      { animation: sheet-in      250ms cubic-bezier(0.32,0.72,0,1);  }
+.animate-fade-in       { animation: fade-in        180ms ease-out;                      }
+.animate-slide-up      { animation: slide-up       220ms ease-out;                      }
+.animate-pop           { animation: pop            320ms cubic-bezier(0.32,0.72,0,1);   }
+.animate-slide-in-right{ animation: slide-in-right 200ms ease-out;                      }
+.animate-stella-float  { animation: stella-float   3s ease-in-out infinite;             }
+.animate-pulse-orange  { animation: pulse-orange   2s ease-in-out infinite;             }
+.animate-wiggle        { animation: wiggle         0.28s ease-in-out infinite;           }
+
 @keyframes wiggle {
   0%, 100% { transform: rotate(-1deg); }
   50%       { transform: rotate(1deg); }
 }
-
-.animate-sheet-in      { animation: sheet-in     250ms cubic-bezier(0.32,0.72,0,1);  }
-.animate-fade-in       { animation: fade-in      150ms ease-out;                      }
-.animate-slide-up      { animation: slide-up     200ms ease-out;                      }
-.animate-pop           { animation: pop          320ms cubic-bezier(0.32,0.72,0,1);   }
-.animate-stella-float  { animation: stella-float 3s ease-in-out infinite;             }
-.animate-wiggle        { animation: wiggle       0.28s ease-in-out infinite;           }

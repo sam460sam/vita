@@ -41,9 +41,10 @@ export default {
       },
       boxShadow: {
         card:       '0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04)',
-        'card-md':  '0 4px 16px rgba(0,0,0,0.08)',
-        sheet:      '0 -8px 40px rgba(0,0,0,0.16)',
-        'glow-sm':  '0 4px 14px rgba(232,160,32,0.32)',
+        'card-md':  '0 4px 16px rgba(0,0,0,0.10)',
+        sheet:      '0 -8px 40px rgba(0,0,0,0.18)',
+        'glow-sm':  '0 4px 16px rgba(245,81,0,0.32)',
+        'glow-md':  '0 6px 24px rgba(245,81,0,0.40)',
       },
       fontFamily: {
         sans:    ['-apple-system','BlinkMacSystemFont','Inter','system-ui','sans-serif'],
