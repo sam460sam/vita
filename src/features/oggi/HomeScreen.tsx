@@ -4,7 +4,7 @@ import { Check } from 'lucide-react';
 import { db } from '@/data/db';
 import { readSettings, toggleHabitLog } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
-import { ProgressRing } from '@/ui';
+import { ProgressRing, VioCompanion } from '@/ui';
 import { cn } from '@/lib/cn';
 import { longDate, todayISO } from '@/lib/format';
 import { platform } from '@/platform/platform';
@@ -13,7 +13,6 @@ import { habitDisplayName } from '@/features/abitudini/recommended';
 import { computeMomentum, momentumMessageKey } from './momentum';
 import { useT, type TKey } from '@/i18n';
 import vLogo from '/vyta-vmark.png';
-import vioPlant from '/vio/vio-celebrate.png';
 import iconHabits from '/icons3d/habits.png';
 import iconWater from '/icons3d/water.png';
 import iconCompass from '/icons3d/compass.png';
@@ -78,7 +77,7 @@ export function HomeScreen() {
               </ProgressRing>
             </div>
             <p className="text-[14px] text-ink-2 leading-snug mt-3.5 pr-28">{t(momentumMessageKey(m.score) as TKey)}</p>
-            <img src={vioPlant} alt="" aria-hidden draggable={false} className="vio-bob absolute right-1 top-1/2 -translate-y-1/2 object-contain" style={{ width: 150, height: 150 }} />
+            <VioCompanion score={m.score} size={150} animated className="absolute right-1 top-1/2 -translate-y-1/2" />
           </div>
         </Link>
 
