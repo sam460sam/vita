@@ -71,7 +71,7 @@ export function CalendarPage() {
     <>
       <PageHeader title={t('calendar.title')} back="/altro" />
       <Screen>
-        <Card className="mb-4">
+        <Card heroAccent="var(--c-project)" className="mb-4">
           <div className="flex items-center justify-between mb-3 gap-2">
             <IconButton label={t('common.previous')} onClick={() => setCursor((c) => (mode === 'month' ? addMonths(c, -1) : addDays(c, -7)))}>
               <ChevronLeft size={18} />

@@ -78,7 +78,7 @@ export function JournalPage() {
       />
       <Screen>
         {/* Calendar */}
-        <Card className="mb-4">
+        <Card heroAccent="var(--c-journal)" className="mb-4">
           <div className="flex items-center justify-between mb-3">
             <IconButton label={t('common.previous')} onClick={() => setCursor((c) => addMonths(c, -1))}>
               <ChevronLeft size={18} />

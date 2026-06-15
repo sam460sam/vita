@@ -57,7 +57,7 @@ export function GoalsPage() {
       />
       <Screen>
         {sorted.length === 0 ? (
-          <Card>
+          <Card heroAccent="var(--c-project)" heroIcon={<Target size={92} />}>
             <EmptyState
               icon={<Target size={22} />}
               title={t('goals.empty.title')}
