@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookUser } from 'lucide-react';
+import { BookUser, MapPin } from 'lucide-react';
 import { Sheet, Field, Input, Select, Textarea, Button } from '@/ui';
 import { useToast } from '@/ui';
 import { saveCantiere, deleteCantiere } from '@/data/cantiere-repo';
 import { useTeam } from '@/auth/TeamContext';
 import type { Cantiere } from '@/data/types';
 import { STATI, PAGAMENTI, TIPO_USO } from './logic';
+import { AddressPicker } from './AddressPicker';
 
 interface Props {
   open: boolean;
@@ -35,6 +36,7 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
   const { team } = useTeam();
   const [form, setForm] = useState<FormState>({ ...DEFAULT });
   const [saving, setSaving] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -115,6 +117,7 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
   }
 
   return (
+    <>
     <Sheet
       open={open}
       onClose={onClose}
@@ -163,11 +166,22 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
       </Field>
 
       <Field label="Indirizzo cantiere">
-        <Input
-          value={form.indirizzo ?? ''}
-          onChange={(e) => set('indirizzo', e.target.value || undefined)}
-          placeholder="Via Roma 1, Milano"
-        />
+        <div className="flex gap-2">
+          <Input
+            value={form.indirizzo ?? ''}
+            onChange={(e) => set('indirizzo', e.target.value || undefined)}
+            placeholder="Via Roma 1, Milano"
+            className="flex-1"
+          />
+          <button
+            type="button"
+            onClick={() => setPickerOpen(true)}
+            className="h-11 w-11 flex items-center justify-center rounded-btn bg-section border border-line text-primary flex-shrink-0"
+            aria-label="Cerca su mappa"
+          >
+            <MapPin size={18} />
+          </button>
+        </div>
       </Field>
 
       <div className="grid grid-cols-2 gap-3">
@@ -295,5 +309,16 @@ export function CantiereForm({ open, onClose, cantiere }: Props) {
         </div>
       </div>
     </Sheet>
+
+    <AddressPicker
+      open={pickerOpen}
+      onClose={() => setPickerOpen(false)}
+      initialValue={form.indirizzo ?? ''}
+      onSelect={(address) => {
+        set('indirizzo', address || undefined);
+        setPickerOpen(false);
+      }}
+    />
+    </>
   );
 }
