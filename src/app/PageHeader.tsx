@@ -53,7 +53,7 @@ export function PageHeader({ title, subtitle, action, back, large, hideStella }:
             aria-label={t('stella.name')}
             className="h-10 w-10 -mr-1 flex items-center justify-center rounded-full hover:bg-section active:scale-90 transition-transform"
           >
-            <VioCompanion stage="germoglio" size={30} />
+            <VioCompanion mood="happy" size={32} />
           </button>
         )}
       </div>

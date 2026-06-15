@@ -14,9 +14,10 @@ import { recommendedWaterMl, ACTIVITY_ML, type ActivityLevel } from '@/features/
 
 const GOLD = '#C9A227';
 const WATER = '#0EA5E9';
-import vioWelcome from '/vio/vio-welcome.png';
+import vioWelcome from '/vio/vio-happy.png';
 import vioBell from '/vio/vio-bell.png';
-import vioCelebrate from '/vio/vio-celebrate.png';
+import vioCelebrate from '/vio/vio-happy.png';
+import vioWaiting from '/vio/vio-wait.png';
 import iconSun from '/icons3d/sun.png';
 import iconLotus from '/icons3d/lotus.png';
 import iconMoon from '/icons3d/moon.png';
@@ -362,7 +363,7 @@ function PersonalStep({ age, setAge, weight, setWeight, height, setHeight }: {
   const { t } = useI18n();
   return (
     <div className="flex flex-col items-center text-center pt-6">
-      <img src={vioWelcome} alt="" aria-hidden draggable={false} className="vio-bob w-28 h-28 object-contain mb-3" />
+      <img src={vioWaiting} alt="" aria-hidden draggable={false} className="vio-bob w-28 h-28 object-contain mb-3" />
       <h1 className="display-serif text-[28px] text-ink leading-tight">{t('onboard.personal.title')}</h1>
       <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.personal.desc')}</p>
       <div className="w-full max-w-xs mt-7 space-y-3 text-left">

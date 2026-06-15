@@ -68,7 +68,7 @@ export function GamificationPage() {
 
         {/* Panda intro for challenges */}
         <Card className="mb-4 flex items-center gap-3">
-          <VioCompanion stage="fioritura" size={64} animated />
+          <VioCompanion mood="happy" size={72} animated />
           <p className="flex-1 text-[14px] text-ink-2 leading-snug">{t('rewards.pandaIntro')}</p>
         </Card>
 

@@ -89,7 +89,7 @@ export function RecapPage() {
         ) : (
           <Card className="overflow-hidden">
             <div className="flex flex-col items-center text-center pt-2 pb-4">
-              <VioCompanion stage="fioritura" size={92} animated />
+              <VioCompanion mood="happy" size={100} animated />
               <div className="metric-label mt-3">{s.name ? `${s.name} · ${t('recap.week')}` : t('recap.week')}</div>
               <div className="text-2xl font-bold text-ink">Vyta</div>
             </div>

@@ -34,8 +34,8 @@ export function HomeScreen() {
   const hr = new Date().getHours();
   const greet = t(hr < 12 ? 'greet.morning' : hr < 18 ? 'greet.afternoon' : 'greet.evening');
   const greeting = s.name ? `${greet}, ${s.name}` : greet;
-  // Vio mood: sleepy at night · happy on a great day · gently waiting when very low.
-  const vioMood = hr >= 21 || hr < 6 ? 'sleepy' : m.score >= 80 ? 'happy' : m.score <= 10 ? 'waiting' : undefined;
+  // Vio mood (the V-pot character): sleepy at night · happier as momentum rises.
+  const vioMood = hr >= 21 || hr < 6 ? 'sleepy' : m.score >= 60 ? 'happy' : 'waiting';
 
   const active = (habits ?? []).filter((x) => !x.archived);
   const todays = active.filter((x) => isScheduled(x, today));
