@@ -1,5 +1,5 @@
 import { format, parseISO, isToday, isTomorrow, isYesterday, differenceInCalendarDays } from 'date-fns';
-import { it as dfnIt, enUS as dfnEn } from 'date-fns/locale';
+import { it as dfnIt, enUS as dfnEn, es as dfnEs, fr as dfnFr, de as dfnDe } from 'date-fns/locale';
 import type { Locale } from 'date-fns';
 
 export const ISO_DAY = 'yyyy-MM-dd';
@@ -8,18 +8,23 @@ export const ISO_DAY = 'yyyy-MM-dd';
 // Active locale — kept in sync by the I18nProvider so plain (non-React) format
 // helpers below produce dates in the current UI language.
 // ---------------------------------------------------------------------------
-type LangCode = 'it' | 'en';
+type LangCode = 'it' | 'en' | 'es' | 'fr' | 'de';
 let activeLang: LangCode = 'it';
 let activeLocale: Locale = dfnIt;
 
+const DFN: Record<LangCode, Locale> = { it: dfnIt, en: dfnEn, es: dfnEs, fr: dfnFr, de: dfnDe };
+const INTL: Record<LangCode, string> = { it: 'it-IT', en: 'en-US', es: 'es-ES', fr: 'fr-FR', de: 'de-DE' };
 const REL_LABELS: Record<LangCode, { today: string; tomorrow: string; yesterday: string }> = {
   it: { today: 'Oggi', tomorrow: 'Domani', yesterday: 'Ieri' },
   en: { today: 'Today', tomorrow: 'Tomorrow', yesterday: 'Yesterday' },
+  es: { today: 'Hoy', tomorrow: 'Mañana', yesterday: 'Ayer' },
+  fr: { today: "Aujourd'hui", tomorrow: 'Demain', yesterday: 'Hier' },
+  de: { today: 'Heute', tomorrow: 'Morgen', yesterday: 'Gestern' },
 };
 
 export function setActiveLang(lang: LangCode) {
   activeLang = lang;
-  activeLocale = lang === 'it' ? dfnIt : dfnEn;
+  activeLocale = DFN[lang] ?? dfnEn;
 }
 
 /** Current UI language for plain (non-React) modules (e.g. demo seed copy). */
@@ -88,8 +93,7 @@ export function formatPace(secPerKm: number): string {
 }
 
 export function formatMoney(amount: number, currency = 'EUR'): string {
-  const loc = activeLang === 'it' ? 'it-IT' : 'en-US';
-  return new Intl.NumberFormat(loc, { style: 'currency', currency }).format(amount);
+  return new Intl.NumberFormat(INTL[activeLang] ?? 'en-US', { style: 'currency', currency }).format(amount);
 }
 
 export function monthKey(dateISO: string): string {

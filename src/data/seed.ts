@@ -68,7 +68,8 @@ const rand = (min: number, max: number) => Math.round(min + Math.random() * (max
 
 /** Replace all data with a curated demo dataset. */
 export async function seedDemoData(name = 'Samuele') {
-  const C = COPY[getActiveLang()];
+  const lang = getActiveLang();
+  const C = lang === 'it' ? COPY.it : COPY.en; // demo copy exists in it/en; others use en
   await clearAllData();
   await updateSettings({
     name,
