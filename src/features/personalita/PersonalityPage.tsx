@@ -91,9 +91,12 @@ function Intro({ onStart }: { onStart: () => void }) {
 
         {/* Dimensions preview */}
         <h2 className="display-serif text-[22px] text-ink mt-6 mb-3">{t('personality.preview')}</h2>
-        <div className="space-y-3">
-          {dims.map((d) => (
-            <div key={d.key} className="rounded-[20px] bg-card shadow-card p-4">
+        <div className="space-y-4">
+          {dims.map((d, i) => (
+            <div key={d.key} className="relative rounded-[20px] bg-card shadow-card p-4">
+              {i % 2 === 0
+                ? <Sprout className="absolute -top-[18px] right-5 w-7" rot={i === 0 ? -8 : 8} flip={i !== 0} />
+                : <Flower className="absolute -top-[22px] right-5 w-8" />}
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-[15px] font-bold text-ink">{t(d.key)}</span>
                 <span className="text-[12.5px] text-ink-3">{t(d.level)}</span>
@@ -108,6 +111,31 @@ function Intro({ onStart }: { onStart: () => void }) {
         </div>
       </div>
     </div>
+  );
+}
+
+/** Small faceless sprout decoration (two leaves on a stem). */
+function Sprout({ className, rot = 0, flip }: { className?: string; rot?: number; flip?: boolean }) {
+  return (
+    <svg viewBox="0 0 44 56" className={className} style={{ transform: `rotate(${rot}deg)${flip ? ' scaleX(-1)' : ''}` }} aria-hidden>
+      <line x1="22" y1="56" x2="22" y2="24" stroke="#3E8E4E" strokeWidth="3.5" strokeLinecap="round" />
+      <path d="M22 36 C9 35 4 23 6 14 C18 15 25 26 22 36 Z" fill="#74C06A" />
+      <path d="M22 30 C35 29 40 17 38 8 C26 9 19 20 22 30 Z" fill="#8FCB5E" />
+    </svg>
+  );
+}
+
+/** Small faceless flower decoration. */
+function Flower({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 56" className={className} aria-hidden>
+      <line x1="24" y1="56" x2="24" y2="28" stroke="#3E8E4E" strokeWidth="3.5" strokeLinecap="round" />
+      <path d="M24 40 C14 40 10 32 12 26 C20 26 26 33 24 40 Z" fill="#74C06A" />
+      {[0, 72, 144, 216, 288].map((a) => (
+        <ellipse key={a} cx="24" cy="14" rx="6" ry="10" fill="#F4A8C0" transform={`rotate(${a} 24 22)`} />
+      ))}
+      <circle cx="24" cy="22" r="5.5" fill="#FFD66B" />
+    </svg>
   );
 }
 
