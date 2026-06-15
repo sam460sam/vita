@@ -3,9 +3,11 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'node:path';
 
-// Capacitor-ready: relative base so the app can be served from local files.
+// Use absolute base on Vercel (detected via env), relative base for Capacitor local file serving.
+const isVercel = !!process.env.VERCEL;
+
 export default defineConfig({
-  base: './',
+  base: isVercel ? '/' : './',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
@@ -17,15 +19,15 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Cantieri',
-        short_name: 'Cantieri',
-        description: 'Gestisci cantieri, ordina cemento e firma verbali di consegna direttamente in cantiere.',
-        theme_color: '#ea580c',
-        background_color: '#f8f5f1',
+        name: 'GETTO',
+        short_name: 'GETTO',
+        description: 'Gestionale per pavimentatori in calcestruzzo — cantieri, preventivi, firma, meteo, incassi.',
+        theme_color: '#F55100',
+        background_color: '#070710',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: './#/cantiere',
-        scope: './',
+        start_url: isVercel ? '/#/' : './#/',
+        scope: isVercel ? '/' : './',
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
