@@ -960,6 +960,8 @@ export const en: Record<TKey, string> = {
 
   // Home / widgets
   'home.routine.title': 'Your day',
+  'home.tile.todo': '{n} today',
+  'home.tile.ready': 'Ready',
   'home.routine.progress': '{done} of {total} done',
   'home.routine.all': 'See all',
   'home.routine.streak': '{n}-day streak',

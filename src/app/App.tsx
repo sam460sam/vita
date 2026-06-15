@@ -15,7 +15,7 @@ import { BrandSplash } from './BrandSplash';
 
 // Core modules — eager (part of the primary experience).
 import { HomeDashboard } from '@/features/home';
-import { TodayPage } from '@/features/oggi';
+import { TodayPage, HomeScreen } from '@/features/oggi';
 import { ActivityPage } from '@/features/attivita';
 import { ProjectsPage, ProjectDetailPage } from '@/features/progetti';
 import { HabitsPage } from '@/features/abitudini';
@@ -58,7 +58,8 @@ export function App() {
                     <Suspense fallback={<PageSkeleton />}>
                       <Routes>
                       <Route path="/" element={<Navigate to="/oggi" replace />} />
-                      <Route path="/oggi" element={<HomeDashboard />} />
+                      <Route path="/oggi" element={<HomeScreen />} />
+                      <Route path="/oggi-dashboard" element={<HomeDashboard />} />
                       <Route path="/oggi-classic" element={<TodayPage />} />
                       <Route path="/attivita" element={<RequireModule id="attivita"><ActivityPage /></RequireModule>} />
                       <Route path="/peso" element={<RequireModule id="peso"><WeightPage /></RequireModule>} />
