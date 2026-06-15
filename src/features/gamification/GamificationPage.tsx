@@ -4,7 +4,7 @@ import { readSettings } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
-import { Card, CardHeader, ProgressRing, StarMascot } from '@/ui';
+import { Card, CardHeader, ProgressRing, VioCompanion } from '@/ui';
 import { useT, type TKey } from '@/i18n';
 import { cn } from '@/lib/cn';
 import {
@@ -68,7 +68,7 @@ export function GamificationPage() {
 
         {/* Panda intro for challenges */}
         <Card className="mb-4 flex items-center gap-3">
-          <StarMascot size={56} animated />
+          <VioCompanion stage="fioritura" size={64} animated />
           <p className="flex-1 text-[14px] text-ink-2 leading-snug">{t('rewards.pandaIntro')}</p>
         </Card>
 

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Sun, Moon } from 'lucide-react';
-import { StarMascot } from '@/ui/StarMascot';
+import { VioCompanion } from '@/ui';
 import { useStella } from '@/features/stella';
 import { useTheme } from '@/theme/theme';
 import { useT } from '@/i18n';
@@ -53,7 +53,7 @@ export function PageHeader({ title, subtitle, action, back, large, hideStella }:
             aria-label={t('stella.name')}
             className="h-10 w-10 -mr-1 flex items-center justify-center rounded-full hover:bg-section active:scale-90 transition-transform"
           >
-            <StarMascot size={28} />
+            <VioCompanion stage="germoglio" size={30} />
           </button>
         )}
       </div>

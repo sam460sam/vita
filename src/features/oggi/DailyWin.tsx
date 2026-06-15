@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Flame, TrendingUp } from 'lucide-react';
-import { StarMascot, Button } from '@/ui';
+import { VioCompanion, Button } from '@/ui';
 import { useT } from '@/i18n';
 import { platform } from '@/platform/platform';
 
@@ -28,7 +28,7 @@ export function DailyWin({ streak, pointsToday, pointsYesterday, onClose }: Dail
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-center">
-          <StarMascot size={120} mood="starstruck" animated />
+          <VioCompanion stage="fioritura" size={132} animated />
         </div>
         <h2 className="text-2xl font-bold text-ink mt-2">{t('win.title')}</h2>
         <p className="text-[15px] text-ink-2 mt-1">{t('win.subtitle')}</p>

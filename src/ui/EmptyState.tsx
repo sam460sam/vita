@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { StarMascot } from './StarMascot';
+import { VioCompanion } from './VioCompanion';
 
 export function EmptyState({
   icon,
@@ -18,9 +18,7 @@ export function EmptyState({
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-6">
       {mascot ? (
-        <span className="mb-4 h-24 w-24 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
-          <StarMascot size={64} animated />
-        </span>
+        <VioCompanion stage="germoglio" size={104} animated className="mb-3" />
       ) : icon ? (
         <div
           className="mb-3 h-16 w-16 rounded-3xl flex items-center justify-center text-ink-2 shadow-chip"
