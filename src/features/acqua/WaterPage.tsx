@@ -40,16 +40,17 @@ export function WaterPage() {
 
   // Average / minimum / maximum daily intake (l) over the last 30 days that had
   // any intake — computed from real logs, so it varies with the user's history.
+  // This week's water habits: daily average, best day, and how many of the last
+  // 7 days hit the goal. Clear and motivating (no confusing "weekly min").
   const stats = useMemo(() => {
-    const cutoff = todayISO(subDays(new Date(), 30));
-    const days = (waters ?? [])
-      .filter((w) => w.date >= cutoff)
-      .map((w) => w.ml / 1000)
-      .filter((v) => v > 0);
-    if (days.length === 0) return { avg: 0, min: 0, max: 0, n: 0 };
-    const avg = days.reduce((a, b) => a + b, 0) / days.length;
-    return { avg, min: Math.min(...days), max: Math.max(...days), n: days.length };
-  }, [waters]);
+    const cutoff = todayISO(subDays(new Date(), 6)); // last 7 days incl. today
+    const recent = (waters ?? []).filter((w) => w.date >= cutoff && w.ml > 0);
+    const liters = recent.map((w) => w.ml / 1000);
+    if (liters.length === 0) return { avg: 0, best: 0, goalDays: 0, n: 0 };
+    const avg = liters.reduce((a, b) => a + b, 0) / liters.length;
+    const goalDays = recent.filter((w) => w.ml >= goalMl).length;
+    return { avg, best: Math.max(...liters), goalDays, n: liters.length };
+  }, [waters, goalMl]);
 
   function add(deltaMl: number) {
     platform.haptic();
@@ -108,11 +109,12 @@ export function WaterPage() {
           ))}
         </div>
 
-        {/* Weekly stats */}
-        <div className="grid grid-cols-3 gap-3 mt-4">
-          <WeekStat value={stats.n ? fmtL(stats.avg) : '—'} label={t('water.screen.average')} weekly={t('water.weekly')} />
-          <WeekStat value={stats.n ? fmtL(stats.min) : '—'} label={t('water.screen.minimum')} weekly={t('water.weekly')} />
-          <WeekStat value={stats.n ? fmtL(stats.max) : '—'} label={t('water.screen.maximum')} weekly={t('water.weekly')} />
+        {/* This week */}
+        <h2 className="text-[15px] font-bold text-ink mt-5 mb-2.5">{t('water.thisWeek')}</h2>
+        <div className="grid grid-cols-3 gap-3">
+          <WeekStat value={stats.n ? fmtL(stats.avg) : '—'} label={t('water.screen.average')} />
+          <WeekStat value={stats.n ? fmtL(stats.best) : '—'} label={t('water.bestDay')} />
+          <WeekStat value={`${stats.goalDays}/7`} label={t('water.goalMet')} />
         </div>
 
         {/* Reminder card */}
@@ -160,12 +162,11 @@ export function WaterPage() {
   );
 }
 
-function WeekStat({ value, label, weekly }: { value: string; label: string; weekly: string }) {
+function WeekStat({ value, label }: { value: string; label: string }) {
   return (
     <div className="rounded-card bg-card border border-line/70 dark:border-white/5 p-3 text-center shadow-chip">
       <div className="text-[18px] font-extrabold text-ink tnum leading-none">{value}</div>
-      <div className="text-[10px] font-bold uppercase tracking-wide text-ink-3 mt-1.5">{label}</div>
-      <div className="text-[10px] text-ink-3">{weekly}</div>
+      <div className="text-[10.5px] font-bold uppercase tracking-wide text-ink-3 mt-1.5">{label}</div>
     </div>
   );
 }
