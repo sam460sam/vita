@@ -12,6 +12,9 @@ import { todayISO } from '@/lib/format';
 import { platform } from '@/platform/platform';
 import { notifications } from '@/platform/notifications';
 import { useT, type TKey } from '@/i18n';
+import glassEmpty from '/icons3d/glass-empty.png';
+import glassHalf from '/icons3d/glass-half.png';
+import glassFull from '/icons3d/glass-full.png';
 
 const WATER = '#0EA5E9';
 const INTERVALS = [30, 45, 60, 90, 120];
@@ -75,7 +78,7 @@ export function WaterPage() {
       <Screen>
         {/* Hero — glass + today's litres + Vio */}
         <Card className="flex items-center gap-4 overflow-hidden">
-          <WaterGlass pct={pct} />
+          <img src={pct < 33 ? glassEmpty : pct < 66 ? glassHalf : glassFull} alt="" aria-hidden draggable={false} className="h-24 w-auto object-contain flex-shrink-0 -ml-1" />
           <div className="flex-1 min-w-0">
             <div className="flex items-end gap-1.5 whitespace-nowrap">
               <span className="text-[32px] font-extrabold text-ink leading-none tnum">{fmtL(ml / 1000)}</span>
@@ -154,29 +157,6 @@ export function WaterPage() {
       <WaterGoalSheet open={goalOpen} onClose={() => setGoalOpen(false)} goalMl={goalMl} glassMl={glassMl} />
       <HydrationCalcSheet open={calcOpen} onClose={() => setCalcOpen(false)} glassMl={glassMl} />
     </>
-  );
-}
-
-/** A simple CSS glass that fills up to `pct`%. */
-function WaterGlass({ pct }: { pct: number }) {
-  return (
-    <div className="relative flex-shrink-0" style={{ width: 78, height: 104 }}>
-      <div
-        className="absolute inset-0 overflow-hidden"
-        style={{ clipPath: 'polygon(12% 0,88% 0,80% 100%,20% 100%)', background: `${WATER}12` }}
-      >
-        <div
-          className="absolute inset-x-0 bottom-0 transition-all duration-700"
-          style={{ height: `${Math.max(4, pct)}%`, background: `linear-gradient(180deg, ${WATER}cc, ${WATER})` }}
-        >
-          <div className="absolute -top-1.5 inset-x-0 h-3 rounded-[50%]" style={{ background: '#7DD3FC' }} />
-        </div>
-      </div>
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ clipPath: 'polygon(12% 0,88% 0,80% 100%,20% 100%)', boxShadow: `inset 0 0 0 3px ${WATER}59` }}
-      />
-    </div>
   );
 }
 
