@@ -56,7 +56,8 @@ struct WidgetReminder: Decodable, Hashable { let label: String; let time: String
 struct WidgetTask: Decodable, Hashable { let title: String; let due: String? }
 struct WidgetWater: Decodable { let ml: Int; let goalMl: Int; let glassMl: Int? }
 struct WidgetHabit: Decodable, Hashable { let name: String; let color: String; let week: [Int]; let heat: [Int] }
-struct WidgetData: Decodable { let water: WidgetWater; let reminders: [WidgetReminder]; let tasks: [WidgetTask]; let habits: [WidgetHabit] }
+struct WidgetMomentum: Decodable { let score: Int; let message: String }
+struct WidgetData: Decodable { let water: WidgetWater; let reminders: [WidgetReminder]; let tasks: [WidgetTask]; let habits: [WidgetHabit]; let momentum: WidgetMomentum? }
 
 /** Parse a #rrggbb hex into a SwiftUI Color (falls back to green). */
 func hexColor(_ hex: String) -> Color {
@@ -67,7 +68,7 @@ func hexColor(_ hex: String) -> Color {
 }
 
 func readWidgetData() -> WidgetData {
-    let fallback = WidgetData(water: .init(ml: 0, goalMl: 2000, glassMl: 200), reminders: [], tasks: [], habits: [])
+    let fallback = WidgetData(water: .init(ml: 0, goalMl: 2000, glassMl: 200), reminders: [], tasks: [], habits: [], momentum: nil)
     guard let defaults = UserDefaults(suiteName: APP_GROUP),
           let raw = defaults.string(forKey: WIDGET_KEY),
           let data = raw.data(using: .utf8),
@@ -124,10 +125,11 @@ struct ListConfigIntent: WidgetConfigurationIntent {
 
 // MARK: - Colors
 
-let vGreen = Color(red: 0.086, green: 0.639, blue: 0.290)
+let vGreen = Color(red: 0.310, green: 0.616, blue: 0.333) // #4F9D55 brand green
+let vGreenDeep = Color(red: 0.118, green: 0.490, blue: 0.275) // #1E7D46
 let vBlue  = Color(red: 0.055, green: 0.647, blue: 0.914)
-let vCream = Color(red: 0.973, green: 0.945, blue: 0.902)
-let vInk   = Color(red: 0.165, green: 0.125, blue: 0.094)
+let vCream = Color(red: 0.957, green: 0.937, blue: 0.898) // #F4EFE5 app background
+let vInk   = Color(red: 0.169, green: 0.180, blue: 0.137)
 
 // MARK: - Reusable bits
 
@@ -471,11 +473,88 @@ struct HabitsWidget: Widget {
     }
 }
 
+// MARK: - Momentum widget (daily cross-life score)
+
+struct MomentumEntry: TimelineEntry { let date: Date; let data: WidgetData }
+struct MomentumProvider: TimelineProvider {
+    func placeholder(in c: Context) -> MomentumEntry { MomentumEntry(date: Date(), data: readWidgetData()) }
+    func getSnapshot(in c: Context, completion: @escaping (MomentumEntry) -> Void) { completion(MomentumEntry(date: Date(), data: readWidgetData())) }
+    func getTimeline(in c: Context, completion: @escaping (Timeline<MomentumEntry>) -> Void) {
+        let next = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
+        completion(Timeline(entries: [MomentumEntry(date: Date(), data: readWidgetData())], policy: .after(next)))
+    }
+}
+
+struct MomentumWidgetView: View {
+    @Environment(\.widgetFamily) var family
+    let data: WidgetData
+    var score: Int { data.momentum?.score ?? 0 }
+    var message: String { data.momentum?.message ?? L.t("Pianta il primo seme di oggi 🌱", "Plant your first seed today 🌱") }
+    var progress: Double { min(1, Double(score) / 100) }
+
+    func ring(_ size: CGFloat) -> some View {
+        ZStack {
+            Circle().stroke(vGreen.opacity(0.16), lineWidth: size * 0.11)
+            Circle().trim(from: 0, to: progress)
+                .stroke(LinearGradient(colors: [vGreen, vGreenDeep], startPoint: .topLeading, endPoint: .bottomTrailing),
+                        style: StrokeStyle(lineWidth: size * 0.11, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+            VStack(spacing: 0) {
+                Text("\(score)").font(.system(size: size * 0.34, weight: .heavy)).foregroundColor(vInk)
+                Text("/100").font(.system(size: size * 0.12, weight: .bold)).foregroundColor(.secondary)
+            }
+        }.frame(width: size, height: size)
+    }
+
+    var header: some View {
+        HStack(spacing: 5) {
+            Image(systemName: "leaf.fill").foregroundColor(vGreen)
+            Text("Momentum").font(.caption).bold().foregroundColor(.secondary); Spacer()
+        }
+    }
+
+    var body: some View {
+        switch family {
+        case .accessoryCircular:
+            Gauge(value: progress) { Image(systemName: "leaf.fill") } currentValueLabel: { Text("\(score)") }
+                .gaugeStyle(.accessoryCircular)
+        case .systemMedium:
+            HStack(spacing: 16) {
+                ring(96)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Momentum").font(.caption).bold().foregroundColor(.secondary)
+                    Text(message).font(.system(size: 15, weight: .semibold)).foregroundColor(vInk).lineLimit(3)
+                }
+                Spacer(minLength: 0)
+            }.padding()
+        default: // systemSmall
+            VStack(alignment: .leading, spacing: 8) {
+                header
+                HStack { Spacer(); ring(78); Spacer() }
+                Spacer(minLength: 0)
+            }.padding()
+        }
+    }
+}
+
+struct MomentumWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "VytaMomentumWidget", provider: MomentumProvider()) { entry in
+            if #available(iOS 17.0, *) { MomentumWidgetView(data: entry.data).containerBackground(vCream, for: .widget) }
+            else { MomentumWidgetView(data: entry.data).background(vCream) }
+        }
+        .configurationDisplayName(L.t("Vyta · Momentum", "Vyta · Momentum"))
+        .description(L.t("Il tuo punteggio di oggi.", "Your daily score."))
+        .supportedFamilies([.systemSmall, .systemMedium, .accessoryCircular])
+    }
+}
+
 // MARK: - Bundle
 
 @main
 struct VytaWidgets: WidgetBundle {
     var body: some Widget {
+        MomentumWidget()
         WaterWidget()
         ListWidget()
         HabitsWidget()

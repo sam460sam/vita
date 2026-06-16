@@ -38,6 +38,8 @@ export interface WidgetPayload {
   reminders: WidgetReminder[];
   tasks: WidgetTask[];
   habits: WidgetHabit[];
+  /** Daily cross-life Momentum score (0–100) + a short message. */
+  momentum?: { score: number; message: string };
   updatedAt: number;
 }
 

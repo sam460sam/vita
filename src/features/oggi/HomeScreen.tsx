@@ -1,16 +1,20 @@
+import { useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Link } from 'react-router-dom';
+import { startOfWeek, addDays, subDays, format } from 'date-fns';
 import { Check } from 'lucide-react';
 import { db } from '@/data/db';
-import { readSettings, toggleHabitLog, setWaterMl } from '@/data/repo';
+import { readSettings, toggleHabitLog, setWaterMl, addWaterMl } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { ProgressRing, VioCompanion, Icon } from '@/ui';
 import { longDate, todayISO } from '@/lib/format';
 import { platform } from '@/platform/platform';
+import { syncWidgetData, drainWidgetWaterInbox } from '@/platform/widget';
 import { isScheduled, isDone } from '@/features/abitudini/logic';
 import { habitDisplayName } from '@/features/abitudini/recommended';
 import { computeMomentum, momentumMessageKey } from './momentum';
 import { useT, type TKey } from '@/i18n';
+import type { Habit } from '@/data/types';
 import vLogo from '/vyta-vmark.png';
 import iconHabits from '/icons3d/habits.png';
 import iconWater from '/icons3d/water.png';
@@ -47,6 +51,35 @@ export function HomeScreen() {
   const fmtL = (n: number) => `${n.toFixed(1).replace(/\.0$/, '')} L`;
   const dropTotal = Math.min(10, Math.max(6, Math.round(goalMl / glassMl)));
   const dropDone = Math.min(dropTotal, Math.round(ml / glassMl));
+
+  // Apply any water logged from the home/lock-screen widget on launch.
+  useEffect(() => { void drainWidgetWaterInbox((delta) => addWaterMl(today, delta)); }, [today]);
+
+  // Mirror today's data (incl. Momentum) into the App Group so the widgets stay fresh.
+  useEffect(() => {
+    const reminders = Object.entries(s.reminders ?? {})
+      .filter(([, time]) => !!time)
+      .map(([kind, time]) => ({ label: t(`reminder.${kind}.title` as TKey), time: time as string }))
+      .sort((a, b) => a.time.localeCompare(b.time));
+    const openTasks = (tasks ?? [])
+      .filter((tk) => tk.status !== 'done')
+      .sort((a, b) => (a.dueDate ?? '9999').localeCompare(b.dueDate ?? '9999') || a.order - b.order)
+      .slice(0, 12)
+      .map((tk) => ({ title: tk.title, due: tk.dueDate }));
+    const ll = logs ?? [];
+    const enc = (h: Habit, d: string) => (!isScheduled(h, d) ? 0 : isDone(ll, h.id, d) ? 2 : 1);
+    const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+    const weekDays = Array.from({ length: 7 }, (_, i) => format(addDays(weekStart, i), 'yyyy-MM-dd'));
+    const heatDays = Array.from({ length: 49 }, (_, i) => format(subDays(new Date(), 48 - i), 'yyyy-MM-dd'));
+    const habitData = active.slice(0, 6).map((h) => ({ name: habitDisplayName(h, t), color: h.color, week: weekDays.map((d) => enc(h, d)), heat: heatDays.map((d) => enc(h, d)) }));
+    void syncWidgetData({
+      water: { ml, goalMl, glassMl },
+      reminders,
+      tasks: openTasks,
+      habits: habitData,
+      momentum: { score: m.score, message: t(momentumMessageKey(m.score) as TKey) },
+    });
+  }, [s, ml, goalMl, glassMl, tasks, habits, logs, m.score, active, t, today]);
 
   return (
     <div className="min-h-[100dvh] bg-app relative overflow-hidden">
