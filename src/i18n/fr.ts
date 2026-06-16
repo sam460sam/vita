@@ -479,6 +479,7 @@ export const fr: Record<TKey, string> = {
   'personality.intro.start': 'Commencer le test',
   'personality.discover': 'Découvre ton profil',
   'personality.preview': 'Aperçu des dimensions',
+  'personality.previewHint': 'Un exemple de ce que tu découvriras en faisant le test.',
   'personality.dim.awareness': 'Conscience',
   'personality.dim.rhythm': 'Rythme circadien',
   'personality.dim.resilience': 'Résilience',

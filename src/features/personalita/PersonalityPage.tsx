@@ -89,19 +89,18 @@ function Intro({ onStart }: { onStart: () => void }) {
           <Plus size={20} strokeWidth={2.6} /> {t('personality.intro.start')}
         </button>
 
-        {/* Dimensions preview */}
-        <h2 className="display-serif text-[22px] text-ink mt-6 mb-3">{t('personality.preview')}</h2>
+        {/* Dimensions preview — clearly an example, locked until you take the test */}
+        <h2 className="display-serif text-[22px] text-ink mt-6 mb-1">{t('personality.preview')}</h2>
+        <p className="text-[13px] text-ink-3 mb-3">{t('personality.previewHint')}</p>
         <div className="space-y-3">
           {dims.map((d) => (
             <div key={d.key} className="rounded-[20px] bg-card shadow-card p-4">
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="text-[15px] font-bold text-ink">{t(d.key)}</span>
-                <span className="text-[12.5px] text-ink-3">{t(d.level)}</span>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[15px] font-bold text-ink-2">{t(d.key)}</span>
+                <Lock size={14} className="text-ink-3 flex-shrink-0" />
               </div>
-              <div className="mt-2.5 h-7 rounded-full bg-section overflow-hidden relative">
-                <div className="h-full rounded-full flex items-center px-3" style={{ width: `${d.pct}%`, background: 'linear-gradient(90deg, #6FBE6F, #2F7D43)' }}>
-                  <span className="text-[12px] font-bold text-white">{d.pct}%</span>
-                </div>
+              <div className="mt-2.5 h-3 rounded-full bg-section overflow-hidden">
+                <div className="h-full rounded-full bg-ink-3/25" style={{ width: `${d.pct}%` }} />
               </div>
             </div>
           ))}

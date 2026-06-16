@@ -483,6 +483,7 @@ export const it = {
   'personality.intro.start': 'Inizia il test',
   'personality.discover': 'Scopri il tuo profilo',
   'personality.preview': 'Anteprima dimensioni',
+  'personality.previewHint': 'Ecco un esempio di ciò che scoprirai facendo il test.',
   'personality.dim.awareness': 'Consapevolezza',
   'personality.dim.rhythm': 'Ritmo circadiano',
   'personality.dim.resilience': 'Resilienza',

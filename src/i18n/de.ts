@@ -479,6 +479,7 @@ export const de: Record<TKey, string> = {
   'personality.intro.start': 'Test starten',
   'personality.discover': 'Entdecke dein Profil',
   'personality.preview': 'Dimensionen-Vorschau',
+  'personality.previewHint': 'Ein Beispiel dafür, was du im Test entdeckst.',
   'personality.dim.awareness': 'Bewusstsein',
   'personality.dim.rhythm': 'Zirkadianer Rhythmus',
   'personality.dim.resilience': 'Resilienz',

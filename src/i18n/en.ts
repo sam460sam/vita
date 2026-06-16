@@ -480,6 +480,7 @@ export const en: Record<TKey, string> = {
   'personality.intro.start': 'Start the test',
   'personality.discover': 'Discover your profile',
   'personality.preview': 'Dimensions preview',
+  'personality.previewHint': 'An example of what you will discover by taking the test.',
   'personality.dim.awareness': 'Awareness',
   'personality.dim.rhythm': 'Circadian rhythm',
   'personality.dim.resilience': 'Resilience',
