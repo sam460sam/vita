@@ -58,10 +58,10 @@ export const it = {
   // Momentum (cross-life daily score + Stella)
   'momentum.title': 'Il tuo momentum',
   'momentum.streak': '{n} giorni di fila',
-  'momentum.msg.great': 'Stai brillando oggi! ⭐',
-  'momentum.msg.good': 'Bell’andamento, continua così!',
-  'momentum.msg.start': 'Hai iniziato — un passo alla volta.',
-  'momentum.msg.idle': 'Pronti a iniziare? Anche poco conta.',
+  'momentum.msg.great': 'Oggi sei in piena fioritura! 🌸',
+  'momentum.msg.good': 'Stai crescendo bene, continua così 🌿',
+  'momentum.msg.start': 'Il primo germoglio è spuntato 🌱',
+  'momentum.msg.idle': 'Pianta il primo seme di oggi 🌱',
   'momentum.legend.habits': 'Abitudini',
   'momentum.legend.water': 'Acqua',
   'momentum.legend.tasks': 'Task',
@@ -264,8 +264,8 @@ export const it = {
   'habits.checkin': 'Check in',
   'habits.checkedToday': 'Fatto oggi',
   'habits.deleteConfirm': 'Eliminare l’abitudine “{name}”?',
-  'habits.empty.title': 'Nessuna abitudine',
-  'habits.empty.desc': 'Crea la tua prima abitudine e inizia a costruire una streak.',
+  'habits.empty.title': 'Pianta la prima abitudine',
+  'habits.empty.desc': 'Aggiungine una e guardala crescere ogni giorno con Vio 🌱',
   'habits.empty.cta': 'Nuova abitudine',
   'habits.stat.streak': 'Streak',
   'habits.stat.record': 'Record',
@@ -753,7 +753,7 @@ export const it = {
   'pro.manage': 'Gestisci abbonamento',
 
   // Dashboard tagline
-  'today.tagline': 'Misura le tue abitudini per migliorare salute e benessere.',
+  'today.tagline': 'Coltiva le tue abitudini, un giorno alla volta 🌱',
 
   // Navigation (rewards)
   'nav.rewards': 'Premi & Sfide',
@@ -996,10 +996,10 @@ export const it = {
   'home.routine.all': 'Vedi tutte',
   'home.routine.streak': '{n} giorni di fila',
   'home.routine.tapDone': 'Tocca per completare',
-  'home.routine.empty.title': 'Crea la tua routine',
-  'home.routine.empty.desc': 'Aggiungi le abitudini da seguire ogni giorno',
+  'home.routine.empty.title': 'Coltiva la tua giornata',
+  'home.routine.empty.desc': 'Aggiungi le abitudini da curare ogni giorno 🌿',
   'home.routine.empty.suggest': 'Inizia da una di queste',
-  'home.routine.allDone': 'Tutte le abitudini fatte! 🌱',
+  'home.routine.allDone': 'Tutto curato per oggi! Vio è fiero di te 🌸',
   'home.routine.atRisk': '🔥 {n} giorni — non mollare',
   'home.steps.title': 'Passi oggi',
   'home.explore': 'Esplora',

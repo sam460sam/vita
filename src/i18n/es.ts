@@ -58,10 +58,10 @@ export const es: Record<TKey, string> = {
   // Momentum
   'momentum.title': 'Tu momentum',
   'momentum.streak': 'Racha de {n} días',
-  'momentum.msg.great': '¡Hoy brillas! ⭐',
-  'momentum.msg.good': '¡Bien, sigue así!',
-  'momentum.msg.start': 'Has empezado: paso a paso.',
-  'momentum.msg.idle': '¿Empezamos? Todo cuenta.',
+  'momentum.msg.great': '¡Hoy en plena floración! 🌸',
+  'momentum.msg.good': 'Creces bien, sigue así 🌿',
+  'momentum.msg.start': 'Ya asoma tu primer brote 🌱',
+  'momentum.msg.idle': 'Planta tu primera semilla de hoy 🌱',
   'momentum.legend.habits': 'Hábitos',
   'momentum.legend.water': 'Agua',
   'momentum.legend.tasks': 'Tareas',
@@ -261,8 +261,8 @@ export const es: Record<TKey, string> = {
   'habits.checkin': 'Registrar',
   'habits.checkedToday': 'Hecho hoy',
   'habits.deleteConfirm': '¿Eliminar el hábito “{name}”?',
-  'habits.empty.title': 'Sin hábitos',
-  'habits.empty.desc': 'Crea tu primer hábito y empieza una racha.',
+  'habits.empty.title': 'Planta tu primer hábito',
+  'habits.empty.desc': 'Añade uno y míralo crecer cada día con Vio 🌱',
   'habits.empty.cta': 'Nuevo hábito',
   'habits.stat.streak': 'Racha',
   'habits.stat.record': 'Récord',
@@ -749,7 +749,7 @@ export const es: Record<TKey, string> = {
   'pro.manage': 'Gestionar suscripción',
 
   // Dashboard tagline
-  'today.tagline': 'Mide tus hábitos para mejorar tu salud y bienestar.',
+  'today.tagline': 'Cultiva tus hábitos, día a día 🌱',
 
   // Navigation (rewards)
   'nav.rewards': 'Logros y retos',
@@ -992,10 +992,10 @@ export const es: Record<TKey, string> = {
   'home.routine.all': 'Ver todo',
   'home.routine.streak': 'Racha de {n} días',
   'home.routine.tapDone': 'Toca para completar',
-  'home.routine.empty.title': 'Crea tu rutina',
-  'home.routine.empty.desc': 'Añade los hábitos que quieras mantener a diario',
+  'home.routine.empty.title': 'Cultiva tu día',
+  'home.routine.empty.desc': 'Añade los hábitos que cuidar cada día 🌿',
   'home.routine.empty.suggest': 'Empieza con uno de estos',
-  'home.routine.allDone': '¡Todos los hábitos hechos! 🌱',
+  'home.routine.allDone': '¡Todo cuidado por hoy! Vio está orgulloso 🌸',
   'home.routine.atRisk': '🔥 Racha de {n} días — sigue así',
   'home.steps.title': 'Pasos hoy',
   'home.habitAdded': 'Hábito añadido',

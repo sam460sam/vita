@@ -58,10 +58,10 @@ export const fr: Record<TKey, string> = {
   // Momentum
   'momentum.title': 'Votre élan',
   'momentum.streak': 'Série de {n} jours',
-  'momentum.msg.great': 'Vous brillez aujourd’hui ! ⭐',
-  'momentum.msg.good': 'Bravo, continuez !',
-  'momentum.msg.start': 'C’est parti : un pas à la fois.',
-  'momentum.msg.idle': 'On commence ? Tout compte.',
+  'momentum.msg.great': 'Aujourd’hui en pleine floraison ! 🌸',
+  'momentum.msg.good': 'Tu pousses bien, continue 🌿',
+  'momentum.msg.start': 'Ta première pousse pointe 🌱',
+  'momentum.msg.idle': 'Plante ta première graine du jour 🌱',
   'momentum.legend.habits': 'Habitudes',
   'momentum.legend.water': 'Eau',
   'momentum.legend.tasks': 'Tâches',
@@ -261,8 +261,8 @@ export const fr: Record<TKey, string> = {
   'habits.checkin': 'Valider',
   'habits.checkedToday': 'Fait aujourd’hui',
   'habits.deleteConfirm': 'Supprimer l’habitude « {name} » ?',
-  'habits.empty.title': 'Aucune habitude',
-  'habits.empty.desc': 'Créez votre première habitude et lancez une série.',
+  'habits.empty.title': 'Plante ta première habitude',
+  'habits.empty.desc': 'Ajoute-en une et regarde-la grandir avec Vio 🌱',
   'habits.empty.cta': 'Nouvelle habitude',
   'habits.stat.streak': 'Série',
   'habits.stat.record': 'Record',
@@ -749,7 +749,7 @@ export const fr: Record<TKey, string> = {
   'pro.manage': 'Gérer l’abonnement',
 
   // Dashboard tagline
-  'today.tagline': 'Mesurez vos habitudes pour améliorer votre santé et votre bien-être.',
+  'today.tagline': 'Cultive tes habitudes, jour après jour 🌱',
 
   // Navigation (rewards)
   'nav.rewards': 'Récompenses & défis',
@@ -992,10 +992,10 @@ export const fr: Record<TKey, string> = {
   'home.routine.all': 'Tout voir',
   'home.routine.streak': 'Série de {n} jours',
   'home.routine.tapDone': 'Touchez pour valider',
-  'home.routine.empty.title': 'Créez votre routine',
-  'home.routine.empty.desc': 'Ajoutez les habitudes à garder chaque jour',
+  'home.routine.empty.title': 'Cultive ta journée',
+  'home.routine.empty.desc': 'Ajoute les habitudes à cultiver chaque jour 🌿',
   'home.routine.empty.suggest': 'Commencez par l’une d’elles',
-  'home.routine.allDone': 'Toutes les habitudes faites ! 🌱',
+  'home.routine.allDone': 'Tout est fait ! Vio est fier de toi 🌸',
   'home.routine.atRisk': '🔥 Série de {n} jours — continuez',
   'home.steps.title': 'Pas aujourd’hui',
   'home.habitAdded': 'Habitude ajoutée',

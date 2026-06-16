@@ -59,10 +59,10 @@ export const en: Record<TKey, string> = {
   // Momentum (cross-life daily score + Stella)
   'momentum.title': 'Your momentum',
   'momentum.streak': '{n}-day streak',
-  'momentum.msg.great': "You're shining today! ⭐",
-  'momentum.msg.good': 'Nice going, keep it up!',
-  'momentum.msg.start': "You've started — one step at a time.",
-  'momentum.msg.idle': 'Ready to begin? Even a little counts.',
+  'momentum.msg.great': 'In full bloom today! 🌸',
+  'momentum.msg.good': 'Growing nicely — keep it up 🌿',
+  'momentum.msg.start': 'Your first sprout is showing 🌱',
+  'momentum.msg.idle': 'Plant your first seed today 🌱',
   'momentum.legend.habits': 'Habits',
   'momentum.legend.water': 'Water',
   'momentum.legend.tasks': 'Tasks',
@@ -262,8 +262,8 @@ export const en: Record<TKey, string> = {
   'habits.checkin': 'Check in',
   'habits.checkedToday': 'Done today',
   'habits.deleteConfirm': 'Delete the habit “{name}”?',
-  'habits.empty.title': 'No habits',
-  'habits.empty.desc': 'Create your first habit and start building a streak.',
+  'habits.empty.title': 'Plant your first habit',
+  'habits.empty.desc': 'Add one and watch it grow every day with Vio 🌱',
   'habits.empty.cta': 'New habit',
   'habits.stat.streak': 'Streak',
   'habits.stat.record': 'Record',
@@ -750,7 +750,7 @@ export const en: Record<TKey, string> = {
   'pro.manage': 'Manage subscription',
 
   // Dashboard tagline
-  'today.tagline': 'Measure your habits to improve your health and wellbeing.',
+  'today.tagline': 'Grow your habits, one day at a time 🌱',
 
   // Navigation (rewards)
   'nav.rewards': 'Rewards & Challenges',
@@ -993,10 +993,10 @@ export const en: Record<TKey, string> = {
   'home.routine.all': 'See all',
   'home.routine.streak': '{n}-day streak',
   'home.routine.tapDone': 'Tap to complete',
-  'home.routine.empty.title': 'Build your routine',
-  'home.routine.empty.desc': 'Add the habits you want to keep daily',
+  'home.routine.empty.title': 'Grow your day',
+  'home.routine.empty.desc': 'Add the habits to tend every day 🌿',
   'home.routine.empty.suggest': 'Start with one of these',
-  'home.routine.allDone': 'All habits done! 🌱',
+  'home.routine.allDone': 'All tended for today! Vio is proud of you 🌸',
   'home.routine.atRisk': '🔥 {n}-day streak — keep it up',
   'home.steps.title': 'Steps today',
   'home.habitAdded': 'Habit added',
