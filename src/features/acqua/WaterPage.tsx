@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { subDays } from 'date-fns';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Droplet, ChevronDown, Bell } from 'lucide-react';
+import { Droplet, ChevronDown, Bell, Minus } from 'lucide-react';
 import { db } from '@/data/db';
 import { setWaterMl, updateSettings, readSettings } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
@@ -94,7 +94,16 @@ export function WaterPage() {
         </Card>
 
         {/* Quick add */}
-        <h2 className="text-[17px] font-extrabold text-ink mt-6 mb-3">{t('water.quickAdd')}</h2>
+        <div className="flex items-center justify-between mt-6 mb-3">
+          <h2 className="text-[17px] font-extrabold text-ink">{t('water.quickAdd')}</h2>
+          <button
+            onClick={() => add(-glassMl)}
+            disabled={ml <= 0}
+            className="inline-flex items-center gap-1 text-[13px] font-semibold text-ink-2 disabled:opacity-40 active:scale-95 transition-transform"
+          >
+            <Minus size={15} strokeWidth={2.6} /> {t('water.remove')}
+          </button>
+        </div>
         <div className="grid grid-cols-3 gap-3">
           {QUICK.map((q, i) => (
             <button

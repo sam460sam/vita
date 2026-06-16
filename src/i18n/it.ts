@@ -453,6 +453,7 @@ export const it = {
   'water.screen.maximum': 'Massimo',
   'water.hydrationToday': 'Idratazione odierna',
   'water.quickAdd': 'Aggiunta rapida',
+  'water.remove': 'Rimuovi',
   'water.bottle': 'Borraccia',
   'water.weekly': 'Settimanale',
   'water.thisWeek': 'Questa settimana',

@@ -449,6 +449,7 @@ export const es: Record<TKey, string> = {
   'water.screen.maximum': 'Máximo',
   'water.hydrationToday': 'Hidratación de hoy',
   'water.quickAdd': 'Añadir rápido',
+  'water.remove': 'Quitar',
   'water.bottle': 'Botella',
   'water.weekly': 'Semanal',
   'water.thisWeek': 'Esta semana',
