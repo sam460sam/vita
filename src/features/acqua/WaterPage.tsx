@@ -77,16 +77,16 @@ export function WaterPage() {
         <Card className="flex items-center gap-4 overflow-hidden">
           <WaterGlass pct={pct} />
           <div className="flex-1 min-w-0">
-            <div className="flex items-end gap-1.5">
-              <span className="text-[34px] font-extrabold text-ink leading-none tnum">{fmtL(ml / 1000)}</span>
-              <span className="text-[17px] font-bold text-ink-3 mb-0.5">/ {fmtL(goalMl / 1000)}</span>
+            <div className="flex items-end gap-1.5 whitespace-nowrap">
+              <span className="text-[32px] font-extrabold text-ink leading-none tnum">{fmtL(ml / 1000)}</span>
+              <span className="text-[16px] font-bold text-ink-3 mb-0.5">/ {fmtL(goalMl / 1000)}</span>
             </div>
             <div className="text-[14px] font-semibold text-ink-2 mt-1.5">{t('water.hydrationToday')}</div>
             <div className="mt-2 h-2 rounded-full bg-section overflow-hidden">
               <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: WATER }} />
             </div>
           </div>
-          <VioCompanion score={Math.max(8, pct)} size={76} animated className="-mr-1 self-end" />
+          <VioCompanion mood={pct >= 60 ? 'happy' : 'waiting'} size={70} animated className="-mr-1 self-end flex-shrink-0" />
         </Card>
 
         {/* Quick add */}
