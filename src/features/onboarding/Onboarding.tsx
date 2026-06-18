@@ -260,7 +260,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         )}
         {step === 'name' && (
           <div className="flex flex-col items-center justify-center text-center min-h-full py-8">
-            <span className="h-24 w-24 rounded-[28px] flex items-center justify-center mb-6 text-primary" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
+            <span className="h-24 w-24 rounded-card flex items-center justify-center mb-6 text-primary" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
               <Plus size={44} />
             </span>
             <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.3.title')}</h1>
@@ -395,7 +395,7 @@ function WaterIntroStep({ weightKg, heightCm, activity, setActivity, ml }: {
   const glasses = Math.max(1, Math.round(ml / 200));
   return (
     <div className="flex flex-col items-center text-center pt-6">
-      <span className="h-24 w-24 rounded-[28px] flex items-center justify-center mb-6" style={{ background: `${WATER}1f`, color: WATER }}>
+      <span className="h-24 w-24 rounded-card flex items-center justify-center mb-6" style={{ background: `${WATER}1f`, color: WATER }}>
         <Droplet size={44} fill={WATER} />
       </span>
       <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.water.title')}</h1>
@@ -470,7 +470,7 @@ function TrialStep() {
   const bullets: TKey[] = ['onboard.trial.b1', 'onboard.trial.b2', 'onboard.trial.b3'];
   return (
     <div className="flex flex-col items-center text-center pt-6">
-      <span className="h-24 w-24 rounded-[28px] flex items-center justify-center mb-6" style={{ background: `${GOLD}1f`, color: GOLD }}>
+      <span className="h-24 w-24 rounded-card flex items-center justify-center mb-6" style={{ background: `${GOLD}1f`, color: GOLD }}>
         <Crown size={44} fill={GOLD} />
       </span>
       <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.trial.title')}</h1>
@@ -615,7 +615,7 @@ function LanguageStep({ onPick }: { onPick: (l: Lang) => void }) {
   const { t, lang } = useI18n();
   return (
     <div className="flex flex-col items-center text-center pt-6">
-      <span className="h-24 w-24 rounded-[28px] flex items-center justify-center mb-6 text-primary" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
+      <span className="h-24 w-24 rounded-card flex items-center justify-center mb-6 text-primary" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
         <Languages size={44} />
       </span>
       <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.lang.title')}</h1>

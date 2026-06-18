@@ -99,7 +99,7 @@ export function Paywall({ onClose }: { onClose?: () => void }) {
           <button
             disabled={busy}
             onClick={subscribe}
-            className="w-full h-[54px] rounded-[18px] text-white font-bold text-[16px] flex items-center justify-center active:scale-[0.98] transition-transform shadow-card disabled:opacity-60"
+            className="w-full h-[54px] rounded-2xl text-white font-bold text-[16px] flex items-center justify-center active:scale-[0.98] transition-transform shadow-card disabled:opacity-60"
             style={{ background: 'linear-gradient(180deg, #6FBE6F, #2F7D43)' }}
           >
             {t('paywall.startTrial')}
@@ -128,7 +128,7 @@ function PlanCard({ period, price, selected, onSelect, highlight }: { period: Pl
   return (
     <button
       onClick={onSelect}
-      className="w-full rounded-[20px] bg-card p-4 text-left relative transition-all active:scale-[0.99]"
+      className="w-full rounded-2xl bg-card p-4 text-left relative transition-all active:scale-[0.99]"
       style={{ boxShadow: selected ? `0 0 0 2.5px ${GREEN}, 0 6px 18px ${GREEN}22` : '0 4px 14px rgba(83,52,20,0.06)' }}
     >
       {highlight && (

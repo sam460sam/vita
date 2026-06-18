@@ -110,7 +110,7 @@ function StellaSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
               <div className="animate-stella-float">
                 <StellaOrb size={84} />
               </div>
-              <div className="rounded-[20px] rounded-tl-md bg-section px-4 py-3 text-[15px] font-semibold text-ink shadow-chip">
+              <div className="rounded-2xl rounded-tl-md bg-section px-4 py-3 text-[15px] font-semibold text-ink shadow-chip">
                 {opener}
               </div>
             </div>

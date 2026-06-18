@@ -11,7 +11,7 @@ interface IconChipProps {
 }
 
 const sizes = {
-  sm: 'h-9 w-9 rounded-[12px]',
+  sm: 'h-9 w-9 rounded-xl',
   md: 'h-11 w-11 rounded-2xl',
   lg: 'h-12 w-12 rounded-2xl',
 } as const;

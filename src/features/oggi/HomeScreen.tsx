@@ -91,14 +91,14 @@ export function HomeScreen() {
             <p className="text-[12.5px] font-semibold text-ink-3 capitalize leading-none">{longDate()}</p>
             <h1 className="display-serif text-[30px] text-ink leading-tight mt-1.5 truncate">{greeting}</h1>
           </div>
-          <Link to="/altro" aria-label={t('nav.more')} className="mt-1 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform" style={{ background: '#E8F1E3' }}>
+          <Link to="/altro" aria-label={t('nav.more')} className="mt-1 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' }}>
             <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
           </Link>
         </header>
 
         {/* Momentum + Vio */}
         <Link to="/recap" className="block">
-          <div className="rounded-[26px] bg-card shadow-card px-5 py-4 active:bg-section transition-colors">
+          <div className="rounded-card bg-card shadow-card px-5 py-4 active:bg-section transition-colors">
             <h2 className="display-serif text-[21px] text-ink">Momentum</h2>
             <div className="flex items-center justify-between gap-2 mt-1">
               <div className="flex-1 flex justify-center">
@@ -129,7 +129,7 @@ export function HomeScreen() {
           <h2 className="display-serif text-[22px] text-ink">{t('nav.today')}</h2>
           <Link to="/abitudini" className="text-[13px] font-semibold text-habit">{t('home.routine.all')}</Link>
         </div>
-        <div className="rounded-[26px] bg-card shadow-card p-2">
+        <div className="rounded-card bg-card shadow-card p-2">
           {todays.length === 0 ? (
             <div className="p-4 text-center text-[14px] text-ink-2">{t('home.routine.empty.desc')}</div>
           ) : (
@@ -140,7 +140,7 @@ export function HomeScreen() {
                   key={hb.id}
                   onClick={() => { platform.haptic(); void toggleHabitLog(hb.id, today); }}
                   className="flex items-center gap-3 w-full px-3 rounded-2xl text-left transition-colors active:opacity-80"
-                  style={{ minHeight: 52, background: done ? '#E8F1E3' : 'transparent' }}
+                  style={{ minHeight: 52, background: done ? 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' : 'transparent' }}
                 >
                   <span
                     className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors"
@@ -157,7 +157,7 @@ export function HomeScreen() {
         </div>
 
         {/* Water drops tracker — tap a drop to set your intake */}
-        <div className="rounded-[26px] bg-card shadow-card px-4 py-4 mt-4">
+        <div className="rounded-card bg-card shadow-card px-4 py-4 mt-4">
           <div className="flex items-center justify-between mb-3">
             <Link to="/acqua" className="text-[14px] font-semibold text-ink">{t('nav.water')}</Link>
             <span className="text-[13px] text-ink-3 tnum">{fmtL(ml / 1000)} / {fmtL(goalMl / 1000)}</span>
@@ -195,7 +195,7 @@ function Drop({ filled }: { filled: boolean }) {
       </defs>
       <path
         d="M12 1 C12 1 22 14 22 21 a10 10 0 0 1 -20 0 C2 14 12 1 12 1 Z"
-        fill={filled ? 'url(#wdropG)' : '#E3E0D8'}
+        fill={filled ? 'url(#wdropG)' : 'var(--c-section)'}
         stroke={filled ? '#6BA8D6' : 'transparent'}
         strokeWidth="1"
       />
@@ -205,7 +205,7 @@ function Drop({ filled }: { filled: boolean }) {
 
 function HeroTile({ to, icon, label, sub }: { to: string; icon: string; label: string; sub: string }) {
   return (
-    <Link to={to} className="rounded-[22px] bg-card shadow-card px-2 py-4 flex flex-col items-center text-center gap-1 active:scale-[0.97] transition-transform">
+    <Link to={to} className="rounded-card bg-card shadow-card px-2 py-4 flex flex-col items-center text-center gap-1 active:scale-[0.97] transition-transform">
       <img src={icon} className="h-11 w-11 object-contain" alt="" aria-hidden draggable={false} />
       <span className="text-[14.5px] font-bold text-ink leading-tight mt-1">{label}</span>
       <span className="text-[12px] text-ink-3 truncate max-w-full">{sub}</span>

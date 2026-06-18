@@ -55,7 +55,7 @@ export function HabitsPage() {
               <p className="text-[12.5px] font-semibold text-ink-3 capitalize leading-none">{longDate()}</p>
               <h2 className="display-serif text-[22px] text-ink leading-tight mt-1.5 truncate">{greeting}</h2>
             </div>
-            <Link to="/altro" aria-label={t('nav.more')} className="mt-1 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform" style={{ background: '#E8F1E3' }}>
+            <Link to="/altro" aria-label={t('nav.more')} className="mt-1 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' }}>
               <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
             </Link>
           </div>
@@ -67,7 +67,7 @@ export function HabitsPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3 mt-4">
-          <div className="rounded-[22px] bg-card shadow-card p-4">
+          <div className="rounded-card bg-card shadow-card p-4">
             <div className="flex items-center gap-1.5 text-[12.5px] font-semibold text-ink-3">
               <Check size={14} className="text-habit" strokeWidth={3} /> {t('habits.doneToday')}
             </div>
@@ -77,7 +77,7 @@ export function HabitsPage() {
             </div>
             <div className="text-[12.5px] text-ink-3 mt-1.5">{t('habits.completed')}</div>
           </div>
-          <div className="rounded-[22px] bg-card shadow-card p-4">
+          <div className="rounded-card bg-card shadow-card p-4">
             <div className="text-[12.5px] font-semibold text-ink-3">{t('habits.totalHabits')}</div>
             <div className="mt-2 text-[30px] font-extrabold text-ink tnum leading-none">{active.length}</div>
             <div className="text-[12.5px] text-ink-3 mt-1.5">{t('habits.activeCount')}</div>
@@ -87,7 +87,7 @@ export function HabitsPage() {
         {/* New habit */}
         <button
           onClick={openNew}
-          className="w-full mt-3 h-[52px] rounded-[18px] text-white font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-card"
+          className="w-full mt-3 h-[52px] rounded-2xl text-white font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-card"
           style={{ background: 'linear-gradient(180deg, #6FBE6F, #2F7D43)' }}
         >
           <Plus size={20} strokeWidth={2.6} /> {t('habits.newHabit')}
@@ -100,7 +100,7 @@ export function HabitsPage() {
         </div>
 
         {todays.length === 0 ? (
-          <div className="rounded-[22px] bg-card shadow-card p-6 text-center">
+          <div className="rounded-card bg-card shadow-card p-6 text-center">
             <p className="text-[15px] font-semibold text-ink">{t('habits.empty.title')}</p>
             <p className="text-[13px] text-ink-2 mt-1">{t('habits.empty.desc')}</p>
             <button onClick={openNew} className="mt-4 h-11 px-5 rounded-full bg-primary text-on-primary font-bold text-[14px]">{t('habits.empty.cta')}</button>
@@ -119,7 +119,7 @@ export function HabitsPage() {
                     <span className="min-w-0">
                       <span className="block text-[15px] font-bold text-ink truncate">{habitDisplayName(hb, t)}</span>
                       {streak > 0 && (
-                        <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-[12px] font-bold" style={{ background: '#F5E2D2', color: '#C8743C' }}>
+                        <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-[12px] font-bold" style={{ background: 'color-mix(in srgb, var(--c-streak) 16%, transparent)', color: 'var(--c-streak)' }}>
                           {t('habits.streakDays', { n: streak })} 🔥
                         </span>
                       )}

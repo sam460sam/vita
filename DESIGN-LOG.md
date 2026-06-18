@@ -31,3 +31,15 @@ stationery" as the **material** target (tooth, soft shadow, restraint), not a hu
 ## Verification
 - `tsc -b` clean · `vite build` clean · before/after screenshots captured.
 - Native widget palette aligned in a prior commit; not part of this CSS pass.
+
+## Pass 2 — signature + radius + dark
+- **Signature = letterpress serif titles.** Every serif heading is now pressed into
+  the paper (`text-shadow` highlight on light, deboss on dark). One ownable,
+  consistent detail across the whole app — calm, not loud.
+- **Radius scale standardized.** Picked 3 steps and mapped every ad-hoc value:
+  large surfaces → `rounded-card` (22px), medium → `rounded-2xl` (16px), small →
+  `rounded-xl` (12px). Killed the 28/26/22/20/18/12 mix (the #1 "unpolished" tell).
+- **Dark mode.** The base palette was already warm (charcoal+forest); fixed what
+  broke: hardcoded light tints (`#E8F1E3` badges/rows, `#F5E2D2` streak pill,
+  `#E3E0D8` empty drop) are now theme-aware via `color-mix`/tokens, so they read
+  correctly in both themes. Letterpress flips to a dark deboss in dark.

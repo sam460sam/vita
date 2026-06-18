@@ -173,6 +173,13 @@ body::before {
 }
 .dark body::before { mix-blend-mode: screen; opacity: 0.05; }
 
+/* Letterpress reads as a dark deboss on the night-paper. */
+.dark h1,
+.dark h2:not(.metric-label):not(.uppercase),
+.dark h3:not(.uppercase),
+.dark .display-serif,
+.dark .ob-content h1 { text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4); }
+
 /* Native feel: no blue tap flash, no accidental selection of UI chrome. */
 button, a, [role='button'] {
   -webkit-tap-highlight-color: transparent;
@@ -207,6 +214,8 @@ h3:not(.uppercase),
   font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Georgia, Cambria,
     'Times New Roman', Times, serif;
   letter-spacing: -0.015em;
+  /* Signature: letterpress — serif titles look pressed into fine paper. */
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 /* Editorial touch: serif titles read better a little lighter than the default

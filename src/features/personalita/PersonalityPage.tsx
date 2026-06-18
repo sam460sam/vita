@@ -67,7 +67,7 @@ function Intro({ onStart }: { onStart: () => void }) {
               <p className="text-[12.5px] font-semibold text-ink-3 capitalize leading-none">{longDate()}</p>
               <h2 className="display-serif text-[22px] text-ink leading-tight mt-1.5 truncate">{greeting}</h2>
             </div>
-            <Link to="/altro" aria-label={t('nav.more')} className="mt-1 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform" style={{ background: '#E8F1E3' }}>
+            <Link to="/altro" aria-label={t('nav.more')} className="mt-1 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' }}>
               <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
             </Link>
           </div>
@@ -75,7 +75,7 @@ function Intro({ onStart }: { onStart: () => void }) {
         </header>
 
         {/* Hero card */}
-        <div className="relative rounded-[26px] bg-card shadow-card px-5 py-6 mt-4 overflow-hidden min-h-[150px]">
+        <div className="relative rounded-card bg-card shadow-card px-5 py-6 mt-4 overflow-hidden min-h-[150px]">
           <h2 className="display-serif text-[28px] text-ink leading-tight pr-24">{t('personality.discover')}</h2>
           <img src={iconCompass} alt="" aria-hidden draggable={false} className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 object-contain" />
         </div>
@@ -83,7 +83,7 @@ function Intro({ onStart }: { onStart: () => void }) {
         {/* CTA */}
         <button
           onClick={onStart}
-          className="w-full mt-3 h-[52px] rounded-[18px] text-white font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-card"
+          className="w-full mt-3 h-[52px] rounded-2xl text-white font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-card"
           style={{ background: 'linear-gradient(180deg, #6FBE6F, #2F7D43)' }}
         >
           <Plus size={20} strokeWidth={2.6} /> {t('personality.intro.start')}
@@ -94,7 +94,7 @@ function Intro({ onStart }: { onStart: () => void }) {
         <p className="text-[13px] text-ink-3 mb-3">{t('personality.previewHint')}</p>
         <div className="space-y-3">
           {dims.map((d) => (
-            <div key={d.key} className="rounded-[20px] bg-card shadow-card p-4">
+            <div key={d.key} className="rounded-2xl bg-card shadow-card p-4">
               <div className="flex items-center justify-between gap-2">
                 <span className="text-[15px] font-bold text-ink-2">{t(d.key)}</span>
                 <Lock size={14} className="text-ink-3 flex-shrink-0" />
