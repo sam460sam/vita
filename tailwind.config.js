@@ -69,7 +69,7 @@ export default {
       },
       fontFamily: {
         sans: ['-apple-system', 'system-ui', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
-        serif: ['ui-serif', 'Iowan Old Style', 'Palatino Linotype', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
+        serif: ['Fraunces', 'ui-serif', 'Iowan Old Style', 'Palatino Linotype', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
       },
       fontVariantNumeric: {
         tabular: 'tabular-nums',

@@ -43,3 +43,12 @@ stationery" as the **material** target (tooth, soft shadow, restraint), not a hu
   broke: hardcoded light tints (`#E8F1E3` badges/rows, `#F5E2D2` streak pill,
   `#E3E0D8` empty drop) are now theme-aware via `color-mix`/tokens, so they read
   correctly in both themes. Letterpress flips to a dark deboss in dark.
+
+## Pass 3 — bundled display serif (Fraunces)
+- Added **Fraunces** (OFL) as the display/serif face — the characterful, editorial
+  feel of a fine notebook cover, replacing the generic system serif for titles.
+- Subset to latin + smart punctuation, optical size pinned to display (opsz 72),
+  variable weight kept (100–900). **43.7 KB woff2, bundled locally** at
+  `public/fonts/fraunces.woff2` (offline, no CDN); license at `Fraunces-OFL.txt`.
+- Wired as first in the serif stack (CSS + Tailwind), `font-display: swap`.
+  Pairs with the letterpress signature.

@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Signature display serif — Fraunces (OFL), subset to latin, variable weight,
+   bundled locally (offline). Gives titles the engraved feel of a fine notebook. */
+@font-face {
+  font-family: 'Fraunces';
+  src: url('/fonts/fraunces.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* ===== Design tokens — single source of truth (Warm & Soft / cozy) ===== */
   /* Surfaces — toasty cream that feels like morning light, not paper-white */
@@ -211,9 +221,9 @@ h2:not(.metric-label):not(.uppercase),
 h3:not(.uppercase),
 .display-serif,
 .ob-content h1 {
-  font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Georgia, Cambria,
-    'Times New Roman', Times, serif;
-  letter-spacing: -0.015em;
+  font-family: 'Fraunces', ui-serif, 'Iowan Old Style', 'Palatino Linotype', Georgia,
+    Cambria, 'Times New Roman', Times, serif;
+  letter-spacing: -0.01em;
   /* Signature: letterpress — serif titles look pressed into fine paper. */
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
