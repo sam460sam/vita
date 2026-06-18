@@ -59,12 +59,13 @@ export default {
         btn: '16px',
       },
       boxShadow: {
-        card: '0 10px 30px rgba(83,52,20,0.07)',
-        'card-hover': '0 16px 40px rgba(83,52,20,0.12)',
-        chip: '0 4px 14px rgba(83,52,20,0.06)',
-        fab: '0 12px 30px rgba(22,163,74,0.42)',
-        nav: '0 8px 30px rgba(83,52,20,0.12)',
-        sheet: '0 -8px 40px rgba(40,25,10,0.16)',
+        // Two-layer warm shadows = paper resting on a desk (ambient + soft key).
+        card: '0 1px 2px rgba(83,52,20,0.04), 0 10px 24px rgba(83,52,20,0.06)',
+        'card-hover': '0 2px 6px rgba(83,52,20,0.06), 0 18px 40px rgba(83,52,20,0.12)',
+        chip: '0 1px 2px rgba(83,52,20,0.04), 0 4px 12px rgba(83,52,20,0.05)',
+        fab: '0 2px 6px rgba(34,140,86,0.30), 0 10px 22px rgba(34,140,86,0.34)',
+        nav: '0 1px 3px rgba(83,52,20,0.06), 0 12px 30px rgba(83,52,20,0.12)',
+        sheet: '0 -2px 8px rgba(40,25,10,0.06), 0 -10px 40px rgba(40,25,10,0.16)',
       },
       fontFamily: {
         sans: ['-apple-system', 'system-ui', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
