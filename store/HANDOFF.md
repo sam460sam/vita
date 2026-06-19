@@ -44,8 +44,18 @@ Regole imparate (IMPORTANTISSIME):
 
 ## STATO ATTUALE DEGLI SCREENSHOT
 - 🇮🇹 **ITALIANO: 5/5 COMPLETO** ✅ (Hero, Abitudini, Acqua, Test, Privacy) — watermark
-  rimosso, IT Hero con schermo reale, formato 1320×2868.
+  rimosso, formato 1320×2868.
 - 🇬🇧 **ENGLISH: 4/5** (Hero, Habits, Water, Test) ✅ — **manca SOLO la Privacy EN**.
+- I 9 file finiti (puliti + upscalati) sono salvati in `store/screenshots-appstore/`
+  (`01..05-IT-*`, `06..09-EN-*`). Slide scartate: recensioni a stelle (vietate Apple 2.3)
+  e le versioni con lingua schermo/headline non combacianti.
+
+## PAGAMENTI / PRO — STATO
+- ⚠️ Nel codice il billing **non è implementato**: `src/premium/premium.tsx` ha
+  `UNLOCK_ALL_FOR_NOW = true` (tutto sbloccato, nessun prodotto StoreKit collegato).
+- Vyta può uscire **solo gratis** finché non si scrive il billing (RevenueCat o StoreKit).
+- Guida computer completa (aggiornamento app + pagamenti) in
+  `store/COMPUTER-AGGIORNAMENTO-E-PAGAMENTI.md`.
 
 ## UNICO STEP RIMASTO PER GLI SCREENSHOT
 Generare la **EN Privacy**:
