@@ -14,7 +14,7 @@ export function ProGate({ children }: { children: ReactNode }) {
 }
 
 /**
- * Vyta Pro paywall — cream/gold, two plans (yearly highlighted), 7-day trial,
+ * Vyta Pro paywall — cream/gold, two plans (yearly highlighted), 3-day trial,
  * restore + legal links. On web the purchase actions are hidden (status only).
  */
 export function Paywall({ onClose }: { onClose?: () => void }) {
