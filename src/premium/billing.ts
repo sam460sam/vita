@@ -5,7 +5,7 @@
 // ============================================================================
 import { Capacitor } from '@capacitor/core';
 import { Subscriptions } from '@squareetlabs/capacitor-subscriptions';
-import { PRODUCT_IDS, ALL_PRODUCT_IDS, type PlanPeriod } from './config';
+import { PRODUCT_IDS, ALL_PRODUCT_IDS, ONE_TIME_PRODUCT_IDS, type PlanPeriod } from './config';
 
 /** True only inside the native iOS app (where StoreKit exists). */
 export function isBillingConfigured(): boolean {
@@ -96,6 +96,50 @@ export async function purchase(productId: string): Promise<EntitlementState> {
  *  entitlements, so we re-read them. */
 export async function restore(): Promise<EntitlementState> {
   return getEntitlement();
+}
+
+// --- One-time purchase: personality full profile (non-consumable) -----------
+
+/** Localized price of the personality full-profile unlock (or null off-store). */
+export async function getPersonalityPrice(): Promise<string | null> {
+  if (!isBillingConfigured()) return null;
+  try {
+    const res = await Subscriptions.getProductDetails({ productIdentifier: ONE_TIME_PRODUCT_IDS.personalityFull });
+    if (res.responseCode === 0 && res.data) return res.data.price;
+  } catch {
+    /* not available */
+  }
+  return null;
+}
+
+/** Whether the user owns the personality full-profile unlock. Non-consumables
+ *  stay in StoreKit's currentEntitlements forever, so this survives reinstalls
+ *  (acts as "restore"). */
+export async function ownsPersonality(): Promise<boolean> {
+  if (!isBillingConfigured()) return false;
+  try {
+    const res = await Subscriptions.getCurrentEntitlements();
+    const raw = res.responseCode === 0 ? (res.data as unknown) : undefined;
+    const txns: Array<{ productIdentifier?: string }> = Array.isArray(raw)
+      ? raw
+      : raw && typeof raw === 'object'
+        ? Object.values(raw as Record<string, { productIdentifier?: string }>)
+        : [];
+    return txns.some((t) => t?.productIdentifier === ONE_TIME_PRODUCT_IDS.personalityFull);
+  } catch {
+    return false;
+  }
+}
+
+/** Buy the personality full-profile unlock. Re-reads ownership afterwards. */
+export async function purchasePersonality(): Promise<boolean> {
+  if (!isBillingConfigured()) return false;
+  try {
+    await Subscriptions.purchaseProduct({ productIdentifier: ONE_TIME_PRODUCT_IDS.personalityFull });
+  } catch {
+    /* cancelled or transient — re-check ownership below */
+  }
+  return ownsPersonality();
 }
 
 /** Open the system "Manage Subscriptions" screen. */

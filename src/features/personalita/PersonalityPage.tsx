@@ -1,17 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Check, Lock, Sparkles, ChevronLeft, RotateCcw, Plus } from 'lucide-react';
 import { db } from '@/data/db';
-import { writePersonalityResult, readSettings } from '@/data/repo';
+import { writePersonalityResult, setPersonalityUnlocked, readSettings } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
-import { Button } from '@/ui';
+import { Button, useToast } from '@/ui';
 import { longDate } from '@/lib/format';
 import { useT, useI18n, type TKey } from '@/i18n';
 import vLogo from '/vyta-vmark.png';
 import iconCompass from '/icons3d/clipboard.png';
 import { platform } from '@/platform/platform';
+import { isBillingConfigured, getPersonalityPrice, ownsPersonality, purchasePersonality } from '@/premium/billing';
+import { PERSONALITY_PRICE_FALLBACK } from '@/premium/config';
 import { QUESTIONS, TYPES, type PTypeText } from './content';
 import { scoreAnswers, codeFromScores, TOTAL_QUESTIONS, type Answers } from './scoring';
 import type { PersonalityResult } from '@/data/types';
@@ -26,8 +28,9 @@ export function PersonalityPage() {
   async function finish(answers: Answers) {
     const scores = scoreAnswers(answers);
     const code = codeFromScores(scores);
-    // The full profile is free for everyone.
-    await writePersonalityResult({ code, scores, unlocked: true });
+    // Preserve an existing unlock (ownership persists across retakes).
+    const unlocked = result?.unlocked || (isBillingConfigured() ? await ownsPersonality() : false);
+    await writePersonalityResult({ code, scores, unlocked });
     setTesting(false);
   }
 
@@ -222,7 +225,15 @@ function TestFlow({ onDone, onCancel }: { onDone: (a: Answers) => void; onCancel
 function ResultView({ result, onRetake }: { result: PersonalityResult; onRetake: () => void }) {
   const t = useT();
   const { lang } = useI18n();
+  const toast = useToast();
   const type = TYPES[result.code];
+  const [busy, setBusy] = useState(false);
+  const [price, setPrice] = useState<string | null>(null);
+  const billingActive = isBillingConfigured();
+
+  useEffect(() => {
+    if (billingActive) void getPersonalityPrice().then(setPrice);
+  }, [billingActive]);
 
   // Unknown code safeguard (shouldn't happen with all 16 present).
   if (!type) {
@@ -236,6 +247,30 @@ function ResultView({ result, onRetake }: { result: PersonalityResult; onRetake:
 
   const tx: PTypeText = lang === 'it' ? type.it : type.en;
   const accent = type.accent;
+
+  async function unlock() {
+    if (!billingActive) {
+      toast.show(t('personality.web'));
+      return;
+    }
+    setBusy(true);
+    const ok = await purchasePersonality();
+    if (ok) await setPersonalityUnlocked(true);
+    setBusy(false);
+    toast.show(ok ? t('personality.purchased') : t('personality.purchaseError'));
+  }
+
+  async function restore() {
+    if (!billingActive) {
+      toast.show(t('personality.web'));
+      return;
+    }
+    setBusy(true);
+    const ok = await ownsPersonality();
+    if (ok) await setPersonalityUnlocked(true);
+    setBusy(false);
+    toast.show(ok ? t('personality.restored') : t('personality.noPurchase'));
+  }
 
   return (
     <>
@@ -258,7 +293,8 @@ function ResultView({ result, onRetake }: { result: PersonalityResult; onRetake:
           <Sparkles size={18} style={{ color: GOLD }} /> {t('personality.full.title')}
         </h2>
 
-        <div className="space-y-4">
+        {result.unlocked ? (
+          <div className="space-y-4">
             <Section title={t('personality.section.strengths')} accent={accent}>
               <ul className="space-y-1.5">
                 {tx.strengths.map((sgth, k) => (
@@ -288,7 +324,32 @@ function ResultView({ result, onRetake }: { result: PersonalityResult; onRetake:
             <Section title={t('personality.section.stress')} accent={accent}><p className="text-[14px] text-ink leading-relaxed">{tx.stress}</p></Section>
             <Section title={t('personality.section.relationships')} accent={accent}><p className="text-[14px] text-ink leading-relaxed">{tx.relationships}</p></Section>
             <Section title={t('personality.section.traits')} accent={accent}><p className="text-[14px] text-ink leading-relaxed">{tx.famousTraits}</p></Section>
-        </div>
+          </div>
+        ) : (
+          <div className="rounded-card bg-card shadow-card p-5 relative overflow-hidden">
+            {/* blurred teaser */}
+            <div className="space-y-2 select-none" style={{ filter: 'blur(5px)', opacity: 0.5 }} aria-hidden>
+              <div className="h-3.5 rounded-full bg-section w-3/4" />
+              <div className="h-3.5 rounded-full bg-section w-full" />
+              <div className="h-3.5 rounded-full bg-section w-2/3" />
+              <div className="h-3.5 rounded-full bg-section w-5/6" />
+            </div>
+            <div className="mt-4 flex flex-col items-center text-center">
+              <span className="h-12 w-12 rounded-full flex items-center justify-center" style={{ background: `${GOLD}1f`, color: GOLD }}>
+                <Lock size={22} />
+              </span>
+              <p className="text-[14px] text-ink-2 leading-snug mt-3 max-w-xs">{t('personality.full.locked')}</p>
+              {billingActive ? (
+                <Button block size="lg" disabled={busy} onClick={unlock} className="!bg-[#C9A227] !text-white mt-4">
+                  {t('personality.full.unlock', { price: price ?? PERSONALITY_PRICE_FALLBACK })}
+                </Button>
+              ) : (
+                <div className="rounded-card bg-section px-4 py-3 text-center text-[13px] text-ink-2 mt-4 w-full">{t('personality.web')}</div>
+              )}
+              <button onClick={restore} disabled={busy} className="mt-3 text-[12px] text-ink-3 py-1 disabled:opacity-50">{t('personality.restore')}</button>
+            </div>
+          </div>
+        )}
 
         <button onClick={onRetake} className="mt-6 w-full h-12 rounded-full bg-section text-ink font-bold text-[15px] active:scale-[0.98] transition-transform">
           {t('personality.result.retake')}

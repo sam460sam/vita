@@ -19,6 +19,15 @@ export type PlanPeriod = 'monthly' | 'yearly';
 /** All subscription product IDs (for Pro entitlement matching). */
 export const ALL_PRODUCT_IDS: string[] = [PRODUCT_IDS.monthly, PRODUCT_IDS.yearly];
 
+/** One-time (non-consumable) purchases — separate from the Pro subscription.
+ *  The personality test's full profile is unlocked for life with this. */
+export const ONE_TIME_PRODUCT_IDS = {
+  personalityFull: 'vyta_personality_full',
+} as const;
+
+/** Display price shown before the live store price loads. */
+export const PERSONALITY_PRICE_FALLBACK = '€3,99';
+
 /** Free trial length (must match the Introductory Offer in App Store Connect). */
 export const TRIAL_DAYS = 3;
 
