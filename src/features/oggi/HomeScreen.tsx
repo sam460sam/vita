@@ -186,7 +186,7 @@ export function HomeScreen() {
 /** A single teardrop water-glass with a teal gradient when filled, matching the render. */
 function Drop({ filled }: { filled: boolean }) {
   return (
-    <svg width="30" height="34" viewBox="0 0 24 28" aria-hidden>
+    <svg width="28" height="35" viewBox="0 0 24 30" aria-hidden>
       <defs>
         <linearGradient id="wdropG" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#A7D2EC" />
@@ -194,7 +194,7 @@ function Drop({ filled }: { filled: boolean }) {
         </linearGradient>
       </defs>
       <path
-        d="M12 1 C12 1 22 14 22 21 a10 10 0 0 1 -20 0 C2 14 12 1 12 1 Z"
+        d="M12 2 C12 2 20 13 20 18 A8 8 0 0 1 4 18 C4 13 12 2 12 2 Z"
         fill={filled ? 'url(#wdropG)' : 'var(--c-section)'}
         stroke={filled ? '#6BA8D6' : 'transparent'}
         strokeWidth="1"

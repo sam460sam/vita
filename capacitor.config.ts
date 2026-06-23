@@ -7,21 +7,21 @@ const config: CapacitorConfig = {
   // native iOS/Android projects.
   webDir: 'dist',
   // Light theme to match the app's white design system.
-  backgroundColor: '#f8f1e6',
+  backgroundColor: '#f4efe5',
   ios: {
     // Full-screen: let the WebView extend behind the status bar / home indicator.
     // Safe areas are handled in CSS (pt-safe-top / pb-safe-bottom), so there are
     // no white native inset bars at the top/bottom.
     contentInset: 'never',
-    backgroundColor: '#f8f1e6',
+    backgroundColor: '#f4efe5',
   },
   android: {
-    backgroundColor: '#f8f1e6',
+    backgroundColor: '#f4efe5',
   },
   plugins: {
     SplashScreen: {
       launchShowDuration: 600,
-      backgroundColor: '#f8f1e6',
+      backgroundColor: '#f4efe5',
       showSpinner: false,
       androidScaleType: 'CENTER_CROP',
     },
