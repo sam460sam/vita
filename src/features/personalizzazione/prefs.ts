@@ -12,9 +12,10 @@ import { ALL_MODULES, type ModuleId, type Settings, type WidgetInstance } from '
 import { MODULE_LIST } from './modules';
 import { defaultWidgets } from './defaultLayout';
 
-/** The three hero pages (Habits · Water · Test) are core to Vyta and always
- *  available, so they never disappear from the bottom tab bar. */
-const HERO_MODULES: ModuleId[] = ['abitudini', 'acqua', 'personalita'];
+/** Core pages that are always available. The three hero pages (Habits · Water ·
+ *  Test) lead the tab bar; Activity (Apple Watch/Health) is always reachable too
+ *  (e.g. from the "+" menu) even though it lives in "More". */
+const HERO_MODULES: ModuleId[] = ['abitudini', 'acqua', 'personalita', 'attivita'];
 
 /**
  * Resolve the enabled modules from settings. `undefined` (legacy users who
