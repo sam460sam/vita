@@ -35,12 +35,15 @@ const FOCUS_MODULES: Record<'health' | 'productivity' | 'wellbeing', ModuleId[]>
   wellbeing: ['diario', 'abitudini'],
 };
 
+/** The hero pages are always enabled (they lead the tab bar). */
+const HERO_MODULES: ModuleId[] = ['abitudini', 'acqua', 'personalita'];
+
 /** Modules to enable from a set of chosen focuses (all/empty → everything). */
 function modulesForFocus(set: Set<Focus>): Set<ModuleId> {
   if (set.has('all') || set.size === 0) return new Set(ALL_MODULES);
-  const out = new Set<ModuleId>();
+  const out = new Set<ModuleId>(HERO_MODULES);
   for (const f of set) if (f !== 'all') FOCUS_MODULES[f].forEach((m) => out.add(m));
-  return out.size ? out : new Set(ALL_MODULES);
+  return out;
 }
 
 const STORAGE_KEY = 'vita.onboarded';
@@ -89,7 +92,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const [customHabits, setCustomHabits] = useState<string[]>([]);
   const [wantNotif, setWantNotif] = useState(true);
-  const [goal, setGoal] = useState<Goal>();
+  const [goals, setGoals] = useState<Set<Goal>>(new Set());
   // Personal details (strings while editing) + activity level for the water test.
   const [age, setAge] = useState('');
   const [weight, setWeight] = useState('');
@@ -137,7 +140,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       name: name.trim() || undefined,
       focus: primaryFocus,
       age: parseInt(age) || undefined,
-      goal,
+      goal: [...goals][0],
       body: { ...cur.body, heightCm: heightNum || cur.body.heightCm, startWeightKg: weightNum || cur.body.startWeightKg },
       water: waterMl ? { ...cur.water, dailyGoalMl: waterMl } : cur.water,
       enabledModules: selected,
@@ -153,6 +156,14 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
     // the aha screen), so the app behind it already reflects the user's setup.
     if (step === 'notify') await commit();
     setStepIdx((i) => Math.min(i + 1, STEPS.length - 1));
+  }
+
+  function toggleGoal(g: Goal) {
+    setGoals((prev) => {
+      const n = new Set(prev);
+      n.has(g) ? n.delete(g) : n.add(g);
+      return n;
+    });
   }
 
   function toggleFocus(f: Focus) {
@@ -253,10 +264,10 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         {step === 'focus' && <FocusStep value={focusSet} onToggle={toggleFocus} />}
         {step === 'personal' && <PersonalStep age={age} setAge={setAge} weight={weight} setWeight={setWeight} height={height} setHeight={setHeight} />}
         {step === 'water' && <WaterIntroStep weightKg={weightNum} heightCm={heightNum} activity={activity} setActivity={setActivity} ml={waterMl} />}
-        {step === 'goal' && <GoalStep value={goal} onPick={setGoal} />}
+        {step === 'goal' && <GoalStep value={goals} onToggle={toggleGoal} />}
         {step === 'modules' && <ModulesStep selected={modules} onToggle={toggleModule} />}
         {step === 'habits' && (
-          <HabitsStep goal={goal} picked={picked} onToggle={toggleHabit} customHabits={customHabits} setCustomHabits={setCustomHabits} />
+          <HabitsStep goal={[...goals][0]} picked={picked} onToggle={toggleHabit} customHabits={customHabits} setCustomHabits={setCustomHabits} />
         )}
         {step === 'name' && (
           <div className="flex flex-col items-center justify-center text-center min-h-full py-8">
@@ -436,7 +447,7 @@ const GOAL_OPTS: { value: Goal; key: TKey; icon: string }[] = [
   { value: 'reach_goal', key: 'onboard.goal.reach_goal', icon: iconMoon },
 ];
 
-function GoalStep({ value, onPick }: { value?: Goal; onPick: (g: Goal) => void }) {
+function GoalStep({ value, onToggle }: { value: Set<Goal>; onToggle: (g: Goal) => void }) {
   const { t } = useI18n();
   return (
     <div className="pt-6">
@@ -444,11 +455,11 @@ function GoalStep({ value, onPick }: { value?: Goal; onPick: (g: Goal) => void }
       <p className="text-[15px] text-ink-2 mt-2 max-w-sm mx-auto leading-relaxed text-center">{t('onboard.goal.desc')}</p>
       <div className="w-full max-w-sm mx-auto mt-7 space-y-2.5">
         {GOAL_OPTS.map((o) => {
-          const selected = value === o.value;
+          const selected = value.has(o.value);
           return (
             <button
               key={o.value}
-              onClick={() => onPick(o.value)}
+              onClick={() => onToggle(o.value)}
               className="w-full flex items-center gap-3 p-3 rounded-2xl bg-card text-left transition-all active:scale-[0.99]"
               style={{ boxShadow: selected ? '0 0 0 2.5px #4F9D55, 0 6px 18px rgba(79,157,85,0.18)' : '0 2px 10px rgba(83,52,20,0.05)' }}
             >
