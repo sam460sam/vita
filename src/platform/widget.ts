@@ -7,12 +7,22 @@
 // Native setup (see WIDGETS.md): add a Widget Extension target + App Group
 // "group.app.vita.lifeos" to both the app and the widget.
 // ============================================================================
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 
 export const WIDGET_APP_GROUP = 'group.app.vita.lifeos';
 export const WIDGET_KEY = 'vyta_widget';
 /** Widget → app channel: ml the user logged from the widget, pending apply. */
 export const WIDGET_INBOX_KEY = 'vyta_widget_inbox';
+
+/** Native bridge that reads/writes the real App Group suite (see WidgetBridge.swift).
+ *  Required because @capacitor/preferences `group` does NOT use a UserDefaults
+ *  suite — it prefixes the key in standard defaults, which the widget can't read. */
+interface WidgetBridgePlugin {
+  set(options: { key: string; value: string }): Promise<void>;
+  get(options: { key: string }): Promise<{ value: string | null }>;
+  remove(options: { key: string }): Promise<void>;
+}
+const WidgetBridge = registerPlugin<WidgetBridgePlugin>('WidgetBridge');
 
 export interface WidgetReminder {
   label: string;
@@ -43,22 +53,64 @@ export interface WidgetPayload {
   updatedAt: number;
 }
 
-let configured = false;
+/** Write a value into the shared App Group via the native bridge (real suite).
+ *  Falls back to @capacitor/preferences so older builds don't crash. */
+async function appGroupSet(key: string, value: string): Promise<void> {
+  try {
+    await WidgetBridge.set({ key, value });
+    return;
+  } catch {
+    /* bridge not present — fall back (won't reach the widget, but harmless) */
+  }
+  try {
+    const { Preferences } = await import('@capacitor/preferences');
+    await Preferences.configure({ group: WIDGET_APP_GROUP });
+    await Preferences.set({ key, value });
+  } catch {
+    /* widgets unavailable */
+  }
+}
+
+/** Read a value from the shared App Group via the native bridge. */
+async function appGroupGet(key: string): Promise<string | null> {
+  try {
+    const { value } = await WidgetBridge.get({ key });
+    return value ?? null;
+  } catch {
+    /* fall through */
+  }
+  try {
+    const { Preferences } = await import('@capacitor/preferences');
+    await Preferences.configure({ group: WIDGET_APP_GROUP });
+    const { value } = await Preferences.get({ key });
+    return value ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Remove a value from the shared App Group via the native bridge. */
+async function appGroupRemove(key: string): Promise<void> {
+  try {
+    await WidgetBridge.remove({ key });
+    return;
+  } catch {
+    /* fall through */
+  }
+  try {
+    const { Preferences } = await import('@capacitor/preferences');
+    await Preferences.configure({ group: WIDGET_APP_GROUP });
+    await Preferences.remove({ key });
+  } catch {
+    /* noop */
+  }
+}
 
 /** Mirror the latest water + reminders into the shared App Group for widgets. */
 export async function syncWidgetData(data: Omit<WidgetPayload, 'updatedAt'>): Promise<void> {
   if (!Capacitor.isNativePlatform()) return;
-  try {
-    const { Preferences } = await import('@capacitor/preferences');
-    if (!configured) {
-      await Preferences.configure({ group: WIDGET_APP_GROUP });
-      configured = true;
-    }
-    const payload: WidgetPayload = { ...data, updatedAt: Date.now() };
-    await Preferences.set({ key: WIDGET_KEY, value: JSON.stringify(payload) });
-  } catch {
-    /* widgets unavailable */
-  }
+  const payload: WidgetPayload = { ...data, updatedAt: Date.now() };
+  await appGroupSet(WIDGET_KEY, JSON.stringify(payload));
 }
 
 /**
@@ -69,16 +121,11 @@ export async function syncWidgetData(data: Omit<WidgetPayload, 'updatedAt'>): Pr
 export async function drainWidgetWaterInbox(addMl: (ml: number) => Promise<void>): Promise<void> {
   if (!Capacitor.isNativePlatform()) return;
   try {
-    const { Preferences } = await import('@capacitor/preferences');
-    if (!configured) {
-      await Preferences.configure({ group: WIDGET_APP_GROUP });
-      configured = true;
-    }
-    const { value } = await Preferences.get({ key: WIDGET_INBOX_KEY });
+    const value = await appGroupGet(WIDGET_INBOX_KEY);
     const ml = value ? parseInt(value, 10) : 0;
     if (ml > 0) {
       await addMl(ml);
-      await Preferences.remove({ key: WIDGET_INBOX_KEY });
+      await appGroupRemove(WIDGET_INBOX_KEY);
     }
   } catch {
     /* noop */

@@ -12,6 +12,17 @@ The web app already mirrors the data into a shared **App Group** (see
 2. **+ Capability → App Groups**. Add `group.app.vita.lifeos`.
 3. Make sure the checkbox next to it is **ticked**.
 
+## 1b. ⚠️ Native data bridge (REQUIRED — this is why old widgets stayed empty)
+`@capacitor/preferences` does NOT write to the App Group suite — it writes to
+`UserDefaults.standard` with a prefixed key, which the widget extension cannot read.
+The repo now includes `ios/App/App/WidgetBridge.swift`, a tiny plugin that writes the
+raw key into `UserDefaults(suiteName: "group.app.vita.lifeos")`. The JS in
+`src/platform/widget.ts` calls it automatically (with a safe fallback).
+1. In Xcode select `WidgetBridge.swift` → File Inspector → **Target Membership** →
+   tick **App**. If it's not in the project: File → Add Files… → `App/WidgetBridge.swift`
+   → tick **App**.
+2. Nothing else to wire — Capacitor auto-registers it (CAPBridgedPlugin).
+
 ## 2. Create the Widget Extension target
 1. **File → New → Target… → Widget Extension**.
 2. Product name: **VytaWidgets**. **Uncheck** "Include Live Activity".
