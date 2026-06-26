@@ -39,8 +39,10 @@ export function HomeScreen() {
   const hr = new Date().getHours();
   const greet = t(hr < 12 ? 'greet.morning' : hr < 18 ? 'greet.afternoon' : 'greet.evening');
   const greeting = s.name ? `${greet}, ${s.name}` : greet;
-  // Vio mood (the V-pot character): sleepy at night · happier as momentum rises.
-  const vioMood = hr >= 21 || hr < 6 ? 'sleepy' : m.score >= 60 ? 'happy' : 'waiting';
+  // Vio reflects your Momentum: by day it grows with the score (seed → sprout →
+  // plant → bloom); at night it just rests (sleepy). No mood override by day, so
+  // the growth stage from `score` shows through.
+  const vioMood = hr >= 21 || hr < 6 ? 'sleepy' : undefined;
 
   const active = (habits ?? []).filter((x) => !x.archived);
   const todays = active.filter((x) => isScheduled(x, today));
