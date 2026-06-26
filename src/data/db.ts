@@ -7,6 +7,7 @@
 import Dexie, { type Table } from 'dexie';
 import type {
   Budget,
+  DayPlan,
   Goal,
   Habit,
   HabitLog,
@@ -41,6 +42,7 @@ export class VitaDB extends Dexie {
   notes!: Table<Note, string>;
   subscription!: Table<SubscriptionCache, string>;
   personality!: Table<PersonalityResult, string>;
+  dayPlans!: Table<DayPlan, string>;
 
   constructor() {
     super('vita');
@@ -80,6 +82,10 @@ export class VitaDB extends Dexie {
     // v7: personality test result (singleton row).
     this.version(7).stores({
       personality: 'id',
+    });
+    // v8: "plan your day" — intention + quick to-dos, keyed by date. Additive only.
+    this.version(8).stores({
+      dayPlans: 'date',
     });
   }
 }

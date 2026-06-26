@@ -1098,6 +1098,10 @@ export const it = {
   'progress.trend': 'Andamento',
   'progress.goalDays': 'Giorni a obiettivo acqua',
   'progress.empty': 'Inizia a tracciare abitudini e acqua per vedere qui i tuoi progressi.',
+  'plan.title': 'Pianifica il giorno',
+  'plan.intentionPlaceholder': 'La cosa più importante di oggi…',
+  'plan.addPlaceholder': 'Aggiungi una cosa da fare…',
+  'plan.add': 'Aggiungi',
 
   // Error recovery (instead of a blank screen)
   'error.title': 'Ops, qualcosa è andato storto',

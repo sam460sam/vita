@@ -7,6 +7,7 @@ import { defaultSettings } from './defaults';
 import { ALL_MODULES } from './types';
 import type {
   Budget,
+  DayPlan,
   Goal,
   Habit,
   HabitLog,
@@ -651,5 +652,39 @@ export async function clearAllData() {
     db.waterLogs.clear(),
     db.weightLogs.clear(),
     db.notes.clear(),
+    db.dayPlans.clear(),
   ]);
+}
+
+// ----------------------------------------------------------------------------
+// Day plan — "plan your day" (intention + quick to-dos), keyed by ISO date.
+// ----------------------------------------------------------------------------
+export async function readDayPlan(date: string): Promise<DayPlan> {
+  return (await db.dayPlans.get(date)) ?? { date, intention: '', items: [], updatedAt: now() };
+}
+
+async function saveDayPlan(p: DayPlan): Promise<void> {
+  await db.dayPlans.put({ ...p, updatedAt: now() });
+}
+
+export async function setDayIntention(date: string, intention: string): Promise<void> {
+  const p = await readDayPlan(date);
+  await saveDayPlan({ ...p, intention });
+}
+
+export async function addDayItem(date: string, text: string): Promise<void> {
+  const value = text.trim();
+  if (!value) return;
+  const p = await readDayPlan(date);
+  await saveDayPlan({ ...p, items: [...p.items, { id: uid('day_'), text: value, done: false }] });
+}
+
+export async function toggleDayItem(date: string, id: string): Promise<void> {
+  const p = await readDayPlan(date);
+  await saveDayPlan({ ...p, items: p.items.map((it) => (it.id === id ? { ...it, done: !it.done } : it)) });
+}
+
+export async function removeDayItem(date: string, id: string): Promise<void> {
+  const p = await readDayPlan(date);
+  await saveDayPlan({ ...p, items: p.items.filter((it) => it.id !== id) });
 }

@@ -308,6 +308,25 @@ export interface PersonalityResult {
 }
 
 // ----------------------------------------------------------------------------
+// Day plan — a light "plan your day" mix of an intention + quick to-dos,
+// stored per day (keyed by ISO date). Independent of the Tasks module.
+// ----------------------------------------------------------------------------
+export interface DayPlanItem {
+  id: ID;
+  text: string;
+  done: boolean;
+}
+
+export interface DayPlan {
+  /** yyyy-MM-dd — primary key. */
+  date: string;
+  /** The day's main focus / intention (one line). */
+  intention: string;
+  items: DayPlanItem[];
+  updatedAt: number;
+}
+
+// ----------------------------------------------------------------------------
 // Goals
 // ----------------------------------------------------------------------------
 export type GoalLinkType = 'none' | 'project' | 'habit' | 'milestones';

@@ -1094,6 +1094,10 @@ export const fr: Record<TKey, string> = {
   'progress.trend': 'Évolution',
   'progress.goalDays': 'Jours avec objectif d’eau',
   'progress.empty': 'Commencez à suivre habitudes et eau pour voir vos progrès ici.',
+  'plan.title': 'Planifie ta journée',
+  'plan.intentionPlaceholder': 'La chose la plus importante aujourd’hui…',
+  'plan.addPlaceholder': 'Ajoute une tâche…',
+  'plan.add': 'Ajouter',
 
   // Error recovery
   'error.title': 'Oups, un problème est survenu',

@@ -1094,6 +1094,10 @@ export const de: Record<TKey, string> = {
   'progress.trend': 'Verlauf',
   'progress.goalDays': 'Tage am Wasserziel',
   'progress.empty': 'Tracke Gewohnheiten und Wasser, um hier deinen Fortschritt zu sehen.',
+  'plan.title': 'Plane deinen Tag',
+  'plan.intentionPlaceholder': 'Das Wichtigste heute…',
+  'plan.addPlaceholder': 'To-do hinzufügen…',
+  'plan.add': 'Hinzufügen',
 
   // Error recovery
   'error.title': 'Hoppla, etwas ist schiefgelaufen',

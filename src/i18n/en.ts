@@ -1095,6 +1095,10 @@ export const en: Record<TKey, string> = {
   'progress.trend': 'Trend',
   'progress.goalDays': 'Days at water goal',
   'progress.empty': 'Start tracking habits and water to see your progress here.',
+  'plan.title': 'Plan your day',
+  'plan.intentionPlaceholder': 'Today’s most important thing…',
+  'plan.addPlaceholder': 'Add a to-do…',
+  'plan.add': 'Add',
 
   // Error recovery (instead of a blank screen)
   'error.title': 'Oops, something went wrong',

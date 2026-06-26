@@ -13,6 +13,7 @@ import { syncWidgetData, drainWidgetWaterInbox } from '@/platform/widget';
 import { isScheduled, isDone } from '@/features/abitudini/logic';
 import { habitDisplayName } from '@/features/abitudini/recommended';
 import { UpdateNudge } from '@/features/update/UpdateNudge';
+import { DayPlanCard } from '@/features/plan/DayPlanCard';
 import { computeMomentum, momentumMessageKey } from './momentum';
 import { useT, type TKey } from '@/i18n';
 import type { Habit } from '@/data/types';
@@ -129,6 +130,9 @@ export function HomeScreen() {
           <HeroTile to="/acqua" icon={iconWater} label={t('nav.water')} sub={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} />
           <HeroTile to="/personalita" icon={iconCompass} label={t('nav.personality.short')} sub={t('home.tile.ready')} />
         </div>
+
+        {/* Plan your day */}
+        <DayPlanCard />
 
         {/* Today's habits */}
         <div className="flex items-center justify-between mt-6 mb-2.5">

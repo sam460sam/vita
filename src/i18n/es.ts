@@ -1094,6 +1094,10 @@ export const es: Record<TKey, string> = {
   'progress.trend': 'Evolución',
   'progress.goalDays': 'Días con objetivo de agua',
   'progress.empty': 'Empieza a registrar hábitos y agua para ver aquí tu progreso.',
+  'plan.title': 'Planifica tu día',
+  'plan.intentionPlaceholder': 'Lo más importante de hoy…',
+  'plan.addPlaceholder': 'Añade una tarea…',
+  'plan.add': 'Añadir',
 
   // Error recovery
   'error.title': 'Vaya, algo salió mal',
