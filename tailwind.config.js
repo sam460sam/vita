@@ -58,24 +58,24 @@ export default {
         drops: 'var(--c-drops)',
       },
       borderRadius: {
-        card: '26px',
+        card: '28px',
         pill: '999px',
         btn: '16px',
       },
       boxShadow: {
-        // Dark gamified: deep ambient shadows + a faint neon-green hairline edge.
-        card: 'inset 0 0 0 1px rgba(34,227,106,0.10), 0 1px 2px rgba(0,0,0,0.35), 0 12px 28px rgba(0,0,0,0.45)',
-        'card-hover': 'inset 0 0 0 1px rgba(34,227,106,0.16), 0 2px 6px rgba(0,0,0,0.40), 0 20px 44px rgba(0,0,0,0.55)',
-        chip: 'inset 0 0 0 1px rgba(34,227,106,0.08), 0 1px 2px rgba(0,0,0,0.30), 0 4px 14px rgba(0,0,0,0.38)',
-        // FAB: tight bright core + wide soft halo (matches the primary buttons).
-        fab: '0 0 0 1px rgba(34,227,106,0.45), 0 0 14px rgba(34,227,106,0.55), 0 6px 30px rgba(34,227,106,0.40)',
-        nav: '0 -2px 12px rgba(0,0,0,0.45)',
-        sheet: '0 -2px 10px rgba(0,0,0,0.40), 0 -12px 44px rgba(0,0,0,0.55)',
-        // Layered neon glows: a tight bright ring close to the edge, then a wider soft bloom.
-        glow: '0 0 10px rgba(34,227,106,0.50), 0 0 28px rgba(34,227,106,0.35)',
-        'glow-strong': '0 0 0 1px rgba(34,227,106,0.45), 0 0 16px rgba(34,227,106,0.60), 0 0 42px rgba(34,227,106,0.42)',
-        'glow-gold': '0 0 10px rgba(232,181,58,0.55), 0 0 26px rgba(232,181,58,0.38)',
-        'glow-water': '0 0 10px rgba(45,212,247,0.50), 0 0 26px rgba(45,212,247,0.35)',
+        // Luxury matte: soft light top hairline + neutral edge, deep ambient drop.
+        card: 'inset 0 1px 0 rgba(255,255,255,0.05), inset 0 0 0 1px rgba(255,255,255,0.035), 0 2px 4px rgba(0,0,0,0.40), 0 18px 40px rgba(0,0,0,0.55)',
+        'card-hover': 'inset 0 1px 0 rgba(255,255,255,0.07), inset 0 0 0 1px rgba(255,255,255,0.05), 0 4px 8px rgba(0,0,0,0.45), 0 26px 56px rgba(0,0,0,0.62)',
+        chip: 'inset 0 1px 0 rgba(255,255,255,0.04), inset 0 0 0 1px rgba(255,255,255,0.03), 0 1px 2px rgba(0,0,0,0.35), 0 6px 16px rgba(0,0,0,0.42)',
+        // Satin FAB: matte emerald body, thin antique-gold ring, soft ambient halo.
+        fab: 'inset 0 1px 0 rgba(255,255,255,0.12), 0 0 0 1px rgba(184,134,11,0.40), 0 10px 30px rgba(0,0,0,0.55), 0 0 26px rgba(13,77,50,0.55)',
+        nav: '0 -2px 12px rgba(0,0,0,0.50)',
+        sheet: '0 -2px 10px rgba(0,0,0,0.45), 0 -12px 44px rgba(0,0,0,0.60)',
+        // Satin glows: muted emerald bloom with a thin gold-lit outline (no neon).
+        glow: 'inset 0 1px 0 rgba(255,255,255,0.10), 0 0 0 1px rgba(184,134,11,0.30), 0 8px 22px rgba(0,0,0,0.45)',
+        'glow-strong': 'inset 0 1px 0 rgba(255,255,255,0.12), 0 0 0 1px rgba(184,134,11,0.42), 0 0 22px rgba(13,77,50,0.50), 0 10px 26px rgba(0,0,0,0.50)',
+        'glow-gold': '0 0 0 1px rgba(184,134,11,0.45), 0 0 22px rgba(184,134,11,0.30)',
+        'glow-water': '0 0 16px rgba(45,212,247,0.28)',
       },
       fontFamily: {
         sans: ['-apple-system', 'system-ui', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],

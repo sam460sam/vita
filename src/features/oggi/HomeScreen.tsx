@@ -105,11 +105,11 @@ export function HomeScreen() {
 
         {/* Momentum + Vio */}
         <Link to="/recap" className="block">
-          <div className="rounded-card bg-card px-5 py-4 active:bg-section transition-colors" style={{ boxShadow: 'inset 0 0 0 1px rgba(34,227,106,0.22), 0 0 30px rgba(34,227,106,0.16), 0 12px 28px rgba(0,0,0,0.5)' }}>
-            <h2 className="display-serif text-[21px] text-ink">Momentum</h2>
-            <div className="flex items-center justify-between gap-2 mt-1">
-              <div className="flex-1 flex justify-center" style={{ filter: 'drop-shadow(0 0 10px rgba(34,227,106,0.55))' }}>
-                <ProgressRing progress={m.score / 100} size={132} stroke={14} gradient={['#2BF07A', '#10C45C']}>
+          <div className="rounded-card bg-card px-6 py-6 active:bg-section transition-colors" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px rgba(184,134,11,0.20), 0 0 44px rgba(13,77,50,0.30), 0 18px 40px rgba(0,0,0,0.6)' }}>
+            <h2 className="display-serif text-[21px] text-ink tracking-[0.01em]">Momentum</h2>
+            <div className="flex items-center justify-between gap-2 mt-2">
+              <div className="flex-1 flex justify-center" style={{ filter: 'drop-shadow(0 0 12px rgba(13,77,50,0.65))' }}>
+                <ProgressRing progress={m.score / 100} size={132} stroke={14} gradient={['#3DA66F', '#0D4D32']}>
                   <div className="flex items-baseline">
                     <span className="text-[32px] font-extrabold text-ink tnum leading-none">{m.score}</span>
                     <span className="text-[14px] font-bold text-ink-3"> / 100</span>
@@ -118,14 +118,20 @@ export function HomeScreen() {
               </div>
               <div className="flex-1 flex justify-center">
                 <div className="relative flex items-center justify-center" style={{ width: 138, height: 138 }}>
-                  {/* Terrarium: a soft radial bloom whose intensity tracks Momentum. */}
+                  {/* Luminous terrarium: a soft emerald radial bloom tracking Momentum. */}
                   <div
                     aria-hidden
                     className="pointer-events-none absolute inset-0 rounded-full"
                     style={{
-                      background: `radial-gradient(circle at 50% 56%, rgba(34,227,106,${0.10 + (m.score / 100) * 0.42}) 0%, rgba(34,227,106,${(m.score / 100) * 0.18}) 38%, transparent 70%)`,
-                      filter: 'blur(6px)',
+                      background: `radial-gradient(circle at 50% 56%, rgba(61,166,111,${0.12 + (m.score / 100) * 0.34}) 0%, rgba(13,77,50,${0.10 + (m.score / 100) * 0.20}) 40%, transparent 72%)`,
+                      filter: 'blur(7px)',
                     }}
+                  />
+                  {/* Premium glass-like rim around the terrarium. */}
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute rounded-full"
+                    style={{ inset: 6, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.10), inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 0 0 1.5px rgba(184,134,11,0.12)' }}
                   />
                   {/* Floating spores when momentum is blooming. */}
                   {m.score >= 60 && (
@@ -139,7 +145,7 @@ export function HomeScreen() {
                         <span
                           key={i}
                           className="speck absolute rounded-full"
-                          style={{ left: p.left, bottom: '26%', width: p.size, height: p.size, background: 'var(--c-gold-2)', boxShadow: '0 0 6px rgba(255,215,106,0.8)', animationDuration: p.dur, animationDelay: p.delay }}
+                          style={{ left: p.left, bottom: '26%', width: p.size, height: p.size, background: 'var(--c-gold-2)', boxShadow: '0 0 6px rgba(184,134,11,0.7)', animationDuration: p.dur, animationDelay: p.delay }}
                         />
                       ))}
                     </div>

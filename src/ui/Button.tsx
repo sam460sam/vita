@@ -12,7 +12,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-[linear-gradient(180deg,#27EE76,#13C25C)] text-on-primary shadow-glow hover:brightness-110 active:scale-[0.96]',
+  primary: 'bg-[linear-gradient(180deg,#125A3B,#0B3925)] text-on-primary shadow-glow hover:brightness-[1.06] active:scale-[0.985] active:brightness-90',
   ghost: 'bg-transparent text-ink hover:bg-section active:bg-divider',
   subtle: 'bg-section text-ink hover:bg-divider active:bg-line',
   danger: 'bg-danger text-white hover:opacity-90 active:scale-[0.97]',
@@ -36,7 +36,7 @@ export function Button({
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center rounded-full font-bold transition-all duration-150 disabled:opacity-40 disabled:pointer-events-none select-none',
+        'inline-flex items-center justify-center rounded-full font-bold transition-all duration-200 ease-out disabled:opacity-40 disabled:pointer-events-none select-none',
         variants[variant],
         sizes[size],
         block && 'w-full',

@@ -76,7 +76,7 @@ export function RoutinesPage() {
                 ))}
               </div>
             )}
-            <button onClick={() => setEditing('new')} className="w-full mt-1 h-[52px] rounded-2xl text-on-primary font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-glow-strong" style={{ background: 'linear-gradient(180deg, #27EE76, #13C25C)' }}>
+            <button onClick={() => setEditing('new')} className="w-full mt-1 h-[52px] rounded-2xl text-on-primary font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-glow-strong" style={{ background: 'linear-gradient(180deg, #125A3B, #0B3925)' }}>
               <Plus size={20} /> {t('routine.new')}
             </button>
           </>

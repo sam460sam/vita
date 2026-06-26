@@ -100,7 +100,7 @@ export function HabitsPage() {
         <button
           onClick={openNew}
           className="w-full mt-3 h-[52px] rounded-2xl text-on-primary font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-glow-strong"
-          style={{ background: 'linear-gradient(180deg, #27EE76, #13C25C)' }}
+          style={{ background: 'linear-gradient(180deg, #125A3B, #0B3925)' }}
         >
           <Plus size={20} strokeWidth={2.6} /> {t('habits.newHabit')}
         </button>

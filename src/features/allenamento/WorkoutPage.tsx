@@ -74,7 +74,7 @@ export function WorkoutPage() {
     <>
       <PageHeader title={t('workout.title')} />
       <Screen>
-        <button onClick={() => void start()} className="w-full h-[58px] rounded-2xl text-on-primary font-bold text-[16.5px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-glow-strong" style={{ background: 'linear-gradient(180deg, #27EE76, #13C25C)' }}>
+        <button onClick={() => void start()} className="w-full h-[58px] rounded-2xl text-on-primary font-bold text-[16.5px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-glow-strong" style={{ background: 'linear-gradient(180deg, #125A3B, #0B3925)' }}>
           <Dumbbell size={21} /> {t('workout.start')}
         </button>
 

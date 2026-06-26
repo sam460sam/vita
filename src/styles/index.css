@@ -17,28 +17,28 @@
    gold for premium. :root and html.dark are identical so the look is constant. */
 :root,
 html.dark {
-  /* Surfaces — deep green-black (dopamine dark) */
-  --c-app: #090e0b;
-  --c-section: #1b281f;
-  --c-card: #121c15;
-  /* Hero washes — deep emerald glow */
-  --c-hero-1: #0e2e1f;
-  --c-hero-2: #0a2417;
-  --c-glow: rgba(34, 227, 106, 0.32);
-  /* Premium gold + virtual currency (Drops) */
-  --c-gold: #e8b53a;
-  --c-gold-2: #ffd76a;
+  /* Surfaces — charcoal / anthracite (luxury matte) */
+  --c-app: #0f1115;
+  --c-section: #161a20;
+  --c-card: #13171d;
+  /* Hero washes — deep forest → emerald */
+  --c-hero-1: #0a2a1a;
+  --c-hero-2: #0d4d32;
+  --c-glow: rgba(13, 77, 50, 0.42);
+  /* Antique gold — muted, matte premium accent */
+  --c-gold: #b8860b;
+  --c-gold-2: #d9b45a;
   --c-drops: #2dd4f7;
-  /* Text — near-white with a faint cool green tint */
-  --c-ink: #eaf2ec;
-  --c-ink-2: #9bb0a6;
-  --c-ink-3: #627280;
-  /* Lines */
-  --c-line: #24332a;
-  --c-divider: #16221a;
+  /* Text — warm editorial off-white, desaturated greys */
+  --c-ink: #eceff0;
+  --c-ink-2: #a6b1ac;
+  --c-ink-3: #6b7680;
+  /* Lines — neutral charcoal hairlines */
+  --c-line: #262b30;
+  --c-divider: #1a1f24;
   /* Module accents (vivid neon on dark) */
-  --c-activity: #ff7a4d;
-  --c-habit: #22e36a;
+  --c-activity: #d98a5a;
+  --c-habit: #3da66f;
   --c-project: #6e7bff;
   --c-journal: #ffc53d;
   --c-finance: #b98cf5;
@@ -57,7 +57,7 @@ html.dark {
   --c-personality-tint: #2e1424;
   /* Module CHIPS — neon icon containers */
   --c-activity-chip: #ff7a4d;
-  --c-habit-chip: #22e36a;
+  --c-habit-chip: #3da66f;
   --c-project-chip: #6e7bff;
   --c-journal-chip: #ffc53d;
   --c-finance-chip: #b98cf5;
@@ -66,18 +66,18 @@ html.dark {
   --c-water-chip: #2dd4f7;
   --c-personality-chip: #ff5fa8;
   /* States */
-  --c-success: #22e36a;
-  --c-warning: #ffb23d;
-  --c-danger: #ff5a5a;
-  /* Signature — neon green is the dopamine color */
-  --c-accent: #22e36a;
-  --c-on-accent: #04130a;
-  --c-streak: #ff6b4a; /* coral flame — triggers FOMO */
-  --c-check: #22e36a;
-  /* Primary action (CTA / FAB) — emerald-neon with dark text for punch */
-  --c-primary: #1fd96a;
-  --c-on-primary: #04130a;
-  --c-primary-border: transparent;
+  --c-success: #3da66f;
+  --c-warning: #d9a23d;
+  --c-danger: #d96a6a;
+  /* Signature — refined emerald */
+  --c-accent: #3da66f;
+  --c-on-accent: #eceff0;
+  --c-streak: #c97b4a; /* muted copper flame */
+  --c-check: #3da66f;
+  /* Primary action (CTA / FAB) — satin emerald with light editorial text */
+  --c-primary: #0d4d32;
+  --c-on-primary: #eef4ee;
+  --c-primary-border: rgba(184, 134, 11, 0.45);
   color-scheme: dark;
 }
 
@@ -168,9 +168,10 @@ h3:not(.uppercase),
 .ob-content h1 {
   font-family: 'Fraunces', ui-serif, 'Iowan Old Style', 'Palatino Linotype', Georgia,
     Cambria, 'Times New Roman', Times, serif;
-  letter-spacing: -0.01em;
-  /* Signature: letterpress — serif titles look pressed into fine paper. */
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  /* Editorial: a touch of positive tracking reads refined at display sizes. */
+  letter-spacing: 0.005em;
+  /* Matte engrave — titles pressed into anthracite, not glowing on it. */
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
 }
 
 /* Editorial touch: serif titles read better a little lighter than the default
@@ -336,10 +337,11 @@ html.dark .animate-shimmer::after {
 }
 
 /* ===== Gamified premium polish ===== */
-/* Glassmorphism: a subtle gradient sheen over every card for depth */
+/* Satin finish: a soft light-to-shadow gradient over every card to simulate a
+   matte, high-quality material with a gentle top sheen. */
 .shadow-card,
 .shadow-card-hover {
-  background-image: linear-gradient(158deg, rgba(255, 255, 255, 0.025), rgba(0, 0, 0, 0.06));
+  background-image: linear-gradient(157deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0) 36%, rgba(0, 0, 0, 0.10));
 }
 
 /* Terrarium: slow "breathing" of the plant when momentum is high */
