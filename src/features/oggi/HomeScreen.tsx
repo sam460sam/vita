@@ -14,6 +14,7 @@ import { isScheduled, isDone } from '@/features/abitudini/logic';
 import { habitDisplayName } from '@/features/abitudini/recommended';
 import { UpdateNudge } from '@/features/update/UpdateNudge';
 import { GoalsQuiz } from '@/features/plan/GoalsQuiz';
+import { DailyInspiration } from '@/features/luxe/DailyInspiration';
 import { computeMomentum, momentumMessageKey } from './momentum';
 import { useT, type TKey } from '@/i18n';
 import type { Habit } from '@/data/types';
@@ -161,14 +162,14 @@ export function HomeScreen() {
         </Link>
 
         {/* Hero tiles */}
-        <div className="grid grid-cols-3 gap-3 mt-4">
+        <div className="grid grid-cols-3 gap-3 mt-5">
           <HeroTile to="/abitudini" icon={iconHabits} label={t('nav.habits')} sub={t('home.tile.todo', { n: pending.length })} />
           <HeroTile to="/acqua" icon={iconWater} label={t('nav.water')} sub={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} />
           <HeroTile to="/personalita" icon={iconCompass} label={t('nav.personality.short')} sub={t('home.tile.ready')} />
         </div>
 
         {/* Notes & to-dos */}
-        <Link to="/agenda" className="rounded-card bg-card shadow-card px-4 py-3.5 mt-4 flex items-center justify-between active:bg-section transition-colors">
+        <Link to="/agenda" className="rounded-card bg-card shadow-card px-4 py-4 mt-5 flex items-center justify-between active:bg-section transition-colors">
           <span className="flex items-center gap-2.5 min-w-0">
             <span className="text-[20px]" aria-hidden>📝</span>
             <span className="min-w-0">
@@ -180,20 +181,20 @@ export function HomeScreen() {
         </Link>
 
         {/* Routines */}
-        <Link to="/routine" className="rounded-card bg-card shadow-card px-4 py-3.5 mt-3 flex items-center justify-between active:bg-section transition-colors">
+        <Link to="/routine" className="rounded-card bg-card shadow-card px-4 py-4 mt-3.5 flex items-center justify-between active:bg-section transition-colors">
           <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><span className="text-[20px]" aria-hidden>🌿</span> {t('routine.title')}</span>
           <ChevronRight size={18} className="text-ink-3" />
         </Link>
 
         {/* Goals quiz */}
-        <button onClick={() => setQuizOpen(true)} className="w-full rounded-card bg-card shadow-card px-4 py-3.5 mt-3 flex items-center justify-between active:bg-section transition-colors text-left">
+        <button onClick={() => setQuizOpen(true)} className="w-full rounded-card bg-card shadow-card px-4 py-4 mt-3.5 flex items-center justify-between active:bg-section transition-colors text-left">
           <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><span className="text-[20px]" aria-hidden>🎯</span> {t('goalsq.cta')}</span>
           <ChevronRight size={18} className="text-ink-3" />
         </button>
         {quizOpen && <GoalsQuiz onClose={() => setQuizOpen(false)} />}
 
         {/* Today's habits */}
-        <div className="flex items-center justify-between mt-6 mb-2.5">
+        <div className="flex items-center justify-between mt-7 mb-2.5">
           <h2 className="display-serif text-[22px] text-ink">{t('nav.today')}</h2>
           <Link to="/abitudini" className="text-[13px] font-semibold text-habit">{t('home.routine.all')}</Link>
         </div>
@@ -223,6 +224,9 @@ export function HomeScreen() {
             })
           )}
         </div>
+
+        {/* Editorial close */}
+        <DailyInspiration className="mt-7" />
 
       </div>
     </div>

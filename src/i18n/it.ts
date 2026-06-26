@@ -1108,6 +1108,8 @@ export const it = {
   'agenda.notes': 'Note',
   'agenda.notesPlaceholder': 'Scrivi qui le tue note…',
   'agenda.todoEmpty': 'Nessuna attività. Aggiungine una qui sotto.',
+  'inspire.label': 'Ispirazione del giorno',
+  'inspire.pool': 'La costanza è la forma più alta di lusso.|Piccoli gesti, ripetuti, diventano carattere.|Il progresso ama la calma, non la fretta.|Cura i dettagli: il resto si prende cura di sé.|Oggi vale più di domani. Inizia.|La disciplina è libertà travestita.',
   'routine.title': 'Routine',
   'routine.new': 'Nuova routine',
   'routine.edit': 'Modifica routine',

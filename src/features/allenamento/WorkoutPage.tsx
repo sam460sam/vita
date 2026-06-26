@@ -15,6 +15,7 @@ import { TEMPLATES, templateItems, itemsToEntries } from './generator';
 import { ocrImage, parseWorkout } from './ocr';
 import { GenerateSheet } from './GenerateSheet';
 import { EquipmentSheet } from './EquipmentSheet';
+import { DailyInspiration } from '@/features/luxe/DailyInspiration';
 import type { Equipment } from '@/data/types';
 
 /** Strength-training hub: start / generate / templates / history. */
@@ -96,11 +97,11 @@ export function WorkoutPage() {
 
         {/* Templates */}
         <h2 className="display-serif text-[20px] text-ink mt-6 mb-2.5">{t('workout.templates')}</h2>
-        <div className="flex gap-2.5 overflow-x-auto -mx-1 px-1 pb-1">
+        <div className="grid grid-cols-3 gap-2.5">
           {TEMPLATES.map((tpl) => (
-            <button key={tpl.id} onClick={() => void fromTemplate(tpl.id)} className="flex-shrink-0 w-[120px] rounded-card bg-card shadow-card px-3 py-4 flex flex-col items-center gap-1.5 active:scale-[0.97] transition-transform">
+            <button key={tpl.id} onClick={() => void fromTemplate(tpl.id)} className="rounded-card bg-card shadow-card px-2 py-4 flex flex-col items-center gap-1.5 active:scale-[0.97] transition-transform">
               <span className="text-[26px]">{tpl.emoji}</span>
-              <span className="text-[13.5px] font-bold text-ink text-center leading-tight">{t(tpl.nameKey as TKey)}</span>
+              <span className="text-[13px] font-bold text-ink text-center leading-tight">{t(tpl.nameKey as TKey)}</span>
             </button>
           ))}
         </div>
@@ -140,6 +141,9 @@ export function WorkoutPage() {
             );
           })
         )}
+
+        {/* Editorial close */}
+        <DailyInspiration className="mt-7" />
       </Screen>
 
       {genOpen && <GenerateSheet equipment={equipment} onClose={() => setGenOpen(false)} />}

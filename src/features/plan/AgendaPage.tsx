@@ -5,6 +5,7 @@ import { readDayPlan, addDayItem, toggleDayItem, removeDayItem, setDayNotes, GEN
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { platform } from '@/platform/platform';
+import { DailyInspiration } from '@/features/luxe/DailyInspiration';
 import { useT } from '@/i18n';
 
 /** General (not day-bound) to-do list + free-form notes. */
@@ -92,6 +93,9 @@ export function AgendaPage() {
             className="w-full bg-section rounded-2xl px-3.5 py-3 text-[15px] text-ink placeholder:text-ink-3 outline-none resize-none leading-relaxed"
           />
         </div>
+
+        {/* Editorial close */}
+        <DailyInspiration className="mt-7" />
       </Screen>
     </>
   );

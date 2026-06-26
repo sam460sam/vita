@@ -10,6 +10,7 @@ import { useT, type TKey } from '@/i18n';
 import type { Routine, RoutineStep } from '@/data/types';
 import { RoutinePlayer } from './RoutinePlayer';
 import { RoutineBuilder } from './RoutineBuilder';
+import { DailyInspiration } from '@/features/luxe/DailyInspiration';
 
 const EMOJIS = ['☀️', '🌙', '🧘', '💪', '📖', '🌱', '🚿', '✍️', '🧠', '🏃'];
 
@@ -81,6 +82,9 @@ export function RoutinesPage() {
             </button>
           </>
         )}
+
+        {/* Editorial close */}
+        <DailyInspiration className="mt-7" />
       </Screen>
 
       {building && <RoutineBuilder kind={building} onClose={() => setBuilding(null)} />}

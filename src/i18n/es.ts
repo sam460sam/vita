@@ -1104,6 +1104,8 @@ export const es: Record<TKey, string> = {
   'agenda.notes': 'Notas',
   'agenda.notesPlaceholder': 'Escribe aquí tus notas…',
   'agenda.todoEmpty': 'Nada que hacer aún. Añade una abajo.',
+  'inspire.label': 'Inspiración del día',
+  'inspire.pool': 'La constancia es la forma más alta de lujo.|Pequeños gestos, repetidos, forman el carácter.|El progreso ama la calma, no la prisa.|Cuida los detalles; el resto se cuida solo.|Hoy vale más que mañana. Empieza.|La disciplina es libertad disfrazada.',
   'routine.title': 'Rutinas',
   'routine.new': 'Nueva rutina',
   'routine.edit': 'Editar rutina',

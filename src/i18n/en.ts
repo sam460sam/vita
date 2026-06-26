@@ -1105,6 +1105,8 @@ export const en: Record<TKey, string> = {
   'agenda.notes': 'Notes',
   'agenda.notesPlaceholder': 'Write your notes here…',
   'agenda.todoEmpty': 'Nothing to do yet. Add one below.',
+  'inspire.label': 'Daily inspiration',
+  'inspire.pool': 'Consistency is the highest form of luxury.|Small acts, repeated, become character.|Progress loves calm, not haste.|Mind the details; the rest takes care of itself.|Today is worth more than tomorrow. Begin.|Discipline is freedom in disguise.',
   'routine.title': 'Routines',
   'routine.new': 'New routine',
   'routine.edit': 'Edit routine',

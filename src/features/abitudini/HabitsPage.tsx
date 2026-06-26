@@ -13,6 +13,7 @@ import type { Habit } from '@/data/types';
 import { useT } from '@/i18n';
 import { Link } from 'react-router-dom';
 import { DayPlanCard } from '@/features/plan/DayPlanCard';
+import { DailyInspiration } from '@/features/luxe/DailyInspiration';
 import vioPlant from '/vio/vio-celebrate.png';
 import vLogo from '/vyta-vmark.png';
 
@@ -169,6 +170,9 @@ export function HabitsPage() {
             </div>
           </>
         )}
+
+        {/* Editorial close */}
+        <DailyInspiration className="mt-7" />
       </div>
 
       <HabitForm open={formOpen} onClose={() => setFormOpen(false)} habit={editing} />

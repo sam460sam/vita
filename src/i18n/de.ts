@@ -1104,6 +1104,8 @@ export const de: Record<TKey, string> = {
   'agenda.notes': 'Notizen',
   'agenda.notesPlaceholder': 'Schreibe hier deine Notizen…',
   'agenda.todoEmpty': 'Noch nichts zu tun. Füge unten etwas hinzu.',
+  'inspire.label': 'Inspiration des Tages',
+  'inspire.pool': 'Beständigkeit ist die höchste Form von Luxus.|Kleine Gesten, wiederholt, werden Charakter.|Fortschritt liebt Ruhe, nicht Eile.|Achte auf Details; der Rest folgt.|Heute zählt mehr als morgen. Fang an.|Disziplin ist verkleidete Freiheit.',
   'routine.title': 'Routinen',
   'routine.new': 'Neue Routine',
   'routine.edit': 'Routine bearbeiten',

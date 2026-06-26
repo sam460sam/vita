@@ -1104,6 +1104,8 @@ export const fr: Record<TKey, string> = {
   'agenda.notes': 'Notes',
   'agenda.notesPlaceholder': 'Écrivez vos notes ici…',
   'agenda.todoEmpty': 'Rien à faire pour l’instant. Ajoutez-en une ci-dessous.',
+  'inspire.label': 'Inspiration du jour',
+  'inspire.pool': 'La constance est la plus haute forme de luxe.|De petits gestes, répétés, forgent le caractère.|Le progrès aime le calme, pas la hâte.|Soigne les détails ; le reste suit.|Aujourd’hui vaut plus que demain. Commence.|La discipline est la liberté déguisée.',
   'routine.title': 'Routines',
   'routine.new': 'Nouvelle routine',
   'routine.edit': 'Modifier la routine',
