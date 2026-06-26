@@ -7,6 +7,7 @@ import { ArrowLeft, ImagePlus, Camera as CameraIcon, WifiOff, RotateCcw } from '
 import { Button } from '@/ui';
 import { processImage } from '@/lib/image';
 import { hashImage } from '@/lib/hash';
+import { isDemoMode } from '@/lib/demo';
 import { api, ApiError, type IdentifyResult } from '@/lib/api';
 import { cacheRepo } from '@/data/repo';
 import { takePhoto, type PhotoSource } from '@/platform/camera';
@@ -153,6 +154,12 @@ export function ScanFlow({ onClose, onUnlock }: { onClose: () => void; onUnlock:
             {freeScansLeft > 0
               ? `${freeScansLeft} free scan${freeScansLeft > 1 ? 's' : ''} left`
               : 'Free scans used'}
+          </p>
+        )}
+
+        {isDemoMode() && (
+          <p className="mt-3 rounded-pill bg-warning/10 px-3 py-1.5 text-[12px] font-medium text-warning">
+            Demo mode — results are simulated (no AI key configured)
           </p>
         )}
       </div>

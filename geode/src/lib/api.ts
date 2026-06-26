@@ -131,10 +131,14 @@ const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export const api = {
-  identify(imageBase64: string): Promise<IdentifyResult> {
+  async identify(imageBase64: string): Promise<IdentifyResult> {
+    const { isDemoMode, demoIdentify } = await import('./demo');
+    if (isDemoMode()) return demoIdentify(imageBase64);
     return callProxy({ imageBase64, mode: 'identify' });
   },
-  refine(imageBase64: string, answers: RefineAnswer[]): Promise<IdentifyResult> {
+  async refine(imageBase64: string, answers: RefineAnswer[]): Promise<IdentifyResult> {
+    const { isDemoMode, demoRefine } = await import('./demo');
+    if (isDemoMode()) return demoRefine(imageBase64, answers);
     return callProxy({ imageBase64, mode: 'refine', answers });
   },
 };

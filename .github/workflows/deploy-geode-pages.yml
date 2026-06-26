@@ -1,0 +1,60 @@
+# Builds the Geode demo (geode/) and publishes it to GitHub Pages.
+# Live URL once enabled: https://sam460sam.github.io/vita/
+#
+# One-time setup in the repo: Settings ▸ Pages ▸ "Build and deployment" ▸
+# Source = "GitHub Actions".  (If the github-pages environment is restricted to
+# the default branch, either run this from main or allow this branch in
+# Settings ▸ Environments ▸ github-pages ▸ Deployment branches.)
+name: Deploy Geode demo to Pages
+
+on:
+  push:
+    branches:
+      - claude/geode-crystal-identifier-4wsqn8
+      - main
+    paths:
+      - 'geode/**'
+      - '.github/workflows/deploy-geode-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: geode
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: geode/package-lock.json
+      - run: npm ci
+      # VITE_DEMO=1 keeps the built-in simulated identifier on for the public
+      # demo (no AI key / Worker needed). Remove it once a real proxy is set.
+      - run: npm run build
+        env:
+          VITE_DEMO: '1'
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: geode/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
