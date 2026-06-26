@@ -334,3 +334,30 @@ html.dark .animate-shimmer::after {
 @media (prefers-reduced-motion: reduce) {
   .animate-rise { animation: none; }
 }
+
+/* ===== Gamified premium polish ===== */
+/* Glassmorphism: a subtle gradient sheen over every card for depth */
+.shadow-card,
+.shadow-card-hover {
+  background-image: linear-gradient(158deg, rgba(255, 255, 255, 0.025), rgba(0, 0, 0, 0.06));
+}
+
+/* Terrarium: slow "breathing" of the plant when momentum is high */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.vio-breathe { animation: breathe 4s ease-in-out infinite; }
+
+/* Floating light specks (terrarium particles) */
+@keyframes floatspeck {
+  0% { transform: translateY(0); opacity: 0; }
+  20% { opacity: 0.95; }
+  80% { opacity: 0.95; }
+  100% { transform: translateY(-28px); opacity: 0; }
+}
+.speck { animation: floatspeck linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vio-breathe, .speck { animation: none; }
+}

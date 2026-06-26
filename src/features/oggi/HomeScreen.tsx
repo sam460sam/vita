@@ -120,7 +120,37 @@ export function HomeScreen() {
                 </ProgressRing>
               </div>
               <div className="flex-1 flex justify-center">
-                <VioCompanion score={m.score} mood={vioMood} size={138} animated />
+                <div className="relative flex items-center justify-center" style={{ width: 138, height: 138 }}>
+                  {/* Terrarium: a soft radial bloom whose intensity tracks Momentum. */}
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 rounded-full"
+                    style={{
+                      background: `radial-gradient(circle at 50% 56%, rgba(34,227,106,${0.10 + (m.score / 100) * 0.42}) 0%, rgba(34,227,106,${(m.score / 100) * 0.18}) 38%, transparent 70%)`,
+                      filter: 'blur(6px)',
+                    }}
+                  />
+                  {/* Floating spores when momentum is blooming. */}
+                  {m.score >= 60 && (
+                    <div aria-hidden className="pointer-events-none absolute inset-0">
+                      {[
+                        { left: '24%', size: 4, dur: '5.5s', delay: '0s' },
+                        { left: '46%', size: 3, dur: '6.5s', delay: '1.4s' },
+                        { left: '68%', size: 5, dur: '5s', delay: '0.7s' },
+                        { left: '58%', size: 3, dur: '7s', delay: '2.2s' },
+                      ].map((p, i) => (
+                        <span
+                          key={i}
+                          className="speck absolute rounded-full"
+                          style={{ left: p.left, bottom: '26%', width: p.size, height: p.size, background: 'var(--c-gold-2)', boxShadow: '0 0 6px rgba(255,215,106,0.8)', animationDuration: p.dur, animationDelay: p.delay }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  <div className={`relative ${m.score >= 60 ? 'vio-breathe' : ''}`}>
+                    <VioCompanion score={m.score} mood={vioMood} size={138} animated />
+                  </div>
+                </div>
               </div>
             </div>
             <p className="text-[14px] text-ink-2 mt-2 whitespace-nowrap overflow-hidden text-ellipsis">{t(momentumMessageKey(m.score) as TKey)}</p>

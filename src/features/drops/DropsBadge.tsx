@@ -10,7 +10,9 @@ export function DropsBadge() {
       aria-label={`${drops} Gocce`}
     >
       <span aria-hidden style={{ width: 16, height: 16, borderRadius: '50%', background: 'radial-gradient(circle at 35% 30%, #FFE79A, #D69A1C)', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.35)' }} />
-      {drops.toLocaleString()}
+      <span className="tnum" style={{ backgroundImage: 'linear-gradient(180deg, #FFF0BE 0%, #FFD76A 45%, #E8B53A 70%, #FFE9A8 100%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', color: 'transparent' }}>
+        {drops.toLocaleString()}
+      </span>
     </span>
   );
 }
