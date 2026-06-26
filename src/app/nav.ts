@@ -1,6 +1,7 @@
 import {
   CalendarDays,
   CheckSquare,
+  Dumbbell,
   Flame,
   Leaf,
   Home,
@@ -56,6 +57,8 @@ export const SECONDARY_NAV: NavItem[] = [
 // ---------------------------------------------------------------------------
 export const HOME_ITEM: NavItem = { to: '/oggi', labelKey: 'nav.today', icon: Leaf };
 export const MORE_ITEM: NavItem = { to: '/altro', labelKey: 'nav.more', icon: MoreHorizontal };
+/** Strength-workout tab (sits where Water used to). */
+export const WORKOUT_ITEM: NavItem = { to: '/allenamento', labelKey: 'workout.title', icon: Dumbbell };
 
 /**
  * Hero modules — the focused set that always leads the bottom tab bar (in this
@@ -95,10 +98,12 @@ export function useNavItems(): NavSet {
   const hero = HERO_MODULES.filter((id) => enabled.has(id)).map(toItem);
   // Everything else keeps the user's order but is pushed into "More".
   const rest = order.filter((id) => !HERO_MODULES.includes(id)).map(toItem);
+  // Tab bar: Home · Habits · Workout · Test (Workout sits where Water used to).
+  const tabs = [HOME_ITEM, ...(hero[0] ? [hero[0]] : []), WORKOUT_ITEM, ...hero.slice(1)];
   return {
     modules: order.map(toItem),
-    tabs: [HOME_ITEM, ...hero],
-    sidebarPrimary: [HOME_ITEM, ...hero],
+    tabs,
+    sidebarPrimary: [HOME_ITEM, ...hero, WORKOUT_ITEM],
     more: [...rest, ...EXTRA_NAV],
   };
 }

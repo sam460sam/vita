@@ -24,6 +24,7 @@ import type {
   WaterLog,
   WeightLog,
   Workout,
+  WorkoutSession,
 } from './types';
 
 export class VitaDB extends Dexie {
@@ -45,6 +46,7 @@ export class VitaDB extends Dexie {
   personality!: Table<PersonalityResult, string>;
   dayPlans!: Table<DayPlan, string>;
   routines!: Table<Routine, string>;
+  workoutSessions!: Table<WorkoutSession, string>;
 
   constructor() {
     super('vita');
@@ -92,6 +94,10 @@ export class VitaDB extends Dexie {
     // v9: Fabulous-style routines. Additive only.
     this.version(9).stores({
       routines: 'id, order',
+    });
+    // v10: strength-training workout sessions. Additive only.
+    this.version(10).stores({
+      workoutSessions: 'id, date, createdAt',
     });
   }
 }

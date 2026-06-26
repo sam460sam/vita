@@ -14,11 +14,14 @@ import type {
   HomeLayout,
   JournalEntry,
   ModuleId,
+  MuscleGroup,
   Note,
   NoteChecklistItem,
   Project,
   Routine,
   RoutineStep,
+  WorkoutEntry,
+  WorkoutSession,
   Settings,
   Subtask,
   Task,
@@ -656,6 +659,7 @@ export async function clearAllData() {
     db.notes.clear(),
     db.dayPlans.clear(),
     db.routines.clear(),
+    db.workoutSessions.clear(),
   ]);
 }
 
@@ -720,4 +724,28 @@ export async function saveRoutine(routine: Routine): Promise<void> {
 
 export async function deleteRoutine(id: string): Promise<void> {
   await db.routines.delete(id);
+}
+
+// ----------------------------------------------------------------------------
+// Strength workouts — sessions of exercises with logged sets (reps × weight).
+// ----------------------------------------------------------------------------
+export async function createWorkoutSession(title: string): Promise<WorkoutSession> {
+  const ts = now();
+  const d = new Date();
+  const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const session: WorkoutSession = { id: uid('wos_'), date, title, entries: [], createdAt: ts, updatedAt: ts };
+  await db.workoutSessions.put(session);
+  return session;
+}
+
+export async function saveWorkoutSession(session: WorkoutSession): Promise<void> {
+  await db.workoutSessions.put({ ...session, updatedAt: now() });
+}
+
+export async function deleteWorkoutSession(id: string): Promise<void> {
+  await db.workoutSessions.delete(id);
+}
+
+export function newWorkoutEntry(exerciseId: string, name: string, muscle: MuscleGroup): WorkoutEntry {
+  return { id: uid('woe_'), exerciseId, name, muscle, sets: [{ reps: 10, weightKg: 0, done: false }] };
 }

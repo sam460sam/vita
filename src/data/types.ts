@@ -327,6 +327,45 @@ export interface DayPlan {
 }
 
 // ----------------------------------------------------------------------------
+// Strength training — a "serious" workout logger (sessions of exercises, each
+// with logged sets of reps × weight). Separate from the cardio `Workout` above.
+// ----------------------------------------------------------------------------
+export type MuscleGroup = 'chest' | 'back' | 'legs' | 'shoulders' | 'arms' | 'core' | 'fullbody';
+export type Equipment = 'bodyweight' | 'dumbbell' | 'barbell' | 'band' | 'kettlebell' | 'machine' | 'pullupbar';
+
+/** A bundled exercise definition (static library, not stored in the DB). */
+export interface ExerciseDef {
+  id: string;
+  name: string;   // Italian
+  nameEn: string;
+  muscle: MuscleGroup;
+  equipment: Equipment[];
+}
+
+export interface WorkoutSet {
+  reps: number;
+  weightKg: number;
+  done: boolean;
+}
+
+export interface WorkoutEntry {
+  id: ID;
+  /** Library exercise id, or 'custom'. */
+  exerciseId: string;
+  name: string;
+  muscle: MuscleGroup;
+  sets: WorkoutSet[];
+}
+
+export interface WorkoutSession extends Timestamped {
+  date: string; // yyyy-MM-dd
+  title: string;
+  entries: WorkoutEntry[];
+  /** Epoch ms when the session was finished (undefined = still in progress). */
+  finishedAt?: number;
+}
+
+// ----------------------------------------------------------------------------
 // Routines — Fabulous-style rituals: an ordered list of small steps you run
 // through with a guided player (optional per-step timer).
 // ----------------------------------------------------------------------------
