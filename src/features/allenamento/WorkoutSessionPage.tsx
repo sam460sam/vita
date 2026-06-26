@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Plus, X, Check, Trash2, Timer } from 'lucide-react';
+import { Plus, X, Check, Trash2, Timer, BookMarked } from 'lucide-react';
 import { db } from '@/data/db';
-import { saveWorkoutSession, deleteWorkoutSession, newWorkoutEntry } from '@/data/repo';
+import { saveWorkoutSession, deleteWorkoutSession, newWorkoutEntry, createWorkoutPlan } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
+import { useToast } from '@/ui';
 import { platform } from '@/platform/platform';
 import { useT, useI18n } from '@/i18n';
 import type { WorkoutSession, WorkoutEntry, ExerciseDef } from '@/data/types';
@@ -14,6 +15,7 @@ import { ExercisePicker } from './ExercisePicker';
 export function WorkoutSessionPage() {
   const t = useT();
   const { lang } = useI18n();
+  const toast = useToast();
   const { id = '' } = useParams();
   const nav = useNavigate();
   const [session, setSession] = useState<WorkoutSession | null | undefined>(undefined);
@@ -56,6 +58,10 @@ export function WorkoutSessionPage() {
   async function removeSession() {
     await deleteWorkoutSession(s.id);
     nav('/allenamento');
+  }
+  async function saveAsPlan() {
+    await createWorkoutPlan(s.title || t('workout.session.default'), s.entries, 'manual');
+    toast.show(t('workout.planSaved'));
   }
 
   return (
@@ -127,9 +133,14 @@ export function WorkoutSessionPage() {
         </button>
 
         {s.entries.length > 0 && (
-          <button onClick={() => void finish()} className="w-full mt-3 h-[54px] rounded-2xl text-white font-bold text-[16px] flex items-center justify-center active:scale-[0.98] transition-transform shadow-card" style={{ background: 'linear-gradient(180deg, #125A3B, #0B3925)' }}>
-            {t('workout.finishSession')}
-          </button>
+          <>
+            <button onClick={() => void finish()} className="w-full mt-3 h-[54px] rounded-2xl text-white font-bold text-[16px] flex items-center justify-center active:scale-[0.98] transition-transform shadow-card" style={{ background: 'linear-gradient(180deg, #125A3B, #0B3925)' }}>
+              {t('workout.finishSession')}
+            </button>
+            <button onClick={() => void saveAsPlan()} className="w-full mt-2.5 h-[50px] rounded-2xl bg-card shadow-card text-ink font-bold text-[14.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+              <BookMarked size={17} style={{ color: 'var(--c-gold-2)' }} /> {t('workout.saveAsPlan')}
+            </button>
+          </>
         )}
 
         <button onClick={() => void removeSession()} className="w-full text-[13.5px] font-semibold text-danger py-3 mt-1 flex items-center justify-center gap-1.5">

@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate, Link } from 'react-router-dom';
-import { Dumbbell, ChevronRight, Watch, Sparkles, Copy, SlidersHorizontal, TrendingUp, Camera } from 'lucide-react';
+import { Dumbbell, ChevronRight, Watch, Sparkles, Copy, SlidersHorizontal, TrendingUp, Camera, Play, Trash2, BookMarked } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { db } from '@/data/db';
-import { createWorkoutSession, saveWorkoutSession, duplicateWorkoutSession, readSettings } from '@/data/repo';
+import { createWorkoutSession, saveWorkoutSession, duplicateWorkoutSession, readSettings, createWorkoutPlan, startSessionFromPlan, deleteWorkoutPlan } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { useToast } from '@/ui';
@@ -24,6 +24,7 @@ export function WorkoutPage() {
   const { lang } = useI18n();
   const nav = useNavigate();
   const sessions = useLiveQuery(() => db.workoutSessions.orderBy('createdAt').reverse().toArray(), [], []);
+  const plans = useLiveQuery(() => db.workoutPlans.orderBy('createdAt').reverse().toArray(), [], []);
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const [genOpen, setGenOpen] = useState(false);
   const [equipOpen, setEquipOpen] = useState(false);
@@ -66,8 +67,16 @@ export function WorkoutPage() {
       toast.show(t('workout.ocrNone'));
       return;
     }
-    const s = await createWorkoutSession(t('workout.fromPhoto'));
-    await saveWorkoutSession({ ...s, entries });
+    // Archive the scanned plan so it stays reusable, then open a session from it.
+    const plan = await createWorkoutPlan(t('workout.fromPhoto'), entries, 'scan');
+    toast.show(t('workout.scanSavedNav'));
+    const s = await startSessionFromPlan(plan);
+    nav(`/allenamento/s/${s.id}`);
+  }
+  async function fromPlan(planId: string) {
+    const plan = (plans ?? []).find((p) => p.id === planId);
+    if (!plan) return;
+    const s = await startSessionFromPlan(plan);
     nav(`/allenamento/s/${s.id}`);
   }
 
@@ -105,6 +114,28 @@ export function WorkoutPage() {
             </button>
           ))}
         </div>
+
+        {/* Saved plans archive */}
+        <h2 className="display-serif text-[20px] text-ink mt-7 mb-2.5">{t('workout.myPlans')}</h2>
+        {(plans ?? []).length === 0 ? (
+          <p className="rounded-card bg-card shadow-card px-4 py-5 text-center text-[13px] text-ink-3">{t('workout.plansEmpty')}</p>
+        ) : (
+          (plans ?? []).map((p) => (
+            <div key={p.id} className="rounded-card bg-card shadow-card p-3.5 mb-2.5 flex items-center gap-3">
+              <span className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'color-mix(in srgb, var(--c-gold) 16%, transparent)', color: 'var(--c-gold-2)' }}>
+                <BookMarked size={18} />
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="text-[15.5px] font-bold text-ink truncate">{p.title}</div>
+                <div className="text-[12.5px] text-ink-3 mt-0.5">{t('workout.planExercises', { n: p.entries.length })}</div>
+              </div>
+              <button onClick={() => void deleteWorkoutPlan(p.id)} aria-label={t('workout.deletePlan')} className="h-9 w-9 rounded-full flex items-center justify-center text-ink-3 flex-shrink-0 active:scale-90 transition-transform"><Trash2 size={16} /></button>
+              <button onClick={() => void fromPlan(p.id)} aria-label={t('workout.startPlan')} className="h-10 w-10 rounded-full flex items-center justify-center text-on-primary flex-shrink-0 active:scale-90 transition-transform" style={{ background: 'var(--c-primary)' }}>
+                <Play size={18} fill="currentColor" />
+              </button>
+            </div>
+          ))
+        )}
 
         {/* Equipment + Activity */}
         <button onClick={() => setEquipOpen(true)} className="w-full rounded-card bg-card shadow-card px-4 py-3.5 mt-4 flex items-center justify-between active:bg-section transition-colors text-left">

@@ -23,6 +23,7 @@ import type {
   RoutineStep,
   WorkoutEntry,
   WorkoutSession,
+  WorkoutPlan,
   Settings,
   Subtask,
   Task,
@@ -770,6 +771,36 @@ export async function duplicateWorkoutSession(src: WorkoutSession): Promise<Work
   const s = await createWorkoutSession(src.title);
   const entries = src.entries.map((e) => ({ ...e, id: uid('woe_'), sets: e.sets.map((x) => ({ ...x, done: false })) }));
   const next = { ...s, entries };
+  await saveWorkoutSession(next);
+  return next;
+}
+
+// ----------------------------------------------------------------------------
+// Saved workout plans ("schede") — a reusable archive, independent of sessions.
+// ----------------------------------------------------------------------------
+function cloneEntriesReset(entries: WorkoutEntry[]): WorkoutEntry[] {
+  return entries.map((e) => ({ ...e, id: uid('woe_'), sets: e.sets.map((x) => ({ ...x, done: false })) }));
+}
+
+export async function createWorkoutPlan(title: string, entries: WorkoutEntry[], source?: WorkoutPlan['source']): Promise<WorkoutPlan> {
+  const ts = now();
+  const plan: WorkoutPlan = { id: uid('wpl_'), title: title.trim() || 'Scheda', entries: cloneEntriesReset(entries), source, createdAt: ts, updatedAt: ts };
+  await db.workoutPlans.put(plan);
+  return plan;
+}
+
+export async function saveWorkoutPlan(plan: WorkoutPlan): Promise<void> {
+  await db.workoutPlans.put({ ...plan, updatedAt: now() });
+}
+
+export async function deleteWorkoutPlan(id: string): Promise<void> {
+  await db.workoutPlans.delete(id);
+}
+
+/** Start a fresh in-progress session from a saved plan (sets reset). */
+export async function startSessionFromPlan(plan: WorkoutPlan): Promise<WorkoutSession> {
+  const s = await createWorkoutSession(plan.title);
+  const next = { ...s, entries: cloneEntriesReset(plan.entries) };
   await saveWorkoutSession(next);
   return next;
 }

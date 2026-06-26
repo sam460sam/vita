@@ -25,6 +25,7 @@ import type {
   WeightLog,
   Workout,
   WorkoutSession,
+  WorkoutPlan,
 } from './types';
 
 export class VitaDB extends Dexie {
@@ -47,6 +48,7 @@ export class VitaDB extends Dexie {
   dayPlans!: Table<DayPlan, string>;
   routines!: Table<Routine, string>;
   workoutSessions!: Table<WorkoutSession, string>;
+  workoutPlans!: Table<WorkoutPlan, string>;
 
   constructor() {
     super('vita');
@@ -98,6 +100,10 @@ export class VitaDB extends Dexie {
     // v10: strength-training workout sessions. Additive only.
     this.version(10).stores({
       workoutSessions: 'id, date, createdAt',
+    });
+    // v11: saved, reusable workout plans ("schede") archive. Additive only.
+    this.version(11).stores({
+      workoutPlans: 'id, createdAt',
     });
   }
 }

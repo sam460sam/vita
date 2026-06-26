@@ -370,6 +370,15 @@ export interface WorkoutSession extends Timestamped {
   finishedAt?: number;
 }
 
+/** A saved, reusable workout plan ("scheda") kept in the archive. Independent
+ *  of sessions: start a fresh session from it any time, even after switching. */
+export interface WorkoutPlan extends Timestamped {
+  title: string;
+  entries: WorkoutEntry[];
+  /** Where the plan came from (photo scan, manual save, generator, template). */
+  source?: 'scan' | 'manual' | 'generated' | 'template';
+}
+
 // ----------------------------------------------------------------------------
 // Routines — Fabulous-style rituals: an ordered list of small steps you run
 // through with a guided player (optional per-step timer).
