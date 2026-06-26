@@ -1188,6 +1188,7 @@ export const de: Record<TKey, string> = {
   'workout.session.default': 'Training',
   'workout.addExercise': 'Übung hinzufügen',
   'workout.addSet': 'Satz hinzufügen',
+  'workout.sets': 'Sätze',
   'workout.finishSession': 'Training beenden',
   'workout.deleteSession': 'Training löschen',
   'workout.reps': 'Wdh',

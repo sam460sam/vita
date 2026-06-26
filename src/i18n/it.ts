@@ -1192,6 +1192,7 @@ export const it = {
   'workout.session.default': 'Allenamento',
   'workout.addExercise': 'Aggiungi esercizio',
   'workout.addSet': 'Aggiungi serie',
+  'workout.sets': 'Serie',
   'workout.finishSession': 'Termina allenamento',
   'workout.deleteSession': 'Elimina allenamento',
   'workout.reps': 'Rip',

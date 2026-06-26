@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Plus, X, Check, Trash2, Timer, BookMarked } from 'lucide-react';
+import { Plus, Minus, Check, Trash2, Timer, BookMarked } from 'lucide-react';
 import { db } from '@/data/db';
 import { saveWorkoutSession, deleteWorkoutSession, newWorkoutEntry, createWorkoutPlan, readSettings } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
@@ -73,6 +73,38 @@ export function WorkoutSessionPage() {
     const i = REST_PRESETS.findIndex((p) => p >= cur);
     const next = REST_PRESETS[(i < 0 ? -1 : i) + 1] ?? REST_PRESETS[0];
     patchEntry(eid, (en) => ({ ...en, restSec: next }));
+  }
+  // Collapsed model: one row per exercise = N sets of the same reps × kg.
+  const clampN = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
+  function setReps(eid: string, r: number) {
+    patchEntry(eid, (en) => ({ ...en, sets: en.sets.map((x) => ({ ...x, reps: r })) }));
+  }
+  function setKg(eid: string, kg: number) {
+    patchEntry(eid, (en) => ({ ...en, sets: en.sets.map((x) => ({ ...x, weightKg: kg })) }));
+  }
+  function setCount(eid: string, n: number) {
+    platform.haptic();
+    patchEntry(eid, (en) => {
+      const total = clampN(n, 1, 12);
+      const r = en.sets[0]?.reps ?? 10;
+      const w = en.sets[0]?.weightKg ?? 0;
+      const sets = en.sets.slice(0, total);
+      while (sets.length < total) sets.push({ reps: r, weightKg: w, done: false });
+      return { ...en, sets };
+    });
+  }
+  // Tap the progress pill: complete the next set (1/4 → 2/4 …); wraps to 0/N.
+  function tickSet(entry: WorkoutEntry) {
+    platform.haptic();
+    const total = entry.sets.length;
+    const done = entry.sets.filter((x) => x.done).length;
+    let next = done + 1;
+    const advancing = next <= total;
+    if (next > total) next = 0;
+    recordPending();
+    patchEntry(entry.id, (en) => ({ ...en, sets: en.sets.map((x, i) => ({ ...x, done: i < next })) }));
+    if (advancing) { setRest(entry.restSec ?? defaultRest); setRestCtx({ eid: entry.id, k: next - 1, startedAt: Date.now() }); }
+    else { setRest(null); setRestCtx(null); }
   }
   function addExercise(def: ExerciseDef) {
     update({ ...s, entries: [...s.entries, newWorkoutEntry(def.id, exerciseName(def, lang), def.muscle)] });
@@ -165,60 +197,60 @@ export function WorkoutSessionPage() {
               </div>
             )}
 
-            {/* header row */}
-            <div className="flex items-center gap-2 text-[11px] font-semibold text-ink-3 uppercase tracking-wide px-1 mb-1">
-              <span className="w-6 text-center">#</span>
-              <span className="flex-1 text-center">{t('workout.reps')}</span>
-              <span className="flex-1 text-center">{t('workout.kg')}</span>
-              <span className="w-8" />
-              <span className="w-6" />
-            </div>
+            {/* Collapsed: one row = N sets of the same reps × kg; tap the pill to
+                tick off a set (1/4 → 2/4 …). */}
+            {(() => {
+              const reps = entry.sets[0]?.reps ?? 0;
+              const kg = entry.sets[0]?.weightKg ?? 0;
+              const total = entry.sets.length;
+              const done = entry.sets.filter((x) => x.done).length;
+              const full = total > 0 && done >= total;
+              return (
+                <>
+                  <div className="flex items-end gap-2.5">
+                    <label className="flex-1 min-w-0">
+                      <span className="block text-[10px] font-semibold text-ink-3 uppercase tracking-wide mb-1 px-1">{t('workout.reps')}</span>
+                      <input type="number" inputMode="numeric" value={reps || ''} onChange={(e) => setReps(entry.id, parseInt(e.target.value) || 0)} className="w-full bg-section rounded-xl py-2.5 text-center text-[16px] font-bold text-ink outline-none" />
+                    </label>
+                    <span className="text-ink-3 text-[15px] font-bold pb-2.5">×</span>
+                    <label className="flex-1 min-w-0">
+                      <span className="block text-[10px] font-semibold text-ink-3 uppercase tracking-wide mb-1 px-1">{t('workout.kg')}</span>
+                      <input type="number" inputMode="decimal" value={kg || ''} onChange={(e) => setKg(entry.id, parseFloat(e.target.value) || 0)} className="w-full bg-section rounded-xl py-2.5 text-center text-[16px] font-bold text-ink outline-none" />
+                    </label>
+                    <button
+                      onClick={() => tickSet(entry)}
+                      aria-label={`${done}/${total}`}
+                      className="flex-shrink-0 h-[46px] min-w-[74px] px-3 rounded-xl flex items-center justify-center gap-1.5 font-extrabold text-[17px] active:scale-95 transition-transform"
+                      style={full
+                        ? { background: '#4F9D55', color: '#fff' }
+                        : done > 0
+                          ? { background: 'color-mix(in srgb, var(--c-primary) 22%, var(--c-card))', color: 'var(--c-ink)', boxShadow: 'inset 0 0 0 1px color-mix(in srgb, var(--c-primary) 55%, transparent)' }
+                          : { background: 'var(--c-card)', color: 'var(--c-ink-2)', boxShadow: 'inset 0 0 0 1px var(--c-line)' }}
+                    >
+                      <span className="tnum">{done}/{total}</span>
+                      {full && <Check size={17} strokeWidth={3} />}
+                    </button>
+                  </div>
 
-            {entry.sets.map((set, k) => (
-              <div key={k} className="flex items-center gap-2 mb-1.5">
-                <span className="w-6 text-center text-[13px] font-bold text-ink-3">{k + 1}</span>
-                <input
-                  type="number" inputMode="numeric" value={set.reps || ''}
-                  onChange={(e) => patchEntry(entry.id, (en) => ({ ...en, sets: en.sets.map((x, i) => (i === k ? { ...x, reps: parseInt(e.target.value) || 0 } : x)) }))}
-                  className="flex-1 min-w-0 bg-section rounded-xl py-2 text-center text-[15px] font-semibold text-ink outline-none"
-                />
-                <input
-                  type="number" inputMode="decimal" value={set.weightKg || ''}
-                  onChange={(e) => patchEntry(entry.id, (en) => ({ ...en, sets: en.sets.map((x, i) => (i === k ? { ...x, weightKg: parseFloat(e.target.value) || 0 } : x)) }))}
-                  className="flex-1 min-w-0 bg-section rounded-xl py-2 text-center text-[15px] font-semibold text-ink outline-none"
-                />
-                <button
-                  onClick={() => {
-                    platform.haptic();
-                    const turningOn = !set.done;
-                    recordPending();
-                    setSetField(entry.id, k, (x) => ({ ...x, done: !x.done }));
-                    if (turningOn) { setRest(entry.restSec ?? defaultRest); setRestCtx({ eid: entry.id, k, startedAt: Date.now() }); }
-                    else { setRest(null); setRestCtx(null); }
-                  }}
-                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 border-2"
-                  style={set.done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }}
-                  aria-label="done"
-                >
-                  {set.done && <Check size={15} className="text-white" strokeWidth={3} />}
-                </button>
-                <button onClick={() => patchEntry(entry.id, (en) => ({ ...en, sets: en.sets.filter((_, i) => i !== k) }))} aria-label={t('common.close')} className="w-6 text-ink-3 flex-shrink-0"><X size={15} /></button>
-              </div>
-            ))}
+                  <div className="flex items-center gap-2 mt-2.5">
+                    <span className="text-[12.5px] font-semibold text-ink-3">{t('workout.sets')}</span>
+                    <div className="flex items-center gap-1.5 ml-auto">
+                      <button onClick={() => setCount(entry.id, total - 1)} disabled={total <= 1} aria-label="-" className="h-8 w-8 rounded-full bg-section text-ink flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"><Minus size={16} /></button>
+                      <span className="w-7 text-center text-[16px] font-extrabold text-ink tnum">{total}</span>
+                      <button onClick={() => setCount(entry.id, total + 1)} disabled={total >= 12} aria-label="+" className="h-8 w-8 rounded-full bg-section text-ink flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"><Plus size={16} /></button>
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
+
             {entry.sets.some((x) => x.restTakenSec) && (
-              <div className="flex flex-wrap gap-x-3 gap-y-0.5 px-1 mt-0.5">
+              <div className="flex flex-wrap gap-x-3 gap-y-0.5 px-1 mt-2">
                 {entry.sets.map((set, k) => set.restTakenSec ? (
                   <span key={k} className="text-[10.5px] text-ink-3">{k + 1}: ↺ {fmtRest(set.restTakenSec)}</span>
                 ) : null)}
               </div>
             )}
-
-            <button
-              onClick={() => patchEntry(entry.id, (en) => ({ ...en, sets: [...en.sets, { ...(en.sets[en.sets.length - 1] ?? { reps: 10, weightKg: 0 }), done: false }] }))}
-              className="mt-2 text-[13.5px] font-semibold text-habit flex items-center gap-1"
-            >
-              <Plus size={15} /> {t('workout.addSet')}
-            </button>
           </div>
           );
         })}

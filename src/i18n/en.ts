@@ -1189,6 +1189,7 @@ export const en: Record<TKey, string> = {
   'workout.session.default': 'Workout',
   'workout.addExercise': 'Add exercise',
   'workout.addSet': 'Add set',
+  'workout.sets': 'Sets',
   'workout.finishSession': 'Finish workout',
   'workout.deleteSession': 'Delete workout',
   'workout.reps': 'Reps',
