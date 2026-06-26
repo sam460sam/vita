@@ -12,6 +12,7 @@ import { platform } from '@/platform/platform';
 import { syncWidgetData, drainWidgetWaterInbox } from '@/platform/widget';
 import { isScheduled, isDone } from '@/features/abitudini/logic';
 import { habitDisplayName } from '@/features/abitudini/recommended';
+import { UpdateNudge } from '@/features/update/UpdateNudge';
 import { computeMomentum, momentumMessageKey } from './momentum';
 import { useT, type TKey } from '@/i18n';
 import type { Habit } from '@/data/types';
@@ -95,6 +96,9 @@ export function HomeScreen() {
             <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
           </Link>
         </header>
+
+        {/* Update available (App Store has a newer version) */}
+        <UpdateNudge />
 
         {/* Momentum + Vio */}
         <Link to="/recap" className="block">

@@ -1086,6 +1086,9 @@ export const it = {
   'backup.restore': 'Ripristina da file',
   'backup.nudge.title': 'Proteggi i tuoi dati',
   'backup.nudge.desc': 'Non fai un backup da un po’. Esportane uno e salvalo su iCloud/Drive per non perderlo.',
+  'update.nudge.title': 'Aggiorna l’app',
+  'update.nudge.desc': 'È disponibile una nuova versione di Vyta.',
+  'update.nudge.cta': 'Aggiorna',
 
   // Error recovery (instead of a blank screen)
   'error.title': 'Ops, qualcosa è andato storto',

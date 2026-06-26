@@ -1082,6 +1082,9 @@ export const es: Record<TKey, string> = {
   'backup.restore': 'Restaurar desde archivo',
   'backup.nudge.title': 'Protege tus datos',
   'backup.nudge.desc': 'Hace tiempo que no haces copia. Exporta una y guárdala en iCloud/Drive para no perderla.',
+  'update.nudge.title': 'Actualiza la app',
+  'update.nudge.desc': 'Hay una nueva versión de Vyta disponible.',
+  'update.nudge.cta': 'Actualizar',
 
   // Error recovery
   'error.title': 'Vaya, algo salió mal',

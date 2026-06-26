@@ -1082,6 +1082,9 @@ export const fr: Record<TKey, string> = {
   'backup.restore': 'Restaurer depuis un fichier',
   'backup.nudge.title': 'Protégez vos données',
   'backup.nudge.desc': 'Vous n’avez pas sauvegardé depuis un moment. Exportez-en une et gardez-la sur iCloud/Drive pour ne rien perdre.',
+  'update.nudge.title': 'Mettre à jour',
+  'update.nudge.desc': 'Une nouvelle version de Vyta est disponible.',
+  'update.nudge.cta': 'Mettre à jour',
 
   // Error recovery
   'error.title': 'Oups, un problème est survenu',
