@@ -1,0 +1,17 @@
+name = "geode-proxy"
+main = "geode-proxy.js"
+compatibility_date = "2025-01-01"
+
+# Optional model override (defaults to gemini-2.0-flash in code).
+[vars]
+GEMINI_MODEL = "gemini-2.0-flash"
+
+# Per-IP rate limiting via KV. Create the namespace, then paste its id below:
+#   wrangler kv namespace create RATE_LIMIT
+# If you omit this binding the Worker falls back to per-isolate in-memory limits.
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT"
+# id = "PASTE_YOUR_KV_NAMESPACE_ID"
+
+# The AI key is a SECRET — never put it here. Set it with:
+#   wrangler secret put AI_API_KEY

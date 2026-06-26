@@ -1,0 +1,25 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+*.log
+npm-debug.log*
+.env
+.env.*
+*.tsbuildinfo
+
+# Capacitor / native build artifacts
+ios/App/build
+ios/App/Pods
+ios/App/App/public
+ios/App/App/capacitor.config.json
+ios/App/App/config.xml
+DerivedData
+*.xcuserstate
+
+# Cloudflare Worker
+worker/.wrangler
+worker/node_modules

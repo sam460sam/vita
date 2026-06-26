@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Privacy Manifest for the Geode app target (BUILD-SPEC §6).
+  Position: "Data Not Collected". We do not collect data linked to the user;
+  photos are processed via the proxy and not stored on our servers; the
+  collection lives only on-device.
+
+  Copy this file into the iOS App target in Xcode:
+    ios/App/App/PrivacyInfo.xcprivacy
+  (Add it to the "App" target membership.)
+
+  NOTE: Each third-party SDK ships its OWN PrivacyInfo.xcprivacy inside its
+  framework (RevenueCat and the Capacitor plugins already do). Do not remove
+  those — Apple requires every SDK to declare its own.
+-->
+<plist version="1.0">
+<dict>
+  <!-- We do not track users across apps/websites. -->
+  <key>NSPrivacyTracking</key>
+  <false/>
+  <key>NSPrivacyTrackingDomains</key>
+  <array/>
+
+  <!-- No data types collected by the app itself. -->
+  <key>NSPrivacyCollectedDataTypes</key>
+  <array/>
+
+  <!-- Required-reason APIs used by the app / WebView storage. -->
+  <key>NSPrivacyAccessedAPITypes</key>
+  <array>
+    <dict>
+      <!-- UserDefaults (Capacitor Preferences, RevenueCat). -->
+      <key>NSPrivacyAccessedAPIType</key>
+      <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+      <key>NSPrivacyAccessedAPITypeReasons</key>
+      <array>
+        <string>CA92.1</string>
+      </array>
+    </dict>
+    <dict>
+      <!-- File timestamp (Filesystem export/share). -->
+      <key>NSPrivacyAccessedAPIType</key>
+      <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+      <key>NSPrivacyAccessedAPITypeReasons</key>
+      <array>
+        <string>C617.1</string>
+      </array>
+    </dict>
+    <dict>
+      <!-- Disk space (IndexedDB / WKWebView storage). -->
+      <key>NSPrivacyAccessedAPIType</key>
+      <string>NSPrivacyAccessedAPICategoryDiskSpace</string>
+      <key>NSPrivacyAccessedAPITypeReasons</key>
+      <array>
+        <string>E174.1</string>
+      </array>
+    </dict>
+  </array>
+</dict>
+</plist>
