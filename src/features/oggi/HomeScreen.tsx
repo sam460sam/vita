@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Link } from 'react-router-dom';
 import { startOfWeek, addDays, subDays, format } from 'date-fns';
@@ -14,6 +14,7 @@ import { isScheduled, isDone } from '@/features/abitudini/logic';
 import { habitDisplayName } from '@/features/abitudini/recommended';
 import { UpdateNudge } from '@/features/update/UpdateNudge';
 import { DayPlanCard } from '@/features/plan/DayPlanCard';
+import { GoalsQuiz } from '@/features/plan/GoalsQuiz';
 import { computeMomentum, momentumMessageKey } from './momentum';
 import { useT, type TKey } from '@/i18n';
 import type { Habit } from '@/data/types';
@@ -25,6 +26,7 @@ import iconCompass from '/icons3d/clipboard.png';
 /** Home — premium "Today" screen, faithful to the design north-star. */
 export function HomeScreen() {
   const t = useT();
+  const [quizOpen, setQuizOpen] = useState(false);
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const habits = useLiveQuery(() => db.habits.orderBy('order').toArray(), [], []);
   const logs = useLiveQuery(() => db.habitLogs.toArray(), [], []);
@@ -139,6 +141,13 @@ export function HomeScreen() {
           <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><span className="text-[20px]" aria-hidden>🌿</span> {t('routine.title')}</span>
           <ChevronRight size={18} className="text-ink-3" />
         </Link>
+
+        {/* Goals quiz */}
+        <button onClick={() => setQuizOpen(true)} className="w-full rounded-card bg-card shadow-card px-4 py-3.5 mt-3 flex items-center justify-between active:bg-section transition-colors text-left">
+          <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><span className="text-[20px]" aria-hidden>🎯</span> {t('goalsq.cta')}</span>
+          <ChevronRight size={18} className="text-ink-3" />
+        </button>
+        {quizOpen && <GoalsQuiz onClose={() => setQuizOpen(false)} />}
 
         {/* Today's habits */}
         <div className="flex items-center justify-between mt-6 mb-2.5">
