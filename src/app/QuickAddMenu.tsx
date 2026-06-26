@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { CheckSquare, Flame, Dumbbell, BookHeart, Scale, Wallet, CalendarDays } from 'lucide-react';
+import { Dumbbell, BookHeart, Wallet, CalendarDays } from 'lucide-react';
 import { Sheet } from '@/ui';
 import { useT, type TKey } from '@/i18n';
 import { useIsPro } from '@/premium/premium';
@@ -7,10 +7,9 @@ import { useQuickAdd, type QuickAddTarget } from './QuickAdd';
 
 const GOLD = '#C9A227';
 
-const ACTIONS: { target: QuickAddTarget; labelKey: TKey; icon: typeof CheckSquare; accent: string }[] = [
-  { target: 'task', labelKey: 'quick.task', icon: CheckSquare, accent: 'var(--c-project)' },
-  { target: 'habit', labelKey: 'quick.habit', icon: Flame, accent: 'var(--c-habit)' },
-  { target: 'weight', labelKey: 'quick.weight', icon: Scale, accent: 'var(--c-project)' },
+// Quick-create sheets. Tasks now live inside Journal, and weight inside the
+// Workout/Activity page, so only the journal note opens a quick sheet here.
+const ACTIONS: { target: QuickAddTarget; labelKey: TKey; icon: typeof BookHeart; accent: string }[] = [
   { target: 'journal', labelKey: 'quick.journal', icon: BookHeart, accent: 'var(--c-journal)' },
 ];
 

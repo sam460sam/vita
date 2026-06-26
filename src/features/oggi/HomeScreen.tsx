@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { startOfWeek, addDays, subDays, format } from 'date-fns';
 import { Check, ChevronRight } from 'lucide-react';
 import { db } from '@/data/db';
-import { readSettings, toggleHabitLog, setWaterMl, addWaterMl } from '@/data/repo';
+import { readSettings, toggleHabitLog, addWaterMl } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { ProgressRing, VioCompanion, Icon } from '@/ui';
 import { longDate, todayISO } from '@/lib/format';
@@ -54,8 +54,6 @@ export function HomeScreen() {
   const goalMl = s.water.dailyGoalMl || 2000;
   const ml = todayWater?.ml ?? 0;
   const fmtL = (n: number) => `${n.toFixed(1).replace(/\.0$/, '')} L`;
-  const dropTotal = Math.min(10, Math.max(6, Math.round(goalMl / glassMl)));
-  const dropDone = Math.min(dropTotal, Math.round(ml / glassMl));
 
   // Apply any water logged from the home/lock-screen widget on launch.
   useEffect(() => { void drainWidgetWaterInbox((delta) => addWaterMl(today, delta)); }, [today]);
@@ -180,50 +178,8 @@ export function HomeScreen() {
           )}
         </div>
 
-        {/* Water drops tracker — tap a drop to set your intake */}
-        <div className="rounded-card bg-card shadow-card px-4 py-4 mt-4">
-          <div className="flex items-center justify-between mb-3">
-            <Link to="/acqua" className="text-[14px] font-semibold text-ink">{t('nav.water')}</Link>
-            <span className="text-[13px] text-ink-3 tnum">{fmtL(ml / 1000)} / {fmtL(goalMl / 1000)}</span>
-          </div>
-          <div className="flex justify-between gap-1">
-            {Array.from({ length: dropTotal }, (_, i) => {
-              const f = i < dropDone;
-              return (
-                <button
-                  key={i}
-                  aria-label={`${i + 1}`}
-                  onClick={() => { platform.haptic(); void setWaterMl(today, (f && i + 1 === dropDone ? i : i + 1) * glassMl); }}
-                  className="active:scale-90 transition-transform"
-                >
-                  <Drop filled={f} />
-                </button>
-              );
-            })}
-          </div>
-        </div>
       </div>
     </div>
-  );
-}
-
-/** A single teardrop water-glass with a teal gradient when filled, matching the render. */
-function Drop({ filled }: { filled: boolean }) {
-  return (
-    <svg width="28" height="35" viewBox="0 0 24 30" aria-hidden>
-      <defs>
-        <linearGradient id="wdropG" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#A7D2EC" />
-          <stop offset="100%" stopColor="#6BA8D6" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M12 2 C12 2 20 13 20 18 A8 8 0 0 1 4 18 C4 13 12 2 12 2 Z"
-        fill={filled ? 'url(#wdropG)' : 'var(--c-section)'}
-        stroke={filled ? '#6BA8D6' : 'transparent'}
-        strokeWidth="1"
-      />
-    </svg>
   );
 }
 

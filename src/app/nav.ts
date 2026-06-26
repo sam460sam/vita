@@ -63,7 +63,7 @@ export const MORE_ITEM: NavItem = { to: '/altro', labelKey: 'nav.more', icon: Mo
  * the "More" drawer. This keeps the app from feeling like a sprawling all-in-one
  * and puts our three strongest pages front and centre.
  */
-export const HERO_MODULES: ModuleId[] = ['abitudini', 'acqua', 'personalita'];
+export const HERO_MODULES: ModuleId[] = ['abitudini', 'personalita'];
 
 /** Always-available destinations that are not toggleable interests. */
 export const EXTRA_NAV: NavItem[] = [
