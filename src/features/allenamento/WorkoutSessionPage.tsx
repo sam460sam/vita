@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Plus, X, Check, Trash2, Timer, BookMarked } from 'lucide-react';
 import { db } from '@/data/db';
@@ -11,6 +12,7 @@ import { useT, useI18n } from '@/i18n';
 import type { WorkoutSession, WorkoutEntry, ExerciseDef } from '@/data/types';
 import { exerciseName } from './exercises';
 import { ExercisePicker } from './ExercisePicker';
+import { lastStatFor, suggestNextWeight } from './progression';
 
 export function WorkoutSessionPage() {
   const t = useT();
@@ -21,6 +23,7 @@ export function WorkoutSessionPage() {
   const [session, setSession] = useState<WorkoutSession | null | undefined>(undefined);
   const [picker, setPicker] = useState(false);
   const [rest, setRest] = useState<number | null>(null);
+  const sessions = useLiveQuery(() => db.workoutSessions.toArray(), [], []);
 
   useEffect(() => { void db.workoutSessions.get(id).then((x) => setSession(x ?? null)); }, [id]);
 
@@ -50,6 +53,11 @@ export function WorkoutSessionPage() {
     update({ ...s, entries: [...s.entries, newWorkoutEntry(def.id, exerciseName(def, lang), def.muscle)] });
     setPicker(false);
   }
+  // Fill the empty (0 kg) sets of an exercise with the suggested next load.
+  function applyWeight(eid: string, w: number) {
+    platform.haptic();
+    patchEntry(eid, (en) => ({ ...en, sets: en.sets.map((x) => (x.weightKg === 0 ? { ...x, weightKg: w } : x)) }));
+  }
 
   async function finish() {
     await saveWorkoutSession({ ...s, finishedAt: Date.now() });
@@ -75,7 +83,10 @@ export function WorkoutSessionPage() {
           placeholder={t('workout.session.default')}
         />
 
-        {s.entries.map((entry) => (
+        {s.entries.map((entry) => {
+          const last = lastStatFor(sessions ?? [], entry.exerciseId);
+          const next = last ? suggestNextWeight(last) : 0;
+          return (
           <div key={entry.id} className="rounded-card bg-card shadow-card p-4 mb-3">
             <div className="flex items-center justify-between gap-2 mb-2">
               <div className="min-w-0">
@@ -84,6 +95,20 @@ export function WorkoutSessionPage() {
               </div>
               <button onClick={() => update({ ...s, entries: s.entries.filter((e) => e.id !== entry.id) })} aria-label={t('common.delete')} className="text-ink-3 p-1"><Trash2 size={16} /></button>
             </div>
+
+            {/* Progression hint: what you did last time + a one-tap suggested load. */}
+            {last && (
+              <div className="flex items-center gap-2 -mt-1 mb-2.5 flex-wrap">
+                <span className="text-[12px] text-ink-3">
+                  {last.weightKg > 0 ? t('workout.lastTime', { w: last.weightKg, r: last.reps }) : t('workout.lastTimeReps', { r: last.reps })}
+                </span>
+                {next > 0 && (
+                  <button onClick={() => applyWeight(entry.id, next)} className="text-[12px] font-bold px-2.5 py-0.5 rounded-full active:scale-95 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-gold) 18%, transparent)', color: 'var(--c-gold-2)' }}>
+                    {t('workout.tryWeight', { w: next })}
+                  </button>
+                )}
+              </div>
+            )}
 
             {/* header row */}
             <div className="flex items-center gap-2 text-[11px] font-semibold text-ink-3 uppercase tracking-wide px-1 mb-1">
@@ -126,7 +151,8 @@ export function WorkoutSessionPage() {
               <Plus size={15} /> {t('workout.addSet')}
             </button>
           </div>
-        ))}
+          );
+        })}
 
         <button onClick={() => setPicker(true)} className="w-full h-[52px] rounded-2xl bg-card shadow-card text-ink font-bold text-[15px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
           <Plus size={20} className="text-habit" /> {t('workout.addExercise')}
