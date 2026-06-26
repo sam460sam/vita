@@ -59,8 +59,10 @@ You should get back JSON with a `candidates` array.
 
 ## Notes
 
-- **Model:** defaults to `gemini-2.0-flash` (cheap, fast vision). Override with
+- **Model:** defaults to `gemini-2.5-flash` (cheap, fast vision). Override with
   the `GEMINI_MODEL` var in `wrangler.toml`.
+- **API key format:** both the new-style keys (prefix `AQ.`) and classic `AIza`
+  keys work — the Worker authenticates via the `x-goog-api-key` header.
 - **Cost:** the app sends a ≤768px JPEG (q0.7), so each scan is a tiny number of
   tokens — well under \$0.001/scan.
 - **Rate limiting:** 30 requests / IP / hour by default (tune `RATE_LIMIT` and

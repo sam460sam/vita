@@ -99,8 +99,8 @@ export default {
       }
     }
 
-    const model = env.GEMINI_MODEL || 'gemini-2.0-flash';
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.AI_API_KEY}`;
+    const model = env.GEMINI_MODEL || 'gemini-2.5-flash';
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
     const payload = {
       systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
@@ -125,7 +125,12 @@ export default {
     try {
       upstream = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          // New-style Google API keys (prefix "AQ.") and classic "AIza" keys
+          // both work via this header — the recommended auth method.
+          'x-goog-api-key': env.AI_API_KEY,
+        },
         body: JSON.stringify(payload),
       });
     } catch {
