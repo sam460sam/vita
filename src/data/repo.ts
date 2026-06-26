@@ -712,13 +712,14 @@ export function newRoutineStep(title: string, durationSec?: number): RoutineStep
   return { id: uid('rst_'), title, durationSec };
 }
 
-export async function createRoutine(data: { name: string; emoji: string; steps: RoutineStep[] }): Promise<Routine> {
+export async function createRoutine(data: { name: string; emoji: string; steps: RoutineStep[]; notes?: string }): Promise<Routine> {
   const count = await db.routines.count();
   const routine: Routine = {
     id: uid('rtn_'),
     name: data.name,
     emoji: data.emoji,
     steps: data.steps,
+    notes: data.notes,
     order: count,
     createdAt: now(),
     updatedAt: now(),

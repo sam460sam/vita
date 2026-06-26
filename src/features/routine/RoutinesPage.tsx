@@ -9,6 +9,7 @@ import { Sheet, Field, Input, Button } from '@/ui';
 import { useT, type TKey } from '@/i18n';
 import type { Routine, RoutineStep } from '@/data/types';
 import { RoutinePlayer } from './RoutinePlayer';
+import { RoutineBuilder } from './RoutineBuilder';
 
 const EMOJIS = ['☀️', '🌙', '🧘', '💪', '📖', '🌱', '🚿', '✍️', '🧠', '🏃'];
 
@@ -17,13 +18,7 @@ export function RoutinesPage() {
   const routines = useLiveQuery(() => db.routines.orderBy('order').toArray(), [], []);
   const [playing, setPlaying] = useState<Routine | null>(null);
   const [editing, setEditing] = useState<Routine | 'new' | null>(null);
-
-  async function addTemplate(kind: 'morning' | 'evening') {
-    const emoji = kind === 'morning' ? '☀️' : '🌙';
-    const name = t(`routine.tpl.${kind}.name` as TKey);
-    const titles = t(`routine.tpl.${kind}.steps` as TKey).split('|');
-    await createRoutine({ name, emoji, steps: titles.map((x) => newRoutineStep(x.trim())) });
-  }
+  const [building, setBuilding] = useState<'morning' | 'evening' | null>(null);
 
   const list = routines ?? [];
 
@@ -46,8 +41,8 @@ export function RoutinesPage() {
             <h2 className="display-serif text-[22px] text-ink mt-2">{t('routine.emptyTitle')}</h2>
             <p className="text-[14px] text-ink-2 mt-1.5 max-w-xs mx-auto leading-relaxed">{t('routine.emptyDesc')}</p>
             <div className="flex flex-col gap-2.5 mt-6 max-w-xs mx-auto">
-              <Button block onClick={() => void addTemplate('morning')}>☀️ {t('routine.tpl.morning.name')}</Button>
-              <Button block onClick={() => void addTemplate('evening')}>🌙 {t('routine.tpl.evening.name')}</Button>
+              <Button block onClick={() => setBuilding('morning')}>☀️ {t('routine.tpl.morning.name')}</Button>
+              <Button block onClick={() => setBuilding('evening')}>🌙 {t('routine.tpl.evening.name')}</Button>
               <button onClick={() => setEditing('new')} className="text-[14px] font-semibold text-habit py-2">{t('routine.new')}</button>
             </div>
           </div>
@@ -72,7 +67,7 @@ export function RoutinesPage() {
                 {missing.map((tp) => (
                   <button
                     key={tp.kind}
-                    onClick={() => void addTemplate(tp.kind)}
+                    onClick={() => setBuilding(tp.kind)}
                     className="flex-1 rounded-card bg-card shadow-card px-3 py-3.5 flex items-center justify-center gap-2 text-[14px] font-bold text-ink active:scale-[0.97] transition-transform"
                   >
                     <span className="text-[18px]" aria-hidden>{tp.emoji}</span>
@@ -88,6 +83,7 @@ export function RoutinesPage() {
         )}
       </Screen>
 
+      {building && <RoutineBuilder kind={building} onClose={() => setBuilding(null)} />}
       {editing && <RoutineForm routine={editing === 'new' ? null : editing} onClose={() => setEditing(null)} />}
       {playing && <RoutinePlayer routine={playing} onClose={() => setPlaying(null)} />}
     </>

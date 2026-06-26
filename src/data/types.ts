@@ -386,6 +386,8 @@ export interface Routine extends Timestamped {
   /** A simple emoji used as the routine's icon. */
   emoji: string;
   steps: RoutineStep[];
+  /** Optional personal notes for this routine. */
+  notes?: string;
   order: number;
 }
 
