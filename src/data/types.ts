@@ -327,6 +327,25 @@ export interface DayPlan {
 }
 
 // ----------------------------------------------------------------------------
+// Routines — Fabulous-style rituals: an ordered list of small steps you run
+// through with a guided player (optional per-step timer).
+// ----------------------------------------------------------------------------
+export interface RoutineStep {
+  id: ID;
+  title: string;
+  /** Optional countdown for this step, in seconds. */
+  durationSec?: number;
+}
+
+export interface Routine extends Timestamped {
+  name: string;
+  /** A simple emoji used as the routine's icon. */
+  emoji: string;
+  steps: RoutineStep[];
+  order: number;
+}
+
+// ----------------------------------------------------------------------------
 // Goals
 // ----------------------------------------------------------------------------
 export type GoalLinkType = 'none' | 'project' | 'habit' | 'milestones';

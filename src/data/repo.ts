@@ -17,6 +17,8 @@ import type {
   Note,
   NoteChecklistItem,
   Project,
+  Routine,
+  RoutineStep,
   Settings,
   Subtask,
   Task,
@@ -653,6 +655,7 @@ export async function clearAllData() {
     db.weightLogs.clear(),
     db.notes.clear(),
     db.dayPlans.clear(),
+    db.routines.clear(),
   ]);
 }
 
@@ -687,4 +690,34 @@ export async function toggleDayItem(date: string, id: string): Promise<void> {
 export async function removeDayItem(date: string, id: string): Promise<void> {
   const p = await readDayPlan(date);
   await saveDayPlan({ ...p, items: p.items.filter((it) => it.id !== id) });
+}
+
+// ----------------------------------------------------------------------------
+// Routines — Fabulous-style rituals (an ordered list of steps + guided player).
+// ----------------------------------------------------------------------------
+export function newRoutineStep(title: string, durationSec?: number): RoutineStep {
+  return { id: uid('rst_'), title, durationSec };
+}
+
+export async function createRoutine(data: { name: string; emoji: string; steps: RoutineStep[] }): Promise<Routine> {
+  const count = await db.routines.count();
+  const routine: Routine = {
+    id: uid('rtn_'),
+    name: data.name,
+    emoji: data.emoji,
+    steps: data.steps,
+    order: count,
+    createdAt: now(),
+    updatedAt: now(),
+  };
+  await db.routines.put(routine);
+  return routine;
+}
+
+export async function saveRoutine(routine: Routine): Promise<void> {
+  await db.routines.put({ ...routine, updatedAt: now() });
+}
+
+export async function deleteRoutine(id: string): Promise<void> {
+  await db.routines.delete(id);
 }

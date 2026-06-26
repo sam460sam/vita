@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Link } from 'react-router-dom';
 import { startOfWeek, addDays, subDays, format } from 'date-fns';
-import { Check } from 'lucide-react';
+import { Check, ChevronRight } from 'lucide-react';
 import { db } from '@/data/db';
 import { readSettings, toggleHabitLog, setWaterMl, addWaterMl } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
@@ -133,6 +133,12 @@ export function HomeScreen() {
 
         {/* Plan your day */}
         <DayPlanCard />
+
+        {/* Routines */}
+        <Link to="/routine" className="rounded-card bg-card shadow-card px-4 py-3.5 mt-3 flex items-center justify-between active:bg-section transition-colors">
+          <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><span className="text-[20px]" aria-hidden>🌿</span> {t('routine.title')}</span>
+          <ChevronRight size={18} className="text-ink-3" />
+        </Link>
 
         {/* Today's habits */}
         <div className="flex items-center justify-between mt-6 mb-2.5">

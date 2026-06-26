@@ -16,6 +16,7 @@ import type {
   Note,
   PersonalityResult,
   Project,
+  Routine,
   Settings,
   SubscriptionCache,
   Task,
@@ -43,6 +44,7 @@ export class VitaDB extends Dexie {
   subscription!: Table<SubscriptionCache, string>;
   personality!: Table<PersonalityResult, string>;
   dayPlans!: Table<DayPlan, string>;
+  routines!: Table<Routine, string>;
 
   constructor() {
     super('vita');
@@ -86,6 +88,10 @@ export class VitaDB extends Dexie {
     // v8: "plan your day" — intention + quick to-dos, keyed by date. Additive only.
     this.version(8).stores({
       dayPlans: 'date',
+    });
+    // v9: Fabulous-style routines. Additive only.
+    this.version(9).stores({
+      routines: 'id, order',
     });
   }
 }
