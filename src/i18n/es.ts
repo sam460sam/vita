@@ -1178,6 +1178,8 @@ export const es: Record<TKey, string> = {
   'workout.lastTime': 'Última vez: {w} kg × {r}',
   'workout.lastTimeReps': 'Última vez: {r} reps',
   'workout.tryWeight': 'Prueba {w} kg',
+  'workout.tryReps': 'Prueba {r} reps',
+  'workout.pr': '¡Récord!',
   'workout.empty': 'Aún no hay entrenamientos. ¡Empieza el primero!',
   'workout.inProgress': 'En curso',
   'workout.summary': '{ex} ejercicios · {sets} series',

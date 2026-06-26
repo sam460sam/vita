@@ -12,7 +12,7 @@ import { useT, useI18n } from '@/i18n';
 import type { WorkoutSession, WorkoutEntry, ExerciseDef } from '@/data/types';
 import { exerciseName } from './exercises';
 import { ExercisePicker } from './ExercisePicker';
-import { lastStatFor, suggestNextWeight } from './progression';
+import { lastStatFor, suggestNextWeight, suggestNextReps, prevBestMetric, currentBestMetric } from './progression';
 
 export function WorkoutSessionPage() {
   const t = useT();
@@ -58,6 +58,10 @@ export function WorkoutSessionPage() {
     platform.haptic();
     patchEntry(eid, (en) => ({ ...en, sets: en.sets.map((x) => (x.weightKg === 0 ? { ...x, weightKg: w } : x)) }));
   }
+  function applyReps(eid: string, r: number) {
+    platform.haptic();
+    patchEntry(eid, (en) => ({ ...en, sets: en.sets.map((x) => ({ ...x, reps: r })) }));
+  }
 
   async function finish() {
     await saveWorkoutSession({ ...s, finishedAt: Date.now() });
@@ -85,26 +89,41 @@ export function WorkoutSessionPage() {
 
         {s.entries.map((entry) => {
           const last = lastStatFor(sessions ?? [], entry.exerciseId);
-          const next = last ? suggestNextWeight(last) : 0;
+          const nextW = last ? suggestNextWeight(last) : 0;
+          const nextR = last ? suggestNextReps(last) : 0;
+          const prevBest = prevBestMetric(sessions ?? [], entry.exerciseId, s.id);
+          const isPR = prevBest > 0 && currentBestMetric(entry) > prevBest;
           return (
           <div key={entry.id} className="rounded-card bg-card shadow-card p-4 mb-3">
             <div className="flex items-center justify-between gap-2 mb-2">
               <div className="min-w-0">
-                <div className="text-[16px] font-bold text-ink truncate">{entry.name}</div>
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-[16px] font-bold text-ink truncate">{entry.name}</span>
+                  {isPR && (
+                    <span className="flex-shrink-0 inline-flex items-center gap-1 text-[11px] font-extrabold px-2 py-0.5 rounded-full" style={{ background: 'color-mix(in srgb, var(--c-gold) 22%, transparent)', color: 'var(--c-gold-2)' }}>
+                      🏆 {t('workout.pr')}
+                    </span>
+                  )}
+                </div>
                 <div className="text-[12px] text-ink-3">{t(`muscle.${entry.muscle}`)}</div>
               </div>
               <button onClick={() => update({ ...s, entries: s.entries.filter((e) => e.id !== entry.id) })} aria-label={t('common.delete')} className="text-ink-3 p-1"><Trash2 size={16} /></button>
             </div>
 
-            {/* Progression hint: what you did last time + a one-tap suggested load. */}
+            {/* Progression hint: what you did last time + a one-tap suggested target. */}
             {last && (
               <div className="flex items-center gap-2 -mt-1 mb-2.5 flex-wrap">
                 <span className="text-[12px] text-ink-3">
                   {last.weightKg > 0 ? t('workout.lastTime', { w: last.weightKg, r: last.reps }) : t('workout.lastTimeReps', { r: last.reps })}
                 </span>
-                {next > 0 && (
-                  <button onClick={() => applyWeight(entry.id, next)} className="text-[12px] font-bold px-2.5 py-0.5 rounded-full active:scale-95 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-gold) 18%, transparent)', color: 'var(--c-gold-2)' }}>
-                    {t('workout.tryWeight', { w: next })}
+                {nextW > 0 && (
+                  <button onClick={() => applyWeight(entry.id, nextW)} className="text-[12px] font-bold px-2.5 py-0.5 rounded-full active:scale-95 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-gold) 18%, transparent)', color: 'var(--c-gold-2)' }}>
+                    {t('workout.tryWeight', { w: nextW })}
+                  </button>
+                )}
+                {nextW === 0 && nextR > 0 && (
+                  <button onClick={() => applyReps(entry.id, nextR)} className="text-[12px] font-bold px-2.5 py-0.5 rounded-full active:scale-95 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-gold) 18%, transparent)', color: 'var(--c-gold-2)' }}>
+                    {t('workout.tryReps', { r: nextR })}
                   </button>
                 )}
               </div>

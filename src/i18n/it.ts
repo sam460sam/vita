@@ -1182,6 +1182,8 @@ export const it = {
   'workout.lastTime': 'Ultima volta: {w} kg × {r}',
   'workout.lastTimeReps': 'Ultima volta: {r} reps',
   'workout.tryWeight': 'Prova {w} kg',
+  'workout.tryReps': 'Prova {r} reps',
+  'workout.pr': 'Record!',
   'workout.empty': 'Nessun allenamento ancora. Inizia il primo!',
   'workout.inProgress': 'In corso',
   'workout.summary': '{ex} esercizi · {sets} serie',

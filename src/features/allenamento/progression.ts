@@ -34,3 +34,35 @@ export function suggestNextWeight(last: LastStat): number {
   const step = last.weightKg >= 40 ? 5 : 2.5;
   return last.weightKg + step;
 }
+
+/** Bodyweight progression: one more rep if you completed everything last time. */
+export function suggestNextReps(last: LastStat): number {
+  if (last.weightKg > 0) return 0; // weighted lifts progress by load, not reps
+  return last.allDone ? last.reps + 1 : last.reps;
+}
+
+function epley(w: number, reps: number): number {
+  return w * (1 + reps / 30);
+}
+function setMetric(weightKg: number, reps: number): number {
+  return weightKg > 0 ? epley(weightKg, reps) : reps;
+}
+
+/** Best metric for an exercise across past finished sessions (excluding one). */
+export function prevBestMetric(sessions: WorkoutSession[], exerciseId: string, excludeSessionId: string): number {
+  let best = 0;
+  for (const s of sessions) {
+    if (!s.finishedAt || s.id === excludeSessionId) continue;
+    const e = s.entries.find((x) => x.exerciseId === exerciseId);
+    if (!e) continue;
+    for (const set of e.sets) best = Math.max(best, setMetric(set.weightKg, set.reps));
+  }
+  return best;
+}
+
+/** Best metric among the *completed* sets of the current entry. */
+export function currentBestMetric(entry: { sets: { weightKg: number; reps: number; done: boolean }[] }): number {
+  let best = 0;
+  for (const set of entry.sets) if (set.done) best = Math.max(best, setMetric(set.weightKg, set.reps));
+  return best;
+}
