@@ -15,6 +15,27 @@ const CONFIG: Record<Kind, { emoji: string; on: boolean[] }> = {
   evening: { emoji: '🌙', on: [true, true, true, true, false, false] },
 };
 
+// Quick "2-tap" questions that pre-select the most fitting steps. `pick` is an
+// ordered list of suggestion indices (best-first); the time answer caps how
+// many are turned on.
+const GOALS: Record<Kind, { key: string; emoji: string; pick: number[] }[]> = {
+  morning: [
+    { key: 'energy', emoji: '⚡', pick: [0, 1, 2, 5] },
+    { key: 'calm', emoji: '🌿', pick: [0, 3, 1, 5] },
+    { key: 'focus', emoji: '🎯', pick: [0, 3, 4, 2] },
+  ],
+  evening: [
+    { key: 'relax', emoji: '🌿', pick: [4, 5, 1, 0] },
+    { key: 'sleep', emoji: '😴', pick: [0, 5, 4, 2] },
+    { key: 'reflect', emoji: '🪞', pick: [1, 2, 3, 0] },
+  ],
+};
+const TIMES = [
+  { min: 5, cap: 2 },
+  { min: 10, cap: 4 },
+  { min: 20, cap: 6 },
+];
+
 /**
  * "Build your routine" — opens when tapping the Morning/Evening quick-add.
  * The user composes their own to-do list from evidence-based suggestions
@@ -29,12 +50,25 @@ export function RoutineBuilder({ kind, onClose, onCreated }: { kind: Kind; onClo
     return { title, why: why ?? '' };
   });
 
+  const [phase, setPhase] = useState<'ask' | 'build'>('ask');
+  const [timeCap, setTimeCap] = useState<number | null>(null);
+  const [goalKey, setGoalKey] = useState<string | null>(null);
   const [picked, setPicked] = useState<boolean[]>(suggestions.map((_, i) => cfg.on[i] ?? false));
   const [custom, setCustom] = useState<string[]>([]);
   const [draft, setDraft] = useState('');
   const [notes, setNotes] = useState('');
 
   const total = picked.filter(Boolean).length + custom.length;
+
+  // Turn the two answers into a pre-selection, then reveal the editable list.
+  function applyQuiz() {
+    if (goalKey && timeCap) {
+      const goal = GOALS[kind].find((g) => g.key === goalKey)!;
+      const on = goal.pick.slice(0, timeCap);
+      setPicked(suggestions.map((_, i) => on.includes(i)));
+    }
+    setPhase('build');
+  }
 
   function toggle(i: number) {
     platform.haptic();
@@ -57,14 +91,53 @@ export function RoutineBuilder({ kind, onClose, onCreated }: { kind: Kind; onClo
     onCreated?.(r);
   }
 
+  const chip = (sel: boolean) =>
+    sel
+      ? { background: 'color-mix(in srgb, var(--c-primary) 16%, var(--c-card))', boxShadow: 'inset 0 0 0 1px color-mix(in srgb, var(--c-primary) 50%, transparent)' }
+      : { background: 'var(--c-card)', boxShadow: 'inset 0 0 0 1px var(--c-line)' };
+
+  const vioTip = (
+    <div className="flex items-start gap-3 rounded-card p-3.5" style={{ background: 'color-mix(in srgb, var(--c-primary) 12%, var(--c-section))' }}>
+      <VioCompanion mood="happy" size={48} />
+      <p className="flex-1 text-[13.5px] text-ink leading-relaxed pt-0.5">{t(`rb.${kind}.tip` as TKey)}</p>
+    </div>
+  );
+
   return (
     <Sheet open onClose={onClose} title={t(`routine.tpl.${kind}.name` as TKey)}>
+      {phase === 'ask' ? (
+        <div className="space-y-5">
+          {vioTip}
+          <div>
+            <h3 className="text-[13px] font-bold text-ink-3 uppercase tracking-wide mb-2">{t('rb.q.time')}</h3>
+            <div className="flex gap-2">
+              {TIMES.map((tm) => (
+                <button key={tm.min} onClick={() => setTimeCap(tm.cap)} className="flex-1 rounded-2xl py-3 text-[15px] font-bold text-ink transition-colors" style={chip(timeCap === tm.cap)}>
+                  {tm.min} {t('rb.min')}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h3 className="text-[13px] font-bold text-ink-3 uppercase tracking-wide mb-2">{t('rb.q.goal')}</h3>
+            <div className="flex gap-2">
+              {GOALS[kind].map((g) => (
+                <button key={g.key} onClick={() => setGoalKey(g.key)} className="flex-1 rounded-2xl py-3 flex flex-col items-center gap-1 text-[13.5px] font-bold text-ink transition-colors" style={chip(goalKey === g.key)}>
+                  <span className="text-[20px]" aria-hidden>{g.emoji}</span>
+                  {t(`rb.goal.${g.key}` as TKey)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-2 pt-1">
+            <Button block disabled={!timeCap || !goalKey} onClick={applyQuiz}>{t('rb.q.continue')}</Button>
+            <button onClick={() => setPhase('build')} className="w-full text-[14px] font-semibold text-ink-3 py-2">{t('rb.q.skip')}</button>
+          </div>
+        </div>
+      ) : (
       <div className="space-y-5">
         {/* Vio's personal tip */}
-        <div className="flex items-start gap-3 rounded-card p-3.5" style={{ background: 'color-mix(in srgb, var(--c-primary) 12%, var(--c-section))' }}>
-          <VioCompanion mood="happy" size={48} />
-          <p className="flex-1 text-[13.5px] text-ink leading-relaxed pt-0.5">{t(`rb.${kind}.tip` as TKey)}</p>
-        </div>
+        {vioTip}
 
         {/* Evidence-based suggestions */}
         <div>
@@ -126,6 +199,7 @@ export function RoutineBuilder({ kind, onClose, onCreated }: { kind: Kind; onClo
         {total === 0 && <p className="text-[13px] text-ink-3 text-center">{t('rb.empty')}</p>}
         <Button block disabled={total === 0} onClick={() => void create()}>{t('rb.create')} · {total}</Button>
       </div>
+      )}
     </Sheet>
   );
 }
