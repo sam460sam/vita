@@ -1,13 +1,13 @@
 import { useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate, Link } from 'react-router-dom';
-import { Dumbbell, ChevronRight, Watch, Sparkles, Copy, SlidersHorizontal, TrendingUp, Camera, Play, Trash2, BookMarked } from 'lucide-react';
+import { Dumbbell, ChevronRight, Watch, Sparkles, Copy, SlidersHorizontal, TrendingUp, Camera, Play, Trash2, BookMarked, Timer, Check } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { db } from '@/data/db';
-import { createWorkoutSession, saveWorkoutSession, duplicateWorkoutSession, readSettings, createWorkoutPlan, startSessionFromPlan, deleteWorkoutPlan } from '@/data/repo';
+import { createWorkoutSession, saveWorkoutSession, duplicateWorkoutSession, readSettings, createWorkoutPlan, startSessionFromPlan, deleteWorkoutPlan, setRestSec } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
-import { useToast } from '@/ui';
+import { useToast, Sheet } from '@/ui';
 import { activeDfnLocale } from '@/lib/format';
 import { useT, useI18n, type TKey } from '@/i18n';
 import { EQUIPMENT_LIST } from './exercises';
@@ -28,10 +28,12 @@ export function WorkoutPage() {
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const [genOpen, setGenOpen] = useState(false);
   const [equipOpen, setEquipOpen] = useState(false);
+  const [restOpen, setRestOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
 
   const equipment: Equipment[] = settings?.equipment ?? EQUIPMENT_LIST;
+  const restSec = settings?.restSec ?? 90;
   const lastFinished = (sessions ?? []).find((s) => s.finishedAt);
 
   async function start() {
@@ -142,6 +144,10 @@ export function WorkoutPage() {
           <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><SlidersHorizontal size={18} className="text-habit" /> {t('workout.equipment')}</span>
           <ChevronRight size={18} className="text-ink-3" />
         </button>
+        <button onClick={() => setRestOpen(true)} className="w-full rounded-card bg-card shadow-card px-4 py-3.5 mt-2.5 flex items-center justify-between active:bg-section transition-colors text-left">
+          <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><Timer size={18} className="text-habit" /> {t('workout.restDefault')}</span>
+          <span className="flex items-center gap-1.5 text-[14px] font-bold text-ink-2">{restSec}s <ChevronRight size={18} className="text-ink-3" /></span>
+        </button>
         <Link to="/allenamento/progressi" className="rounded-card bg-card shadow-card px-4 py-3.5 mt-2.5 flex items-center justify-between active:bg-section transition-colors">
           <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><TrendingUp size={18} className="text-habit" /> {t('workout.records')}</span>
           <ChevronRight size={18} className="text-ink-3" />
@@ -179,6 +185,25 @@ export function WorkoutPage() {
 
       {genOpen && <GenerateSheet equipment={equipment} onClose={() => setGenOpen(false)} />}
       {equipOpen && <EquipmentSheet current={equipment} onClose={() => setEquipOpen(false)} />}
+      {restOpen && (
+        <Sheet open onClose={() => setRestOpen(false)} title={t('workout.restTitle')}>
+          <div className="grid grid-cols-3 gap-2.5">
+            {[45, 60, 75, 90, 120, 150, 180].map((n) => {
+              const active = restSec === n;
+              return (
+                <button
+                  key={n}
+                  onClick={() => { void setRestSec(n); setRestOpen(false); }}
+                  className="rounded-2xl py-4 text-[16px] font-bold text-ink flex items-center justify-center gap-1.5 transition-colors"
+                  style={active ? { background: 'color-mix(in srgb, var(--c-primary) 16%, var(--c-card))', boxShadow: 'inset 0 0 0 1px color-mix(in srgb, var(--c-primary) 50%, transparent)' } : { background: 'var(--c-card)', boxShadow: 'inset 0 0 0 1px var(--c-line)' }}
+                >
+                  {active && <Check size={15} style={{ color: 'var(--c-primary)' }} strokeWidth={3} />} {n}s
+                </button>
+              );
+            })}
+          </div>
+        </Sheet>
+      )}
     </>
   );
 }

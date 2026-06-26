@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Plus, X, Check, Trash2, Timer, BookMarked } from 'lucide-react';
 import { db } from '@/data/db';
-import { saveWorkoutSession, deleteWorkoutSession, newWorkoutEntry, createWorkoutPlan } from '@/data/repo';
+import { saveWorkoutSession, deleteWorkoutSession, newWorkoutEntry, createWorkoutPlan, readSettings } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { useToast } from '@/ui';
@@ -23,16 +23,20 @@ export function WorkoutSessionPage() {
   const [session, setSession] = useState<WorkoutSession | null | undefined>(undefined);
   const [picker, setPicker] = useState(false);
   const [rest, setRest] = useState<number | null>(null);
+  const [restCtx, setRestCtx] = useState<{ eid: string; k: number; startedAt: number } | null>(null);
   const sessions = useLiveQuery(() => db.workoutSessions.toArray(), [], []);
+  const settings = useLiveQuery(() => readSettings(), [], undefined);
+  const defaultRest = settings?.restSec ?? 90;
 
   useEffect(() => { void db.workoutSessions.get(id).then((x) => setSession(x ?? null)); }, [id]);
 
   // Rest countdown after completing a set.
   useEffect(() => {
     if (rest == null) return;
-    if (rest <= 0) { platform.haptic(); setRest(null); return; }
+    if (rest <= 0) { platform.haptic(); endRest(); return; }
     const tid = setTimeout(() => setRest((r) => (r == null ? r : r - 1)), 1000);
     return () => clearTimeout(tid);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rest]);
 
   if (session === undefined) return null;
@@ -49,6 +53,27 @@ export function WorkoutSessionPage() {
   function patchEntry(eid: string, fn: (e: WorkoutEntry) => WorkoutEntry) {
     update({ ...s, entries: s.entries.map((e) => (e.id === eid ? fn(e) : e)) });
   }
+  function setSetField(eid: string, k: number, fn: (set: WorkoutSession['entries'][number]['sets'][number]) => WorkoutSession['entries'][number]['sets'][number]) {
+    patchEntry(eid, (en) => ({ ...en, sets: en.sets.map((x, i) => (i === k ? fn(x) : x)) }));
+  }
+  // Store the rest actually taken on the set that started the running timer.
+  function recordPending() {
+    if (!restCtx) return;
+    const taken = Math.max(1, Math.round((Date.now() - restCtx.startedAt) / 1000));
+    setSetField(restCtx.eid, restCtx.k, (x) => ({ ...x, restTakenSec: taken }));
+    setRestCtx(null);
+  }
+  function endRest() {
+    recordPending();
+    setRest(null);
+  }
+  const REST_PRESETS = [45, 60, 75, 90, 120, 150, 180];
+  function cycleRest(eid: string, cur: number) {
+    platform.haptic();
+    const i = REST_PRESETS.findIndex((p) => p >= cur);
+    const next = REST_PRESETS[(i < 0 ? -1 : i) + 1] ?? REST_PRESETS[0];
+    patchEntry(eid, (en) => ({ ...en, restSec: next }));
+  }
   function addExercise(def: ExerciseDef) {
     update({ ...s, entries: [...s.entries, newWorkoutEntry(def.id, exerciseName(def, lang), def.muscle)] });
     setPicker(false);
@@ -64,7 +89,12 @@ export function WorkoutSessionPage() {
   }
 
   async function finish() {
-    await saveWorkoutSession({ ...s, finishedAt: Date.now() });
+    let entries = s.entries;
+    if (restCtx) {
+      const taken = Math.max(1, Math.round((Date.now() - restCtx.startedAt) / 1000));
+      entries = entries.map((e) => (e.id === restCtx.eid ? { ...e, sets: e.sets.map((x, i) => (i === restCtx.k ? { ...x, restTakenSec: taken } : x)) } : e));
+    }
+    await saveWorkoutSession({ ...s, entries, finishedAt: Date.now() });
     nav('/allenamento');
   }
   async function removeSession() {
@@ -105,7 +135,13 @@ export function WorkoutSessionPage() {
                     </span>
                   )}
                 </div>
-                <div className="text-[12px] text-ink-3">{t(`muscle.${entry.muscle}`)}</div>
+                <div className="flex items-center gap-2 text-[12px] text-ink-3">
+                  <span>{t(`muscle.${entry.muscle}`)}</span>
+                  <span aria-hidden>·</span>
+                  <button onClick={() => cycleRest(entry.id, entry.restSec ?? defaultRest)} className="inline-flex items-center gap-1 font-semibold active:scale-95 transition-transform" style={{ color: 'var(--c-ink-2)' }}>
+                    <Timer size={12} /> {entry.restSec ?? defaultRest}s
+                  </button>
+                </div>
               </div>
               <button onClick={() => update({ ...s, entries: s.entries.filter((e) => e.id !== entry.id) })} aria-label={t('common.delete')} className="text-ink-3 p-1"><Trash2 size={16} /></button>
             </div>
@@ -152,7 +188,14 @@ export function WorkoutSessionPage() {
                   className="flex-1 min-w-0 bg-section rounded-xl py-2 text-center text-[15px] font-semibold text-ink outline-none"
                 />
                 <button
-                  onClick={() => { platform.haptic(); const turningOn = !set.done; patchEntry(entry.id, (en) => ({ ...en, sets: en.sets.map((x, i) => (i === k ? { ...x, done: !x.done } : x)) })); if (turningOn) setRest(90); }}
+                  onClick={() => {
+                    platform.haptic();
+                    const turningOn = !set.done;
+                    recordPending();
+                    setSetField(entry.id, k, (x) => ({ ...x, done: !x.done }));
+                    if (turningOn) { setRest(entry.restSec ?? defaultRest); setRestCtx({ eid: entry.id, k, startedAt: Date.now() }); }
+                    else { setRest(null); setRestCtx(null); }
+                  }}
                   className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 border-2"
                   style={set.done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }}
                   aria-label="done"
@@ -162,6 +205,13 @@ export function WorkoutSessionPage() {
                 <button onClick={() => patchEntry(entry.id, (en) => ({ ...en, sets: en.sets.filter((_, i) => i !== k) }))} aria-label={t('common.close')} className="w-6 text-ink-3 flex-shrink-0"><X size={15} /></button>
               </div>
             ))}
+            {entry.sets.some((x) => x.restTakenSec) && (
+              <div className="flex flex-wrap gap-x-3 gap-y-0.5 px-1 mt-0.5">
+                {entry.sets.map((set, k) => set.restTakenSec ? (
+                  <span key={k} className="text-[10.5px] text-ink-3">{k + 1}: ↺ {fmtRest(set.restTakenSec)}</span>
+                ) : null)}
+              </div>
+            )}
 
             <button
               onClick={() => patchEntry(entry.id, (en) => ({ ...en, sets: [...en.sets, { ...(en.sets[en.sets.length - 1] ?? { reps: 10, weightKg: 0 }), done: false }] }))}
@@ -202,7 +252,7 @@ export function WorkoutSessionPage() {
             <span className="font-extrabold tnum text-[17px]">{fmtRest(rest)}</span>
             <span className="flex-1 text-[13px] opacity-80">{t('workout.rest')}</span>
             <button onClick={() => setRest((r) => (r ?? 0) + 15)} className="text-[13px] font-bold px-1.5">+15</button>
-            <button onClick={() => setRest(null)} className="text-[13px] font-bold px-1.5">{t('workout.skip')}</button>
+            <button onClick={endRest} className="text-[13px] font-bold px-1.5">{t('workout.skip')}</button>
           </div>
         </div>
       )}

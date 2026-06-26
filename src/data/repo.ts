@@ -766,6 +766,11 @@ export async function setEquipment(equipment: Equipment[]): Promise<void> {
   await db.settings.put({ ...s, equipment, updatedAt: now() });
 }
 
+export async function setRestSec(restSec: number): Promise<void> {
+  const s = await readSettings();
+  await db.settings.put({ ...s, restSec, updatedAt: now() });
+}
+
 /** Clone a session's exercises into a fresh in-progress session (sets reset). */
 export async function duplicateWorkoutSession(src: WorkoutSession): Promise<WorkoutSession> {
   const s = await createWorkoutSession(src.title);

@@ -130,6 +130,8 @@ export interface Settings {
   /** Gym equipment the user has available (drives the workout generator).
    *  `undefined` = not chosen yet → treated as "everything available". */
   equipment?: Equipment[];
+  /** Default rest-timer length between sets, in seconds (fallback 90). */
+  restSec?: number;
   /** What the user mainly wants from Vita (set in onboarding). Drives nudges. */
   focus?: 'health' | 'productivity' | 'wellbeing' | 'all';
   /** Optional personal details from onboarding (kept on-device only). */
@@ -351,6 +353,8 @@ export interface WorkoutSet {
   reps: number;
   weightKg: number;
   done: boolean;
+  /** Rest actually taken after completing this set, in seconds (recorded live). */
+  restTakenSec?: number;
 }
 
 export interface WorkoutEntry {
@@ -360,6 +364,8 @@ export interface WorkoutEntry {
   name: string;
   muscle: MuscleGroup;
   sets: WorkoutSet[];
+  /** Per-exercise rest override, in seconds (falls back to the global default). */
+  restSec?: number;
 }
 
 export interface WorkoutSession extends Timestamped {
