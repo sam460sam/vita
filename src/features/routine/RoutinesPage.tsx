@@ -27,6 +27,15 @@ export function RoutinesPage() {
 
   const list = routines ?? [];
 
+  // Quick-add templates that haven't been created yet (always available, not
+  // just on the empty screen) so a one-tap morning + evening is always there.
+  const tpls: { kind: 'morning' | 'evening'; emoji: string }[] = [
+    { kind: 'morning', emoji: '☀️' },
+    { kind: 'evening', emoji: '🌙' },
+  ];
+  const names = new Set(list.map((r) => r.name));
+  const missing = tpls.filter((tp) => !names.has(t(`routine.tpl.${tp.kind}.name` as TKey)));
+
   return (
     <>
       <PageHeader title={t('routine.title')} back />
@@ -58,7 +67,21 @@ export function RoutinesPage() {
                 </button>
               </div>
             ))}
-            <button onClick={() => setEditing('new')} className="w-full mt-1 h-[52px] rounded-2xl text-white font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-card" style={{ background: 'linear-gradient(180deg, #27EE76, #13C25C)' }}>
+            {missing.length > 0 && (
+              <div className="flex gap-2.5 mb-3">
+                {missing.map((tp) => (
+                  <button
+                    key={tp.kind}
+                    onClick={() => void addTemplate(tp.kind)}
+                    className="flex-1 rounded-card bg-card shadow-card px-3 py-3.5 flex items-center justify-center gap-2 text-[14px] font-bold text-ink active:scale-[0.97] transition-transform"
+                  >
+                    <span className="text-[18px]" aria-hidden>{tp.emoji}</span>
+                    {t(`routine.tpl.${tp.kind}.name` as TKey)}
+                  </button>
+                ))}
+              </div>
+            )}
+            <button onClick={() => setEditing('new')} className="w-full mt-1 h-[52px] rounded-2xl text-on-primary font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-glow-strong" style={{ background: 'linear-gradient(180deg, #27EE76, #13C25C)' }}>
               <Plus size={20} /> {t('routine.new')}
             </button>
           </>
