@@ -1233,6 +1233,7 @@ export const fr: Record<TKey, string> = {
   'workout.restTitle': 'Temps de récupération',
   'workout.restTaken': 'Récup. {t}',
   'workout.restCustom': 'Personnalisé',
+  'workout.avgRest': 'Récup. moy. {t}',
   'workout.records': 'Records',
   'workout.noProgress': 'Termine quelques séances pour voir tes records.',
   'workout.est1rm': '1RM est. {kg} kg',

@@ -1233,6 +1233,7 @@ export const de: Record<TKey, string> = {
   'workout.restTitle': 'Pausenzeit',
   'workout.restTaken': 'Pause {t}',
   'workout.restCustom': 'Benutzerdefiniert',
+  'workout.avgRest': 'Ø Pause {t}',
   'workout.records': 'Rekorde',
   'workout.noProgress': 'Schließe ein paar Trainings ab, um deine Rekorde zu sehen.',
   'workout.est1rm': 'Gesch. 1RM {kg} kg',

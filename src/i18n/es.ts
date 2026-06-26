@@ -1233,6 +1233,7 @@ export const es: Record<TKey, string> = {
   'workout.restTitle': 'Tiempo de descanso',
   'workout.restTaken': 'Descanso {t}',
   'workout.restCustom': 'Personalizado',
+  'workout.avgRest': 'Descanso medio {t}',
   'workout.records': 'Récords',
   'workout.noProgress': 'Completa algunos entrenamientos para ver tus récords.',
   'workout.est1rm': '1RM est. {kg} kg',

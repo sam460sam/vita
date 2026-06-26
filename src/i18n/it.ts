@@ -1237,6 +1237,7 @@ export const it = {
   'workout.restTitle': 'Tempo di recupero',
   'workout.restTaken': 'Riposo {t}',
   'workout.restCustom': 'Personalizzato',
+  'workout.avgRest': 'Riposo medio {t}',
   'workout.records': 'Record',
   'workout.noProgress': 'Completa qualche allenamento per vedere i tuoi record.',
   'workout.est1rm': '1RM stimato {kg} kg',

@@ -17,10 +17,19 @@ interface ExProgress {
   weighted: boolean;
   /** Per-session best metric (for the sparkline), oldest→newest. */
   points: number[];
+  /** Running totals to derive the average rest actually taken. */
+  restSum: number;
+  restCount: number;
 }
 
 function epley(w: number, reps: number): number {
   return w * (1 + reps / 30);
+}
+
+function fmtTime(s: number): string {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${m}:${String(sec).padStart(2, '0')}`;
 }
 
 function compute(sessions: WorkoutSession[]): ExProgress[] {
@@ -43,9 +52,12 @@ function compute(sessions: WorkoutSession[]): ExProgress[] {
         }
       }
       if (sessionBest <= 0) continue;
-      const cur = map.get(e.exerciseId) ?? { id: e.exerciseId, name: e.name, muscle: e.muscle, bestW: 0, bestReps: 0, e1rm: 0, weighted, points: [] };
+      const cur = map.get(e.exerciseId) ?? { id: e.exerciseId, name: e.name, muscle: e.muscle, bestW: 0, bestReps: 0, e1rm: 0, weighted, points: [], restSum: 0, restCount: 0 };
       cur.name = e.name;
       cur.points.push(Math.round(sessionBest));
+      for (const set of e.sets) {
+        if (set.restTakenSec && set.restTakenSec > 0) { cur.restSum += set.restTakenSec; cur.restCount += 1; }
+      }
       const curBest = cur.weighted ? cur.e1rm : cur.bestReps;
       if (sessionBest > curBest) {
         cur.bestW = bw;
@@ -78,7 +90,10 @@ export function WorkoutProgressPage() {
                 <div className="flex items-end justify-between gap-2">
                   <div className="min-w-0">
                     <div className="text-[15.5px] font-bold text-ink truncate">{ex.name}</div>
-                    <div className="text-[12px] text-ink-3">{t(`muscle.${ex.muscle}` as TKey)}</div>
+                    <div className="text-[12px] text-ink-3">
+                      {t(`muscle.${ex.muscle}` as TKey)}
+                      {ex.restCount > 0 && <> · {t('workout.avgRest', { t: fmtTime(Math.round(ex.restSum / ex.restCount)) })}</>}
+                    </div>
                   </div>
                   <div className="text-right flex-shrink-0">
                     <div className="text-[18px] font-extrabold text-ink tnum leading-none">
