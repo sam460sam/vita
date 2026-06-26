@@ -67,7 +67,7 @@ export function WorkoutSessionPage() {
     recordPending();
     setRest(null);
   }
-  const REST_PRESETS = [45, 60, 75, 90, 120, 150, 180];
+  const REST_PRESETS = [15, 30, 45, 60, 75, 90, 120, 150, 180];
   function cycleRest(eid: string, cur: number) {
     platform.haptic();
     const i = REST_PRESETS.findIndex((p) => p >= cur);

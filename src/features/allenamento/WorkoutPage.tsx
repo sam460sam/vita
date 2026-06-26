@@ -188,7 +188,7 @@ export function WorkoutPage() {
       {restOpen && (
         <Sheet open onClose={() => setRestOpen(false)} title={t('workout.restTitle')}>
           <div className="grid grid-cols-3 gap-2.5">
-            {[45, 60, 75, 90, 120, 150, 180].map((n) => {
+            {[15, 30, 45, 60, 75, 90, 120, 150, 180].map((n) => {
               const active = restSec === n;
               return (
                 <button
