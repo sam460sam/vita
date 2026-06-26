@@ -38,7 +38,8 @@ function QuickAddButton() {
     <button
       onClick={openMenu}
       aria-label={t('common.add')}
-      className="h-[56px] w-[56px] -mt-7 rounded-full bg-accent text-on-accent shadow-fab ring-4 ring-card flex items-center justify-center active:scale-90 transition-transform"
+      className="h-[58px] w-[58px] -mt-7 rounded-full text-on-accent shadow-fab ring-[3px] ring-app flex items-center justify-center active:scale-90 transition-transform"
+      style={{ background: 'linear-gradient(160deg,#2BF07A,#10B257)' }}
     >
       <Plus size={28} strokeWidth={2.75} />
     </button>

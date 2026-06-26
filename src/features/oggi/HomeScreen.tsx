@@ -15,6 +15,7 @@ import { habitDisplayName } from '@/features/abitudini/recommended';
 import { UpdateNudge } from '@/features/update/UpdateNudge';
 import { DayPlanCard } from '@/features/plan/DayPlanCard';
 import { GoalsQuiz } from '@/features/plan/GoalsQuiz';
+import { DropsBadge } from '@/features/drops/DropsBadge';
 import { computeMomentum, momentumMessageKey } from './momentum';
 import { useT, type TKey } from '@/i18n';
 import type { Habit } from '@/data/types';
@@ -94,9 +95,12 @@ export function HomeScreen() {
             <p className="text-[12.5px] font-semibold text-ink-3 capitalize leading-none">{longDate()}</p>
             <h1 className="display-serif text-[30px] text-ink leading-tight mt-1.5 truncate">{greeting}</h1>
           </div>
-          <Link to="/altro" aria-label={t('nav.more')} className="mt-1 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' }}>
-            <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
-          </Link>
+          <div className="flex items-center gap-2 mt-1.5 flex-shrink-0">
+            <DropsBadge />
+            <Link to="/altro" aria-label={t('nav.more')} className="h-10 w-10 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' }}>
+              <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
+            </Link>
+          </div>
         </header>
 
         {/* Update available (App Store has a newer version) */}
@@ -107,8 +111,8 @@ export function HomeScreen() {
           <div className="rounded-card bg-card shadow-card px-5 py-4 active:bg-section transition-colors">
             <h2 className="display-serif text-[21px] text-ink">Momentum</h2>
             <div className="flex items-center justify-between gap-2 mt-1">
-              <div className="flex-1 flex justify-center">
-                <ProgressRing progress={m.score / 100} size={132} stroke={14} gradient={['#86C45A', '#1E8E4E']}>
+              <div className="flex-1 flex justify-center" style={{ filter: 'drop-shadow(0 0 10px rgba(34,227,106,0.55))' }}>
+                <ProgressRing progress={m.score / 100} size={132} stroke={14} gradient={['#2BF07A', '#10C45C']}>
                   <div className="flex items-baseline">
                     <span className="text-[32px] font-extrabold text-ink tnum leading-none">{m.score}</span>
                     <span className="text-[14px] font-bold text-ink-3"> / 100</span>

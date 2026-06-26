@@ -99,8 +99,8 @@ export function Paywall({ onClose }: { onClose?: () => void }) {
           <button
             disabled={busy}
             onClick={subscribe}
-            className="w-full h-[54px] rounded-2xl text-white font-bold text-[16px] flex items-center justify-center active:scale-[0.98] transition-transform shadow-card disabled:opacity-60"
-            style={{ background: 'linear-gradient(180deg, #6FBE6F, #2F7D43)' }}
+            className="w-full h-[54px] rounded-2xl font-bold text-[16px] flex items-center justify-center active:scale-[0.97] transition-transform shadow-glow-gold disabled:opacity-60"
+            style={{ background: 'linear-gradient(180deg, var(--c-gold-2), var(--c-gold))', color: '#1a1206' }}
           >
             {t('paywall.startTrial')}
           </button>

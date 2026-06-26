@@ -340,7 +340,7 @@ function ResultView({ result, onRetake }: { result: PersonalityResult; onRetake:
               </span>
               <p className="text-[14px] text-ink-2 leading-snug mt-3 max-w-xs">{t('personality.full.locked')}</p>
               {billingActive ? (
-                <Button block size="lg" disabled={busy} onClick={unlock} className="!bg-[#C9A227] !text-white mt-4">
+                <Button block size="lg" disabled={busy} onClick={unlock} className="mt-4 !bg-[linear-gradient(180deg,var(--c-gold-2),var(--c-gold))] !text-[#1a1206] shadow-glow-gold">
                   {t('personality.full.unlock', { price: price ?? PERSONALITY_PRICE_FALLBACK })}
                 </Button>
               ) : (
