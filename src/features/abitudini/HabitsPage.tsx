@@ -12,6 +12,7 @@ import { currentStreak, isDone, isScheduled } from './logic';
 import type { Habit } from '@/data/types';
 import { useT } from '@/i18n';
 import { Link } from 'react-router-dom';
+import { DropsBadge } from '@/features/drops/DropsBadge';
 import vioPlant from '/vio/vio-celebrate.png';
 import vLogo from '/vyta-vmark.png';
 
@@ -55,9 +56,12 @@ export function HabitsPage() {
               <p className="text-[12.5px] font-semibold text-ink-3 capitalize leading-none">{longDate()}</p>
               <h2 className="display-serif text-[22px] text-ink leading-tight mt-1.5 truncate">{greeting}</h2>
             </div>
-            <Link to="/altro" aria-label={t('nav.more')} className="mt-1 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' }}>
-              <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
-            </Link>
+            <div className="flex items-center gap-2 mt-1.5 flex-shrink-0">
+              <DropsBadge />
+              <Link to="/altro" aria-label={t('nav.more')} className="h-10 w-10 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' }}>
+                <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
+              </Link>
+            </div>
           </div>
           <div className="flex items-center gap-2 mt-1">
             <h1 className="display-serif text-[30px] text-ink leading-tight">{t('habits.title')}</h1>
@@ -93,8 +97,8 @@ export function HabitsPage() {
         {/* New habit */}
         <button
           onClick={openNew}
-          className="w-full mt-3 h-[52px] rounded-2xl text-white font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-card"
-          style={{ background: 'linear-gradient(180deg, #6FBE6F, #2F7D43)' }}
+          className="w-full mt-3 h-[52px] rounded-2xl text-on-primary font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-glow-strong"
+          style={{ background: 'linear-gradient(180deg, #27EE76, #13C25C)' }}
         >
           <Plus size={20} strokeWidth={2.6} /> {t('habits.newHabit')}
         </button>

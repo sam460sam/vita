@@ -108,7 +108,7 @@ export function HomeScreen() {
 
         {/* Momentum + Vio */}
         <Link to="/recap" className="block">
-          <div className="rounded-card bg-card shadow-card px-5 py-4 active:bg-section transition-colors">
+          <div className="rounded-card bg-card px-5 py-4 active:bg-section transition-colors" style={{ boxShadow: 'inset 0 0 0 1px rgba(34,227,106,0.22), 0 0 30px rgba(34,227,106,0.16), 0 12px 28px rgba(0,0,0,0.5)' }}>
             <h2 className="display-serif text-[21px] text-ink">Momentum</h2>
             <div className="flex items-center justify-between gap-2 mt-1">
               <div className="flex-1 flex justify-center" style={{ filter: 'drop-shadow(0 0 10px rgba(34,227,106,0.55))' }}>

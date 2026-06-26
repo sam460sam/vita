@@ -17,14 +17,14 @@
    gold for premium. :root and html.dark are identical so the look is constant. */
 :root,
 html.dark {
-  /* Surfaces — deep dark slate */
-  --c-app: #0e141a;
-  --c-section: #1c2630;
-  --c-card: #18212b;
+  /* Surfaces — deep green-black (dopamine dark) */
+  --c-app: #090e0b;
+  --c-section: #1b281f;
+  --c-card: #121c15;
   /* Hero washes — deep emerald glow */
-  --c-hero-1: #103226;
-  --c-hero-2: #0c241c;
-  --c-glow: rgba(34, 227, 106, 0.30);
+  --c-hero-1: #0e2e1f;
+  --c-hero-2: #0a2417;
+  --c-glow: rgba(34, 227, 106, 0.32);
   /* Premium gold + virtual currency (Drops) */
   --c-gold: #e8b53a;
   --c-gold-2: #ffd76a;
@@ -34,8 +34,8 @@ html.dark {
   --c-ink-2: #9bb0a6;
   --c-ink-3: #627280;
   /* Lines */
-  --c-line: #273440;
-  --c-divider: #1b2530;
+  --c-line: #24332a;
+  --c-divider: #16221a;
   /* Module accents (vivid neon on dark) */
   --c-activity: #ff7a4d;
   --c-habit: #22e36a;

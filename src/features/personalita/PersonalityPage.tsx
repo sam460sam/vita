@@ -84,7 +84,7 @@ function Intro({ onStart }: { onStart: () => void }) {
         <button
           onClick={onStart}
           className="w-full mt-3 h-[52px] rounded-2xl text-white font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-card"
-          style={{ background: 'linear-gradient(180deg, #6FBE6F, #2F7D43)' }}
+          style={{ background: 'linear-gradient(180deg, #27EE76, #13C25C)' }}
         >
           <Plus size={20} strokeWidth={2.6} /> {t('personality.intro.start')}
         </button>

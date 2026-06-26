@@ -127,7 +127,7 @@ export function WorkoutSessionPage() {
         </button>
 
         {s.entries.length > 0 && (
-          <button onClick={() => void finish()} className="w-full mt-3 h-[54px] rounded-2xl text-white font-bold text-[16px] flex items-center justify-center active:scale-[0.98] transition-transform shadow-card" style={{ background: 'linear-gradient(180deg, #6FBE6F, #2F7D43)' }}>
+          <button onClick={() => void finish()} className="w-full mt-3 h-[54px] rounded-2xl text-white font-bold text-[16px] flex items-center justify-center active:scale-[0.98] transition-transform shadow-card" style={{ background: 'linear-gradient(180deg, #27EE76, #13C25C)' }}>
             {t('workout.finishSession')}
           </button>
         )}
