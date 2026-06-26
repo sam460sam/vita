@@ -1183,6 +1183,11 @@ export const fr: Record<TKey, string> = {
   'equip.kettlebell': 'Kettlebell',
   'equip.machine': 'Machines',
   'equip.pullupbar': 'Barre de traction',
+  'workout.rest': 'Récupération',
+  'workout.skip': 'Passer',
+  'workout.records': 'Records',
+  'workout.noProgress': 'Termine quelques séances pour voir tes records.',
+  'workout.est1rm': '1RM est. {kg} kg',
 
   // Error recovery
   'error.title': 'Oups, un problème est survenu',

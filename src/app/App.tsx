@@ -39,6 +39,7 @@ const ProgressPage = lazy(() => import('@/features/progress').then((m) => ({ def
 const RoutinesPage = lazy(() => import('@/features/routine').then((m) => ({ default: m.RoutinesPage })));
 const WorkoutPage = lazy(() => import('@/features/allenamento').then((m) => ({ default: m.WorkoutPage })));
 const WorkoutSessionPage = lazy(() => import('@/features/allenamento').then((m) => ({ default: m.WorkoutSessionPage })));
+const WorkoutProgressPage = lazy(() => import('@/features/allenamento').then((m) => ({ default: m.WorkoutProgressPage })));
 const GamificationPage = lazy(() => import('@/features/gamification').then((m) => ({ default: m.GamificationPage })));
 const SearchPage = lazy(() => import('@/features/cerca/SearchPage').then((m) => ({ default: m.SearchPage })));
 
@@ -73,6 +74,7 @@ export function App() {
                       <Route path="/routine" element={<RoutinesPage />} />
                       <Route path="/allenamento" element={<WorkoutPage />} />
                       <Route path="/allenamento/s/:id" element={<WorkoutSessionPage />} />
+                      <Route path="/allenamento/progressi" element={<WorkoutProgressPage />} />
                       <Route path="/premi" element={<GamificationPage />} />
                       <Route path="/progetti" element={<RequireModule id="progetti"><ProjectsPage /></RequireModule>} />
                       <Route path="/progetti/:id" element={<RequireModule id="progetti"><ProjectDetailPage /></RequireModule>} />

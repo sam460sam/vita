@@ -1184,6 +1184,11 @@ export const en: Record<TKey, string> = {
   'equip.kettlebell': 'Kettlebell',
   'equip.machine': 'Machines',
   'equip.pullupbar': 'Pull-up bar',
+  'workout.rest': 'Rest',
+  'workout.skip': 'Skip',
+  'workout.records': 'Records',
+  'workout.noProgress': 'Finish a few workouts to see your records.',
+  'workout.est1rm': 'Est. 1RM {kg} kg',
 
   // Error recovery (instead of a blank screen)
   'error.title': 'Oops, something went wrong',

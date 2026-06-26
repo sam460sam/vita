@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate, Link } from 'react-router-dom';
-import { Dumbbell, ChevronRight, Watch, Sparkles, Copy, SlidersHorizontal } from 'lucide-react';
+import { Dumbbell, ChevronRight, Watch, Sparkles, Copy, SlidersHorizontal, TrendingUp } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { db } from '@/data/db';
 import { createWorkoutSession, saveWorkoutSession, duplicateWorkoutSession, readSettings } from '@/data/repo';
@@ -81,6 +81,10 @@ export function WorkoutPage() {
           <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><SlidersHorizontal size={18} className="text-habit" /> {t('workout.equipment')}</span>
           <ChevronRight size={18} className="text-ink-3" />
         </button>
+        <Link to="/allenamento/progressi" className="rounded-card bg-card shadow-card px-4 py-3.5 mt-2.5 flex items-center justify-between active:bg-section transition-colors">
+          <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><TrendingUp size={18} className="text-habit" /> {t('workout.records')}</span>
+          <ChevronRight size={18} className="text-ink-3" />
+        </Link>
         <Link to="/attivita" className="rounded-card bg-card shadow-card px-4 py-3.5 mt-2.5 flex items-center justify-between active:bg-section transition-colors">
           <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><Watch size={18} className="text-activity" /> {t('workout.activityLink')}</span>
           <ChevronRight size={18} className="text-ink-3" />

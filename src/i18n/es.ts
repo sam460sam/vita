@@ -1183,6 +1183,11 @@ export const es: Record<TKey, string> = {
   'equip.kettlebell': 'Kettlebell',
   'equip.machine': 'Máquinas',
   'equip.pullupbar': 'Barra de dominadas',
+  'workout.rest': 'Descanso',
+  'workout.skip': 'Saltar',
+  'workout.records': 'Récords',
+  'workout.noProgress': 'Completa algunos entrenamientos para ver tus récords.',
+  'workout.est1rm': '1RM est. {kg} kg',
 
   // Error recovery
   'error.title': 'Vaya, algo salió mal',

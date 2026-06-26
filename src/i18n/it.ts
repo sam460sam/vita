@@ -1187,6 +1187,11 @@ export const it = {
   'equip.kettlebell': 'Kettlebell',
   'equip.machine': 'Macchine',
   'equip.pullupbar': 'Sbarra trazioni',
+  'workout.rest': 'Recupero',
+  'workout.skip': 'Salta',
+  'workout.records': 'Record',
+  'workout.noProgress': 'Completa qualche allenamento per vedere i tuoi record.',
+  'workout.est1rm': '1RM stimato {kg} kg',
 
   // Error recovery (instead of a blank screen)
   'error.title': 'Ops, qualcosa è andato storto',

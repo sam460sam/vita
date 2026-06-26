@@ -1183,6 +1183,11 @@ export const de: Record<TKey, string> = {
   'equip.kettlebell': 'Kettlebell',
   'equip.machine': 'Maschinen',
   'equip.pullupbar': 'Klimmzugstange',
+  'workout.rest': 'Pause',
+  'workout.skip': 'Überspringen',
+  'workout.records': 'Rekorde',
+  'workout.noProgress': 'Schließe ein paar Trainings ab, um deine Rekorde zu sehen.',
+  'workout.est1rm': 'Gesch. 1RM {kg} kg',
 
   // Error recovery
   'error.title': 'Hoppla, etwas ist schiefgelaufen',
