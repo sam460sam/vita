@@ -1188,6 +1188,10 @@ export const de: Record<TKey, string> = {
   'workout.records': 'Rekorde',
   'workout.noProgress': 'Schließe ein paar Trainings ab, um deine Rekorde zu sehen.',
   'workout.est1rm': 'Gesch. 1RM {kg} kg',
+  'workout.photo': 'Plan-Foto',
+  'workout.fromPhoto': 'Plan aus Foto',
+  'workout.reading': 'Foto wird gelesen…',
+  'workout.ocrNone': 'Konnte keine Übungen aus dem Foto lesen. Versuche ein klareres Foto oder füge sie manuell hinzu.',
 
   // Error recovery
   'error.title': 'Hoppla, etwas ist schiefgelaufen',

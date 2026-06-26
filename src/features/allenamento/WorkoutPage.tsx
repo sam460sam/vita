@@ -1,16 +1,18 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate, Link } from 'react-router-dom';
-import { Dumbbell, ChevronRight, Watch, Sparkles, Copy, SlidersHorizontal, TrendingUp } from 'lucide-react';
+import { Dumbbell, ChevronRight, Watch, Sparkles, Copy, SlidersHorizontal, TrendingUp, Camera } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { db } from '@/data/db';
 import { createWorkoutSession, saveWorkoutSession, duplicateWorkoutSession, readSettings } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
+import { useToast } from '@/ui';
 import { activeDfnLocale } from '@/lib/format';
 import { useT, useI18n, type TKey } from '@/i18n';
 import { EQUIPMENT_LIST } from './exercises';
 import { TEMPLATES, templateItems, itemsToEntries } from './generator';
+import { ocrImage, parseWorkout } from './ocr';
 import { GenerateSheet } from './GenerateSheet';
 import { EquipmentSheet } from './EquipmentSheet';
 import type { Equipment } from '@/data/types';
@@ -24,6 +26,8 @@ export function WorkoutPage() {
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const [genOpen, setGenOpen] = useState(false);
   const [equipOpen, setEquipOpen] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
 
   const equipment: Equipment[] = settings?.equipment ?? EQUIPMENT_LIST;
   const lastFinished = (sessions ?? []).find((s) => s.finishedAt);
@@ -45,6 +49,26 @@ export function WorkoutPage() {
     const s = await duplicateWorkoutSession(lastFinished);
     nav(`/allenamento/s/${s.id}`);
   }
+  async function onPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    toast.show(t('workout.reading'));
+    const dataUrl = await new Promise<string>((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result as string);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+    const entries = parseWorkout(await ocrImage(dataUrl), lang);
+    if (!entries.length) {
+      toast.show(t('workout.ocrNone'));
+      return;
+    }
+    const s = await createWorkoutSession(t('workout.fromPhoto'));
+    await saveWorkoutSession({ ...s, entries });
+    nav(`/allenamento/s/${s.id}`);
+  }
 
   return (
     <>
@@ -54,16 +78,21 @@ export function WorkoutPage() {
           <Dumbbell size={21} /> {t('workout.start')}
         </button>
 
-        <div className="grid grid-cols-2 gap-3 mt-3">
-          <button onClick={() => setGenOpen(true)} className="rounded-card bg-card shadow-card px-3 py-4 flex flex-col items-center gap-1.5 active:scale-[0.97] transition-transform">
+        <div className="grid grid-cols-3 gap-3 mt-3">
+          <button onClick={() => setGenOpen(true)} className="rounded-card bg-card shadow-card px-2 py-4 flex flex-col items-center gap-1.5 active:scale-[0.97] transition-transform">
             <Sparkles size={22} className="text-habit" />
-            <span className="text-[14px] font-bold text-ink text-center leading-tight">{t('workout.generate')}</span>
+            <span className="text-[13px] font-bold text-ink text-center leading-tight">{t('workout.generate')}</span>
           </button>
-          <button onClick={() => void duplicate()} disabled={!lastFinished} className="rounded-card bg-card shadow-card px-3 py-4 flex flex-col items-center gap-1.5 active:scale-[0.97] transition-transform disabled:opacity-40">
+          <button onClick={() => fileRef.current?.click()} className="rounded-card bg-card shadow-card px-2 py-4 flex flex-col items-center gap-1.5 active:scale-[0.97] transition-transform">
+            <Camera size={22} className="text-journal" />
+            <span className="text-[13px] font-bold text-ink text-center leading-tight">{t('workout.photo')}</span>
+          </button>
+          <button onClick={() => void duplicate()} disabled={!lastFinished} className="rounded-card bg-card shadow-card px-2 py-4 flex flex-col items-center gap-1.5 active:scale-[0.97] transition-transform disabled:opacity-40">
             <Copy size={22} className="text-activity" />
-            <span className="text-[14px] font-bold text-ink text-center leading-tight">{t('workout.duplicate')}</span>
+            <span className="text-[13px] font-bold text-ink text-center leading-tight">{t('workout.duplicate')}</span>
           </button>
         </div>
+        <input ref={fileRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={onPhoto} />
 
         {/* Templates */}
         <h2 className="display-serif text-[20px] text-ink mt-6 mb-2.5">{t('workout.templates')}</h2>

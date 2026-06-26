@@ -1188,6 +1188,10 @@ export const es: Record<TKey, string> = {
   'workout.records': 'Récords',
   'workout.noProgress': 'Completa algunos entrenamientos para ver tus récords.',
   'workout.est1rm': '1RM est. {kg} kg',
+  'workout.photo': 'Foto del plan',
+  'workout.fromPhoto': 'Plan desde foto',
+  'workout.reading': 'Leyendo la foto…',
+  'workout.ocrNone': 'No pude leer ejercicios de la foto. Prueba con un plan más nítido o añádelos a mano.',
 
   // Error recovery
   'error.title': 'Vaya, algo salió mal',

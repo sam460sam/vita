@@ -1192,6 +1192,10 @@ export const it = {
   'workout.records': 'Record',
   'workout.noProgress': 'Completa qualche allenamento per vedere i tuoi record.',
   'workout.est1rm': '1RM stimato {kg} kg',
+  'workout.photo': 'Foto scheda',
+  'workout.fromPhoto': 'Scheda da foto',
+  'workout.reading': 'Sto leggendo la foto…',
+  'workout.ocrNone': 'Non sono riuscito a leggere esercizi dalla foto. Riprova con una scheda più nitida o aggiungili a mano.',
 
   // Error recovery (instead of a blank screen)
   'error.title': 'Ops, qualcosa è andato storto',

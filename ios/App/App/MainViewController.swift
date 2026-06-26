@@ -8,5 +8,6 @@ import Capacitor
 class MainViewController: CAPBridgeViewController {
     override open func capacitorDidLoad() {
         bridge?.registerPluginInstance(WidgetBridge())
+        bridge?.registerPluginInstance(OcrBridge())
     }
 }

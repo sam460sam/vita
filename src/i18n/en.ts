@@ -1189,6 +1189,10 @@ export const en: Record<TKey, string> = {
   'workout.records': 'Records',
   'workout.noProgress': 'Finish a few workouts to see your records.',
   'workout.est1rm': 'Est. 1RM {kg} kg',
+  'workout.photo': 'Photo plan',
+  'workout.fromPhoto': 'Plan from photo',
+  'workout.reading': 'Reading the photo…',
+  'workout.ocrNone': 'Couldn’t read exercises from the photo. Try a clearer plan or add them manually.',
 
   // Error recovery (instead of a blank screen)
   'error.title': 'Oops, something went wrong',

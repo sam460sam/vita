@@ -1188,6 +1188,10 @@ export const fr: Record<TKey, string> = {
   'workout.records': 'Records',
   'workout.noProgress': 'Termine quelques séances pour voir tes records.',
   'workout.est1rm': '1RM est. {kg} kg',
+  'workout.photo': 'Photo du plan',
+  'workout.fromPhoto': 'Plan depuis photo',
+  'workout.reading': 'Lecture de la photo…',
+  'workout.ocrNone': 'Impossible de lire les exercices sur la photo. Essaie un plan plus net ou ajoute-les à la main.',
 
   // Error recovery
   'error.title': 'Oups, un problème est survenu',
