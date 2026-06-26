@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Sun, Moon } from 'lucide-react';
 import { VioCompanion } from '@/ui';
 import { useStella } from '@/features/stella';
-import { DropsBadge } from '@/features/drops/DropsBadge';
 import { useTheme } from '@/theme/theme';
 import { useT } from '@/i18n';
 
@@ -41,7 +40,6 @@ export function PageHeader({ title, subtitle, action, back, large, hideStella }:
           {subtitle && <p className="text-[12px] text-ink-2 truncate">{subtitle}</p>}
         </div>
         {action}
-        <DropsBadge />
         <button
           onClick={() => setPref(isDark ? 'light' : 'dark')}
           aria-label={t('theme.toggle')}

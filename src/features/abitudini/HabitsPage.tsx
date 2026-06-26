@@ -12,7 +12,7 @@ import { currentStreak, isDone, isScheduled } from './logic';
 import type { Habit } from '@/data/types';
 import { useT } from '@/i18n';
 import { Link } from 'react-router-dom';
-import { DropsBadge } from '@/features/drops/DropsBadge';
+import { DayPlanCard } from '@/features/plan/DayPlanCard';
 import vioPlant from '/vio/vio-celebrate.png';
 import vLogo from '/vyta-vmark.png';
 
@@ -57,7 +57,6 @@ export function HabitsPage() {
               <h2 className="display-serif text-[22px] text-ink leading-tight mt-1.5 truncate">{greeting}</h2>
             </div>
             <div className="flex items-center gap-2 mt-1.5 flex-shrink-0">
-              <DropsBadge />
               <Link to="/altro" aria-label={t('nav.more')} className="h-10 w-10 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' }}>
                 <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
               </Link>
@@ -93,6 +92,9 @@ export function HabitsPage() {
           <span className="flex items-center gap-2 text-[14.5px] font-semibold text-ink"><TrendingUp size={18} className="text-habit" /> {t('progress.title')}</span>
           <ChevronRight size={18} className="text-ink-3" />
         </Link>
+
+        {/* Plan your day */}
+        <DayPlanCard />
 
         {/* New habit */}
         <button

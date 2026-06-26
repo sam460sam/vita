@@ -680,6 +680,14 @@ export async function setDayIntention(date: string, intention: string): Promise<
   await saveDayPlan({ ...p, intention });
 }
 
+/** Fixed key for the general (not day-bound) notes + to-do list. */
+export const GENERAL_PLAN_KEY = 'general';
+
+export async function setDayNotes(date: string, notes: string): Promise<void> {
+  const p = await readDayPlan(date);
+  await saveDayPlan({ ...p, notes });
+}
+
 export async function addDayItem(date: string, text: string): Promise<void> {
   const value = text.trim();
   if (!value) return;

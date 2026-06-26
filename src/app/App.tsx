@@ -37,6 +37,7 @@ const BmiPage = lazy(() => import('@/features/peso').then((m) => ({ default: m.B
 const RecapPage = lazy(() => import('@/features/recap').then((m) => ({ default: m.RecapPage })));
 const ProgressPage = lazy(() => import('@/features/progress').then((m) => ({ default: m.ProgressPage })));
 const RoutinesPage = lazy(() => import('@/features/routine').then((m) => ({ default: m.RoutinesPage })));
+const AgendaPage = lazy(() => import('@/features/plan/AgendaPage').then((m) => ({ default: m.AgendaPage })));
 const WorkoutPage = lazy(() => import('@/features/allenamento').then((m) => ({ default: m.WorkoutPage })));
 const WorkoutSessionPage = lazy(() => import('@/features/allenamento').then((m) => ({ default: m.WorkoutSessionPage })));
 const WorkoutProgressPage = lazy(() => import('@/features/allenamento').then((m) => ({ default: m.WorkoutProgressPage })));
@@ -72,6 +73,7 @@ export function App() {
                       <Route path="/recap" element={<RecapPage />} />
                       <Route path="/progressi" element={<ProgressPage />} />
                       <Route path="/routine" element={<RoutinesPage />} />
+                      <Route path="/agenda" element={<AgendaPage />} />
                       <Route path="/allenamento" element={<WorkoutPage />} />
                       <Route path="/allenamento/s/:id" element={<WorkoutSessionPage />} />
                       <Route path="/allenamento/progressi" element={<WorkoutProgressPage />} />

@@ -13,9 +13,7 @@ import { syncWidgetData, drainWidgetWaterInbox } from '@/platform/widget';
 import { isScheduled, isDone } from '@/features/abitudini/logic';
 import { habitDisplayName } from '@/features/abitudini/recommended';
 import { UpdateNudge } from '@/features/update/UpdateNudge';
-import { DayPlanCard } from '@/features/plan/DayPlanCard';
 import { GoalsQuiz } from '@/features/plan/GoalsQuiz';
-import { DropsBadge } from '@/features/drops/DropsBadge';
 import { computeMomentum, momentumMessageKey } from './momentum';
 import { useT, type TKey } from '@/i18n';
 import type { Habit } from '@/data/types';
@@ -96,7 +94,6 @@ export function HomeScreen() {
             <h1 className="display-serif text-[30px] text-ink leading-tight mt-1.5 truncate">{greeting}</h1>
           </div>
           <div className="flex items-center gap-2 mt-1.5 flex-shrink-0">
-            <DropsBadge />
             <Link to="/altro" aria-label={t('nav.more')} className="h-10 w-10 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' }}>
               <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
             </Link>
@@ -164,8 +161,17 @@ export function HomeScreen() {
           <HeroTile to="/personalita" icon={iconCompass} label={t('nav.personality.short')} sub={t('home.tile.ready')} />
         </div>
 
-        {/* Plan your day */}
-        <DayPlanCard />
+        {/* Notes & to-dos */}
+        <Link to="/agenda" className="rounded-card bg-card shadow-card px-4 py-3.5 mt-4 flex items-center justify-between active:bg-section transition-colors">
+          <span className="flex items-center gap-2.5 min-w-0">
+            <span className="text-[20px]" aria-hidden>📝</span>
+            <span className="min-w-0">
+              <span className="block text-[15px] font-semibold text-ink">{t('agenda.title')}</span>
+              <span className="block text-[12.5px] text-ink-3 truncate">{t('agenda.subtitle')}</span>
+            </span>
+          </span>
+          <ChevronRight size={18} className="text-ink-3 flex-shrink-0" />
+        </Link>
 
         {/* Routines */}
         <Link to="/routine" className="rounded-card bg-card shadow-card px-4 py-3.5 mt-3 flex items-center justify-between active:bg-section transition-colors">

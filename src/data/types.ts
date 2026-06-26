@@ -326,6 +326,8 @@ export interface DayPlan {
   /** The day's main focus / intention (one line). */
   intention: string;
   items: DayPlanItem[];
+  /** Free-form general notes (used by the general "Notes & to-dos" screen). */
+  notes?: string;
   updatedAt: number;
 }
 
