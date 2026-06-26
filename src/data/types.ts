@@ -127,6 +127,9 @@ export interface Settings {
     goalWeightKg?: number; // target weight
     unit: 'kg' | 'lb';
   };
+  /** Gym equipment the user has available (drives the workout generator).
+   *  `undefined` = not chosen yet → treated as "everything available". */
+  equipment?: Equipment[];
   /** What the user mainly wants from Vita (set in onboarding). Drives nudges. */
   focus?: 'health' | 'productivity' | 'wellbeing' | 'all';
   /** Optional personal details from onboarding (kept on-device only). */

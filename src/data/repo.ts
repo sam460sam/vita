@@ -8,6 +8,7 @@ import { ALL_MODULES } from './types';
 import type {
   Budget,
   DayPlan,
+  Equipment,
   Goal,
   Habit,
   HabitLog,
@@ -748,4 +749,18 @@ export async function deleteWorkoutSession(id: string): Promise<void> {
 
 export function newWorkoutEntry(exerciseId: string, name: string, muscle: MuscleGroup): WorkoutEntry {
   return { id: uid('woe_'), exerciseId, name, muscle, sets: [{ reps: 10, weightKg: 0, done: false }] };
+}
+
+export async function setEquipment(equipment: Equipment[]): Promise<void> {
+  const s = await readSettings();
+  await db.settings.put({ ...s, equipment, updatedAt: now() });
+}
+
+/** Clone a session's exercises into a fresh in-progress session (sets reset). */
+export async function duplicateWorkoutSession(src: WorkoutSession): Promise<WorkoutSession> {
+  const s = await createWorkoutSession(src.title);
+  const entries = src.entries.map((e) => ({ ...e, id: uid('woe_'), sets: e.sets.map((x) => ({ ...x, done: false })) }));
+  const next = { ...s, entries };
+  await saveWorkoutSession(next);
+  return next;
 }
