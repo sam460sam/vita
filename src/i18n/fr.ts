@@ -1085,6 +1085,15 @@ export const fr: Record<TKey, string> = {
   'update.nudge.title': 'Mettre à jour',
   'update.nudge.desc': 'Une nouvelle version de Vyta est disponible.',
   'update.nudge.cta': 'Mettre à jour',
+  'progress.title': 'Progrès',
+  'progress.period.day': 'Jour',
+  'progress.period.week': 'Semaine',
+  'progress.period.month': 'Mois',
+  'progress.habitRate': 'Habitudes complétées',
+  'progress.habitsCount': '{done}/{total} complétées',
+  'progress.trend': 'Évolution',
+  'progress.goalDays': 'Jours avec objectif d’eau',
+  'progress.empty': 'Commencez à suivre habitudes et eau pour voir vos progrès ici.',
 
   // Error recovery
   'error.title': 'Oups, un problème est survenu',

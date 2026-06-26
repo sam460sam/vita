@@ -1086,6 +1086,15 @@ export const en: Record<TKey, string> = {
   'update.nudge.title': 'Update available',
   'update.nudge.desc': 'A new version of Vyta is available.',
   'update.nudge.cta': 'Update',
+  'progress.title': 'Progress',
+  'progress.period.day': 'Day',
+  'progress.period.week': 'Week',
+  'progress.period.month': 'Month',
+  'progress.habitRate': 'Habits completed',
+  'progress.habitsCount': '{done}/{total} completed',
+  'progress.trend': 'Trend',
+  'progress.goalDays': 'Days at water goal',
+  'progress.empty': 'Start tracking habits and water to see your progress here.',
 
   // Error recovery (instead of a blank screen)
   'error.title': 'Oops, something went wrong',

@@ -1085,6 +1085,15 @@ export const es: Record<TKey, string> = {
   'update.nudge.title': 'Actualiza la app',
   'update.nudge.desc': 'Hay una nueva versión de Vyta disponible.',
   'update.nudge.cta': 'Actualizar',
+  'progress.title': 'Progreso',
+  'progress.period.day': 'Día',
+  'progress.period.week': 'Semana',
+  'progress.period.month': 'Mes',
+  'progress.habitRate': 'Hábitos completados',
+  'progress.habitsCount': '{done}/{total} completados',
+  'progress.trend': 'Evolución',
+  'progress.goalDays': 'Días con objetivo de agua',
+  'progress.empty': 'Empieza a registrar hábitos y agua para ver aquí tu progreso.',
 
   // Error recovery
   'error.title': 'Vaya, algo salió mal',

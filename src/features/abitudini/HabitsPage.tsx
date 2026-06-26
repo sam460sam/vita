@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Plus, Check } from 'lucide-react';
+import { Plus, Check, TrendingUp, ChevronRight } from 'lucide-react';
 import { db } from '@/data/db';
 import { toggleHabitLog, createHabit, readSettings } from '@/data/repo';
 import { Icon, useToast } from '@/ui';
@@ -83,6 +83,12 @@ export function HabitsPage() {
             <div className="text-[12.5px] text-ink-3 mt-1.5">{t('habits.activeCount')}</div>
           </div>
         </div>
+
+        {/* Progress */}
+        <Link to="/progressi" className="mt-3 rounded-card bg-card shadow-card px-4 py-3.5 flex items-center justify-between active:bg-section transition-colors">
+          <span className="flex items-center gap-2 text-[14.5px] font-semibold text-ink"><TrendingUp size={18} className="text-habit" /> {t('progress.title')}</span>
+          <ChevronRight size={18} className="text-ink-3" />
+        </Link>
 
         {/* New habit */}
         <button

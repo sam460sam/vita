@@ -1085,6 +1085,15 @@ export const de: Record<TKey, string> = {
   'update.nudge.title': 'Update verfügbar',
   'update.nudge.desc': 'Eine neue Version von Vyta ist verfügbar.',
   'update.nudge.cta': 'Aktualisieren',
+  'progress.title': 'Fortschritt',
+  'progress.period.day': 'Tag',
+  'progress.period.week': 'Woche',
+  'progress.period.month': 'Monat',
+  'progress.habitRate': 'Gewohnheiten erledigt',
+  'progress.habitsCount': '{done}/{total} erledigt',
+  'progress.trend': 'Verlauf',
+  'progress.goalDays': 'Tage am Wasserziel',
+  'progress.empty': 'Tracke Gewohnheiten und Wasser, um hier deinen Fortschritt zu sehen.',
 
   // Error recovery
   'error.title': 'Hoppla, etwas ist schiefgelaufen',

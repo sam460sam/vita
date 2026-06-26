@@ -1089,6 +1089,15 @@ export const it = {
   'update.nudge.title': 'Aggiorna l’app',
   'update.nudge.desc': 'È disponibile una nuova versione di Vyta.',
   'update.nudge.cta': 'Aggiorna',
+  'progress.title': 'Progressi',
+  'progress.period.day': 'Giorno',
+  'progress.period.week': 'Settimana',
+  'progress.period.month': 'Mese',
+  'progress.habitRate': 'Abitudini completate',
+  'progress.habitsCount': '{done}/{total} completate',
+  'progress.trend': 'Andamento',
+  'progress.goalDays': 'Giorni a obiettivo acqua',
+  'progress.empty': 'Inizia a tracciare abitudini e acqua per vedere qui i tuoi progressi.',
 
   // Error recovery (instead of a blank screen)
   'error.title': 'Ops, qualcosa è andato storto',
