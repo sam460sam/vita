@@ -52,6 +52,10 @@ export default {
         primary: 'var(--c-primary)',
         'on-primary': 'var(--c-on-primary)',
         'primary-border': 'var(--c-primary-border)',
+        // Gamified: premium gold + virtual currency (Drops)
+        gold: 'var(--c-gold)',
+        'gold-2': 'var(--c-gold-2)',
+        drops: 'var(--c-drops)',
       },
       borderRadius: {
         card: '26px',
@@ -59,13 +63,18 @@ export default {
         btn: '16px',
       },
       boxShadow: {
-        // Two-layer warm shadows = paper resting on a desk (ambient + soft key).
-        card: '0 1px 2px rgba(83,52,20,0.04), 0 10px 24px rgba(83,52,20,0.06)',
-        'card-hover': '0 2px 6px rgba(83,52,20,0.06), 0 18px 40px rgba(83,52,20,0.12)',
-        chip: '0 1px 2px rgba(83,52,20,0.04), 0 4px 12px rgba(83,52,20,0.05)',
-        fab: '0 2px 6px rgba(34,140,86,0.30), 0 10px 22px rgba(34,140,86,0.34)',
-        nav: '0 1px 3px rgba(83,52,20,0.06), 0 12px 30px rgba(83,52,20,0.12)',
-        sheet: '0 -2px 8px rgba(40,25,10,0.06), 0 -10px 40px rgba(40,25,10,0.16)',
+        // Dark gamified: deep ambient shadows for cards on slate.
+        card: '0 1px 2px rgba(0,0,0,0.30), 0 12px 28px rgba(0,0,0,0.40)',
+        'card-hover': '0 2px 6px rgba(0,0,0,0.35), 0 20px 44px rgba(0,0,0,0.50)',
+        chip: '0 1px 2px rgba(0,0,0,0.30), 0 4px 14px rgba(0,0,0,0.35)',
+        fab: '0 6px 18px rgba(34,227,106,0.45), 0 0 26px rgba(34,227,106,0.40)',
+        nav: '0 -2px 12px rgba(0,0,0,0.45)',
+        sheet: '0 -2px 10px rgba(0,0,0,0.40), 0 -12px 44px rgba(0,0,0,0.55)',
+        // Neon glow effects
+        glow: '0 0 22px rgba(34,227,106,0.45)',
+        'glow-strong': '0 0 36px rgba(34,227,106,0.60)',
+        'glow-gold': '0 0 22px rgba(232,181,58,0.50)',
+        'glow-water': '0 0 22px rgba(45,212,247,0.45)',
       },
       fontFamily: {
         sans: ['-apple-system', 'system-ui', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],

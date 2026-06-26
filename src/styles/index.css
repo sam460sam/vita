@@ -12,126 +12,71 @@
   font-display: swap;
 }
 
-:root {
-  /* ===== Design tokens — single source of truth (Warm & Soft / cozy) ===== */
-  /* Surfaces — toasty cream that feels like morning light, not paper-white */
-  --c-app: #f4efe5;
-  --c-section: #f1e7d7;
-  --c-card: #fffdf8;
-  /* Warm gradient washes for hero surfaces — soft fresh green */
-  --c-hero-1: #d8f5d4;
-  --c-hero-2: #c2eebd;
-  --c-glow: rgba(34, 197, 94, 0.16);
-  /* Text — warm espresso, never a cold pure black */
-  --c-ink: #2a2018;
-  --c-ink-2: #7c7263;
-  --c-ink-3: #aaa08e;
-  /* Lines */
-  --c-line: #ece1cf;
-  --c-divider: #f4ecde;
-  /* Module accents (saturated — used for chips / strokes / numbers) */
-  --c-activity: #ff6b4a;
-  --c-habit: #16b87a;
-  --c-project: #5b6cf0;
-  --c-journal: #f59e0b;
-  --c-finance: #9b5de5;
-  --c-note: #e0992f; /* honey gold */
-  --c-water: #0ea5e9; /* sky blue */
-  --c-personality: #ec4899; /* rose */
-  /* Module card TINTS — soft warm washes for the card background */
-  --c-activity-tint: #ffe6db; /* warm coral */
-  --c-habit-tint: #d8f2e4; /* soft mint */
-  --c-project-tint: #e4e7fd; /* periwinkle */
-  --c-journal-tint: #fdeccd; /* butter */
-  --c-finance-tint: #efe4fb; /* lilac */
-  --c-calendar-tint: #eceef7; /* slate-tint */
-  --c-note-tint: #fdf2d4; /* warm cream */
-  --c-water-tint: #d9f0fb; /* pale sky */
-  --c-personality-tint: #fcdcec; /* pale rose */
-  /* Module CHIPS — a touch more saturated than the tint, for the icon container */
-  --c-activity-chip: #ff8a6e;
-  --c-habit-chip: #44c794;
-  --c-project-chip: #8590f4;
-  --c-journal-chip: #f5b454;
-  --c-finance-chip: #b386ec;
-  --c-calendar-chip: #9fa8c9;
-  --c-note-chip: #ecc35a;
-  --c-water-chip: #4fc0ee;
-  --c-personality-chip: #f06fb0;
-  /* States */
-  --c-success: #1fb877;
-  --c-warning: #ff8a3d;
-  --c-danger: #ef5350;
-  /* Signature colors — fresh leaf green is the brand */
-  --c-accent: #16a34a;
-  --c-on-accent: #ffffff;
-  --c-streak: #ff8a3d; /* flame */
-  --c-check: #1fb877; /* completed badge */
-  /* Primary action (buttons / FAB) — vivid green pill with white text */
-  --c-primary: #16a34a;
-  --c-on-primary: #ffffff;
-  --c-primary-border: transparent;
-  color-scheme: light;
-}
-
-/* ===== Dark theme — deep charcoal, candy accents kept vivid ===== */
+/* ===== Design tokens — SINGLE look: "Dopamine" cyber-gamified dark =====
+   Deep slate surfaces, neon/emerald green dopamine accents, coral streaks,
+   gold for premium. :root and html.dark are identical so the look is constant. */
+:root,
 html.dark {
-  /* Surfaces: warm charcoal (a hint of brown), distinguished by fill */
-  --c-app: #16130f;
-  --c-section: #100d0a;
-  --c-card: #211c17;
-  /* Gradient washes for hero surfaces — deep forest green */
-  --c-hero-1: #21401e;
-  --c-hero-2: #18331a;
-  --c-glow: rgba(45, 212, 90, 0.13);
-  /* Text */
-  --c-ink: #f6f1e9;
-  --c-ink-2: #a89e90;
-  --c-ink-3: #756d61;
-  /* Lines: nearly invisible (no contour look) */
-  --c-line: #2c2620;
-  --c-divider: #211c17;
-  /* Accents stay vivid on dark; slightly brighter for contrast */
-  --c-activity: #ff8163;
-  --c-habit: #2bd398;
-  --c-project: #8b93ff;
-  --c-journal: #fbbf24;
+  /* Surfaces — deep dark slate */
+  --c-app: #0e141a;
+  --c-section: #1c2630;
+  --c-card: #18212b;
+  /* Hero washes — deep emerald glow */
+  --c-hero-1: #103226;
+  --c-hero-2: #0c241c;
+  --c-glow: rgba(34, 227, 106, 0.30);
+  /* Premium gold + virtual currency (Drops) */
+  --c-gold: #e8b53a;
+  --c-gold-2: #ffd76a;
+  --c-drops: #2dd4f7;
+  /* Text — near-white with a faint cool green tint */
+  --c-ink: #eaf2ec;
+  --c-ink-2: #9bb0a6;
+  --c-ink-3: #627280;
+  /* Lines */
+  --c-line: #273440;
+  --c-divider: #1b2530;
+  /* Module accents (vivid neon on dark) */
+  --c-activity: #ff7a4d;
+  --c-habit: #22e36a;
+  --c-project: #6e7bff;
+  --c-journal: #ffc53d;
   --c-finance: #b98cf5;
   --c-note: #f5c265;
-  --c-water: #38bdf8;
-  --c-personality: #f472b6;
-  /* Module card tints — warm, darkened washes of each hue */
-  --c-activity-tint: #32211a;
-  --c-habit-tint: #16271f;
-  --c-project-tint: #1e2034;
-  --c-journal-tint: #2e2515;
-  --c-finance-tint: #281f34;
-  --c-calendar-tint: #20222f;
-  --c-note-tint: #2d2715;
-  --c-water-tint: #15293a;
-  --c-personality-tint: #321826;
-  /* Module chips — vivid on dark */
-  --c-activity-chip: #ff8163;
-  --c-habit-chip: #2bd398;
-  --c-project-chip: #8b93ff;
-  --c-journal-chip: #fbbf24;
+  --c-water: #2dd4f7;
+  --c-personality: #ff5fa8;
+  /* Module card TINTS — dark washes of each hue */
+  --c-activity-tint: #2a1c16;
+  --c-habit-tint: #0f2a1c;
+  --c-project-tint: #1a1e33;
+  --c-journal-tint: #2c2410;
+  --c-finance-tint: #251c33;
+  --c-calendar-tint: #1b222c;
+  --c-note-tint: #2a2410;
+  --c-water-tint: #102a33;
+  --c-personality-tint: #2e1424;
+  /* Module CHIPS — neon icon containers */
+  --c-activity-chip: #ff7a4d;
+  --c-habit-chip: #22e36a;
+  --c-project-chip: #6e7bff;
+  --c-journal-chip: #ffc53d;
   --c-finance-chip: #b98cf5;
-  --c-calendar-chip: #9fa8c9;
+  --c-calendar-chip: #8fa0c9;
   --c-note-chip: #f5c265;
-  --c-water-chip: #38bdf8;
-  --c-personality-chip: #f472b6;
+  --c-water-chip: #2dd4f7;
+  --c-personality-chip: #ff5fa8;
   /* States */
-  --c-success: #2bd398;
-  --c-warning: #ff9d57;
-  --c-danger: #f87171;
-  /* Signature colors — bright leaf green on dark */
-  --c-accent: #2dd45a;
-  --c-on-accent: #07260f;
-  --c-streak: #ff9d57;
-  --c-check: #2bd398;
-  /* Primary action: bright green pill, dark text for punch on dark. */
-  --c-primary: #2dd45a;
-  --c-on-primary: #07260f;
+  --c-success: #22e36a;
+  --c-warning: #ffb23d;
+  --c-danger: #ff5a5a;
+  /* Signature — neon green is the dopamine color */
+  --c-accent: #22e36a;
+  --c-on-accent: #04130a;
+  --c-streak: #ff6b4a; /* coral flame — triggers FOMO */
+  --c-check: #22e36a;
+  /* Primary action (CTA / FAB) — emerald-neon with dark text for punch */
+  --c-primary: #1fd96a;
+  --c-on-primary: #04130a;
   --c-primary-border: transparent;
   color-scheme: dark;
 }
