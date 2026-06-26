@@ -26,21 +26,31 @@ function clamp(n: number, a: number, b: number): number {
   return Math.max(a, Math.min(b, Number.isFinite(n) ? n : a));
 }
 
+/** Strip set/rep and weight tokens to recover a clean exercise name. */
+function cleanName(line: string): string {
+  return line
+    .replace(/\d+\s*[x×]\s*\d+\s*(s|sec|secondi|reps?|rip\.?)?/gi, ' ') // "4 x 8", "3 x 60s"
+    .replace(/\d+(?:[.,]\d+)?\s*(kg|lb)/gi, ' ') // "60 kg"
+    .replace(/[-–—:•|()]+/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 /**
  * Best-effort parse of OCR'd workout-plan lines into entries: match each line
- * against the exercise library and pull sets×reps and weight when present.
+ * against the exercise library and pull sets×reps and weight. Lines that don't
+ * match the library but clearly describe an exercise (they carry a sets×reps or
+ * a weight) are kept as *custom* exercises with their raw text, so nothing from
+ * the photo is lost; plain headers/notes are skipped.
  */
 export function parseWorkout(lines: string[], lang: string): WorkoutEntry[] {
   const entries: WorkoutEntry[] = [];
   const seen = new Set<string>();
 
   for (const raw of lines) {
-    const lower = raw.trim().toLowerCase();
+    const line = raw.trim();
+    const lower = line.toLowerCase();
     if (lower.length < 3) continue;
-
-    const def = EXERCISES.find((e) => lower.includes(e.name.toLowerCase()) || lower.includes(e.nameEn.toLowerCase()));
-    if (!def || seen.has(def.id)) continue;
-    seen.add(def.id);
 
     const sx = lower.match(/(\d+)\s*[x×]\s*(\d+)/);
     const kgm = lower.match(/(\d+(?:[.,]\d+)?)\s*(kg|lb)/);
@@ -56,7 +66,25 @@ export function parseWorkout(lines: string[], lang: string): WorkoutEntry[] {
       if (kgm[2] === 'lb') kg = Math.round(kg * 0.4536);
     }
 
-    const entry = newWorkoutEntry(def.id, exerciseName(def, lang), def.muscle);
+    const def = EXERCISES.find((e) => lower.includes(e.name.toLowerCase()) || lower.includes(e.nameEn.toLowerCase()));
+    if (def) {
+      if (seen.has(def.id)) continue;
+      seen.add(def.id);
+      const entry = newWorkoutEntry(def.id, exerciseName(def, lang), def.muscle);
+      entry.sets = Array.from({ length: sets }, () => ({ reps, weightKg: kg, done: false }));
+      entries.push(entry);
+      continue;
+    }
+
+    // Unrecognized line: keep it only if it looks like an exercise (has a
+    // sets×reps or a weight), so we don't turn titles/notes into exercises.
+    if (!sx && !kgm) continue;
+    const name = cleanName(line);
+    if (name.length < 2) continue;
+    const id = `custom:${name.toLowerCase()}`;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const entry = newWorkoutEntry(id, name, 'fullbody');
     entry.sets = Array.from({ length: sets }, () => ({ reps, weightKg: kg, done: false }));
     entries.push(entry);
   }
