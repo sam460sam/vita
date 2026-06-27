@@ -56,6 +56,10 @@ export function HomeScreen() {
   const todays = active.filter((x) => isScheduled(x, today));
   const habitsDone = todays.filter((x) => isDone(logs ?? [], x.id, today)).length;
   const todos = dayPlan?.items ?? [];
+  // Completed items sink to the bottom so active ones stay on top.
+  const sortedHabits = [...todays].sort((a, b) => Number(isDone(logs ?? [], a.id, today)) - Number(isDone(logs ?? [], b.id, today)));
+  const sortedTodos = [...todos].sort((a, b) => Number(a.done) - Number(b.done));
+  const maxStreak = active.reduce((mx, h) => Math.max(mx, currentStreak(h, logs ?? [])), 0);
 
   const goalMl = s.water.dailyGoalMl || 2000;
   const ml = todayWater?.ml ?? 0;
@@ -159,7 +163,7 @@ export function HomeScreen() {
         </div>
 
         {/* 2 — Unified checklist (habits + to-dos) */}
-        <div className="flex items-center justify-between mt-5 mb-2.5">
+        <div className="flex items-center justify-between mt-4 mb-2.5">
           <h2 className="display-serif text-[21px] text-ink">{t('home.checklist.title')}</h2>
           <Link to="/abitudini" className="text-[13px] font-semibold text-habit">{t('home.routine.all')}</Link>
         </div>
@@ -180,7 +184,7 @@ export function HomeScreen() {
             <div className="p-4 text-center text-[14px] text-ink-2">{t('home.todosEmpty')}</div>
           ) : (
             <>
-              {todays.map((hb) => {
+              {sortedHabits.map((hb) => {
                 const done = isDone(logs ?? [], hb.id, today);
                 const streak = currentStreak(hb, logs ?? []);
                 return (
@@ -199,7 +203,7 @@ export function HomeScreen() {
                   </button>
                 );
               })}
-              {todos.map((it) => (
+              {sortedTodos.map((it) => (
                 <div key={it.id} className="flex items-center gap-3 w-full px-3 rounded-2xl" style={{ minHeight: 52 }}>
                   <button onClick={() => { platform.haptic(); void toggleDayItem(today, it.id); }} className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors" style={it.done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }} aria-label={it.text}>
                     {it.done && <Check size={14} className="text-white check-pop" strokeWidth={3} />}
@@ -220,18 +224,25 @@ export function HomeScreen() {
           <span className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'color-mix(in srgb, var(--c-primary) 14%, var(--c-card))', color: 'var(--c-habit)' }}><Dumbbell size={20} /></span>
           <span className="min-w-0 flex-1">
             <span className="block text-[12px] font-bold text-ink-3 uppercase tracking-wide">{t('home.workout.title')}</span>
-            <span className="block text-[15.5px] font-semibold text-ink truncate">{inProgress ? inProgress.title : t('home.workout.plan')}</span>
+            {inProgress ? (
+              <span className="block text-[15.5px] font-semibold text-ink truncate">{inProgress.title} · <span className="text-habit">{t('home.workout.inProgress').toLowerCase()}</span></span>
+            ) : (
+              <>
+                <span className="block text-[15.5px] font-semibold text-ink truncate">{t('home.workout.none')}</span>
+                <span className="block text-[12px] text-ink-3 truncate">{t('home.workout.helper')}</span>
+              </>
+            )}
           </span>
           <span className="flex-shrink-0 text-[13.5px] font-bold px-3 py-1.5 rounded-full" style={inProgress ? { background: 'var(--c-primary)', color: 'var(--c-on-primary)' } : { color: 'var(--c-habit)' }}>
             {inProgress ? t('home.workout.resume') : t('workout.start')}
           </span>
         </button>
 
-        {/* 4 — Progress strip */}
+        {/* 4 — Progress strip (Momentum lives in the big card below, not here) */}
         <div className="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar -mx-1 px-1">
-          <Chip emoji="🌿" label={t('nav.habits')} value={`${habitsDone}/${todays.length}`} />
+          <Link to="/abitudini" className="flex-shrink-0"><Chip emoji="🌿" label={t('nav.habits')} value={`${habitsDone}/${todays.length}`} /></Link>
           {isPro && <Link to="/acqua" className="flex-shrink-0"><Chip emoji="💧" label={t('nav.water')} value={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} /></Link>}
-          <Chip emoji="✨" label="Momentum" value={`${m.score}`} />
+          <Link to="/progressi" className="flex-shrink-0"><Chip emoji="🔥" label={t('home.streak')} value={`${maxStreak}`} /></Link>
         </div>
 
         {/* 5 — Your plant (Momentum reward) */}
@@ -255,7 +266,7 @@ export function HomeScreen() {
                   ))}
                 </div>
               ) : (
-                <div className="text-[12.5px] text-ink-3 mt-1 truncate">{t(momentumMessageKey(m.score) as TKey)}</div>
+                <div className="text-[12.5px] text-ink-3 mt-1 leading-snug line-clamp-2">{t('home.momentum.empty')}</div>
               )}
             </div>
             <ChevronRight size={18} className="text-ink-3 flex-shrink-0" />
