@@ -60,11 +60,11 @@ export function ListItemCard({
       <div className="relative flex items-center gap-3 w-full min-w-0">
         {leading && <div className="flex-shrink-0">{leading}</div>}
         <div className="min-w-0 flex-1">
-          <div className={cn('text-[15px] font-bold leading-tight truncate', filled ? 'text-white' : 'text-ink')}>
+          <div className={cn('text-[15px] font-bold leading-tight truncate', filled ? 'text-ink' : 'text-ink')}>
             {title}
           </div>
           {subtitle && (
-            <div className={cn('text-[13px] truncate mt-0.5', filled ? 'text-white/80' : 'text-ink-2')}>{subtitle}</div>
+            <div className={cn('text-[13px] truncate mt-0.5', filled ? 'text-ink/80' : 'text-ink-2')}>{subtitle}</div>
           )}
         </div>
         {trailing && <div className="flex-shrink-0">{trailing}</div>}

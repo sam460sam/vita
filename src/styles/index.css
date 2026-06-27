@@ -17,35 +17,40 @@
    gold for premium. :root and html.dark are identical so the look is constant. */
 :root,
 html.dark {
-  /* Surfaces — charcoal / anthracite (luxury matte) */
-  --c-app: #0f1115;
-  --c-section: #161a20;
-  --c-card: #13171d;
+  /* Surfaces — soft near-black with a faint green tint (luxury matte).
+     No pure black anywhere; warm graphite greens layered by elevation. */
+  --c-app: #0b0e0c;     /* bg            */
+  --c-section: #171c18; /* surface-2 / raised, chips, pressed */
+  --c-card: #121613;    /* surface-1 / cards */
+  --c-overlay: #1b211c; /* sheets / modals */
   /* Hero washes — deep forest → emerald */
   --c-hero-1: #0a2a1a;
   --c-hero-2: #0d4d32;
   --c-glow: rgba(13, 77, 50, 0.42);
-  /* Muted luxury gold — one source of truth for every accent. */
+  /* Antique gold — the single accent (hairlines, flourishes; never body text). */
   --c-gold: #c2a05a;
-  --c-gold-2: #d8be86;
-  --c-drops: #2dd4f7;
+  --c-gold-deep: #a8853f;
+  --c-gold-2: #d8bd7e; /* gold-soft */
+  --c-drops: #4e93a6;  /* muted aqua (was neon cyan) */
   /* Text — warm cream off-white (never stark pure white), desaturated greys */
-  --c-ink: #f3eee3;
-  --c-ink-2: #ada99a;
-  --c-ink-3: #717064;
+  --c-ink: #f3eee3;    /* text-primary (cream) */
+  --c-ink-2: #a7afa6;  /* text-secondary */
+  --c-ink-3: #6e756c;  /* text-tertiary / placeholder */
   /* Hairlines / dividers — faint warm gold instead of cold white/charcoal */
   --c-line: rgba(194, 160, 90, 0.22);
   --c-divider: rgba(194, 160, 90, 0.14);
   --c-hairline: rgba(194, 160, 90, 0.28);
-  /* Module accents (vivid neon on dark) */
-  --c-activity: #d08a5e;
-  --c-habit: #3da66f;
-  --c-project: #7079b0;
-  --c-journal: #cfa85a;
-  --c-finance: #9b86bf;
-  --c-note: #cdb079;
-  --c-water: #2dd4f7;
-  --c-personality: #c47a9d;
+  --c-border-subtle: rgba(243, 238, 227, 0.08);
+  --c-scrim: rgba(11, 14, 12, 0.72); /* behind modals / tour */
+  /* Module accents — deep, muted, desaturated (luxury, never neon) */
+  --c-activity: #c2873f;     /* burnt amber  */
+  --c-habit: #3da66f;        /* emerald (signature) */
+  --c-project: #5f6aa0;      /* muted indigo */
+  --c-journal: #cfa85a;      /* antique gold */
+  --c-finance: #8a74b0;      /* aubergine/plum */
+  --c-note: #cdb079;         /* parchment    */
+  --c-water: #4e93a6;        /* muted aqua (was neon cyan) */
+  --c-personality: #a05a78;  /* dusty rose   */
   /* Module card TINTS — dark washes of each hue */
   --c-activity-tint: #2a1c16;
   --c-habit-tint: #0f2a1c;
@@ -56,20 +61,20 @@ html.dark {
   --c-note-tint: #2a2410;
   --c-water-tint: #102a33;
   --c-personality-tint: #2e1424;
-  /* Module CHIPS — neon icon containers */
-  --c-activity-chip: #d08a5e;
+  /* Module CHIPS — muted icon containers (mirror the accents) */
+  --c-activity-chip: #c2873f;
   --c-habit-chip: #3da66f;
-  --c-project-chip: #7079b0;
+  --c-project-chip: #5f6aa0;
   --c-journal-chip: #cfa85a;
-  --c-finance-chip: #9b86bf;
-  --c-calendar-chip: #8fa0c9;
+  --c-finance-chip: #8a74b0;
+  --c-calendar-chip: #7a88ad;
   --c-note-chip: #cdb079;
-  --c-water-chip: #2dd4f7;
-  --c-personality-chip: #c47a9d;
-  /* States */
+  --c-water-chip: #4e93a6;
+  --c-personality-chip: #a05a78;
+  /* States — muted luxury semantics (deep, not bright) */
   --c-success: #3da66f;
-  --c-warning: #d9a23d;
-  --c-danger: #d96a6a;
+  --c-warning: #c2873f; /* antique amber */
+  --c-danger: #b0504a;  /* oxblood / burgundy */
   /* Signature — refined emerald */
   --c-accent: #3da66f;
   --c-on-accent: #f3eee3;

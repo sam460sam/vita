@@ -38,7 +38,7 @@ export function CheckBadge({
       className={cn(
         'inline-flex items-center justify-center h-8 w-8 rounded-full transition-all duration-150 flex-shrink-0',
         done
-          ? 'bg-check text-white shadow-[0_4px_12px_rgba(52,199,89,0.4)]'
+          ? 'bg-check text-ink shadow-[0_4px_12px_rgba(61,166,111,0.35)]'
           : 'bg-section text-ink-3 border border-line',
         onClick && 'active:scale-90',
         className,
@@ -66,7 +66,7 @@ export function IncrementButton({
       onClick={onClick}
       aria-label={label}
       className={cn(
-        'inline-flex items-center justify-center h-8 w-8 rounded-full text-white active:scale-90 transition-transform flex-shrink-0',
+        'inline-flex items-center justify-center h-8 w-8 rounded-full text-ink active:scale-90 transition-transform flex-shrink-0',
         className,
       )}
       style={{ backgroundColor: color }}

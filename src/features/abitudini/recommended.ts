@@ -10,19 +10,21 @@ export interface RecommendedHabit {
   frequency: HabitFrequency;
 }
 
+// Luxury palette (desaturated, deep) — mapped per habit, still mutually
+// distinguishable. Mirrors the habit-picker swatches.
 export const RECOMMENDED_HABITS: RecommendedHabit[] = [
-  { id: 'water', labelKey: 'rec.water', icon: 'Droplet', color: '#0EA5E9', frequency: { type: 'daily' } },
-  { id: 'nosmoke', labelKey: 'rec.nosmoke', icon: 'CigaretteOff', color: '#EF4444', frequency: { type: 'daily' } },
-  { id: 'move', labelKey: 'rec.move', icon: 'Footprints', color: '#FF6B57', frequency: { type: 'daily' } },
-  { id: 'read', labelKey: 'rec.read', icon: 'BookOpen', color: '#F59E0B', frequency: { type: 'daily' } },
-  { id: 'meditate', labelKey: 'rec.meditate', icon: 'Brain', color: '#7C3AED', frequency: { type: 'daily' } },
-  { id: 'sleep', labelKey: 'rec.sleep', icon: 'Moon', color: '#4F46E5', frequency: { type: 'daily' } },
-  { id: 'gym', labelKey: 'rec.gym', icon: 'Dumbbell', color: '#10B981', frequency: { type: 'times_per_week', timesPerWeek: 3 } },
-  { id: 'stretch', labelKey: 'rec.stretch', icon: 'Activity', color: '#EC4899', frequency: { type: 'daily' } },
-  { id: 'fruit', labelKey: 'rec.fruit', icon: 'Apple', color: '#22C55E', frequency: { type: 'daily' } },
-  { id: 'gratitude', labelKey: 'rec.gratitude', icon: 'PenLine', color: '#F59E0B', frequency: { type: 'daily' } },
-  { id: 'sun', labelKey: 'rec.sun', icon: 'Sun', color: '#FBBF24', frequency: { type: 'daily' } },
-  { id: 'coffee', labelKey: 'rec.coffee', icon: 'Coffee', color: '#B45309', frequency: { type: 'daily' } },
+  { id: 'water', labelKey: 'rec.water', icon: 'Droplet', color: '#4E93A6', frequency: { type: 'daily' } },
+  { id: 'nosmoke', labelKey: 'rec.nosmoke', icon: 'CigaretteOff', color: '#9B4A3C', frequency: { type: 'daily' } },
+  { id: 'move', labelKey: 'rec.move', icon: 'Footprints', color: '#C2873F', frequency: { type: 'daily' } },
+  { id: 'read', labelKey: 'rec.read', icon: 'BookOpen', color: '#3A4A7A', frequency: { type: 'daily' } },
+  { id: 'meditate', labelKey: 'rec.meditate', icon: 'Brain', color: '#6A4673', frequency: { type: 'daily' } },
+  { id: 'sleep', labelKey: 'rec.sleep', icon: 'Moon', color: '#3D5A82', frequency: { type: 'daily' } },
+  { id: 'gym', labelKey: 'rec.gym', icon: 'Dumbbell', color: '#2E6B47', frequency: { type: 'times_per_week', timesPerWeek: 3 } },
+  { id: 'stretch', labelKey: 'rec.stretch', icon: 'Activity', color: '#A05A78', frequency: { type: 'daily' } },
+  { id: 'fruit', labelKey: 'rec.fruit', icon: 'Apple', color: '#3DA66F', frequency: { type: 'daily' } },
+  { id: 'gratitude', labelKey: 'rec.gratitude', icon: 'PenLine', color: '#CFA85A', frequency: { type: 'daily' } },
+  { id: 'sun', labelKey: 'rec.sun', icon: 'Sun', color: '#C2873F', frequency: { type: 'daily' } },
+  { id: 'coffee', labelKey: 'rec.coffee', icon: 'Coffee', color: '#8A5A3C', frequency: { type: 'daily' } },
 ];
 
 /** Lookup a recommended habit by its id. */

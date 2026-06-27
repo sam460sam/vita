@@ -31,7 +31,7 @@ export function Checkbox({ checked, onChange, color = 'var(--c-ink)', size = 24,
           background: checked ? color : 'transparent',
         }}
       >
-        {checked && <Check size={size * 0.62} strokeWidth={3} className="text-white" />}
+        {checked && <Check size={size * 0.62} strokeWidth={3} className="text-ink" />}
       </span>
     </button>
   );

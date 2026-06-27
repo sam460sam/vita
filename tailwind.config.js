@@ -63,10 +63,10 @@ export default {
         btn: '16px',
       },
       boxShadow: {
-        // Luxury matte: soft light top hairline + neutral edge, deep ambient drop.
-        card: 'inset 0 1px 0 rgba(255,255,255,0.05), inset 0 0 0 1px rgba(255,255,255,0.035), 0 2px 4px rgba(0,0,0,0.40), 0 18px 40px rgba(0,0,0,0.55)',
-        'card-hover': 'inset 0 1px 0 rgba(255,255,255,0.07), inset 0 0 0 1px rgba(255,255,255,0.05), 0 4px 8px rgba(0,0,0,0.45), 0 26px 56px rgba(0,0,0,0.62)',
-        chip: 'inset 0 1px 0 rgba(255,255,255,0.04), inset 0 0 0 1px rgba(255,255,255,0.03), 0 1px 2px rgba(0,0,0,0.35), 0 6px 16px rgba(0,0,0,0.42)',
+        // Luxury matte: soft light top hairline + faint gold edge, deep ambient drop.
+        card: 'inset 0 1px 0 rgba(255,255,255,0.05), inset 0 0 0 1px rgba(194,160,90,0.10), 0 2px 4px rgba(0,0,0,0.40), 0 18px 40px rgba(0,0,0,0.55)',
+        'card-hover': 'inset 0 1px 0 rgba(255,255,255,0.07), inset 0 0 0 1px rgba(194,160,90,0.14), 0 4px 8px rgba(0,0,0,0.45), 0 26px 56px rgba(0,0,0,0.62)',
+        chip: 'inset 0 1px 0 rgba(255,255,255,0.04), inset 0 0 0 1px rgba(194,160,90,0.09), 0 1px 2px rgba(0,0,0,0.35), 0 6px 16px rgba(0,0,0,0.42)',
         // Satin FAB: matte emerald body, thin antique-gold ring, soft ambient halo.
         fab: 'inset 0 1px 0 rgba(255,255,255,0.12), 0 0 0 1px rgba(184,134,11,0.40), 0 10px 30px rgba(0,0,0,0.55), 0 0 26px rgba(13,77,50,0.55)',
         nav: '0 -2px 12px rgba(0,0,0,0.50)',
@@ -75,7 +75,7 @@ export default {
         glow: 'inset 0 1px 0 rgba(255,255,255,0.10), 0 0 0 1px rgba(184,134,11,0.30), 0 8px 22px rgba(0,0,0,0.45)',
         'glow-strong': 'inset 0 1px 0 rgba(255,255,255,0.12), 0 0 0 1px rgba(184,134,11,0.42), 0 0 22px rgba(13,77,50,0.50), 0 10px 26px rgba(0,0,0,0.50)',
         'glow-gold': '0 0 0 1px rgba(184,134,11,0.45), 0 0 22px rgba(184,134,11,0.30)',
-        'glow-water': '0 0 16px rgba(45,212,247,0.28)',
+        'glow-water': '0 0 16px rgba(78,147,166,0.28)',
       },
       fontFamily: {
         sans: ['-apple-system', 'system-ui', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],

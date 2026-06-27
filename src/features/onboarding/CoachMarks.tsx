@@ -61,7 +61,7 @@ export function CoachMarks({ steps, doneT, doneD, onClose }: {
   // Closing card.
   if (phase === 'done') {
     return (
-      <div className="fixed inset-0 z-[200] flex items-center justify-center px-7" style={{ background: 'rgba(0,0,0,0.78)' }}>
+      <div className="fixed inset-0 z-[200] flex items-center justify-center px-7" style={{ background: 'var(--c-scrim)' }}>
         <div className="w-full max-w-sm rounded-card bg-card p-6 text-center animate-rise" style={{ boxShadow: 'inset 0 0 0 1px var(--c-hairline), 0 24px 60px rgba(0,0,0,0.6)' }}>
           <div className="display-serif text-[24px] text-ink leading-tight">{t(doneT)}</div>
           <p className="text-[14.5px] text-ink-2 mt-2.5 leading-relaxed">{t(doneD)}</p>
@@ -91,7 +91,7 @@ export function CoachMarks({ steps, doneT, doneD, onClose }: {
   return (
     <div className="fixed inset-0 z-[200]" aria-modal>
       <div className="absolute inset-0" />
-      <div className="absolute rounded-2xl pointer-events-none transition-all duration-300" style={{ left: sx, top: sy, width: sw, height: sh, boxShadow: '0 0 0 9999px rgba(0,0,0,0.74), 0 0 0 1.5px var(--c-gold), 0 0 22px color-mix(in srgb, var(--c-gold) 55%, transparent)' }} />
+      <div className="absolute rounded-2xl pointer-events-none transition-all duration-300" style={{ left: sx, top: sy, width: sw, height: sh, boxShadow: '0 0 0 9999px var(--c-scrim), 0 0 0 1.5px var(--c-gold), 0 0 22px color-mix(in srgb, var(--c-gold) 55%, transparent)' }} />
       <div ref={tipRef} className="absolute rounded-card bg-card p-4 animate-rise" style={{ top: tipTop, left: tipLeft, width: tipW, boxShadow: 'inset 0 0 0 1px var(--c-hairline), 0 18px 44px rgba(0,0,0,0.6)' }}>
         <div className="text-[15.5px] font-bold text-ink">{t(steps[idx].t)}</div>
         <div className="text-[13.5px] text-ink-2 mt-1 leading-snug">{t(steps[idx].d)}</div>

@@ -9,7 +9,10 @@ import { habitDisplayName } from './recommended';
 import { useT } from '@/i18n';
 import { activeDfnLocale } from '@/lib/format';
 
-const COLORS = ['#10B981', '#FF6B57', '#4F46E5', '#F59E0B', '#7C3AED', '#0EA5E9', '#EC4899', '#0A0A0C'];
+// Luxury habit/category palette — desaturated, deep, mutually distinguishable
+// with AA contrast on the near-black surfaces. (Emerald · clay · indigo · amber
+// · plum · deep teal · dusty rose · graphite.)
+const COLORS = ['#2E6B47', '#9B4A3C', '#3A4A7A', '#C2873F', '#6A4673', '#357A7A', '#A05A78', '#2A302C'];
 
 /** Short weekday labels (Sunday-first, index 0 = Sunday) in the active UI
  *  language — fixes English showing Italian abbreviations. */
@@ -116,7 +119,7 @@ export function HabitForm({
               key={c}
               onClick={() => setColor(c)}
               aria-label={`Colore ${c}`}
-              className={cn('h-8 w-8 rounded-full transition-transform', color === c && 'ring-2 ring-offset-2 ring-ink scale-110')}
+              className={cn('h-8 w-8 rounded-full transition-transform', color === c && 'ring-2 ring-gold scale-110')}
               style={{ background: c }}
             />
           ))}

@@ -50,7 +50,7 @@ export function HomeTour() {
 
   if (phase === 'welcome') {
     return (
-      <div className="fixed inset-0 z-[200] flex items-center justify-center px-7" style={{ background: 'rgba(0,0,0,0.78)' }}>
+      <div className="fixed inset-0 z-[200] flex items-center justify-center px-7" style={{ background: 'var(--c-scrim)' }}>
         <div className="w-full max-w-sm rounded-card bg-card p-6 text-center animate-rise" style={{ boxShadow: 'inset 0 0 0 1px var(--c-hairline), 0 24px 60px rgba(0,0,0,0.6)' }}>
           <div className="display-serif text-[24px] text-ink leading-tight">{t('tour.welcome.t')}</div>
           <p className="text-[14.5px] text-ink-2 mt-2.5 leading-relaxed">{t('tour.welcome.d')}</p>
