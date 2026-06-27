@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
-import { Sheet, Button, Segmented } from '@/ui';
+import { Sparkles, Minus, Plus } from 'lucide-react';
+import { Sheet, Button } from '@/ui';
 import { createWorkoutSession, saveWorkoutSession } from '@/data/repo';
 import { useT, useI18n, type TKey } from '@/i18n';
 import { MUSCLE_GROUPS } from './exercises';
@@ -50,7 +50,12 @@ export function GenerateSheet({ equipment, onClose }: { equipment: Equipment[]; 
       </div>
 
       <div className="text-[13px] font-semibold text-ink-2 mb-1.5">{t('workout.exerciseCount')}</div>
-      <Segmented value={String(count)} onChange={(v) => setCount(parseInt(v))} options={[{ value: '4', label: '4' }, { value: '5', label: '5' }, { value: '6', label: '6' }, { value: '8', label: '8' }]} />
+      <div className="flex items-center gap-3">
+        <button onClick={() => setCount((c) => Math.max(1, c - 1))} disabled={count <= 1} aria-label="-" className="h-10 w-10 rounded-full bg-section text-ink flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"><Minus size={18} /></button>
+        <input type="number" inputMode="numeric" value={count} onChange={(e) => setCount(Math.max(1, Math.min(20, parseInt(e.target.value) || 1)))} aria-label={t('workout.exerciseCount')} className="w-16 bg-section rounded-xl py-2.5 text-center text-[18px] font-extrabold text-ink outline-none tnum" />
+        <button onClick={() => setCount((c) => Math.min(20, c + 1))} disabled={count >= 20} aria-label="+" className="h-10 w-10 rounded-full bg-section text-ink flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"><Plus size={18} /></button>
+        <span className="text-[13px] text-ink-3 ml-1">1–20</span>
+      </div>
 
       <Button block className="mt-5" onClick={() => void gen()}><Sparkles size={16} className="inline mr-1" /> {t('workout.generateCta')}</Button>
     </Sheet>
