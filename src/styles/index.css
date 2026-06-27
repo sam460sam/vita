@@ -37,14 +37,14 @@ html.dark {
   --c-line: #262b30;
   --c-divider: #1a1f24;
   /* Module accents (vivid neon on dark) */
-  --c-activity: #d98a5a;
+  --c-activity: #d08a5e;
   --c-habit: #3da66f;
-  --c-project: #6e7bff;
-  --c-journal: #ffc53d;
-  --c-finance: #b98cf5;
-  --c-note: #f5c265;
+  --c-project: #7079b0;
+  --c-journal: #cfa85a;
+  --c-finance: #9b86bf;
+  --c-note: #cdb079;
   --c-water: #2dd4f7;
-  --c-personality: #ff5fa8;
+  --c-personality: #c47a9d;
   /* Module card TINTS — dark washes of each hue */
   --c-activity-tint: #2a1c16;
   --c-habit-tint: #0f2a1c;
@@ -56,15 +56,15 @@ html.dark {
   --c-water-tint: #102a33;
   --c-personality-tint: #2e1424;
   /* Module CHIPS — neon icon containers */
-  --c-activity-chip: #ff7a4d;
+  --c-activity-chip: #d08a5e;
   --c-habit-chip: #3da66f;
-  --c-project-chip: #6e7bff;
-  --c-journal-chip: #ffc53d;
-  --c-finance-chip: #b98cf5;
+  --c-project-chip: #7079b0;
+  --c-journal-chip: #cfa85a;
+  --c-finance-chip: #9b86bf;
   --c-calendar-chip: #8fa0c9;
-  --c-note-chip: #f5c265;
+  --c-note-chip: #cdb079;
   --c-water-chip: #2dd4f7;
-  --c-personality-chip: #ff5fa8;
+  --c-personality-chip: #c47a9d;
   /* States */
   --c-success: #3da66f;
   --c-warning: #d9a23d;

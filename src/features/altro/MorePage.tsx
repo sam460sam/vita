@@ -1,15 +1,18 @@
 import { Link } from 'react-router-dom';
-import { ChevronRight, Sparkles, SlidersHorizontal } from 'lucide-react';
+import { ChevronRight, Sparkles, SlidersHorizontal, Crown } from 'lucide-react';
 import { useNavItems } from '@/app/nav';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, Divider } from '@/ui';
 import { useT } from '@/i18n';
+import { useIsPro } from '@/premium/premium';
+import { PRO_MODULES } from '@/premium/config';
 import { BackupCard } from '@/features/backup';
 import { RateCard } from '@/features/rating/rating';
 
 export function MorePage() {
   const t = useT();
+  const isPro = useIsPro();
   const { more } = useNavItems();
   return (
     <>
@@ -32,6 +35,7 @@ export function MorePage() {
         <Card inset={false} className="overflow-hidden">
           {more.map((item, i) => {
             const Icon = item.icon;
+            const proLocked = !isPro && PRO_MODULES.includes(item.to.replace('/', ''));
             return (
               <div key={item.to}>
                 {i > 0 && <Divider />}
@@ -43,6 +47,11 @@ export function MorePage() {
                     <Icon size={18} />
                   </span>
                   <span className="flex-1 text-[15px] text-ink font-medium">{t(item.labelKey)}</span>
+                  {proLocked && (
+                    <span className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'color-mix(in srgb, var(--c-gold) 20%, transparent)', color: 'var(--c-gold-2)' }} aria-label="Pro">
+                      <Crown size={13} fill="currentColor" />
+                    </span>
+                  )}
                   <ChevronRight size={18} className="text-ink-3" />
                 </Link>
               </div>

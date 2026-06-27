@@ -10,11 +10,14 @@ import { Screen } from '@/app/Screen';
 import { Segmented } from '@/ui';
 import { activeDfnLocale } from '@/lib/format';
 import { useT } from '@/i18n';
+import { useIsPro } from '@/premium/premium';
+import { DailyInspiration } from '@/features/luxe/DailyInspiration';
 import { computeProgress, type ProgressPeriod } from './logic';
 
 /** Progress / trends — daily · weekly · monthly view of the wellness core. */
 export function ProgressPage() {
   const t = useT();
+  const isPro = useIsPro();
   const [period, setPeriod] = useState<ProgressPeriod>('week');
 
   const settings = useLiveQuery(() => readSettings(), [], undefined);
@@ -73,21 +76,26 @@ export function ProgressPage() {
           </div>
         )}
 
-        {/* Stat cards */}
-        <div className="grid grid-cols-3 gap-3 mt-3">
+        {/* Stat cards (water is a Pro metric) */}
+        <div className={`grid ${isPro ? 'grid-cols-3' : 'grid-cols-2'} gap-3 mt-3`}>
           <StatCard icon={<Flame size={18} />} accent="var(--c-habit)" value={`${stats.habitsDone}`} label={t('nav.habits')} />
-          <StatCard icon={<Droplet size={18} />} accent="var(--c-activity)" value={fmtL(stats.waterMl)} label={t('nav.water')} />
+          {isPro && <StatCard icon={<Droplet size={18} />} accent="var(--c-water)" value={fmtL(stats.waterMl)} label={t('nav.water')} />}
           <StatCard icon={<Dumbbell size={18} />} accent="var(--c-project)" value={`${stats.workouts}`} label={t('nav.activity')} />
         </div>
 
-        <div className="rounded-card bg-card shadow-card px-4 py-3.5 mt-3 flex items-center justify-between">
-          <span className="text-[14px] text-ink-2">{t('progress.goalDays')}</span>
-          <span className="text-[16px] font-extrabold text-ink tnum">{stats.goalDays}</span>
-        </div>
+        {isPro && (
+          <div className="rounded-card bg-card shadow-card px-4 py-3.5 mt-3 flex items-center justify-between">
+            <span className="text-[14px] text-ink-2">{t('progress.goalDays')}</span>
+            <span className="text-[16px] font-extrabold text-ink tnum">{stats.goalDays}</span>
+          </div>
+        )}
 
-        {stats.habitsScheduled === 0 && stats.waterMl === 0 && stats.workouts === 0 && (
+        {stats.habitsScheduled === 0 && stats.workouts === 0 && (
           <p className="text-center text-[13px] text-ink-3 mt-6 px-6 leading-relaxed">{t('progress.empty')}</p>
         )}
+
+        {/* Editorial close */}
+        <DailyInspiration className="mt-6" />
       </Screen>
     </>
   );

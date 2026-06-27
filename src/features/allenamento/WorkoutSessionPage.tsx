@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Plus, Minus, Check, Trash2, Timer, BookMarked, X, SlidersHorizontal } from 'lucide-react';
@@ -23,6 +24,7 @@ export function WorkoutSessionPage() {
   const [session, setSession] = useState<WorkoutSession | null | undefined>(undefined);
   const [picker, setPicker] = useState(false);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [edits, setEdits] = useState<Record<string, string>>({});
   // Timestamp-based rest timer: accurate even across re-renders / backgrounding.
   const [restEndsAt, setRestEndsAt] = useState<number | null>(null);
   const [, forceTick] = useState(0);
@@ -119,6 +121,23 @@ export function WorkoutSessionPage() {
   }
   function setKg(eid: string, kg: number) {
     patchEntry(eid, (en) => ({ ...en, sets: en.sets.map((x) => ({ ...x, weightKg: kg })) }));
+  }
+  // A decimal-friendly numeric field: keeps the raw text while typing (so "22.5"
+  // and a trailing dot survive) and commits the parsed number.
+  function decField(key: string, current: number, commit: (n: number) => void) {
+    return {
+      type: 'text' as const,
+      inputMode: 'decimal' as const,
+      value: edits[key] ?? (current ? String(current) : ''),
+      onChange: (e: ChangeEvent<HTMLInputElement>) => {
+        const v = e.target.value;
+        if (!/^\d*[.,]?\d*$/.test(v)) return;
+        setEdits((p) => ({ ...p, [key]: v }));
+        const n = parseFloat(v.replace(',', '.'));
+        commit(Number.isFinite(n) ? n : 0);
+      },
+      onBlur: () => setEdits((p) => { const n = { ...p }; delete n[key]; return n; }),
+    };
   }
   function toggleExpand(eid: string) {
     setExpanded((prev) => {
@@ -272,7 +291,7 @@ export function WorkoutSessionPage() {
                   <div key={k} className="flex items-center gap-2 mb-1.5">
                     <span className="w-5 text-center text-[13px] font-bold text-ink-3">{k + 1}</span>
                     <input type="number" inputMode="numeric" value={set.reps || ''} onChange={(e) => setSetField(entry.id, k, (x) => ({ ...x, reps: parseInt(e.target.value) || 0 }))} className="flex-1 min-w-0 bg-section rounded-xl py-2 text-center text-[15px] font-semibold text-ink outline-none" />
-                    <input type="number" inputMode="decimal" value={set.weightKg || ''} onChange={(e) => setSetField(entry.id, k, (x) => ({ ...x, weightKg: parseFloat(e.target.value) || 0 }))} className="flex-1 min-w-0 bg-section rounded-xl py-2 text-center text-[15px] font-semibold text-ink outline-none" />
+                    <input {...decField(`${entry.id}-${k}-kg`, set.weightKg, (n) => setSetField(entry.id, k, (x) => ({ ...x, weightKg: n })))} className="flex-1 min-w-0 bg-section rounded-xl py-2 text-center text-[15px] font-semibold text-ink outline-none" />
                     <button onClick={() => toggleSetDone(entry, k, set.done)} aria-label="done" className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 border-2" style={set.done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }}>
                       {set.done && <Check size={15} className="text-white" strokeWidth={3} />}
                     </button>
@@ -301,7 +320,7 @@ export function WorkoutSessionPage() {
                     <span className="text-ink-3 text-[15px] font-bold pb-2.5">×</span>
                     <label className="flex-1 min-w-0">
                       <span className="block text-[10px] font-semibold text-ink-3 uppercase tracking-wide mb-1 px-1">{t('workout.kg')}</span>
-                      <input type="number" inputMode="decimal" value={kg || ''} onChange={(e) => setKg(entry.id, parseFloat(e.target.value) || 0)} className="w-full bg-section rounded-xl py-2.5 text-center text-[16px] font-bold text-ink outline-none" />
+                      <input {...decField(`${entry.id}-kg`, kg, (n) => setKg(entry.id, n))} className="w-full bg-section rounded-xl py-2.5 text-center text-[16px] font-bold text-ink outline-none" />
                     </label>
                     <button
                       onClick={() => tickSet(entry)}
