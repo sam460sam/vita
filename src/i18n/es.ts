@@ -253,6 +253,8 @@ export const es: Record<TKey, string> = {
   'habits.totalHabits': 'Hábitos totales',
   'habits.completedToday': 'Completados hoy',
   'habits.doneToday': 'Hechas hoy',
+  'habits.weekChart': 'Esta semana',
+  'habits.30days': '30 días',
   'habits.completed': 'Completadas',
   'habits.activeCount': 'Activas',
   'habits.newHabit': 'Nuevo hábito',

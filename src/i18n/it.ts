@@ -256,6 +256,8 @@ export const it = {
   'habits.totalHabits': 'Abitudini totali',
   'habits.completedToday': 'Completate oggi',
   'habits.doneToday': 'Fatte oggi',
+  'habits.weekChart': 'Andamento settimana',
+  'habits.30days': '30 giorni',
   'habits.completed': 'Completate',
   'habits.activeCount': 'Attive',
   'habits.newHabit': 'Nuova abitudine',

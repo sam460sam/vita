@@ -12,7 +12,7 @@ import { currentStreak, isDone, isScheduled } from './logic';
 import type { Habit } from '@/data/types';
 import { useT } from '@/i18n';
 import { Link } from 'react-router-dom';
-import { DayPlanCard } from '@/features/plan/DayPlanCard';
+import { HabitWeeklyChart } from './HabitWeeklyChart';
 import { DailyInspiration } from '@/features/luxe/DailyInspiration';
 import vioPlant from '/vio/vio-celebrate.png';
 import vLogo from '/vyta-vmark.png';
@@ -88,14 +88,20 @@ export function HabitsPage() {
           </div>
         </div>
 
-        {/* Progress */}
-        <Link to="/progressi" className="mt-3 rounded-card bg-card shadow-card px-4 py-3.5 flex items-center justify-between active:bg-section transition-colors">
-          <span className="flex items-center gap-2 text-[14.5px] font-semibold text-ink"><TrendingUp size={18} className="text-habit" /> {t('progress.title')}</span>
-          <ChevronRight size={18} className="text-ink-3" />
-        </Link>
+        {/* Weekly completion chart */}
+        <HabitWeeklyChart habits={active} logs={logs ?? []} />
 
-        {/* Plan your day */}
-        <DayPlanCard />
+        {/* Progress + Routines */}
+        <div className="grid grid-cols-2 gap-3 mt-3">
+          <Link to="/progressi" className="rounded-card bg-card shadow-card px-4 py-3.5 flex items-center justify-between active:bg-section transition-colors">
+            <span className="flex items-center gap-2 text-[14.5px] font-semibold text-ink"><TrendingUp size={18} className="text-habit" /> {t('progress.title')}</span>
+            <ChevronRight size={18} className="text-ink-3 flex-shrink-0" />
+          </Link>
+          <Link to="/routine" className="rounded-card bg-card shadow-card px-4 py-3.5 flex items-center justify-between active:bg-section transition-colors">
+            <span className="flex items-center gap-2 text-[14.5px] font-semibold text-ink"><span className="text-[17px]" aria-hidden>🌿</span> {t('routine.title')}</span>
+            <ChevronRight size={18} className="text-ink-3 flex-shrink-0" />
+          </Link>
+        </div>
 
         {/* New habit */}
         <button
