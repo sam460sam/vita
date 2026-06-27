@@ -13,7 +13,7 @@ import { recommendedWaterMl, ACTIVITY_ML, type ActivityLevel } from '@/features/
 
 const GOLD = '#C9A227';
 const WATER = '#0EA5E9';
-import vioWelcome from '/vio/vio-happy.png';
+import { HeroSlide, InsideSlide } from './ShowcaseSteps';
 import vioBell from '/vio/vio-bell.png';
 import vioCelebrate from '/vio/vio-happy.png';
 import vioWaiting from '/vio/vio-wait.png';
@@ -244,14 +244,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
 
       <div className="relative flex-1 overflow-y-auto px-7 ob-content">
         {step === 'lang' && <LanguageStep onPick={(l) => { setPref(l); }} />}
-        {step === 'welcome1' && (
-          <div className="flex flex-col items-center justify-center text-center min-h-full py-8">
-            <img src={vioWelcome} alt="" aria-hidden draggable={false} className="vio-bob w-40 h-40 object-contain mb-2" />
-            <h1 className="display-serif text-[30px] text-ink leading-tight mt-4">{t('onboard.1.title')}</h1>
-            <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.1.desc')}</p>
-          </div>
-        )}
-        {step === 'intro' && <IntroStep />}
+        {step === 'welcome1' && <HeroSlide />}
+        {step === 'intro' && <InsideSlide />}
         {step === 'focus' && <FocusStep value={focusSet} onToggle={toggleFocus} />}
         {step === 'personal' && <PersonalStep age={age} setAge={setAge} weight={weight} setWeight={setWeight} height={height} setHeight={setHeight} />}
         {step === 'water' && <WaterIntroStep weightKg={weightNum} heightCm={heightNum} activity={activity} setActivity={setActivity} ml={waterMl} />}
@@ -484,35 +478,6 @@ function TrialStep() {
               <Check size={14} className="text-white" strokeWidth={3} />
             </span>
             <span className="text-[14px] font-semibold text-ink">{t(b)}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function IntroStep() {
-  const { t } = useI18n();
-  const rows: { emoji: string; titleKey: TKey; descKey: TKey }[] = [
-    { emoji: '🎯', titleKey: 'onboard.why.1.title', descKey: 'onboard.why.1.desc' },
-    { emoji: '📈', titleKey: 'onboard.why.2.title', descKey: 'onboard.why.2.desc' },
-    { emoji: '🔒', titleKey: 'onboard.why.3.title', descKey: 'onboard.why.3.desc' },
-    { emoji: '✨', titleKey: 'onboard.why.4.title', descKey: 'onboard.why.4.desc' },
-  ];
-  return (
-    <div className="pt-4">
-      <div className="text-center mb-6">
-        <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.why.title')}</h1>
-        <p className="text-[15px] text-ink-2 mt-2 max-w-sm mx-auto leading-relaxed">{t('onboard.why.desc')}</p>
-      </div>
-      <div className="space-y-3 max-w-md mx-auto">
-        {rows.map((r) => (
-          <div key={r.titleKey} className="flex items-start gap-3 px-4 py-3.5 rounded-card bg-card shadow-chip">
-            <span className="text-2xl leading-none mt-0.5">{r.emoji}</span>
-            <div className="min-w-0">
-              <div className="text-[15px] font-semibold text-ink">{t(r.titleKey)}</div>
-              <div className="text-[13px] text-ink-2 leading-snug">{t(r.descKey)}</div>
-            </div>
           </div>
         ))}
       </div>
