@@ -240,11 +240,11 @@ export function HomeScreen() {
           </span>
         </button>
 
-        {/* 4 — Progress strip (Momentum lives in the big card below, not here) */}
-        <div data-tour="chips" className="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar -mx-1 px-1">
-          <Link to="/abitudini" className="flex-shrink-0"><Chip emoji="🌿" label={t('nav.habits')} value={`${habitsDone}/${todays.length}`} /></Link>
-          {isPro && <Link to="/acqua" className="flex-shrink-0"><Chip emoji="💧" label={t('nav.water')} value={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} /></Link>}
-          <Link to="/progressi" className="flex-shrink-0"><Chip emoji="🔥" label={t('home.streak')} value={`${maxStreak}`} /></Link>
+        {/* 4 — Progress strip: even, fully-visible stat tiles (Momentum lives in the big card below) */}
+        <div data-tour="chips" className={`grid gap-2 mt-3 ${isPro ? 'grid-cols-3' : 'grid-cols-2'}`}>
+          <Link to="/abitudini" className="block"><Chip emoji="🌿" label={t('nav.habits')} value={`${habitsDone}/${todays.length}`} /></Link>
+          {isPro && <Link to="/acqua" className="block"><Chip emoji="💧" label={t('nav.water')} value={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} /></Link>}
+          <Link to="/progressi" className="block"><Chip emoji="🔥" label={t('home.streak')} value={`${maxStreak}`} /></Link>
         </div>
 
         {/* 5 — Your plant (Momentum reward) */}
@@ -301,10 +301,12 @@ function SavedTile({ to, emoji, color, label }: { to: string; emoji: string; col
 
 function Chip({ emoji, label, value }: { emoji: string; label: string; value: string }) {
   return (
-    <span className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-full bg-card shadow-chip pl-2.5 pr-3 h-9 text-[13px] whitespace-nowrap">
-      <span aria-hidden>{emoji}</span>
-      <span className="font-bold text-ink tnum">{value}</span>
-      <span className="text-ink-3">{label}</span>
+    <span className="flex flex-col items-center justify-center gap-0.5 w-full rounded-card bg-card shadow-chip px-1.5 py-2 text-center">
+      <span className="inline-flex items-center gap-1 leading-none">
+        <span aria-hidden className="text-[14px]">{emoji}</span>
+        <span className="font-bold text-ink tnum text-[14px] whitespace-nowrap">{value}</span>
+      </span>
+      <span className="text-ink-3 text-[11px] font-semibold truncate max-w-full">{label}</span>
     </span>
   );
 }
