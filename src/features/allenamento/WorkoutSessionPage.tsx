@@ -136,7 +136,7 @@ export function WorkoutSessionPage() {
   function setCount(eid: string, n: number) {
     platform.haptic();
     patchEntry(eid, (en) => {
-      const total = clampN(n, 1, 12);
+      const total = clampN(n, 1, 30);
       const r = en.sets[0]?.reps ?? 10;
       const w = en.sets[0]?.weightKg ?? 0;
       const sets = en.sets.slice(0, total);
@@ -322,8 +322,8 @@ export function WorkoutSessionPage() {
                     <span className="text-[12.5px] font-semibold text-ink-3">{t('workout.sets')}</span>
                     <div className="flex items-center gap-1.5 ml-auto">
                       <button onClick={() => setCount(entry.id, total - 1)} disabled={total <= 1} aria-label="-" className="h-8 w-8 rounded-full bg-section text-ink flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"><Minus size={16} /></button>
-                      <span className="w-7 text-center text-[16px] font-extrabold text-ink tnum">{total}</span>
-                      <button onClick={() => setCount(entry.id, total + 1)} disabled={total >= 12} aria-label="+" className="h-8 w-8 rounded-full bg-section text-ink flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"><Plus size={16} /></button>
+                      <input type="number" inputMode="numeric" value={total} onChange={(e) => setCount(entry.id, parseInt(e.target.value) || 1)} aria-label={t('workout.sets')} className="w-12 bg-section rounded-lg py-1.5 text-center text-[16px] font-extrabold text-ink outline-none tnum" />
+                      <button onClick={() => setCount(entry.id, total + 1)} disabled={total >= 30} aria-label="+" className="h-8 w-8 rounded-full bg-section text-ink flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"><Plus size={16} /></button>
                     </div>
                   </div>
                 </>
