@@ -134,6 +134,12 @@ let vBg    = Color(red: 0.075, green: 0.090, blue: 0.114) // #13171D card surfac
 let vInk   = Color(red: 0.925, green: 0.937, blue: 0.941) // #ECEFF0 light editorial ink
 let vInk2  = Color(red: 0.651, green: 0.694, blue: 0.675) // #A6B1AC muted ink
 
+// Widget background: a soft emerald wash up top fading into anthracite, echoing
+// the app's home hero gradient.
+let vBgGradient = RadialGradient(
+    gradient: Gradient(colors: [Color(red: 0.071, green: 0.220, blue: 0.149), vBg]),
+    center: UnitPoint(x: 0.5, y: -0.10), startRadius: 6, endRadius: 240)
+
 // MARK: - Reusable bits
 
 struct WaterRing: View {
@@ -256,8 +262,8 @@ struct WaterWidgetView: View {
 struct WaterWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "VytaWaterWidget", provider: WaterProvider()) { entry in
-            if #available(iOS 17.0, *) { WaterWidgetView(data: entry.data).containerBackground(vBg, for: .widget) }
-            else { WaterWidgetView(data: entry.data).background(vBg) }
+            if #available(iOS 17.0, *) { WaterWidgetView(data: entry.data).containerBackground(vBgGradient, for: .widget) }
+            else { WaterWidgetView(data: entry.data).background(vBgGradient) }
         }
         .configurationDisplayName(L.t("Vyta · Acqua", "Vyta · Water"))
         .description(L.t("Segna l’acqua di oggi.", "Log today’s water."))
@@ -350,8 +356,8 @@ struct ListWidgetView: View {
 struct ListWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: "VytaListWidget", intent: ListConfigIntent.self, provider: ListProvider()) { entry in
-            if #available(iOS 17.0, *) { ListWidgetView(data: entry.data, mode: entry.mode).containerBackground(vBg, for: .widget) }
-            else { ListWidgetView(data: entry.data, mode: entry.mode).background(vBg) }
+            if #available(iOS 17.0, *) { ListWidgetView(data: entry.data, mode: entry.mode).containerBackground(vBgGradient, for: .widget) }
+            else { ListWidgetView(data: entry.data, mode: entry.mode).background(vBgGradient) }
         }
         .configurationDisplayName(L.t("Vyta · Lista", "Vyta · List"))
         .description(L.t("Oggi, settimana o to-do.", "Today, week or to-do."))
@@ -467,8 +473,8 @@ struct HabitsWidgetView: View {
 struct HabitsWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "VytaHabitsWidget", provider: HabitsProvider()) { entry in
-            if #available(iOS 17.0, *) { HabitsWidgetView(data: entry.data).containerBackground(vBg, for: .widget) }
-            else { HabitsWidgetView(data: entry.data).background(vBg) }
+            if #available(iOS 17.0, *) { HabitsWidgetView(data: entry.data).containerBackground(vBgGradient, for: .widget) }
+            else { HabitsWidgetView(data: entry.data).background(vBgGradient) }
         }
         .configurationDisplayName(L.t("Vyta · Abitudini", "Vyta · Habits"))
         .description(L.t("Heatmap e tracker settimanale.", "Heatmap and weekly tracker."))
@@ -544,8 +550,8 @@ struct MomentumWidgetView: View {
 struct MomentumWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "VytaMomentumWidget", provider: MomentumProvider()) { entry in
-            if #available(iOS 17.0, *) { MomentumWidgetView(data: entry.data).containerBackground(vBg, for: .widget) }
-            else { MomentumWidgetView(data: entry.data).background(vBg) }
+            if #available(iOS 17.0, *) { MomentumWidgetView(data: entry.data).containerBackground(vBgGradient, for: .widget) }
+            else { MomentumWidgetView(data: entry.data).background(vBgGradient) }
         }
         .configurationDisplayName(L.t("Vyta · Momentum", "Vyta · Momentum"))
         .description(L.t("Il tuo punteggio di oggi.", "Your daily score."))
