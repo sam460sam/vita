@@ -20,6 +20,7 @@ import { UpdateNudge } from '@/features/update/UpdateNudge';
 import { DailyInspiration } from '@/features/luxe/DailyInspiration';
 import { computeMomentum, momentumMessageKey, type MomentumKey } from './momentum';
 import { useT, type TKey } from '@/i18n';
+import { ThemeToggle } from './ThemeToggle';
 import type { Habit } from '@/data/types';
 import vLogo from '/vyta-vmark.png';
 
@@ -133,9 +134,12 @@ export function HomeScreen() {
             <p className="text-[12.5px] font-semibold text-ink-3 capitalize leading-none">{longDate()}</p>
             <h1 className="display-serif text-[28px] text-ink leading-tight mt-1.5 truncate">{greeting}</h1>
           </div>
-          <Link to="/altro" aria-label={t('nav.more')} className="h-10 w-10 rounded-full flex items-center justify-center active:scale-90 transition-transform flex-shrink-0 mt-1" style={{ background: 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' }}>
-            <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
-          </Link>
+          <div className="flex items-center gap-2 flex-shrink-0 mt-1">
+            <ThemeToggle />
+            <Link to="/altro" aria-label={t('nav.more')} className="h-10 w-10 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' }}>
+              <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
+            </Link>
+          </div>
         </header>
 
         <UpdateNudge />

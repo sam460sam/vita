@@ -587,6 +587,8 @@ export const it = {
   'settings.theme.system': 'Automatico (sistema)',
   'settings.theme.light': 'Chiaro',
   'settings.theme.dark': 'Scuro',
+  'theme.toDay': 'Passa alla modalità Giorno',
+  'theme.toNight': 'Passa alla modalità Notte',
   'settings.reminders': 'Promemoria',
   'settings.reminders.note': "Riceverai una notifica all'orario scelto (sull'app installata). Lascia vuoto per disattivare.",
   'settings.reminders.water': 'Bevi acqua',

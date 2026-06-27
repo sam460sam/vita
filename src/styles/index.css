@@ -87,6 +87,107 @@ html.dark {
   color-scheme: dark;
 }
 
+/* ===== Day ("light") theme — same luxury family on warm parchment =====
+   Ink text on layered cream surfaces, deeper antique gold so it reads on the
+   light canvas. No pure white, no pure black. Same semantic token names. */
+html.light {
+  /* Surfaces — warm parchment, layered by elevation */
+  --c-app: #ede7da;     /* bg            */
+  --c-section: #fbf7ee; /* surface-2 / raised, chips, pressed */
+  --c-card: #f6f1e7;    /* surface-1 / cards */
+  --c-overlay: #fcfaf4; /* sheets / modals */
+  /* Hero washes — soft sage on parchment */
+  --c-hero-1: #d6e3d6;
+  --c-hero-2: #c3d8c6;
+  --c-glow: rgba(46, 107, 71, 0.16);
+  /* Antique gold — deeper so it reads on cream */
+  --c-gold: #a8853f;
+  --c-gold-deep: #8a6a30;
+  --c-gold-2: #c2a05a;
+  --c-drops: #2e6b6b;
+  /* Text — warm ink (never pure black), desaturated greys */
+  --c-ink: #22251f;     /* text-primary */
+  --c-ink-2: #5a5f54;   /* text-secondary */
+  --c-ink-3: #8a8f82;   /* text-tertiary / placeholder */
+  /* Hairlines / dividers — gold low-opacity tuned for light */
+  --c-line: rgba(168, 133, 63, 0.30);
+  --c-divider: rgba(168, 133, 63, 0.20);
+  --c-hairline: rgba(168, 133, 63, 0.34);
+  --c-border-subtle: rgba(34, 37, 31, 0.08);
+  --c-scrim: rgba(40, 35, 25, 0.45);
+  /* Module accents — same hue identities, deeper for AA on cream */
+  --c-activity: #a8632a;
+  --c-habit: #2e6b47;
+  --c-project: #3a4a7a;
+  --c-journal: #a8853f;
+  --c-finance: #5a3a63;
+  --c-note: #9a7b3c;
+  --c-water: #2e6b6b;
+  --c-personality: #8a4863;
+  /* Module card TINTS — pale washes of each hue */
+  --c-activity-tint: #f3e7db;
+  --c-habit-tint: #e2efe6;
+  --c-project-tint: #e4e7f0;
+  --c-journal-tint: #f4ecd9;
+  --c-finance-tint: #ece6f0;
+  --c-calendar-tint: #e6ebf2;
+  --c-note-tint: #f4eeda;
+  --c-water-tint: #e0eef0;
+  --c-personality-tint: #f1e3ea;
+  /* Module CHIPS — deeper icon containers */
+  --c-activity-chip: #a8632a;
+  --c-habit-chip: #2e6b47;
+  --c-project-chip: #3a4a7a;
+  --c-journal-chip: #a8853f;
+  --c-finance-chip: #5a3a63;
+  --c-calendar-chip: #4a5a86;
+  --c-note-chip: #9a7b3c;
+  --c-water-chip: #2e6b6b;
+  --c-personality-chip: #8a4863;
+  /* States */
+  --c-success: #2e6b47;
+  --c-warning: #a8632a;
+  --c-danger: #8a332f;
+  /* Signature */
+  --c-accent: #2e6b47;
+  --c-on-accent: #f3eee3;
+  --c-streak: #b05e2e;
+  --c-check: #2e6b47;
+  /* Primary action — green stays, cream text both themes */
+  --c-primary: #0d4d32;
+  --c-on-primary: #f3eee3;
+  --c-primary-border: rgba(168, 133, 63, 0.50);
+  color-scheme: light;
+}
+
+/* Day elevation comes from a soft warm shadow, not surface contrast. */
+html.light .shadow-card,
+html.light .shadow-card-hover {
+  background-image: linear-gradient(157deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 42%, rgba(40, 35, 25, 0.025));
+  box-shadow: inset 0 0 0 1px rgba(168, 133, 63, 0.16), 0 1px 2px rgba(40, 35, 25, 0.05), 0 14px 30px rgba(40, 35, 25, 0.08);
+}
+html.light .shadow-chip {
+  box-shadow: inset 0 0 0 1px rgba(168, 133, 63, 0.16), 0 1px 2px rgba(40, 35, 25, 0.05), 0 6px 14px rgba(40, 35, 25, 0.06);
+}
+/* Soften the engraved title shadow on parchment (light emboss, not dark deboss). */
+html.light h1,
+html.light h2:not(.metric-label):not(.uppercase),
+html.light h3:not(.uppercase),
+html.light .display-serif,
+html.light .ob-content h1 {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Smooth cross-fade when the user switches themes (only while toggling).
+   The reduced-motion block below already neutralises this to an instant swap. */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 250ms ease, color 250ms ease, border-color 250ms ease,
+    fill 250ms ease, box-shadow 250ms ease !important;
+}
+
 * {
   -webkit-tap-highlight-color: transparent;
 }

@@ -583,6 +583,8 @@ export const de: Record<TKey, string> = {
   'settings.theme.system': 'Automatisch (System)',
   'settings.theme.light': 'Hell',
   'settings.theme.dark': 'Dunkel',
+  'theme.toDay': 'In den Tagmodus wechseln',
+  'theme.toNight': 'In den Nachtmodus wechseln',
   'settings.reminders': 'Erinnerungen',
   'settings.reminders.note': 'Du erhältst zur gewählten Zeit eine Benachrichtigung (in der installierten App). Leer lassen zum Deaktivieren.',
   'settings.reminders.water': 'Wasser trinken',
