@@ -262,10 +262,27 @@ export function HomeScreen() {
           </div>
         </Link>
 
+        {/* Saved items — one place, split by category (each opens its by-day list). */}
+        <h2 className="display-serif text-[21px] text-ink mt-6 mb-2.5">{t('home.saved.title')}</h2>
+        <div className="grid grid-cols-3 gap-3">
+          <SavedTile to="/allenamento" emoji="🏋️" color="#d98a6a" label={t('workout.title')} />
+          <SavedTile to="/diario" emoji="📓" color="var(--c-journal)" label={t('nav.journal')} />
+          <SavedTile to="/note" emoji="📝" color="#cdb079" label={t('nav.notes')} />
+        </div>
+
         {/* 6 — Daily inspiration */}
-        <DailyInspiration className="mt-5" />
+        <DailyInspiration className="mt-6" />
       </div>
     </div>
+  );
+}
+
+function SavedTile({ to, emoji, color, label }: { to: string; emoji: string; color: string; label: string }) {
+  return (
+    <Link to={to} className="rounded-card bg-card shadow-card px-2 py-4 flex flex-col items-center text-center gap-2 active:scale-[0.97] transition-transform">
+      <span className="h-11 w-11 rounded-2xl flex items-center justify-center text-[22px]" style={{ background: `color-mix(in srgb, ${color} 16%, var(--c-card))`, boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${color} 40%, transparent)` }} aria-hidden>{emoji}</span>
+      <span className="text-[13px] font-bold text-ink leading-tight">{label}</span>
+    </Link>
   );
 }
 

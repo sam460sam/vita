@@ -1017,6 +1017,7 @@ export const es: Record<TKey, string> = {
   'home.workout.plan': 'Planifica un entrenamiento',
   'home.workout.inProgress': 'En curso',
   'home.todayPlus': '+{n} hoy',
+  'home.saved.title': 'Tus elementos guardados',
   'home.routine.streak': 'Racha de {n} días',
   'home.routine.tapDone': 'Toca para completar',
   'home.routine.empty.title': 'Cultiva tu día',

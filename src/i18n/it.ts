@@ -1021,6 +1021,7 @@ export const it = {
   'home.workout.plan': 'Pianifica un allenamento',
   'home.workout.inProgress': 'In corso',
   'home.todayPlus': '+{n} oggi',
+  'home.saved.title': 'Le tue cose salvate',
   'home.routine.streak': '{n} giorni di fila',
   'home.routine.tapDone': 'Tocca per completare',
   'home.routine.empty.title': 'Coltiva la tua giornata',
