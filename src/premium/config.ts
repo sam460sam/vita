@@ -46,9 +46,9 @@ export const PRIVACY_URL = 'https://vita-peach.vercel.app/privacy.html';
 
 /**
  * Modules behind Vyta Pro (the "equilibrata" split). The wellness core
- * (habits, water, journal, notes, health) stays free.
+ * (habits, journal, notes, health) stays free; water is a Pro feature.
  */
-export const PRO_MODULES: string[] = ['finanze', 'obiettivi', 'calendario'];
+export const PRO_MODULES: string[] = ['finanze', 'obiettivi', 'calendario', 'acqua'];
 
 /** Master switch. Keep true to ship the paywall; flip to false to disable
  *  gating entirely (emergency unlock) without removing the code. */

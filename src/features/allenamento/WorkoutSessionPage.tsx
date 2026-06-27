@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Plus, Minus, Check, Trash2, Timer, BookMarked } from 'lucide-react';
+import { Plus, Minus, Check, Trash2, Timer, BookMarked, X, SlidersHorizontal } from 'lucide-react';
 import { db } from '@/data/db';
 import { saveWorkoutSession, deleteWorkoutSession, newWorkoutEntry, createWorkoutPlan, readSettings } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
@@ -22,22 +22,28 @@ export function WorkoutSessionPage() {
   const nav = useNavigate();
   const [session, setSession] = useState<WorkoutSession | null | undefined>(undefined);
   const [picker, setPicker] = useState(false);
-  const [rest, setRest] = useState<number | null>(null);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  // Timestamp-based rest timer: accurate even across re-renders / backgrounding.
+  const [restEndsAt, setRestEndsAt] = useState<number | null>(null);
+  const [, forceTick] = useState(0);
   const [restCtx, setRestCtx] = useState<{ eid: string; k: number; startedAt: number } | null>(null);
+  const audioRef = useRef<AudioContext | null>(null);
   const sessions = useLiveQuery(() => db.workoutSessions.toArray(), [], []);
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const defaultRest = settings?.restSec ?? 90;
 
   useEffect(() => { void db.workoutSessions.get(id).then((x) => setSession(x ?? null)); }, [id]);
 
-  // Rest countdown after completing a set.
+  // Drive the live rest countdown; ring + finalize exactly when it hits zero.
   useEffect(() => {
-    if (rest == null) return;
-    if (rest <= 0) { platform.haptic(); endRest(); return; }
-    const tid = setTimeout(() => setRest((r) => (r == null ? r : r - 1)), 1000);
-    return () => clearTimeout(tid);
+    if (restEndsAt == null) return;
+    const tid = setInterval(() => {
+      if (Date.now() >= restEndsAt) { ring(); endRest(); }
+      else forceTick((x) => x + 1);
+    }, 250);
+    return () => clearInterval(tid);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rest]);
+  }, [restEndsAt]);
 
   if (session === undefined) return null;
   if (session === null) {
@@ -65,7 +71,39 @@ export function WorkoutSessionPage() {
   }
   function endRest() {
     recordPending();
-    setRest(null);
+    setRestEndsAt(null);
+  }
+  // Prime the audio context on the user gesture that starts the rest, so the
+  // end-of-rest beep is allowed to play later on iOS.
+  function ensureAudio() {
+    try {
+      const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!Ctx) return;
+      if (!audioRef.current) audioRef.current = new Ctx();
+      if (audioRef.current.state === 'suspended') void audioRef.current.resume();
+    } catch { /* ignore */ }
+  }
+  function ring() {
+    platform.haptic();
+    try { navigator.vibrate?.([140, 70, 140]); } catch { /* ignore */ }
+    const ac = audioRef.current;
+    if (!ac) return;
+    try {
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.connect(g); g.connect(ac.destination);
+      o.type = 'sine'; o.frequency.value = 880;
+      g.gain.setValueAtTime(0.0001, ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.3, ac.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.4);
+      o.start(); o.stop(ac.currentTime + 0.42);
+    } catch { /* ignore */ }
+  }
+  function startRest(eid: string, k: number, durSec: number) {
+    ensureAudio();
+    recordPending();
+    setRestEndsAt(Date.now() + durSec * 1000);
+    setRestCtx({ eid, k, startedAt: Date.now() });
   }
   const REST_PRESETS = [15, 30, 45, 60, 75, 90, 120, 150, 180];
   function cycleRest(eid: string, cur: number) {
@@ -81,6 +119,19 @@ export function WorkoutSessionPage() {
   }
   function setKg(eid: string, kg: number) {
     patchEntry(eid, (en) => ({ ...en, sets: en.sets.map((x) => ({ ...x, weightKg: kg })) }));
+  }
+  function toggleExpand(eid: string) {
+    setExpanded((prev) => {
+      const n = new Set(prev);
+      if (n.has(eid)) n.delete(eid); else n.add(eid);
+      return n;
+    });
+  }
+  function addSet(eid: string) {
+    patchEntry(eid, (en) => ({ ...en, sets: [...en.sets, { ...(en.sets[en.sets.length - 1] ?? { reps: 10, weightKg: 0 }), done: false }] }));
+  }
+  function removeSet(eid: string, k: number) {
+    patchEntry(eid, (en) => ({ ...en, sets: en.sets.length > 1 ? en.sets.filter((_, i) => i !== k) : en.sets }));
   }
   function setCount(eid: string, n: number) {
     platform.haptic();
@@ -101,10 +152,16 @@ export function WorkoutSessionPage() {
     let next = done + 1;
     const advancing = next <= total;
     if (next > total) next = 0;
-    recordPending();
     patchEntry(entry.id, (en) => ({ ...en, sets: en.sets.map((x, i) => ({ ...x, done: i < next })) }));
-    if (advancing) { setRest(entry.restSec ?? defaultRest); setRestCtx({ eid: entry.id, k: next - 1, startedAt: Date.now() }); }
-    else { setRest(null); setRestCtx(null); }
+    if (advancing) startRest(entry.id, next - 1, entry.restSec ?? defaultRest);
+    else endRest();
+  }
+  // Toggle a single set's done state (used in the expanded per-set view).
+  function toggleSetDone(entry: WorkoutEntry, k: number, currentlyDone: boolean) {
+    platform.haptic();
+    setSetField(entry.id, k, (x) => ({ ...x, done: !x.done }));
+    if (!currentlyDone) startRest(entry.id, k, entry.restSec ?? defaultRest);
+    else endRest();
   }
   function addExercise(def: ExerciseDef) {
     update({ ...s, entries: [...s.entries, newWorkoutEntry(def.id, exerciseName(def, lang), def.muscle)] });
@@ -155,6 +212,7 @@ export function WorkoutSessionPage() {
           const nextR = last ? suggestNextReps(last) : 0;
           const prevBest = prevBestMetric(sessions ?? [], entry.exerciseId, s.id);
           const isPR = prevBest > 0 && currentBestMetric(entry) > prevBest;
+          const isExpanded = expanded.has(entry.id);
           return (
           <div key={entry.id} className="rounded-card bg-card shadow-card p-4 mb-3">
             <div className="flex items-center justify-between gap-2 mb-2">
@@ -175,7 +233,10 @@ export function WorkoutSessionPage() {
                   </button>
                 </div>
               </div>
-              <button onClick={() => update({ ...s, entries: s.entries.filter((e) => e.id !== entry.id) })} aria-label={t('common.delete')} className="text-ink-3 p-1"><Trash2 size={16} /></button>
+              <div className="flex items-center gap-0.5 flex-shrink-0">
+                <button onClick={() => toggleExpand(entry.id)} aria-label={t('workout.perSet')} className="p-1.5 active:scale-90 transition-transform" style={{ color: isExpanded ? 'var(--c-primary)' : 'var(--c-ink-3)' }}><SlidersHorizontal size={16} /></button>
+                <button onClick={() => update({ ...s, entries: s.entries.filter((e) => e.id !== entry.id) })} aria-label={t('common.delete')} className="text-ink-3 p-1.5"><Trash2 size={16} /></button>
+              </div>
             </div>
 
             {/* Progression hint: what you did last time + a one-tap suggested target. */}
@@ -197,9 +258,34 @@ export function WorkoutSessionPage() {
               </div>
             )}
 
+            {/* Expanded: per-set rows (different reps/kg per set, e.g. pyramid). */}
+            {isExpanded && (
+              <>
+                <div className="flex items-center gap-2 text-[10px] font-semibold text-ink-3 uppercase tracking-wide px-1 mb-1">
+                  <span className="w-5 text-center">#</span>
+                  <span className="flex-1 text-center">{t('workout.reps')}</span>
+                  <span className="flex-1 text-center">{t('workout.kg')}</span>
+                  <span className="w-8" />
+                  <span className="w-5" />
+                </div>
+                {entry.sets.map((set, k) => (
+                  <div key={k} className="flex items-center gap-2 mb-1.5">
+                    <span className="w-5 text-center text-[13px] font-bold text-ink-3">{k + 1}</span>
+                    <input type="number" inputMode="numeric" value={set.reps || ''} onChange={(e) => setSetField(entry.id, k, (x) => ({ ...x, reps: parseInt(e.target.value) || 0 }))} className="flex-1 min-w-0 bg-section rounded-xl py-2 text-center text-[15px] font-semibold text-ink outline-none" />
+                    <input type="number" inputMode="decimal" value={set.weightKg || ''} onChange={(e) => setSetField(entry.id, k, (x) => ({ ...x, weightKg: parseFloat(e.target.value) || 0 }))} className="flex-1 min-w-0 bg-section rounded-xl py-2 text-center text-[15px] font-semibold text-ink outline-none" />
+                    <button onClick={() => toggleSetDone(entry, k, set.done)} aria-label="done" className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 border-2" style={set.done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }}>
+                      {set.done && <Check size={15} className="text-white" strokeWidth={3} />}
+                    </button>
+                    <button onClick={() => removeSet(entry.id, k)} aria-label={t('common.close')} className="w-5 text-ink-3 flex-shrink-0"><X size={15} /></button>
+                  </div>
+                ))}
+                <button onClick={() => addSet(entry.id)} className="mt-1.5 text-[13.5px] font-semibold text-habit flex items-center gap-1"><Plus size={15} /> {t('workout.addSet')}</button>
+              </>
+            )}
+
             {/* Collapsed: one row = N sets of the same reps × kg; tap the pill to
                 tick off a set (1/4 → 2/4 …). */}
-            {(() => {
+            {!isExpanded && (() => {
               const reps = entry.sets[0]?.reps ?? 0;
               const kg = entry.sets[0]?.weightKg ?? 0;
               const total = entry.sets.length;
@@ -277,17 +363,23 @@ export function WorkoutSessionPage() {
 
       {picker && <ExercisePicker onAdd={addExercise} onClose={() => setPicker(false)} />}
 
-      {rest != null && (
-        <div className="fixed left-0 right-0 bottom-[calc(16px+env(safe-area-inset-bottom))] px-4 z-[60]">
-          <div className="max-w-md mx-auto rounded-full shadow-nav flex items-center gap-3 px-5 py-3" style={{ background: 'var(--c-ink)', color: 'var(--c-app)' }}>
-            <Timer size={18} />
-            <span className="font-extrabold tnum text-[17px]">{fmtRest(rest)}</span>
-            <span className="flex-1 text-[13px] opacity-80">{t('workout.rest')}</span>
-            <button onClick={() => setRest((r) => (r ?? 0) + 15)} className="text-[13px] font-bold px-1.5">+15</button>
-            <button onClick={endRest} className="text-[13px] font-bold px-1.5">{t('workout.skip')}</button>
+      {restEndsAt != null && (() => {
+        const remaining = Math.max(0, Math.ceil((restEndsAt - Date.now()) / 1000));
+        const total = restCtx ? Math.max(1, Math.round((restEndsAt - restCtx.startedAt) / 1000)) : remaining;
+        const frac = Math.min(1, Math.max(0, (total - remaining) / total));
+        return (
+          <div className="fixed left-0 right-0 bottom-[calc(16px+env(safe-area-inset-bottom))] px-4 z-[60]">
+            <div className="max-w-md mx-auto rounded-full shadow-nav relative overflow-hidden flex items-center gap-3 px-5 py-3" style={{ background: 'var(--c-ink)', color: 'var(--c-app)' }}>
+              <div aria-hidden className="absolute inset-y-0 left-0 transition-[width] duration-300" style={{ width: `${frac * 100}%`, background: 'color-mix(in srgb, var(--c-primary) 32%, transparent)' }} />
+              <Timer size={18} className="relative" />
+              <span className="relative font-extrabold tnum text-[18px]">{fmtRest(remaining)}</span>
+              <span className="relative flex-1 text-[13px] opacity-80">{t('workout.rest')}</span>
+              <button onClick={() => setRestEndsAt((e) => (e ?? Date.now()) + 15000)} className="relative text-[13px] font-bold px-2">+15</button>
+              <button onClick={endRest} className="relative text-[13px] font-bold px-2">{t('workout.skip')}</button>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </>
   );
 }

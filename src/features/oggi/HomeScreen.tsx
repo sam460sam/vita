@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Link } from 'react-router-dom';
 import { startOfWeek, addDays, subDays, format } from 'date-fns';
-import { Check, ChevronRight } from 'lucide-react';
+import { Check, ChevronRight, Crown } from 'lucide-react';
 import { db } from '@/data/db';
 import { readSettings, toggleHabitLog, addWaterMl } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { ProgressRing, VioCompanion, Icon } from '@/ui';
+import { useIsPro } from '@/premium/premium';
 import { longDate, todayISO } from '@/lib/format';
 import { platform } from '@/platform/platform';
 import { syncWidgetData, drainWidgetWaterInbox } from '@/platform/widget';
@@ -26,6 +27,7 @@ import iconCompass from '/icons3d/clipboard.png';
 /** Home — premium "Today" screen, faithful to the design north-star. */
 export function HomeScreen() {
   const t = useT();
+  const isPro = useIsPro();
   const [quizOpen, setQuizOpen] = useState(false);
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const habits = useLiveQuery(() => db.habits.orderBy('order').toArray(), [], []);
@@ -164,7 +166,7 @@ export function HomeScreen() {
         {/* Hero tiles */}
         <div className="grid grid-cols-3 gap-3 mt-5">
           <HeroTile to="/abitudini" icon={iconHabits} label={t('nav.habits')} sub={t('home.tile.todo', { n: pending.length })} />
-          <HeroTile to="/acqua" icon={iconWater} label={t('nav.water')} sub={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} />
+          <HeroTile to="/acqua" icon={iconWater} label={t('nav.water')} sub={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} locked={!isPro} />
           <HeroTile to="/personalita" icon={iconCompass} label={t('nav.personality.short')} sub={t('home.tile.ready')} />
         </div>
 
@@ -233,9 +235,14 @@ export function HomeScreen() {
   );
 }
 
-function HeroTile({ to, icon, label, sub }: { to: string; icon: string; label: string; sub: string }) {
+function HeroTile({ to, icon, label, sub, locked }: { to: string; icon: string; label: string; sub: string; locked?: boolean }) {
   return (
-    <Link to={to} className="rounded-card bg-card shadow-card px-2 py-4 flex flex-col items-center text-center gap-1 active:scale-[0.97] transition-transform">
+    <Link to={to} className="relative rounded-card bg-card shadow-card px-2 py-4 flex flex-col items-center text-center gap-1 active:scale-[0.97] transition-transform">
+      {locked && (
+        <span className="absolute top-2 right-2 h-5 w-5 rounded-full flex items-center justify-center" style={{ background: 'color-mix(in srgb, var(--c-gold) 22%, var(--c-card))', color: 'var(--c-gold-2)' }} aria-hidden>
+          <Crown size={11} fill="currentColor" />
+        </span>
+      )}
       <img src={icon} className="h-11 w-11 object-contain" alt="" aria-hidden draggable={false} />
       <span className="text-[14.5px] font-bold text-ink leading-tight mt-1">{label}</span>
       <span className="text-[12px] text-ink-3 truncate max-w-full">{sub}</span>

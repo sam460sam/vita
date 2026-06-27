@@ -1193,6 +1193,7 @@ export const it = {
   'workout.addExercise': 'Aggiungi esercizio',
   'workout.addSet': 'Aggiungi serie',
   'workout.sets': 'Serie',
+  'workout.perSet': 'Pesi per serie',
   'workout.finishSession': 'Termina allenamento',
   'workout.deleteSession': 'Elimina allenamento',
   'workout.reps': 'Rip',
