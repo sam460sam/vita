@@ -11,6 +11,8 @@ import { TabBar } from './TabBar';
 import { GlobalSheets } from './GlobalSheets';
 import { RouteErrorBoundary } from './ErrorBoundary';
 import { Onboarding, hasOnboarded } from '@/features/onboarding/Onboarding';
+import { HomeTour } from '@/features/onboarding/HomeTour';
+import { replayTour } from '@/features/onboarding/tour';
 import { BrandSplash } from './BrandSplash';
 
 // Core modules — eager (part of the primary experience).
@@ -100,10 +102,11 @@ export function App() {
               </div>
               <TabBar />
               <GlobalSheets />
+              <HomeTour />
             </StellaProvider>
             </QuickAddProvider>
           </HashRouter>
-          {!onboarded && <Onboarding onDone={() => setOnboarded(true)} />}
+          {!onboarded && <Onboarding onDone={() => { setOnboarded(true); setTimeout(() => replayTour(), 400); }} />}
         </ToastProvider>
       </PremiumProvider>
       </ThemeProvider>

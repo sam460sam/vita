@@ -15,7 +15,7 @@ export function TabBar() {
   return (
     <nav className="fixed bottom-0 inset-x-0 z-40 md:hidden pb-safe-bottom pointer-events-none">
       <div className="px-4 pb-3 pt-2">
-        <div className="pointer-events-auto flex items-stretch h-[64px] max-w-md mx-auto px-2 rounded-card bg-card/90 backdrop-blur-xl border shadow-nav" style={{ borderColor: 'var(--c-hairline)' }}>
+        <div data-tour="nav" className="pointer-events-auto flex items-stretch h-[64px] max-w-md mx-auto px-2 rounded-card bg-card/90 backdrop-blur-xl border shadow-nav" style={{ borderColor: 'var(--c-hairline)' }}>
           {left.map((item) => (
             <TabLink key={item.to} {...item} />
           ))}
@@ -49,7 +49,7 @@ function QuickAddButton() {
 function TabLink({ to, labelKey, shortKey, icon: Icon }: NavItem) {
   const t = useT();
   return (
-    <NavLink to={to} className="flex-1 flex flex-col items-center justify-center gap-0.5 min-w-0">
+    <NavLink to={to} data-tour={to === '/personalita' ? 'test' : undefined} className="flex-1 flex flex-col items-center justify-center gap-0.5 min-w-0">
       {({ isActive }) => (
         <>
           <Icon

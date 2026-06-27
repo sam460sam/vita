@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Trash2, Sparkles } from 'lucide-react';
+import { Trash2, Sparkles, Compass } from 'lucide-react';
+import { replayTour } from '@/features/onboarding/tour';
 import { readSettings, updateSettings, clearAllData } from '@/data/repo';
 import { seedDemoData } from '@/data/seed';
 import { defaultSettings } from '@/data/defaults';
@@ -27,6 +29,7 @@ export function SettingsPage() {
   const [waterGoalL, setWaterGoalL] = useState('2');
   const [glassMl, setGlassMl] = useState('200');
   const toast = useToast();
+  const nav = useNavigate();
 
   useEffect(() => {
     if (settings) {
@@ -190,6 +193,9 @@ export function SettingsPage() {
         <Card className="mb-4">
           <CardHeader title={t('settings.data')} />
           <div className="flex flex-col gap-2">
+            <Button variant="subtle" block icon={<Compass size={18} />} onClick={() => { replayTour(); nav('/oggi'); }}>
+              {t('tour.replay')}
+            </Button>
             <Button variant="subtle" block icon={<Sparkles size={18} />} onClick={doDemo}>
               {t('settings.demo')}
             </Button>

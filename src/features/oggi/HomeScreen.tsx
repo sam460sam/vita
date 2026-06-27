@@ -141,7 +141,7 @@ export function HomeScreen() {
         <UpdateNudge />
 
         {/* 1 — Today's focus */}
-        <div className="rounded-card bg-card shadow-card px-4 py-4">
+        <div data-tour="focus" className="rounded-card bg-card shadow-card px-4 py-4">
           <div className="text-[12px] font-bold text-ink-3 uppercase tracking-wide mb-2 flex items-center gap-1.5"><span aria-hidden>🎯</span> {t('home.focus.label')}</div>
           <div className="flex items-center gap-3">
             <button
@@ -169,7 +169,7 @@ export function HomeScreen() {
         </div>
         <div className="rounded-card bg-card shadow-card p-2">
           {/* Quick add */}
-          <div className="flex items-center gap-2 px-2 py-1.5">
+          <div data-tour="addtask" className="flex items-center gap-2 px-2 py-1.5">
             <input
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
@@ -184,12 +184,13 @@ export function HomeScreen() {
             <div className="p-4 text-center text-[14px] text-ink-2">{t('home.todosEmpty')}</div>
           ) : (
             <>
-              {sortedHabits.map((hb) => {
+              {sortedHabits.map((hb, hi) => {
                 const done = isDone(logs ?? [], hb.id, today);
                 const streak = currentStreak(hb, logs ?? []);
                 return (
                   <button
                     key={hb.id}
+                    data-tour={hi === 0 ? 'habit' : undefined}
                     onClick={() => { platform.haptic(); void toggleHabitLog(hb.id, today); }}
                     className="flex items-center gap-3 w-full px-3 rounded-2xl text-left transition-colors active:opacity-80"
                     style={{ minHeight: 52, background: done ? 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' : 'transparent' }}
@@ -218,6 +219,7 @@ export function HomeScreen() {
 
         {/* 3 — Today's workout */}
         <button
+          data-tour="workout"
           onClick={() => nav(inProgress ? `/allenamento/s/${inProgress.id}` : '/allenamento')}
           className="w-full rounded-card bg-card shadow-card px-4 py-3.5 mt-5 flex items-center gap-3 active:bg-section transition-colors text-left"
         >
@@ -239,14 +241,14 @@ export function HomeScreen() {
         </button>
 
         {/* 4 — Progress strip (Momentum lives in the big card below, not here) */}
-        <div className="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar -mx-1 px-1">
+        <div data-tour="chips" className="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar -mx-1 px-1">
           <Link to="/abitudini" className="flex-shrink-0"><Chip emoji="🌿" label={t('nav.habits')} value={`${habitsDone}/${todays.length}`} /></Link>
           {isPro && <Link to="/acqua" className="flex-shrink-0"><Chip emoji="💧" label={t('nav.water')} value={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} /></Link>}
           <Link to="/progressi" className="flex-shrink-0"><Chip emoji="🔥" label={t('home.streak')} value={`${maxStreak}`} /></Link>
         </div>
 
         {/* 5 — Your plant (Momentum reward) */}
-        <Link to="/recap" className="block mt-3">
+        <Link to="/recap" data-tour="momentum" className="block mt-3">
           <div className="rounded-card bg-card px-4 py-4 active:bg-section transition-colors flex items-center gap-3" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px rgba(184,134,11,0.18), 0 0 30px rgba(13,77,50,0.22), 0 12px 28px rgba(0,0,0,0.5)' }}>
             <div className="relative flex-shrink-0" style={{ filter: 'drop-shadow(0 0 8px rgba(13,77,50,0.6))' }}>
               <ProgressRing progress={m.score / 100} size={72} stroke={8} gradient={['#3DA66F', '#0D4D32']}>
@@ -275,7 +277,7 @@ export function HomeScreen() {
 
         {/* Saved items — one place, split by category (each opens its by-day list). */}
         <h2 className="display-serif text-[21px] text-ink mt-6 mb-2.5">{t('home.saved.title')}</h2>
-        <div className="grid grid-cols-3 gap-3">
+        <div data-tour="saved" className="grid grid-cols-3 gap-3">
           <SavedTile to="/allenamento" emoji="🏋️" color="#d98a6a" label={t('workout.title')} />
           <SavedTile to="/diario" emoji="📓" color="var(--c-journal)" label={t('nav.journal')} />
           <SavedTile to="/note" emoji="📝" color="#cdb079" label={t('nav.notes')} />
