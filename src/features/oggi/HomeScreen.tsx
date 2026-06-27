@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Link, useNavigate } from 'react-router-dom';
 import { startOfWeek, addDays, subDays, format } from 'date-fns';
@@ -70,6 +70,19 @@ export function HomeScreen() {
   const focusSet = !!dayPlan?.intention.trim();
   const focusDone = !!dayPlan?.intentionDone;
 
+  // The plant does a happy little bounce whenever Momentum grows (a completion).
+  const prevScore = useRef(m.score);
+  const [celebrate, setCelebrate] = useState(false);
+  useEffect(() => {
+    if (m.score > prevScore.current) {
+      setCelebrate(true);
+      const id = setTimeout(() => setCelebrate(false), 650);
+      prevScore.current = m.score;
+      return () => clearTimeout(id);
+    }
+    prevScore.current = m.score;
+  }, [m.score]);
+
   const [draft, setDraft] = useState('');
   function addTask() {
     const v = draft.trim();
@@ -133,7 +146,7 @@ export function HomeScreen() {
               className="h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors"
               style={focusDone ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }}
             >
-              {focusDone && <Check size={16} className="text-white" strokeWidth={3} />}
+              {focusDone && <Check size={16} className="text-white check-pop" strokeWidth={3} />}
             </button>
             <input
               value={focusText}
@@ -178,7 +191,7 @@ export function HomeScreen() {
                     style={{ minHeight: 52, background: done ? 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' : 'transparent' }}
                   >
                     <span className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors" style={done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }}>
-                      {done && <Check size={14} className="text-white" strokeWidth={3} />}
+                      {done && <Check size={14} className="text-white check-pop" strokeWidth={3} />}
                     </span>
                     <span className="flex-shrink-0" style={{ color: hb.color }}><Icon name={hb.icon} size={20} strokeWidth={2.4} /></span>
                     <span className="flex-1 min-w-0 text-[15.5px] font-semibold text-ink truncate">{habitDisplayName(hb, t)}</span>
@@ -189,7 +202,7 @@ export function HomeScreen() {
               {todos.map((it) => (
                 <div key={it.id} className="flex items-center gap-3 w-full px-3 rounded-2xl" style={{ minHeight: 52 }}>
                   <button onClick={() => { platform.haptic(); void toggleDayItem(today, it.id); }} className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors" style={it.done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }} aria-label={it.text}>
-                    {it.done && <Check size={14} className="text-white" strokeWidth={3} />}
+                    {it.done && <Check size={14} className="text-white check-pop" strokeWidth={3} />}
                   </button>
                   <span className={`flex-1 min-w-0 text-[15.5px] ${it.done ? 'line-through text-ink-3' : 'text-ink'}`}>{it.text}</span>
                   <button onClick={() => void removeDayItem(today, it.id)} aria-label={t('common.close')} className="h-7 w-7 rounded-full flex items-center justify-center text-ink-3 opacity-50 active:opacity-100 flex-shrink-0"><X size={15} /></button>
@@ -229,7 +242,7 @@ export function HomeScreen() {
                 <span className="text-[18px] font-extrabold text-ink tnum leading-none">{m.score}</span>
               </ProgressRing>
             </div>
-            <div className={`flex-shrink-0 ${m.score >= 60 ? 'vio-breathe' : ''}`}>
+            <div className={`flex-shrink-0 ${celebrate ? 'vio-pop' : m.score >= 60 ? 'vio-breathe' : ''}`}>
               <VioCompanion score={m.score} mood={vioMood} size={68} animated />
             </div>
             <div className="min-w-0 flex-1">

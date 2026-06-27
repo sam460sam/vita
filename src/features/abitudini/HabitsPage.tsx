@@ -150,7 +150,7 @@ export function HabitsPage() {
                     className="h-9 w-9 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors"
                     style={done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }}
                   >
-                    {done && <Check size={18} className="text-white" strokeWidth={3} />}
+                    {done && <Check size={18} className="text-white check-pop" strokeWidth={3} />}
                   </button>
                 </div>
               );
