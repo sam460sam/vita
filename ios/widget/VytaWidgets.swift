@@ -125,11 +125,14 @@ struct ListConfigIntent: WidgetConfigurationIntent {
 
 // MARK: - Colors
 
-let vGreen = Color(red: 0.310, green: 0.616, blue: 0.333) // #4F9D55 brand green
-let vGreenDeep = Color(red: 0.118, green: 0.490, blue: 0.275) // #1E7D46
-let vBlue  = Color(red: 0.055, green: 0.647, blue: 0.914)
-let vCream = Color(red: 0.957, green: 0.937, blue: 0.898) // #F4EFE5 app background
-let vInk   = Color(red: 0.169, green: 0.180, blue: 0.137)
+// Luxury dark palette — matches the app token layer (src/styles/index.css).
+let vGreen = Color(red: 0.239, green: 0.651, blue: 0.435) // #3DA66F refined emerald
+let vGreenDeep = Color(red: 0.051, green: 0.302, blue: 0.196) // #0D4D32 deep emerald
+let vGold  = Color(red: 0.722, green: 0.525, blue: 0.043) // #B8860B antique gold
+let vBlue  = Color(red: 0.176, green: 0.831, blue: 0.969) // #2DD4F7 water cyan
+let vBg    = Color(red: 0.075, green: 0.090, blue: 0.114) // #13171D card surface
+let vInk   = Color(red: 0.925, green: 0.937, blue: 0.941) // #ECEFF0 light editorial ink
+let vInk2  = Color(red: 0.651, green: 0.694, blue: 0.675) // #A6B1AC muted ink
 
 // MARK: - Reusable bits
 
@@ -185,7 +188,7 @@ struct WaterWidgetView: View {
     var header: some View {
         HStack(spacing: 5) {
             Image(systemName: "drop.fill").foregroundColor(vBlue)
-            Text(L.t("Acqua", "Water")).font(.caption).bold().foregroundColor(.secondary)
+            Text(L.t("Acqua", "Water")).font(.caption).bold().foregroundColor(vInk2)
             Spacer()
             Text("\(done)/\(glasses)").font(.caption).bold().foregroundColor(vBlue)
         }
@@ -253,8 +256,8 @@ struct WaterWidgetView: View {
 struct WaterWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "VytaWaterWidget", provider: WaterProvider()) { entry in
-            if #available(iOS 17.0, *) { WaterWidgetView(data: entry.data).containerBackground(vCream, for: .widget) }
-            else { WaterWidgetView(data: entry.data).background(vCream) }
+            if #available(iOS 17.0, *) { WaterWidgetView(data: entry.data).containerBackground(vBg, for: .widget) }
+            else { WaterWidgetView(data: entry.data).background(vBg) }
         }
         .configurationDisplayName(L.t("Vyta · Acqua", "Vyta · Water"))
         .description(L.t("Segna l’acqua di oggi.", "Log today’s water."))
@@ -294,7 +297,7 @@ struct ListWidgetView: View {
     var header: some View {
         HStack(spacing: 5) {
             Image(systemName: icon).foregroundColor(vGreen)
-            Text(titleText).font(.caption).bold().foregroundColor(.secondary); Spacer()
+            Text(titleText).font(.caption).bold().foregroundColor(vInk2); Spacer()
         }
     }
 
@@ -325,7 +328,7 @@ struct ListWidgetView: View {
     }
 
     func emptyView(_ s: String) -> some View {
-        VStack { Spacer(); Text(s).font(.subheadline).foregroundColor(.secondary); Spacer() }
+        VStack { Spacer(); Text(s).font(.subheadline).foregroundColor(vInk2); Spacer() }
     }
 
     var body: some View {
@@ -347,8 +350,8 @@ struct ListWidgetView: View {
 struct ListWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: "VytaListWidget", intent: ListConfigIntent.self, provider: ListProvider()) { entry in
-            if #available(iOS 17.0, *) { ListWidgetView(data: entry.data, mode: entry.mode).containerBackground(vCream, for: .widget) }
-            else { ListWidgetView(data: entry.data, mode: entry.mode).background(vCream) }
+            if #available(iOS 17.0, *) { ListWidgetView(data: entry.data, mode: entry.mode).containerBackground(vBg, for: .widget) }
+            else { ListWidgetView(data: entry.data, mode: entry.mode).background(vBg) }
         }
         .configurationDisplayName(L.t("Vyta · Lista", "Vyta · List"))
         .description(L.t("Oggi, settimana o to-do.", "Today, week or to-do."))
@@ -387,7 +390,7 @@ func currentWeekRange() -> String {
 }
 
 func heatColor(_ s: Int, _ c: Color) -> Color {
-    s == 2 ? c : (s == 1 ? c.opacity(0.26) : Color.gray.opacity(0.16))
+    s == 2 ? c : (s == 1 ? c.opacity(0.30) : Color.white.opacity(0.08))
 }
 
 struct HabitsWidgetView: View {
@@ -413,7 +416,7 @@ struct HabitsWidgetView: View {
 
     func dayCircle(_ s: Int, _ c: Color) -> some View {
         ZStack {
-            Circle().fill(s == 2 ? c : (s == 1 ? c.opacity(0.16) : Color.gray.opacity(0.14)))
+            Circle().fill(s == 2 ? c : (s == 1 ? c.opacity(0.20) : Color.white.opacity(0.07)))
             if s == 2 { Image(systemName: "checkmark").font(.system(size: 9, weight: .bold)).foregroundColor(.white) }
         }.frame(width: 22, height: 22)
     }
@@ -423,9 +426,9 @@ struct HabitsWidgetView: View {
         let rows = family == .systemLarge ? 6 : 4
         return VStack(spacing: 8) {
             HStack(spacing: 0) {
-                Text(currentWeekRange()).font(.caption2).bold().foregroundColor(.secondary).frame(width: nameW, alignment: .leading)
+                Text(currentWeekRange()).font(.caption2).bold().foregroundColor(vInk2).frame(width: nameW, alignment: .leading)
                 ForEach(Array(weekdayLetters().enumerated()), id: \.offset) { _, d in
-                    Text(d).font(.system(size: 10, weight: .bold)).foregroundColor(.secondary).frame(maxWidth: .infinity)
+                    Text(d).font(.system(size: 10, weight: .bold)).foregroundColor(vInk2).frame(maxWidth: .infinity)
                 }
             }
             ForEach(Array(data.habits.prefix(rows).enumerated()), id: \.offset) { _, h in
@@ -445,7 +448,7 @@ struct HabitsWidgetView: View {
 
     var body: some View {
         if data.habits.isEmpty {
-            VStack { Spacer(); Text(emptyText).font(.subheadline).foregroundColor(.secondary); Spacer() }
+            VStack { Spacer(); Text(emptyText).font(.subheadline).foregroundColor(vInk2); Spacer() }
         } else if family == .systemSmall {
             let h = data.habits[0]
             VStack(alignment: .leading, spacing: 8) {
@@ -464,8 +467,8 @@ struct HabitsWidgetView: View {
 struct HabitsWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "VytaHabitsWidget", provider: HabitsProvider()) { entry in
-            if #available(iOS 17.0, *) { HabitsWidgetView(data: entry.data).containerBackground(vCream, for: .widget) }
-            else { HabitsWidgetView(data: entry.data).background(vCream) }
+            if #available(iOS 17.0, *) { HabitsWidgetView(data: entry.data).containerBackground(vBg, for: .widget) }
+            else { HabitsWidgetView(data: entry.data).background(vBg) }
         }
         .configurationDisplayName(L.t("Vyta · Abitudini", "Vyta · Habits"))
         .description(L.t("Heatmap e tracker settimanale.", "Heatmap and weekly tracker."))
@@ -494,6 +497,7 @@ struct MomentumWidgetView: View {
 
     func ring(_ size: CGFloat) -> some View {
         ZStack {
+            Circle().stroke(vGold.opacity(0.22), lineWidth: 1) // antique-gold hairline (app momentum card)
             Circle().stroke(vGreen.opacity(0.16), lineWidth: size * 0.11)
             Circle().trim(from: 0, to: progress)
                 .stroke(LinearGradient(colors: [vGreen, vGreenDeep], startPoint: .topLeading, endPoint: .bottomTrailing),
@@ -501,7 +505,7 @@ struct MomentumWidgetView: View {
                 .rotationEffect(.degrees(-90))
             VStack(spacing: 0) {
                 Text("\(score)").font(.system(size: size * 0.34, weight: .heavy)).foregroundColor(vInk)
-                Text("/100").font(.system(size: size * 0.12, weight: .bold)).foregroundColor(.secondary)
+                Text("/100").font(.system(size: size * 0.12, weight: .bold)).foregroundColor(vInk2)
             }
         }.frame(width: size, height: size)
     }
@@ -509,7 +513,7 @@ struct MomentumWidgetView: View {
     var header: some View {
         HStack(spacing: 5) {
             Image(systemName: "leaf.fill").foregroundColor(vGreen)
-            Text("Momentum").font(.caption).bold().foregroundColor(.secondary); Spacer()
+            Text("Momentum").font(.caption).bold().foregroundColor(vInk2); Spacer()
         }
     }
 
@@ -522,7 +526,7 @@ struct MomentumWidgetView: View {
             HStack(spacing: 16) {
                 ring(96)
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Momentum").font(.caption).bold().foregroundColor(.secondary)
+                    Text("Momentum").font(.caption).bold().foregroundColor(vInk2)
                     Text(message).font(.system(size: 15, weight: .semibold)).foregroundColor(vInk).lineLimit(3)
                 }
                 Spacer(minLength: 0)
@@ -540,8 +544,8 @@ struct MomentumWidgetView: View {
 struct MomentumWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "VytaMomentumWidget", provider: MomentumProvider()) { entry in
-            if #available(iOS 17.0, *) { MomentumWidgetView(data: entry.data).containerBackground(vCream, for: .widget) }
-            else { MomentumWidgetView(data: entry.data).background(vCream) }
+            if #available(iOS 17.0, *) { MomentumWidgetView(data: entry.data).containerBackground(vBg, for: .widget) }
+            else { MomentumWidgetView(data: entry.data).background(vBg) }
         }
         .configurationDisplayName(L.t("Vyta · Momentum", "Vyta · Momentum"))
         .description(L.t("Il tuo punteggio di oggi.", "Your daily score."))
