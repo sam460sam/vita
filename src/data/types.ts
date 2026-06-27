@@ -327,6 +327,8 @@ export interface DayPlan {
   date: string;
   /** The day's main focus / intention (one line). */
   intention: string;
+  /** Whether the day's focus has been completed (feeds Momentum). */
+  intentionDone?: boolean;
   items: DayPlanItem[];
   /** Free-form general notes (used by the general "Notes & to-dos" screen). */
   notes?: string;

@@ -681,6 +681,11 @@ export async function setDayIntention(date: string, intention: string): Promise<
   await saveDayPlan({ ...p, intention });
 }
 
+export async function toggleDayIntentionDone(date: string): Promise<void> {
+  const p = await readDayPlan(date);
+  await saveDayPlan({ ...p, intentionDone: !p.intentionDone });
+}
+
 /** Fixed key for the general (not day-bound) notes + to-do list. */
 export const GENERAL_PLAN_KEY = 'general';
 

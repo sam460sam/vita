@@ -1,34 +1,38 @@
 import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { startOfWeek, addDays, subDays, format } from 'date-fns';
-import { Check, ChevronRight, Crown } from 'lucide-react';
+import { Check, ChevronRight, Plus, X, Dumbbell } from 'lucide-react';
 import { db } from '@/data/db';
-import { readSettings, toggleHabitLog, addWaterMl } from '@/data/repo';
+import {
+  readSettings, toggleHabitLog, addWaterMl, readDayPlan, setDayIntention,
+  toggleDayIntentionDone, addDayItem, toggleDayItem, removeDayItem,
+} from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { ProgressRing, VioCompanion, Icon } from '@/ui';
 import { useIsPro } from '@/premium/premium';
 import { longDate, todayISO } from '@/lib/format';
 import { platform } from '@/platform/platform';
 import { syncWidgetData, drainWidgetWaterInbox } from '@/platform/widget';
-import { isScheduled, isDone } from '@/features/abitudini/logic';
+import { isScheduled, isDone, currentStreak } from '@/features/abitudini/logic';
 import { habitDisplayName } from '@/features/abitudini/recommended';
 import { UpdateNudge } from '@/features/update/UpdateNudge';
-import { GoalsQuiz } from '@/features/plan/GoalsQuiz';
 import { DailyInspiration } from '@/features/luxe/DailyInspiration';
-import { computeMomentum, momentumMessageKey } from './momentum';
+import { computeMomentum, momentumMessageKey, type MomentumKey } from './momentum';
 import { useT, type TKey } from '@/i18n';
 import type { Habit } from '@/data/types';
 import vLogo from '/vyta-vmark.png';
-import iconHabits from '/icons3d/habits.png';
-import iconWater from '/icons3d/water.png';
-import iconCompass from '/icons3d/clipboard.png';
 
-/** Home — premium "Today" screen, faithful to the design north-star. */
+const BREAKDOWN_EMOJI: Record<MomentumKey, string> = {
+  habit: '🌿', focus: '🎯', todo: '✅', workout: '🏋️', journal: '📓', water: '💧',
+};
+
+/** Home — a single, scannable daily agenda: focus → checklist → workout →
+ *  progress → plant. Answers "what should I do today?" at a glance. */
 export function HomeScreen() {
   const t = useT();
+  const nav = useNavigate();
   const isPro = useIsPro();
-  const [quizOpen, setQuizOpen] = useState(false);
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const habits = useLiveQuery(() => db.habits.orderBy('order').toArray(), [], []);
   const logs = useLiveQuery(() => db.habitLogs.toArray(), [], []);
@@ -36,32 +40,47 @@ export function HomeScreen() {
   const workouts = useLiveQuery(() => db.workouts.toArray(), [], []);
   const journals = useLiveQuery(() => db.journalEntries.toArray(), [], []);
   const todayWater = useLiveQuery(() => db.waterLogs.get(todayISO()), [], undefined);
+  const today = todayISO();
+  const dayPlan = useLiveQuery(() => readDayPlan(today), [today], undefined);
+  const sessions = useLiveQuery(() => db.workoutSessions.orderBy('createdAt').reverse().toArray(), [], []);
 
   const s = settings ?? defaultSettings();
-  const today = todayISO();
-  const m = computeMomentum(s, habits ?? [], logs ?? [], tasks ?? [], workouts ?? [], todayWater, journals ?? []);
+  const m = computeMomentum(s, habits ?? [], logs ?? [], tasks ?? [], workouts ?? [], todayWater, journals ?? [], { dayPlan, sessions: sessions ?? [] });
 
   const hr = new Date().getHours();
   const greet = t(hr < 12 ? 'greet.morning' : hr < 18 ? 'greet.afternoon' : 'greet.evening');
   const greeting = s.name ? `${greet}, ${s.name}` : greet;
-  // Vio's FACE reflects your Momentum: low → sleepy, mid → calm/waiting,
-  // high → happy & cheering.
   const vioMood = m.score >= 67 ? 'happy' : m.score >= 34 ? 'waiting' : 'sleepy';
 
   const active = (habits ?? []).filter((x) => !x.archived);
   const todays = active.filter((x) => isScheduled(x, today));
-  const pending = todays.filter((x) => !isDone(logs ?? [], x.id, today));
+  const habitsDone = todays.filter((x) => isDone(logs ?? [], x.id, today)).length;
+  const todos = dayPlan?.items ?? [];
 
-  const glassMl = s.water.glassMl || 250;
   const goalMl = s.water.dailyGoalMl || 2000;
   const ml = todayWater?.ml ?? 0;
+  const glassMl = s.water.glassMl || 250;
   const fmtL = (n: number) => `${n.toFixed(1).replace(/\.0$/, '')} L`;
 
-  // Apply any water logged from the home/lock-screen widget on launch.
-  // Water is a Pro feature: only apply widget-logged water for subscribers.
+  const inProgress = (sessions ?? []).find((x) => !x.finishedAt);
+
+  // Today's focus (one important thing) — kept in local state, committed on blur.
+  const [focusText, setFocusText] = useState('');
+  useEffect(() => { if (dayPlan) setFocusText(dayPlan.intention); }, [dayPlan?.intention]);
+  const focusSet = !!dayPlan?.intention.trim();
+  const focusDone = !!dayPlan?.intentionDone;
+
+  const [draft, setDraft] = useState('');
+  function addTask() {
+    const v = draft.trim();
+    if (!v) return;
+    void addDayItem(today, v);
+    setDraft('');
+  }
+
   useEffect(() => { if (isPro) void drainWidgetWaterInbox((delta) => addWaterMl(today, delta)); }, [today, isPro]);
 
-  // Mirror today's data (incl. Momentum) into the App Group so the widgets stay fresh.
+  // Mirror today's data into the App Group so the widgets stay fresh.
   useEffect(() => {
     const reminders = Object.entries(s.reminders ?? {})
       .filter(([, time]) => !!time)
@@ -89,164 +108,160 @@ export function HomeScreen() {
 
   return (
     <div className="min-h-[100dvh] bg-app relative overflow-hidden">
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[320px]" style={{ background: 'radial-gradient(125% 80% at 50% -12%, color-mix(in srgb, var(--c-hero-2) 50%, transparent), transparent 70%)' }} />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[280px]" style={{ background: 'radial-gradient(125% 80% at 50% -12%, color-mix(in srgb, var(--c-hero-2) 45%, transparent), transparent 70%)' }} />
       <div className="relative max-w-2xl mx-auto px-5 pt-safe-top pb-[calc(116px+env(safe-area-inset-bottom))] animate-rise">
         {/* Greeting header */}
-        <header className="flex items-start justify-between gap-3 pt-5 pb-3">
+        <header className="flex items-start justify-between gap-3 pt-5 pb-4">
           <div className="min-w-0 flex-1">
             <p className="text-[12.5px] font-semibold text-ink-3 capitalize leading-none">{longDate()}</p>
-            <h1 className="display-serif text-[30px] text-ink leading-tight mt-1.5 truncate">{greeting}</h1>
+            <h1 className="display-serif text-[28px] text-ink leading-tight mt-1.5 truncate">{greeting}</h1>
           </div>
-          <div className="flex items-center gap-2 mt-1.5 flex-shrink-0">
-            <Link to="/altro" aria-label={t('nav.more')} className="h-10 w-10 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' }}>
-              <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
-            </Link>
-          </div>
+          <Link to="/altro" aria-label={t('nav.more')} className="h-10 w-10 rounded-full flex items-center justify-center active:scale-90 transition-transform flex-shrink-0 mt-1" style={{ background: 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' }}>
+            <img src={vLogo} className="h-6 w-6 object-contain" alt="Vyta" draggable={false} />
+          </Link>
         </header>
 
-        {/* Update available (App Store has a newer version) */}
         <UpdateNudge />
 
-        {/* Momentum + Vio */}
-        <Link to="/recap" className="block">
-          <div className="rounded-card bg-card px-6 py-6 active:bg-section transition-colors" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px rgba(184,134,11,0.20), 0 0 44px rgba(13,77,50,0.30), 0 18px 40px rgba(0,0,0,0.6)' }}>
-            <h2 className="display-serif text-[21px] text-ink tracking-[0.01em]">Momentum</h2>
-            <div className="flex items-center justify-between gap-2 mt-2">
-              <div className="flex-1 flex justify-center" style={{ filter: 'drop-shadow(0 0 12px rgba(13,77,50,0.65))' }}>
-                <ProgressRing progress={m.score / 100} size={132} stroke={14} gradient={['#3DA66F', '#0D4D32']}>
-                  <div className="flex items-baseline">
-                    <span className="text-[32px] font-extrabold text-ink tnum leading-none">{m.score}</span>
-                    <span className="text-[14px] font-bold text-ink-3"> / 100</span>
-                  </div>
-                </ProgressRing>
-              </div>
-              <div className="flex-1 flex justify-center">
-                <div className="relative flex items-center justify-center" style={{ width: 138, height: 138 }}>
-                  {/* Luminous terrarium: a soft emerald radial bloom tracking Momentum. */}
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 rounded-full"
-                    style={{
-                      background: `radial-gradient(circle at 50% 56%, rgba(61,166,111,${0.12 + (m.score / 100) * 0.34}) 0%, rgba(13,77,50,${0.10 + (m.score / 100) * 0.20}) 40%, transparent 72%)`,
-                      filter: 'blur(7px)',
-                    }}
-                  />
-                  {/* Premium glass-like rim around the terrarium. */}
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute rounded-full"
-                    style={{ inset: 6, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.10), inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 0 0 1.5px rgba(184,134,11,0.12)' }}
-                  />
-                  {/* Floating spores when momentum is blooming. */}
-                  {m.score >= 60 && (
-                    <div aria-hidden className="pointer-events-none absolute inset-0">
-                      {[
-                        { left: '24%', size: 4, dur: '5.5s', delay: '0s' },
-                        { left: '46%', size: 3, dur: '6.5s', delay: '1.4s' },
-                        { left: '68%', size: 5, dur: '5s', delay: '0.7s' },
-                        { left: '58%', size: 3, dur: '7s', delay: '2.2s' },
-                      ].map((p, i) => (
-                        <span
-                          key={i}
-                          className="speck absolute rounded-full"
-                          style={{ left: p.left, bottom: '26%', width: p.size, height: p.size, background: 'var(--c-gold-2)', boxShadow: '0 0 6px rgba(184,134,11,0.7)', animationDuration: p.dur, animationDelay: p.delay }}
-                        />
-                      ))}
-                    </div>
-                  )}
-                  <div className={`relative ${m.score >= 60 ? 'vio-breathe' : ''}`}>
-                    <VioCompanion score={m.score} mood={vioMood} size={138} animated />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <p className="text-[14px] text-ink-2 mt-2 whitespace-nowrap overflow-hidden text-ellipsis">{t(momentumMessageKey(m.score) as TKey)}</p>
+        {/* 1 — Today's focus */}
+        <div className="rounded-card bg-card shadow-card px-4 py-4">
+          <div className="text-[12px] font-bold text-ink-3 uppercase tracking-wide mb-2 flex items-center gap-1.5"><span aria-hidden>🎯</span> {t('home.focus.label')}</div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => { if (focusSet) { platform.haptic(); void toggleDayIntentionDone(today); } }}
+              aria-label={t('home.focus.label')}
+              className="h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors"
+              style={focusDone ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }}
+            >
+              {focusDone && <Check size={16} className="text-white" strokeWidth={3} />}
+            </button>
+            <input
+              value={focusText}
+              onChange={(e) => setFocusText(e.target.value)}
+              onBlur={() => { if (focusText !== (dayPlan?.intention ?? '')) void setDayIntention(today, focusText); }}
+              placeholder={t('plan.intentionPlaceholder')}
+              className={`flex-1 min-w-0 bg-transparent text-[16px] outline-none ${focusDone ? 'line-through text-ink-3' : 'text-ink'}`}
+            />
           </div>
-        </Link>
-
-        {/* Hero tiles */}
-        <div className="grid grid-cols-3 gap-3 mt-5">
-          <HeroTile to="/abitudini" icon={iconHabits} label={t('nav.habits')} sub={t('home.tile.todo', { n: pending.length })} />
-          <HeroTile to="/acqua" icon={iconWater} label={t('nav.water')} sub={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} locked={!isPro} />
-          <HeroTile to="/personalita" icon={iconCompass} label={t('nav.personality.short')} sub={t('home.tile.ready')} />
         </div>
 
-        {/* Notes & to-dos */}
-        <Link to="/agenda" className="rounded-card bg-card shadow-card px-4 py-4 mt-5 flex items-center justify-between active:bg-section transition-colors">
-          <span className="flex items-center gap-2.5 min-w-0">
-            <span className="text-[20px]" aria-hidden>📝</span>
-            <span className="min-w-0">
-              <span className="block text-[15px] font-semibold text-ink">{t('agenda.title')}</span>
-              <span className="block text-[12.5px] text-ink-3 truncate">{t('agenda.subtitle')}</span>
-            </span>
-          </span>
-          <ChevronRight size={18} className="text-ink-3 flex-shrink-0" />
-        </Link>
-
-        {/* Routines */}
-        <Link to="/routine" className="rounded-card bg-card shadow-card px-4 py-4 mt-3.5 flex items-center justify-between active:bg-section transition-colors">
-          <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><span className="text-[20px]" aria-hidden>🌿</span> {t('routine.title')}</span>
-          <ChevronRight size={18} className="text-ink-3" />
-        </Link>
-
-        {/* Goals quiz */}
-        <button onClick={() => setQuizOpen(true)} className="w-full rounded-card bg-card shadow-card px-4 py-4 mt-3.5 flex items-center justify-between active:bg-section transition-colors text-left">
-          <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><span className="text-[20px]" aria-hidden>🎯</span> {t('goalsq.cta')}</span>
-          <ChevronRight size={18} className="text-ink-3" />
-        </button>
-        {quizOpen && <GoalsQuiz onClose={() => setQuizOpen(false)} />}
-
-        {/* Today's habits */}
-        <div className="flex items-center justify-between mt-7 mb-2.5">
-          <h2 className="display-serif text-[22px] text-ink">{t('nav.today')}</h2>
+        {/* 2 — Unified checklist (habits + to-dos) */}
+        <div className="flex items-center justify-between mt-5 mb-2.5">
+          <h2 className="display-serif text-[21px] text-ink">{t('home.checklist.title')}</h2>
           <Link to="/abitudini" className="text-[13px] font-semibold text-habit">{t('home.routine.all')}</Link>
         </div>
         <div className="rounded-card bg-card shadow-card p-2">
-          {todays.length === 0 ? (
-            <div className="p-4 text-center text-[14px] text-ink-2">{t('home.routine.empty.desc')}</div>
+          {/* Quick add */}
+          <div className="flex items-center gap-2 px-2 py-1.5">
+            <input
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') addTask(); }}
+              placeholder={t('home.addTask')}
+              className="flex-1 min-w-0 bg-section rounded-2xl px-3.5 py-2.5 text-[14.5px] text-ink placeholder:text-ink-3 outline-none"
+            />
+            <button onClick={addTask} aria-label={t('plan.add')} className="h-10 w-10 rounded-full flex items-center justify-center text-on-primary flex-shrink-0 active:scale-90 transition-transform" style={{ background: 'var(--c-primary)' }}><Plus size={20} /></button>
+          </div>
+
+          {todays.length === 0 && todos.length === 0 ? (
+            <div className="p-4 text-center text-[14px] text-ink-2">{t('home.todosEmpty')}</div>
           ) : (
-            todays.slice(0, 5).map((hb) => {
-              const done = isDone(logs ?? [], hb.id, today);
-              return (
-                <button
-                  key={hb.id}
-                  onClick={() => { platform.haptic(); void toggleHabitLog(hb.id, today); }}
-                  className="flex items-center gap-3 w-full px-3 rounded-2xl text-left transition-colors active:opacity-80"
-                  style={{ minHeight: 52, background: done ? 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' : 'transparent' }}
-                >
-                  <span
-                    className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors"
-                    style={done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }}
+            <>
+              {todays.map((hb) => {
+                const done = isDone(logs ?? [], hb.id, today);
+                const streak = currentStreak(hb, logs ?? []);
+                return (
+                  <button
+                    key={hb.id}
+                    onClick={() => { platform.haptic(); void toggleHabitLog(hb.id, today); }}
+                    className="flex items-center gap-3 w-full px-3 rounded-2xl text-left transition-colors active:opacity-80"
+                    style={{ minHeight: 52, background: done ? 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' : 'transparent' }}
                   >
-                    {done && <Check size={14} className="text-white" strokeWidth={3} />}
-                  </span>
-                  <span className="flex-1 min-w-0 text-[15.5px] font-semibold text-ink truncate">{habitDisplayName(hb, t)}</span>
-                  <span className="flex-shrink-0" style={{ color: hb.color }}><Icon name={hb.icon} size={20} strokeWidth={2.4} /></span>
-                </button>
-              );
-            })
+                    <span className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors" style={done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }}>
+                      {done && <Check size={14} className="text-white" strokeWidth={3} />}
+                    </span>
+                    <span className="flex-shrink-0" style={{ color: hb.color }}><Icon name={hb.icon} size={20} strokeWidth={2.4} /></span>
+                    <span className="flex-1 min-w-0 text-[15.5px] font-semibold text-ink truncate">{habitDisplayName(hb, t)}</span>
+                    {streak > 0 && <span className="text-[12.5px] font-bold flex-shrink-0" style={{ color: 'var(--c-streak)' }}>{streak} 🔥</span>}
+                  </button>
+                );
+              })}
+              {todos.map((it) => (
+                <div key={it.id} className="flex items-center gap-3 w-full px-3 rounded-2xl" style={{ minHeight: 52 }}>
+                  <button onClick={() => { platform.haptic(); void toggleDayItem(today, it.id); }} className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors" style={it.done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }} aria-label={it.text}>
+                    {it.done && <Check size={14} className="text-white" strokeWidth={3} />}
+                  </button>
+                  <span className={`flex-1 min-w-0 text-[15.5px] ${it.done ? 'line-through text-ink-3' : 'text-ink'}`}>{it.text}</span>
+                  <button onClick={() => void removeDayItem(today, it.id)} aria-label={t('common.close')} className="h-7 w-7 rounded-full flex items-center justify-center text-ink-3 opacity-50 active:opacity-100 flex-shrink-0"><X size={15} /></button>
+                </div>
+              ))}
+            </>
           )}
         </div>
 
-        {/* Editorial close */}
-        <DailyInspiration className="mt-7" />
+        {/* 3 — Today's workout */}
+        <button
+          onClick={() => nav(inProgress ? `/allenamento/s/${inProgress.id}` : '/allenamento')}
+          className="w-full rounded-card bg-card shadow-card px-4 py-3.5 mt-5 flex items-center gap-3 active:bg-section transition-colors text-left"
+        >
+          <span className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'color-mix(in srgb, var(--c-primary) 14%, var(--c-card))', color: 'var(--c-habit)' }}><Dumbbell size={20} /></span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[12px] font-bold text-ink-3 uppercase tracking-wide">{t('home.workout.title')}</span>
+            <span className="block text-[15.5px] font-semibold text-ink truncate">{inProgress ? inProgress.title : t('home.workout.plan')}</span>
+          </span>
+          <span className="flex-shrink-0 text-[13.5px] font-bold px-3 py-1.5 rounded-full" style={inProgress ? { background: 'var(--c-primary)', color: 'var(--c-on-primary)' } : { color: 'var(--c-habit)' }}>
+            {inProgress ? t('home.workout.resume') : t('workout.start')}
+          </span>
+        </button>
 
+        {/* 4 — Progress strip */}
+        <div className="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar -mx-1 px-1">
+          <Chip emoji="🌿" label={t('nav.habits')} value={`${habitsDone}/${todays.length}`} />
+          {isPro && <Link to="/acqua" className="flex-shrink-0"><Chip emoji="💧" label={t('nav.water')} value={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} /></Link>}
+          <Chip emoji="✨" label="Momentum" value={`${m.score}`} />
+        </div>
+
+        {/* 5 — Your plant (Momentum reward) */}
+        <Link to="/recap" className="block mt-3">
+          <div className="rounded-card bg-card px-4 py-4 active:bg-section transition-colors flex items-center gap-3" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px rgba(184,134,11,0.18), 0 0 30px rgba(13,77,50,0.22), 0 12px 28px rgba(0,0,0,0.5)' }}>
+            <div className="relative flex-shrink-0" style={{ filter: 'drop-shadow(0 0 8px rgba(13,77,50,0.6))' }}>
+              <ProgressRing progress={m.score / 100} size={72} stroke={8} gradient={['#3DA66F', '#0D4D32']}>
+                <span className="text-[18px] font-extrabold text-ink tnum leading-none">{m.score}</span>
+              </ProgressRing>
+            </div>
+            <div className={`flex-shrink-0 ${m.score >= 60 ? 'vio-breathe' : ''}`}>
+              <VioCompanion score={m.score} mood={vioMood} size={68} animated />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[15px] font-bold text-ink">Momentum</div>
+              {m.breakdown.length > 0 ? (
+                <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                  <span className="text-[12.5px] font-bold" style={{ color: 'var(--c-habit)' }}>{t('home.todayPlus', { n: m.points })}</span>
+                  {m.breakdown.map((p) => (
+                    <span key={p.key} className="text-[12px] text-ink-3">{BREAKDOWN_EMOJI[p.key]}{p.n > 1 ? `×${p.n}` : ''}</span>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-[12.5px] text-ink-3 mt-1 truncate">{t(momentumMessageKey(m.score) as TKey)}</div>
+              )}
+            </div>
+            <ChevronRight size={18} className="text-ink-3 flex-shrink-0" />
+          </div>
+        </Link>
+
+        {/* 6 — Daily inspiration */}
+        <DailyInspiration className="mt-5" />
       </div>
     </div>
   );
 }
 
-function HeroTile({ to, icon, label, sub, locked }: { to: string; icon: string; label: string; sub: string; locked?: boolean }) {
+function Chip({ emoji, label, value }: { emoji: string; label: string; value: string }) {
   return (
-    <Link to={to} className="relative rounded-card bg-card shadow-card px-2 py-4 flex flex-col items-center text-center gap-1 active:scale-[0.97] transition-transform">
-      {locked && (
-        <span className="absolute top-2 right-2 h-5 w-5 rounded-full flex items-center justify-center" style={{ background: 'color-mix(in srgb, var(--c-gold) 22%, var(--c-card))', color: 'var(--c-gold-2)' }} aria-hidden>
-          <Crown size={11} fill="currentColor" />
-        </span>
-      )}
-      <img src={icon} className="h-11 w-11 object-contain" alt="" aria-hidden draggable={false} />
-      <span className="text-[14.5px] font-bold text-ink leading-tight mt-1">{label}</span>
-      <span className="text-[12px] text-ink-3 truncate max-w-full">{sub}</span>
-    </Link>
+    <span className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-full bg-card shadow-chip pl-2.5 pr-3 h-9 text-[13px] whitespace-nowrap">
+      <span aria-hidden>{emoji}</span>
+      <span className="font-bold text-ink tnum">{value}</span>
+      <span className="text-ink-3">{label}</span>
+    </span>
   );
 }
