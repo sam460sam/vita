@@ -15,7 +15,7 @@ export function TabBar() {
   return (
     <nav className="fixed bottom-0 inset-x-0 z-40 md:hidden pb-safe-bottom pointer-events-none">
       <div className="px-4 pb-3 pt-2">
-        <div className="pointer-events-auto flex items-stretch h-[64px] max-w-md mx-auto px-2 rounded-card bg-card/90 backdrop-blur-xl border border-line/50 dark:border-white/5 shadow-nav">
+        <div className="pointer-events-auto flex items-stretch h-[64px] max-w-md mx-auto px-2 rounded-card bg-card/90 backdrop-blur-xl border shadow-nav" style={{ borderColor: 'var(--c-hairline)' }}>
           {left.map((item) => (
             <TabLink key={item.to} {...item} />
           ))}

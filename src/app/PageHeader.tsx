@@ -21,7 +21,7 @@ export function PageHeader({ title, subtitle, action, back, large, hideStella }:
   const stella = useStella();
   const t = useT();
   return (
-    <header className="sticky top-0 z-30 bg-app/85 backdrop-blur-xl border-b border-line/70 dark:border-transparent pt-safe-top">
+    <header className="sticky top-0 z-30 bg-app/85 backdrop-blur-xl border-b pt-safe-top" style={{ borderColor: 'var(--c-hairline)' }}>
       <div className="max-w-3xl mx-auto px-4 h-14 flex items-center gap-2">
         {back && (
           <button

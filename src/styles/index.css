@@ -25,17 +25,18 @@ html.dark {
   --c-hero-1: #0a2a1a;
   --c-hero-2: #0d4d32;
   --c-glow: rgba(13, 77, 50, 0.42);
-  /* Antique gold — muted, matte premium accent */
-  --c-gold: #b8860b;
-  --c-gold-2: #d9b45a;
+  /* Muted luxury gold — one source of truth for every accent. */
+  --c-gold: #c2a05a;
+  --c-gold-2: #d8be86;
   --c-drops: #2dd4f7;
-  /* Text — warm editorial off-white, desaturated greys */
-  --c-ink: #eceff0;
-  --c-ink-2: #a6b1ac;
-  --c-ink-3: #6b7680;
-  /* Lines — neutral charcoal hairlines */
-  --c-line: #262b30;
-  --c-divider: #1a1f24;
+  /* Text — warm cream off-white (never stark pure white), desaturated greys */
+  --c-ink: #f3eee3;
+  --c-ink-2: #ada99a;
+  --c-ink-3: #717064;
+  /* Hairlines / dividers — faint warm gold instead of cold white/charcoal */
+  --c-line: rgba(194, 160, 90, 0.22);
+  --c-divider: rgba(194, 160, 90, 0.14);
+  --c-hairline: rgba(194, 160, 90, 0.28);
   /* Module accents (vivid neon on dark) */
   --c-activity: #d08a5e;
   --c-habit: #3da66f;
@@ -71,13 +72,13 @@ html.dark {
   --c-danger: #d96a6a;
   /* Signature — refined emerald */
   --c-accent: #3da66f;
-  --c-on-accent: #eceff0;
+  --c-on-accent: #f3eee3;
   --c-streak: #c97b4a; /* muted copper flame */
   --c-check: #3da66f;
-  /* Primary action (CTA / FAB) — satin emerald with light editorial text */
+  /* Primary action (CTA / FAB) — satin emerald with warm cream text */
   --c-primary: #0d4d32;
-  --c-on-primary: #eef4ee;
-  --c-primary-border: rgba(184, 134, 11, 0.45);
+  --c-on-primary: #f3eee3;
+  --c-primary-border: rgba(194, 160, 90, 0.45);
   color-scheme: dark;
 }
 
