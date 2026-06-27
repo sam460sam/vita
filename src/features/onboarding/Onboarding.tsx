@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star, ChevronLeft, Sun, Moon, Bell, Crown, Droplet } from 'lucide-react';
+import { Plus, Check, Languages, X, HeartPulse, ListChecks, Brain, Star, ChevronLeft, Bell, Crown, Droplet } from 'lucide-react';
 import { Button, Input, Segmented } from '@/ui';
 import { useI18n, LANGS, type Lang, type TKey } from '@/i18n';
-import { useTheme } from '@/theme/theme';
 import { notifications } from '@/platform/notifications';
 import { createHabit, updateSettings, readSettings } from '@/data/repo';
 import { RECOMMENDED_HABITS, recommendedForGoal } from '@/features/abitudini/recommended';
@@ -84,7 +83,6 @@ const NO_SKIP: Step[] = ['trial', 'notify', 'paywall'];
 /** First-run onboarding: language → welcome → focus → sections → habits → name → aha. */
 export function Onboarding({ onDone }: { onDone: () => void }) {
   const { t, setPref } = useI18n();
-  const { resolved, setPref: setThemePref } = useTheme();
   const [stepIdx, setStepIdx] = useState(0);
   const [name, setName] = useState('');
   const [focusSet, setFocusSet] = useState<Set<Focus>>(new Set(['all']));
@@ -236,13 +234,6 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
           <span className="w-10" />
         )}
         <div className="flex items-center gap-1">
-          <button
-            onClick={() => setThemePref(resolved === 'dark' ? 'light' : 'dark')}
-            aria-label={t('theme.toggle')}
-            className="h-10 w-10 flex items-center justify-center rounded-full text-ink-2 active:bg-section"
-          >
-            {resolved === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
           {step !== 'lang' && !NO_SKIP.includes(step) && (
             <button onClick={skip} className="text-[14px] font-semibold text-ink-3 px-3 py-2">
               {t('onboard.skip')}
@@ -626,8 +617,8 @@ function LanguageStep({ onPick }: { onPick: (l: Lang) => void }) {
   const { t, lang } = useI18n();
   return (
     <div className="flex flex-col items-center text-center pt-6">
-      <span className="h-24 w-24 rounded-card flex items-center justify-center mb-6 text-primary" style={{ background: 'linear-gradient(140deg, var(--c-hero-1), var(--c-hero-2))' }}>
-        <Languages size={44} />
+      <span className="h-24 w-24 rounded-card flex items-center justify-center mb-6 text-on-primary" style={{ background: 'linear-gradient(150deg, #15623F, #0B3925)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.14), 0 0 0 1px rgba(184,134,11,0.40), 0 10px 30px rgba(0,0,0,0.5)' }}>
+        <Languages size={46} strokeWidth={2.2} />
       </span>
       <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.lang.title')}</h1>
       <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed mb-6">{t('onboard.lang.desc')}</p>

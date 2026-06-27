@@ -15,6 +15,11 @@ import { exerciseName } from './exercises';
 import { ExercisePicker } from './ExercisePicker';
 import { lastStatFor, suggestNextWeight, suggestNextReps, prevBestMetric, currentBestMetric } from './progression';
 
+// A quick visual cue per muscle group, so each exercise reads at a glance.
+const MUSCLE_EMOJI: Record<string, string> = {
+  chest: '💪', back: '🪢', legs: '🦵', shoulders: '🏋️', arms: '🦾', core: '🧱', fullbody: '🔥',
+};
+
 export function WorkoutSessionPage() {
   const t = useT();
   const { lang } = useI18n();
@@ -227,9 +232,19 @@ export function WorkoutSessionPage() {
     toast.show(t('workout.planSaved'));
   }
 
+  const restLeft = restEndsAt != null ? Math.max(0, Math.ceil((restEndsAt - Date.now()) / 1000)) : null;
+
   return (
     <>
-      <PageHeader title={t('workout.session.title')} back="/allenamento" />
+      <PageHeader
+        title={t('workout.session.title')}
+        back="/allenamento"
+        action={restLeft != null ? (
+          <span className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full font-extrabold text-[14px] tnum" style={{ background: 'color-mix(in srgb, var(--c-primary) 22%, var(--c-card))', color: 'var(--c-habit)', boxShadow: 'inset 0 0 0 1px color-mix(in srgb, var(--c-primary) 55%, transparent)' }}>
+            <Timer size={14} /> {fmtRest(restLeft)}
+          </span>
+        ) : undefined}
+      />
       <Screen>
         <input
           value={s.title}
@@ -248,21 +263,26 @@ export function WorkoutSessionPage() {
           return (
           <div key={entry.id} className="rounded-card bg-card shadow-card p-4 mb-3">
             <div className="flex items-center justify-between gap-2 mb-2">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-[16px] font-bold text-ink truncate">{entry.name}</span>
-                  {isPR && (
-                    <span className="flex-shrink-0 inline-flex items-center gap-1 text-[11px] font-extrabold px-2 py-0.5 rounded-full" style={{ background: 'color-mix(in srgb, var(--c-gold) 22%, transparent)', color: 'var(--c-gold-2)' }}>
-                      🏆 {t('workout.pr')}
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2 text-[12px] text-ink-3">
-                  <span>{t(`muscle.${entry.muscle}`)}</span>
-                  <span aria-hidden>·</span>
-                  <button onClick={() => cycleRest(entry.id, entry.restSec ?? defaultRest)} className="inline-flex items-center gap-1 font-semibold active:scale-95 transition-transform" style={{ color: 'var(--c-ink-2)' }}>
-                    <Timer size={12} /> {entry.restSec ?? defaultRest}s
-                  </button>
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="h-10 w-10 rounded-xl flex items-center justify-center text-[20px] flex-shrink-0" style={{ background: 'color-mix(in srgb, var(--c-primary) 12%, var(--c-card))', boxShadow: 'inset 0 0 0 1px color-mix(in srgb, var(--c-primary) 30%, transparent)' }} aria-hidden>
+                  {MUSCLE_EMOJI[entry.muscle] ?? '🏋️'}
+                </span>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-[16px] font-bold text-ink truncate">{entry.name}</span>
+                    {isPR && (
+                      <span className="flex-shrink-0 inline-flex items-center gap-1 text-[11px] font-extrabold px-2 py-0.5 rounded-full" style={{ background: 'color-mix(in srgb, var(--c-gold) 22%, transparent)', color: 'var(--c-gold-2)' }}>
+                        🏆 {t('workout.pr')}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 text-[12px] text-ink-3">
+                    <span>{t(`muscle.${entry.muscle}`)}</span>
+                    <span aria-hidden>·</span>
+                    <button onClick={() => cycleRest(entry.id, entry.restSec ?? defaultRest)} className="inline-flex items-center gap-1 font-semibold active:scale-95 transition-transform" style={{ color: 'var(--c-ink-2)' }}>
+                      <Timer size={12} /> {entry.restSec ?? defaultRest}s
+                    </button>
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-0.5 flex-shrink-0">
@@ -340,13 +360,13 @@ export function WorkoutSessionPage() {
                       aria-label={`${done}/${total}`}
                       className="flex-shrink-0 h-[46px] min-w-[74px] px-3 rounded-xl flex items-center justify-center gap-1.5 font-extrabold text-[17px] active:scale-95 transition-transform"
                       style={full
-                        ? { background: '#4F9D55', color: '#fff' }
+                        ? { background: 'linear-gradient(180deg,#3BD27A,#23A85B)', color: '#04130a', boxShadow: '0 0 0 1px rgba(34,227,106,0.45), 0 6px 16px rgba(34,227,106,0.30)' }
                         : done > 0
-                          ? { background: 'color-mix(in srgb, var(--c-primary) 22%, var(--c-card))', color: 'var(--c-ink)', boxShadow: 'inset 0 0 0 1px color-mix(in srgb, var(--c-primary) 55%, transparent)' }
-                          : { background: 'var(--c-card)', color: 'var(--c-ink-2)', boxShadow: 'inset 0 0 0 1px var(--c-line)' }}
+                          ? { background: 'color-mix(in srgb, var(--c-primary) 30%, var(--c-card))', color: 'var(--c-ink)', boxShadow: 'inset 0 0 0 1.5px var(--c-habit), 0 0 14px rgba(34,227,106,0.20)' }
+                          : { background: 'color-mix(in srgb, var(--c-primary) 16%, var(--c-card))', color: 'var(--c-habit)', boxShadow: 'inset 0 0 0 1.5px color-mix(in srgb, var(--c-habit) 55%, transparent)' }}
                     >
                       <span className="tnum">{done}/{total}</span>
-                      {full && <Check size={17} strokeWidth={3} />}
+                      {full ? <Check size={17} strokeWidth={3} /> : <Check size={16} strokeWidth={2.6} style={{ opacity: 0.5 }} />}
                     </button>
                   </div>
 
