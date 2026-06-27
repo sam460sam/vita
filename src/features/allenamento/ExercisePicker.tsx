@@ -4,6 +4,7 @@ import { Sheet, Input } from '@/ui';
 import { useT, useI18n, type TKey } from '@/i18n';
 import type { ExerciseDef, MuscleGroup } from '@/data/types';
 import { EXERCISES, MUSCLE_GROUPS, exerciseName } from './exercises';
+import { MuscleIcon, iconKindFor, MUSCLE_COLOR } from './MuscleIcon';
 
 /** Sheet to pick an exercise from the bundled library (search + muscle filter). */
 export function ExercisePicker({ onAdd, onClose }: { onAdd: (def: ExerciseDef) => void; onClose: () => void }) {
@@ -31,6 +32,9 @@ export function ExercisePicker({ onAdd, onClose }: { onAdd: (def: ExerciseDef) =
       <div className="space-y-1.5 pb-2">
         {list.map((e) => (
           <button key={e.id} onClick={() => onAdd(e)} className="w-full flex items-center gap-3 p-3 rounded-2xl bg-section text-left active:opacity-80">
+            {(() => { const k = iconKindFor(e.id, e.muscle); const c = MUSCLE_COLOR[k]; return (
+              <span className="h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `color-mix(in srgb, ${c} 16%, var(--c-card))`, color: c, boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${c} 40%, transparent)` }}><MuscleIcon kind={k} size={20} /></span>
+            ); })()}
             <span className="flex-1 min-w-0">
               <span className="block text-[15px] font-semibold text-ink truncate">{exerciseName(e, lang)}</span>
               <span className="block text-[12px] text-ink-3">{t(`muscle.${e.muscle}` as TKey)}</span>

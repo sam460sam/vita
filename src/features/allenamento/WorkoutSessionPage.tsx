@@ -14,11 +14,7 @@ import type { WorkoutSession, WorkoutEntry, ExerciseDef } from '@/data/types';
 import { exerciseName } from './exercises';
 import { ExercisePicker } from './ExercisePicker';
 import { lastStatFor, suggestNextWeight, suggestNextReps, prevBestMetric, currentBestMetric } from './progression';
-
-// A quick visual cue per muscle group, so each exercise reads at a glance.
-const MUSCLE_EMOJI: Record<string, string> = {
-  chest: '💪', back: '🪢', legs: '🦵', shoulders: '🏋️', arms: '🦾', core: '🧱', fullbody: '🔥',
-};
+import { MuscleIcon, iconKindFor, MUSCLE_COLOR } from './MuscleIcon';
 
 export function WorkoutSessionPage() {
   const t = useT();
@@ -264,9 +260,15 @@ export function WorkoutSessionPage() {
           <div key={entry.id} className="rounded-card bg-card shadow-card p-4 mb-3">
             <div className="flex items-center justify-between gap-2 mb-2">
               <div className="flex items-center gap-3 min-w-0">
-                <span className="h-10 w-10 rounded-xl flex items-center justify-center text-[20px] flex-shrink-0" style={{ background: 'color-mix(in srgb, var(--c-primary) 12%, var(--c-card))', boxShadow: 'inset 0 0 0 1px color-mix(in srgb, var(--c-primary) 30%, transparent)' }} aria-hidden>
-                  {MUSCLE_EMOJI[entry.muscle] ?? '🏋️'}
-                </span>
+                {(() => {
+                  const kind = iconKindFor(entry.exerciseId, entry.muscle);
+                  const col = MUSCLE_COLOR[kind];
+                  return (
+                    <span className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `color-mix(in srgb, ${col} 16%, var(--c-card))`, color: col, boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${col} 40%, transparent)` }}>
+                      <MuscleIcon kind={kind} size={22} />
+                    </span>
+                  );
+                })()}
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="text-[16px] font-bold text-ink truncate">{entry.name}</span>
