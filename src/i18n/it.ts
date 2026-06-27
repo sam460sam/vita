@@ -1057,7 +1057,7 @@ export const it = {
   'tour.workout.start.t': 'Inizia ad allenarti',
   'tour.workout.start.d': 'Inizia subito un allenamento — o scegli una scheda qui sotto.',
   'tour.workout.create.t': 'Crea una scheda',
-  'tour.workout.create.d': 'Genera un allenamento con l’AI, creane uno da una foto o duplica uno precedente.',
+  'tour.workout.create.d': 'Genera un allenamento con l’AI o duplica uno precedente.',
   'tour.workout.templates.t': 'Schede pronte',
   'tour.workout.templates.d': 'Schede pronte per ogni obiettivo: total body, spinta, tirata, gambe, core, a casa.',
   'tour.workout.plans.t': 'Le mie schede',

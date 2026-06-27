@@ -1053,7 +1053,7 @@ export const es: Record<TKey, string> = {
   'tour.workout.start.t': 'Empieza a entrenar',
   'tour.workout.start.d': 'Empieza un entrenamiento ahora mismo — o elige una rutina abajo.',
   'tour.workout.create.t': 'Crea una rutina',
-  'tour.workout.create.d': 'Genera un entrenamiento con IA, créalo desde una foto o duplica uno anterior.',
+  'tour.workout.create.d': 'Genera un entrenamiento con IA o duplica uno anterior.',
   'tour.workout.templates.t': 'Rutinas listas',
   'tour.workout.templates.d': 'Rutinas listas para cada objetivo: cuerpo completo, empuje, tirón, piernas, core, en casa.',
   'tour.workout.plans.t': 'Mis rutinas',

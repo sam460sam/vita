@@ -1053,7 +1053,7 @@ export const fr: Record<TKey, string> = {
   'tour.workout.start.t': 'Commence à t’entraîner',
   'tour.workout.start.d': 'Démarre une séance tout de suite — ou choisis un programme ci-dessous.',
   'tour.workout.create.t': 'Crée un programme',
-  'tour.workout.create.d': 'Génère une séance avec l’IA, crée-en une depuis une photo ou duplique-en une.',
+  'tour.workout.create.d': 'Génère une séance avec l’IA ou duplique-en une précédente.',
   'tour.workout.templates.t': 'Programmes prêts',
   'tour.workout.templates.d': 'Programmes prêts pour chaque objectif : full body, poussée, tirage, jambes, gainage, à la maison.',
   'tour.workout.plans.t': 'Mes programmes',

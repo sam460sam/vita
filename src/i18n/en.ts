@@ -1054,7 +1054,7 @@ export const en: Record<TKey, string> = {
   'tour.workout.start.t': 'Start training',
   'tour.workout.start.d': 'Start a workout right away — or pick a plan below.',
   'tour.workout.create.t': 'Create a plan',
-  'tour.workout.create.d': 'Generate a workout with AI, build one from a photo, or duplicate a previous one.',
+  'tour.workout.create.d': 'Generate a workout with AI, or duplicate a previous one.',
   'tour.workout.templates.t': 'Ready plans',
   'tour.workout.templates.d': 'Ready-made plans for every goal: full body, push, pull, legs, core, at home.',
   'tour.workout.plans.t': 'My plans',
