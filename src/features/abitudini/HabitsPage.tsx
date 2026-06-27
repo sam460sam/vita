@@ -70,7 +70,7 @@ export function HabitsPage() {
         </header>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-3 mt-4">
+        <div data-tour="hb-stats" className="grid grid-cols-2 gap-3 mt-4">
           <div className="rounded-card bg-card shadow-card p-4">
             <div className="flex items-center gap-1.5 text-[12.5px] font-semibold text-ink-3">
               <Check size={14} className="text-habit" strokeWidth={3} /> {t('habits.doneToday')}
@@ -92,7 +92,7 @@ export function HabitsPage() {
         <HabitWeeklyChart habits={active} logs={logs ?? []} />
 
         {/* Progress + Routines */}
-        <div className="grid grid-cols-2 gap-3 mt-3">
+        <div data-tour="hb-tools" className="grid grid-cols-2 gap-3 mt-3">
           <Link to="/progressi" className="rounded-card bg-card shadow-card px-4 py-3.5 flex items-center justify-between active:bg-section transition-colors">
             <span className="flex items-center gap-2 text-[14.5px] font-semibold text-ink"><TrendingUp size={18} className="text-habit" /> {t('progress.title')}</span>
             <ChevronRight size={18} className="text-ink-3 flex-shrink-0" />
@@ -105,6 +105,7 @@ export function HabitsPage() {
 
         {/* New habit */}
         <button
+          data-tour="hb-new"
           onClick={openNew}
           className="w-full mt-3 h-[52px] rounded-2xl text-on-primary font-bold text-[15.5px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-glow-strong"
           style={{ background: 'linear-gradient(180deg, #125A3B, #0B3925)' }}
@@ -113,6 +114,7 @@ export function HabitsPage() {
         </button>
 
         {/* Today */}
+        <div data-tour="hb-today">
         <div className="flex items-center justify-between mt-6 mb-2.5 relative">
           <h2 className="display-serif text-[22px] text-ink">{t('nav.today')}</h2>
           <img src={vioPlant} alt="" aria-hidden draggable={false} className="vio-bob absolute -top-6 right-0 w-20 h-20 object-contain pointer-events-none" />
@@ -157,12 +159,13 @@ export function HabitsPage() {
             })}
           </div>
         )}
+        </div>
 
         {/* Suggested */}
         {suggestions.length > 0 && (
           <>
             <h2 className="display-serif text-[20px] text-ink mt-6 mb-2.5">{t('habits.suggested')}</h2>
-            <div className="flex gap-2 overflow-x-auto -mx-5 px-5 pb-1 no-scrollbar">
+            <div data-tour="hb-suggested" className="flex gap-2 overflow-x-auto -mx-5 px-5 pb-1 no-scrollbar">
               {suggestions.map((rec) => (
                 <button
                   key={rec.id}

@@ -12,6 +12,7 @@ import { GlobalSheets } from './GlobalSheets';
 import { RouteErrorBoundary } from './ErrorBoundary';
 import { Onboarding, hasOnboarded } from '@/features/onboarding/Onboarding';
 import { HomeTour } from '@/features/onboarding/HomeTour';
+import { WorkoutTour, HabitsTour } from '@/features/onboarding/PageTour';
 import { replayTour } from '@/features/onboarding/tour';
 import { BrandSplash } from './BrandSplash';
 
@@ -103,6 +104,8 @@ export function App() {
               <TabBar />
               <GlobalSheets />
               <HomeTour />
+              <WorkoutTour />
+              <HabitsTour />
             </StellaProvider>
             </QuickAddProvider>
           </HashRouter>

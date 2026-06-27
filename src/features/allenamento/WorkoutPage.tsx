@@ -86,11 +86,11 @@ export function WorkoutPage() {
     <>
       <PageHeader title={t('workout.title')} />
       <Screen>
-        <button onClick={() => void start()} className="w-full h-[58px] rounded-2xl text-on-primary font-bold text-[16.5px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-glow-strong" style={{ background: 'linear-gradient(180deg, #125A3B, #0B3925)' }}>
+        <button data-tour="wo-start" onClick={() => void start()} className="w-full h-[58px] rounded-2xl text-on-primary font-bold text-[16.5px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-glow-strong" style={{ background: 'linear-gradient(180deg, #125A3B, #0B3925)' }}>
           <Dumbbell size={21} /> {t('workout.start')}
         </button>
 
-        <div className="grid grid-cols-3 gap-3 mt-3">
+        <div data-tour="wo-create" className="grid grid-cols-3 gap-3 mt-3">
           <button onClick={() => setGenOpen(true)} className="rounded-card bg-card shadow-card px-2 py-4 flex flex-col items-center gap-1.5 active:scale-[0.97] transition-transform">
             <Sparkles size={22} className="text-habit" />
             <span className="text-[13px] font-bold text-ink text-center leading-tight">{t('workout.generate')}</span>
@@ -108,7 +108,7 @@ export function WorkoutPage() {
 
         {/* Templates */}
         <h2 className="display-serif text-[20px] text-ink mt-6 mb-2.5">{t('workout.templates')}</h2>
-        <div className="grid grid-cols-3 gap-2.5">
+        <div data-tour="wo-templates" className="grid grid-cols-3 gap-2.5">
           {TEMPLATES.map((tpl) => (
             <button key={tpl.id} onClick={() => void fromTemplate(tpl.id)} className="rounded-card bg-card shadow-card px-2 py-4 flex flex-col items-center gap-1.5 active:scale-[0.97] transition-transform">
               <span className="text-[26px]">{tpl.emoji}</span>
@@ -118,6 +118,7 @@ export function WorkoutPage() {
         </div>
 
         {/* Saved plans archive */}
+        <div data-tour="wo-plans">
         <h2 className="display-serif text-[20px] text-ink mt-7 mb-2.5">{t('workout.myPlans')}</h2>
         {(plans ?? []).length === 0 ? (
           <p className="rounded-card bg-card shadow-card px-4 py-5 text-center text-[13px] text-ink-3">{t('workout.plansEmpty')}</p>
@@ -138,8 +139,10 @@ export function WorkoutPage() {
             </div>
           ))
         )}
+        </div>
 
-        {/* Equipment + Activity */}
+        {/* Equipment + Activity + history shortcuts */}
+        <div data-tour="wo-utils">
         <button onClick={() => setEquipOpen(true)} className="w-full rounded-card bg-card shadow-card px-4 py-3.5 mt-4 flex items-center justify-between active:bg-section transition-colors text-left">
           <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><SlidersHorizontal size={18} className="text-habit" /> {t('workout.equipment')}</span>
           <ChevronRight size={18} className="text-ink-3" />
@@ -156,6 +159,7 @@ export function WorkoutPage() {
           <span className="flex items-center gap-2.5 text-[15px] font-semibold text-ink"><Watch size={18} className="text-activity" /> {t('workout.activityLink')}</span>
           <ChevronRight size={18} className="text-ink-3" />
         </Link>
+        </div>
 
         {/* History */}
         <h2 className="display-serif text-[20px] text-ink mt-6 mb-2.5">{t('workout.history')}</h2>
