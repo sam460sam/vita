@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Sparkles, SlidersHorizontal, Crown } from 'lucide-react';
 import { useNavItems } from '@/app/nav';
@@ -7,6 +8,7 @@ import { Card, Divider } from '@/ui';
 import { useT } from '@/i18n';
 import { useIsPro } from '@/premium/premium';
 import { PRO_MODULES } from '@/premium/config';
+import { GoalsQuiz } from '@/features/plan/GoalsQuiz';
 import { BackupCard } from '@/features/backup';
 import { RateCard } from '@/features/rating/rating';
 
@@ -14,6 +16,7 @@ export function MorePage() {
   const t = useT();
   const isPro = useIsPro();
   const { more } = useNavItems();
+  const [goalsOpen, setGoalsOpen] = useState(false);
   return (
     <>
       <PageHeader title={t('more.title')} />
@@ -58,6 +61,14 @@ export function MorePage() {
             );
           })}
           <Divider />
+          <button onClick={() => setGoalsOpen(true)} className="w-full flex items-center gap-3 px-4 py-3.5 active:bg-section transition-colors text-left">
+            <span className="h-10 w-10 rounded-2xl flex items-center justify-center" style={{ background: 'color-mix(in srgb, var(--c-streak) 16%, transparent)', color: 'var(--c-streak)' }}>
+              <span className="text-[18px]" aria-hidden>🎯</span>
+            </span>
+            <span className="flex-1 text-[15px] text-ink font-medium">{t('goalsq.cta')}</span>
+            <ChevronRight size={18} className="text-ink-3" />
+          </button>
+          <Divider />
           <Link to="/impostazioni#personalizzazione" className="flex items-center gap-3 px-4 py-3.5 active:bg-section transition-colors">
             <span className="h-10 w-10 rounded-2xl flex items-center justify-center bg-habit-tint text-habit">
               <SlidersHorizontal size={18} />
@@ -66,6 +77,7 @@ export function MorePage() {
             <ChevronRight size={18} className="text-ink-3" />
           </Link>
         </Card>
+        {goalsOpen && <GoalsQuiz onClose={() => setGoalsOpen(false)} />}
 
         {/* Rate the app — links straight to the App Store */}
         <div className="mt-4">

@@ -5,13 +5,19 @@ import { readSettings } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
-import { Card, CardHeader, Button, EmptyState, VioCompanion, useToast } from '@/ui';
+import { Card, CardHeader, Button, EmptyState, VioCompanion, ProgressRing, useToast } from '@/ui';
 import { useT, type TKey } from '@/i18n';
 import { platform } from '@/platform/platform';
+import { todayISO } from '@/lib/format';
+import { readDayPlan } from '@/data/repo';
+import { computeMomentum, momentumMessageKey, MOMENTUM_POINTS, type MomentumKey } from '@/features/oggi/momentum';
 import { weeklyRecap, hasAnyData } from './logic';
 import { weeklyInsights } from './insights';
 import type { LifeData } from '@/features/gamification/logic';
 import { buildRecapSVG, svgToPngBlob } from './shareImage';
+
+const MKEY_EMOJI: Record<MomentumKey, string> = { habit: '🌿', focus: '🎯', todo: '✅', workout: '🏋️', journal: '📓', water: '💧' };
+const MKEY_LABEL: Record<MomentumKey, TKey> = { habit: 'nav.habits', focus: 'home.focus.label', todo: 'agenda.todo', workout: 'workout.title', journal: 'nav.journal', water: 'nav.water' };
 
 export function RecapPage() {
   const t = useT();
@@ -24,8 +30,13 @@ export function RecapPage() {
   const waters = useLiveQuery(() => db.waterLogs.toArray(), [], []);
   const journals = useLiveQuery(() => db.journalEntries.toArray(), [], []);
   const weights = useLiveQuery(() => db.weightLogs.toArray(), [], []);
+  const today = todayISO();
+  const dayPlan = useLiveQuery(() => readDayPlan(today), [today], undefined);
+  const sessions = useLiveQuery(() => db.workoutSessions.toArray(), [], []);
 
   const s = settings ?? defaultSettings();
+  const todayWater = (waters ?? []).find((w) => w.date === today);
+  const mom = computeMomentum(s, habits ?? [], logs ?? [], tasks ?? [], workouts ?? [], todayWater, journals ?? [], { dayPlan, sessions: sessions ?? [] });
   const r = weeklyRecap(habits ?? [], logs ?? [], tasks ?? [], workouts ?? [], waters ?? [], journals ?? []);
   const liters = `${(r.waterMl / 1000).toFixed(1)} L`;
 
@@ -82,6 +93,38 @@ export function RecapPage() {
         }
       />
       <Screen>
+        {/* Momentum today — transparent: score, what grew it, and the points legend. */}
+        <Card className="mb-4">
+          <div className="flex items-center gap-4">
+            <div className="flex-shrink-0" style={{ filter: 'drop-shadow(0 0 8px rgba(13,77,50,0.6))' }}>
+              <ProgressRing progress={mom.score / 100} size={84} stroke={9} gradient={['#3DA66F', '#0D4D32']}>
+                <div className="flex items-baseline"><span className="text-[22px] font-extrabold text-ink tnum leading-none">{mom.score}</span><span className="text-[11px] font-bold text-ink-3">/100</span></div>
+              </ProgressRing>
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[16px] font-bold text-ink">Momentum</div>
+              {mom.breakdown.length > 0 ? (
+                <div className="text-[13px] text-ink-2 mt-1 leading-snug">
+                  <span className="font-bold" style={{ color: 'var(--c-habit)' }}>{t('home.todayPlus', { n: mom.points })}</span>{' · '}
+                  {mom.breakdown.map((p) => `${MKEY_EMOJI[p.key]} ${t(MKEY_LABEL[p.key])}${p.n > 1 ? ` ×${p.n}` : ''}`).join(' · ')}
+                </div>
+              ) : (
+                <div className="text-[13px] text-ink-3 mt-1">{t(momentumMessageKey(mom.score) as TKey)}</div>
+              )}
+            </div>
+          </div>
+          {/* Points legend — so anyone curious can see what makes the plant grow. */}
+          <div className="mt-4 pt-3 grid grid-cols-2 gap-x-4 gap-y-2 border-t" style={{ borderColor: 'var(--c-divider)' }}>
+            {(Object.keys(MOMENTUM_POINTS) as MomentumKey[]).map((k) => (
+              <div key={k} className="flex items-center gap-2 text-[12.5px]">
+                <span aria-hidden>{MKEY_EMOJI[k]}</span>
+                <span className="flex-1 text-ink-2 truncate">{t(MKEY_LABEL[k])}</span>
+                <span className="font-bold tnum" style={{ color: 'var(--c-habit)' }}>+{MOMENTUM_POINTS[k]}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+
         {!hasAnyData(r) ? (
           <Card>
             <EmptyState title={t('recap.week')} description={t('recap.empty')} />
