@@ -58,7 +58,8 @@ export function HomeScreen() {
   const fmtL = (n: number) => `${n.toFixed(1).replace(/\.0$/, '')} L`;
 
   // Apply any water logged from the home/lock-screen widget on launch.
-  useEffect(() => { void drainWidgetWaterInbox((delta) => addWaterMl(today, delta)); }, [today]);
+  // Water is a Pro feature: only apply widget-logged water for subscribers.
+  useEffect(() => { if (isPro) void drainWidgetWaterInbox((delta) => addWaterMl(today, delta)); }, [today, isPro]);
 
   // Mirror today's data (incl. Momentum) into the App Group so the widgets stay fresh.
   useEffect(() => {

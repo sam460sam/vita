@@ -30,6 +30,8 @@ export function WorkoutSessionPage() {
   const [, forceTick] = useState(0);
   const [restCtx, setRestCtx] = useState<{ eid: string; k: number; startedAt: number } | null>(null);
   const audioRef = useRef<AudioContext | null>(null);
+  const sessionRef = useRef<WorkoutSession | null>(null);
+  sessionRef.current = session ?? null; // always the latest, for the rest-timer callback
   const sessions = useLiveQuery(() => db.workoutSessions.toArray(), [], []);
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const defaultRest = settings?.restSec ?? 90;
@@ -64,16 +66,29 @@ export function WorkoutSessionPage() {
   function setSetField(eid: string, k: number, fn: (set: WorkoutSession['entries'][number]['sets'][number]) => WorkoutSession['entries'][number]['sets'][number]) {
     patchEntry(eid, (en) => ({ ...en, sets: en.sets.map((x, i) => (i === k ? fn(x) : x)) }));
   }
-  // Store the rest actually taken on the set that started the running timer.
-  function recordPending() {
-    if (!restCtx) return;
-    const taken = Math.max(1, Math.round((Date.now() - restCtx.startedAt) / 1000));
-    setSetField(restCtx.eid, restCtx.k, (x) => ({ ...x, restTakenSec: taken }));
-    setRestCtx(null);
+  function commitSession(next: WorkoutSession) {
+    sessionRef.current = next;
+    setSession(next);
+    void saveWorkoutSession(next);
   }
+  // Fold the rest actually taken (on the set that started the timer) into a base
+  // session — pure, so callers can compose it with other edits in one write.
+  function applyPendingRest(base: WorkoutSession): WorkoutSession {
+    if (!restCtx) return base;
+    const taken = Math.max(1, Math.round((Date.now() - restCtx.startedAt) / 1000));
+    return { ...base, entries: base.entries.map((e) => (e.id === restCtx.eid ? { ...e, sets: e.sets.map((x, i) => (i === restCtx.k ? { ...x, restTakenSec: taken } : x)) } : e)) };
+  }
+  function beginRest(eid: string, k: number, durSec: number) {
+    ensureAudio();
+    setRestEndsAt(Date.now() + durSec * 1000);
+    setRestCtx({ eid, k, startedAt: Date.now() });
+  }
+  function clearRest() { setRestEndsAt(null); setRestCtx(null); }
+  // Skip / timer-up: record the pending rest on the latest session, then stop.
   function endRest() {
-    recordPending();
-    setRestEndsAt(null);
+    const base = sessionRef.current;
+    if (base && restCtx) commitSession(applyPendingRest(base));
+    clearRest();
   }
   // Prime the audio context on the user gesture that starts the rest, so the
   // end-of-rest beep is allowed to play later on iOS.
@@ -100,12 +115,6 @@ export function WorkoutSessionPage() {
       g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.4);
       o.start(); o.stop(ac.currentTime + 0.42);
     } catch { /* ignore */ }
-  }
-  function startRest(eid: string, k: number, durSec: number) {
-    ensureAudio();
-    recordPending();
-    setRestEndsAt(Date.now() + durSec * 1000);
-    setRestCtx({ eid, k, startedAt: Date.now() });
   }
   const REST_PRESETS = [15, 30, 45, 60, 75, 90, 120, 150, 180];
   function cycleRest(eid: string, cur: number) {
@@ -164,23 +173,30 @@ export function WorkoutSessionPage() {
     });
   }
   // Tap the progress pill: complete the next set (1/4 → 2/4 …); wraps to 0/N.
+  // Folds any pending rest + the new done-count into a single write.
   function tickSet(entry: WorkoutEntry) {
     platform.haptic();
-    const total = entry.sets.length;
-    const done = entry.sets.filter((x) => x.done).length;
+    const base0 = sessionRef.current ?? s;
+    const live = base0.entries.find((e) => e.id === entry.id) ?? entry;
+    const total = live.sets.length;
+    const done = live.sets.filter((x) => x.done).length;
     let next = done + 1;
     const advancing = next <= total;
     if (next > total) next = 0;
-    patchEntry(entry.id, (en) => ({ ...en, sets: en.sets.map((x, i) => ({ ...x, done: i < next })) }));
-    if (advancing) startRest(entry.id, next - 1, entry.restSec ?? defaultRest);
-    else endRest();
+    const base = applyPendingRest(base0);
+    commitSession({ ...base, entries: base.entries.map((e) => (e.id === entry.id ? { ...e, sets: e.sets.map((x, i) => ({ ...x, done: i < next })) } : e)) });
+    if (advancing) beginRest(entry.id, next - 1, live.restSec ?? defaultRest);
+    else clearRest();
   }
-  // Toggle a single set's done state (used in the expanded per-set view).
+  // Toggle a single set's done state (expanded per-set view).
   function toggleSetDone(entry: WorkoutEntry, k: number, currentlyDone: boolean) {
     platform.haptic();
-    setSetField(entry.id, k, (x) => ({ ...x, done: !x.done }));
-    if (!currentlyDone) startRest(entry.id, k, entry.restSec ?? defaultRest);
-    else endRest();
+    const base0 = sessionRef.current ?? s;
+    const base = applyPendingRest(base0);
+    commitSession({ ...base, entries: base.entries.map((e) => (e.id === entry.id ? { ...e, sets: e.sets.map((x, i) => (i === k ? { ...x, done: !x.done } : x)) } : e)) });
+    const live = base.entries.find((e) => e.id === entry.id);
+    if (!currentlyDone) beginRest(entry.id, k, live?.restSec ?? defaultRest);
+    else clearRest();
   }
   function addExercise(def: ExerciseDef) {
     update({ ...s, entries: [...s.entries, newWorkoutEntry(def.id, exerciseName(def, lang), def.muscle)] });
@@ -197,12 +213,8 @@ export function WorkoutSessionPage() {
   }
 
   async function finish() {
-    let entries = s.entries;
-    if (restCtx) {
-      const taken = Math.max(1, Math.round((Date.now() - restCtx.startedAt) / 1000));
-      entries = entries.map((e) => (e.id === restCtx.eid ? { ...e, sets: e.sets.map((x, i) => (i === restCtx.k ? { ...x, restTakenSec: taken } : x)) } : e));
-    }
-    await saveWorkoutSession({ ...s, entries, finishedAt: Date.now() });
+    const base = applyPendingRest(sessionRef.current ?? s);
+    await saveWorkoutSession({ ...base, finishedAt: Date.now() });
     nav('/allenamento');
   }
   async function removeSession() {
@@ -210,7 +222,8 @@ export function WorkoutSessionPage() {
     nav('/allenamento');
   }
   async function saveAsPlan() {
-    await createWorkoutPlan(s.title || t('workout.session.default'), s.entries, 'manual');
+    const cur = sessionRef.current ?? s;
+    await createWorkoutPlan(cur.title || t('workout.session.default'), cur.entries, 'manual');
     toast.show(t('workout.planSaved'));
   }
 
