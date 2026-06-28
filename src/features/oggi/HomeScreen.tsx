@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { startOfWeek, addDays, subDays, format } from 'date-fns';
-import { Check, ChevronRight, Plus, X, Dumbbell } from 'lucide-react';
+import { Check, ChevronRight } from 'lucide-react';
 import { db } from '@/data/db';
 import {
-  readSettings, toggleHabitLog, addWaterMl, readDayPlan, setDayIntention,
-  toggleDayIntentionDone, addDayItem, toggleDayItem, removeDayItem,
+  readSettings, addWaterMl, readDayPlan, setDayIntention, toggleDayIntentionDone,
 } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
-import { ProgressRing, VioCompanion, Icon } from '@/ui';
+import { ProgressRing, VioCompanion } from '@/ui';
 import { useIsPro } from '@/premium/premium';
 import { longDate, todayISO } from '@/lib/format';
 import { platform } from '@/platform/platform';
@@ -29,11 +28,10 @@ const BREAKDOWN_EMOJI: Record<MomentumKey, string> = {
   habit: '🌿', focus: '🎯', todo: '✅', workout: '🏋️', journal: '📓', water: '💧',
 };
 
-/** Home — a single, scannable daily agenda: focus → checklist → workout →
- *  progress → plant. Answers "what should I do today?" at a glance. */
+/** Home — a calm daily overview: focus → progress → plant → saved items.
+ *  Habits and Workout have their own tabs; Home just shows the big picture. */
 export function HomeScreen() {
   const t = useT();
-  const nav = useNavigate();
   const isPro = useIsPro();
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const habits = useLiveQuery(() => db.habits.orderBy('order').toArray(), [], []);
@@ -57,18 +55,12 @@ export function HomeScreen() {
   const active = (habits ?? []).filter((x) => !x.archived);
   const todays = active.filter((x) => isScheduled(x, today));
   const habitsDone = todays.filter((x) => isDone(logs ?? [], x.id, today)).length;
-  const todos = dayPlan?.items ?? [];
-  // Completed items sink to the bottom so active ones stay on top.
-  const sortedHabits = [...todays].sort((a, b) => Number(isDone(logs ?? [], a.id, today)) - Number(isDone(logs ?? [], b.id, today)));
-  const sortedTodos = [...todos].sort((a, b) => Number(a.done) - Number(b.done));
   const maxStreak = active.reduce((mx, h) => Math.max(mx, currentStreak(h, logs ?? [])), 0);
 
   const goalMl = s.water.dailyGoalMl || 2000;
   const ml = todayWater?.ml ?? 0;
   const glassMl = s.water.glassMl || 250;
   const fmtL = (n: number) => `${n.toFixed(1).replace(/\.0$/, '')} L`;
-
-  const inProgress = (sessions ?? []).find((x) => !x.finishedAt);
 
   // Today's focus (one important thing) — kept in local state, committed on blur.
   const [focusText, setFocusText] = useState('');
@@ -88,14 +80,6 @@ export function HomeScreen() {
     }
     prevScore.current = m.score;
   }, [m.score]);
-
-  const [draft, setDraft] = useState('');
-  function addTask() {
-    const v = draft.trim();
-    if (!v) return;
-    void addDayItem(today, v);
-    setDraft('');
-  }
 
   useEffect(() => { if (isPro) void drainWidgetWaterInbox((delta) => addWaterMl(today, delta)); }, [today, isPro]);
 
@@ -167,86 +151,8 @@ export function HomeScreen() {
           </div>
         </div>
 
-        {/* 2 — Unified checklist (habits + to-dos) */}
-        <div className="flex items-center justify-between mt-4 mb-2.5">
-          <h2 className="display-serif text-[21px] text-ink">{t('home.checklist.title')}</h2>
-          <Link to="/abitudini" className="text-[13px] font-semibold text-habit">{t('home.routine.all')}</Link>
-        </div>
-        <div className="rounded-card bg-card shadow-card p-2">
-          {/* Quick add */}
-          <div data-tour="addtask" className="flex items-center gap-2 px-2 py-1.5">
-            <input
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') addTask(); }}
-              placeholder={t('home.addTask')}
-              className="flex-1 min-w-0 bg-section rounded-2xl px-3.5 py-2.5 text-[14.5px] text-ink placeholder:text-ink-3 outline-none"
-            />
-            <button onClick={addTask} aria-label={t('plan.add')} className="h-10 w-10 rounded-full flex items-center justify-center text-on-primary flex-shrink-0 active:scale-90 transition-transform" style={{ background: 'var(--c-primary)' }}><Plus size={20} /></button>
-          </div>
-
-          {todays.length === 0 && todos.length === 0 ? (
-            <div className="p-4 text-center text-[14px] text-ink-2">{t('home.todosEmpty')}</div>
-          ) : (
-            <>
-              {sortedHabits.map((hb, hi) => {
-                const done = isDone(logs ?? [], hb.id, today);
-                const streak = currentStreak(hb, logs ?? []);
-                return (
-                  <button
-                    key={hb.id}
-                    data-tour={hi === 0 ? 'habit' : undefined}
-                    onClick={() => { platform.haptic(); void toggleHabitLog(hb.id, today); }}
-                    className="flex items-center gap-3 w-full px-3 rounded-2xl text-left transition-colors active:opacity-80"
-                    style={{ minHeight: 52, background: done ? 'color-mix(in srgb, var(--c-habit) 14%, var(--c-card))' : 'transparent' }}
-                  >
-                    <span className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors" style={done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }}>
-                      {done && <Check size={14} className="text-white check-pop" strokeWidth={3} />}
-                    </span>
-                    <span className="flex-shrink-0" style={{ color: hb.color }}><Icon name={hb.icon} size={20} strokeWidth={2.4} /></span>
-                    <span className="flex-1 min-w-0 text-[15.5px] font-semibold text-ink truncate">{habitDisplayName(hb, t)}</span>
-                    {streak > 0 && <span className="text-[12.5px] font-bold flex-shrink-0" style={{ color: 'var(--c-streak)' }}>{streak} 🔥</span>}
-                  </button>
-                );
-              })}
-              {sortedTodos.map((it) => (
-                <div key={it.id} className="flex items-center gap-3 w-full px-3 rounded-2xl" style={{ minHeight: 52 }}>
-                  <button onClick={() => { platform.haptic(); void toggleDayItem(today, it.id); }} className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors" style={it.done ? { background: '#4F9D55', borderColor: '#4F9D55' } : { borderColor: 'var(--c-line)' }} aria-label={it.text}>
-                    {it.done && <Check size={14} className="text-white check-pop" strokeWidth={3} />}
-                  </button>
-                  <span className={`flex-1 min-w-0 text-[15.5px] ${it.done ? 'line-through text-ink-3' : 'text-ink'}`}>{it.text}</span>
-                  <button onClick={() => void removeDayItem(today, it.id)} aria-label={t('common.close')} className="h-7 w-7 rounded-full flex items-center justify-center text-ink-3 opacity-50 active:opacity-100 flex-shrink-0"><X size={15} /></button>
-                </div>
-              ))}
-            </>
-          )}
-        </div>
-
-        {/* 3 — Today's workout */}
-        <button
-          data-tour="workout"
-          onClick={() => nav(inProgress ? `/allenamento/s/${inProgress.id}` : '/allenamento')}
-          className="w-full rounded-card bg-card shadow-card px-4 py-3.5 mt-5 flex items-center gap-3 active:bg-section transition-colors text-left"
-        >
-          <span className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'color-mix(in srgb, var(--c-primary) 14%, var(--c-card))', color: 'var(--c-habit)' }}><Dumbbell size={20} /></span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-[12px] font-bold text-ink-3 uppercase tracking-wide">{t('home.workout.title')}</span>
-            {inProgress ? (
-              <span className="block text-[15.5px] font-semibold text-ink truncate">{inProgress.title} · <span className="text-habit">{t('home.workout.inProgress').toLowerCase()}</span></span>
-            ) : (
-              <>
-                <span className="block text-[15.5px] font-semibold text-ink truncate">{t('home.workout.none')}</span>
-                <span className="block text-[12px] text-ink-3 truncate">{t('home.workout.helper')}</span>
-              </>
-            )}
-          </span>
-          <span className="flex-shrink-0 text-[13.5px] font-bold px-3 py-1.5 rounded-full" style={inProgress ? { background: 'var(--c-primary)', color: 'var(--c-on-primary)' } : { color: 'var(--c-habit)' }}>
-            {inProgress ? t('home.workout.resume') : t('workout.start')}
-          </span>
-        </button>
-
-        {/* 4 — Progress strip: even, fully-visible stat tiles (Momentum lives in the big card below) */}
-        <div data-tour="chips" className={`grid gap-2 mt-3 ${isPro ? 'grid-cols-3' : 'grid-cols-2'}`}>
+        {/* Progress strip: even, fully-visible stat tiles (Momentum lives in the big card below) */}
+        <div data-tour="chips" className={`grid gap-2 mt-4 ${isPro ? 'grid-cols-3' : 'grid-cols-2'}`}>
           <Link to="/abitudini" className="block"><Chip emoji="🌿" label={t('nav.habits')} value={`${habitsDone}/${todays.length}`} /></Link>
           {isPro && <Link to="/acqua" className="block"><Chip emoji="💧" label={t('nav.water')} value={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} /></Link>}
           <Link to="/progressi" className="block"><Chip emoji="🔥" label={t('home.streak')} value={`${maxStreak}`} /></Link>

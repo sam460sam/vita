@@ -8,9 +8,6 @@ import { CoachMarks, type CoachStep } from './CoachMarks';
 // Home-only steps. No bottom-nav / other-tab steps — the tour never leaves Home.
 const STEPS: CoachStep[] = [
   { sel: '[data-tour="focus"]', t: 'tour.focus.t', d: 'tour.focus.d' },
-  { sel: '[data-tour="addtask"]', t: 'tour.addtask.t', d: 'tour.addtask.d' },
-  { sel: '[data-tour="habit"]', t: 'tour.habit.t', d: 'tour.habit.d' },
-  { sel: '[data-tour="workout"]', t: 'tour.workout.t', d: 'tour.workout.d' },
   { sel: '[data-tour="chips"]', t: 'tour.chips.t', d: 'tour.chips.d' },
   { sel: '[data-tour="momentum"]', t: 'tour.momentum.t', d: 'tour.momentum.d' },
   { sel: '[data-tour="saved"]', t: 'tour.saved.t', d: 'tour.saved.d' },
