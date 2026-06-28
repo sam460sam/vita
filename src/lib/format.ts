@@ -33,6 +33,17 @@ export function getActiveLang(): LangCode {
   return activeLang;
 }
 
+/** Monday-first single-letter weekday initials in the active UI language
+ *  (e.g. EN: M T W T F S S · IT: L M M G V S D). */
+export function weekdayInitials(): string[] {
+  const monday = new Date(2024, 0, 1); // 1 Jan 2024 is a Monday
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    return format(d, 'EEEEE', { locale: activeLocale }).charAt(0).toUpperCase();
+  });
+}
+
 /** Today as ISO yyyy-MM-dd in local time. */
 export function todayISO(d: Date = new Date()): string {
   return format(d, ISO_DAY);

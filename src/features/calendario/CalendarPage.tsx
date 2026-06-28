@@ -13,7 +13,7 @@ import {
   startOfWeek,
   addDays,
 } from 'date-fns';
-import { activeDfnLocale } from '@/lib/format';
+import { activeDfnLocale, weekdayInitials } from '@/lib/format';
 import { db } from '@/data/db';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
@@ -65,7 +65,7 @@ export function CalendarPage() {
   const selJournal = (journal ?? []).filter((j) => j.date === selISO);
   const empty = selTasks.length === 0 && selWorkouts.length === 0 && selJournal.length === 0;
 
-  const weekLabels = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
+  const weekLabels = weekdayInitials();
 
   return (
     <>

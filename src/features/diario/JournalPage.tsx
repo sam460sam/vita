@@ -17,7 +17,7 @@ import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, CardHeader, EmptyState, Button, Input, IconButton } from '@/ui';
 import { cn } from '@/lib/cn';
-import { todayISO, activeDfnLocale } from '@/lib/format';
+import { todayISO, activeDfnLocale, weekdayInitials } from '@/lib/format';
 import { JournalForm } from './JournalForm';
 import { moodMeta } from './mood';
 import type { JournalEntry } from '@/data/types';
@@ -64,7 +64,7 @@ export function JournalPage() {
     setFormOpen(true);
   }
 
-  const weekLabels = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
+  const weekLabels = weekdayInitials();
 
   return (
     <>

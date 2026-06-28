@@ -6,15 +6,15 @@ import { toggleHabitLog } from '@/data/repo';
 import { isScheduled, isDone } from './logic';
 import { habitDisplayName } from './recommended';
 import { useT } from '@/i18n';
+import { weekdayInitials } from '@/lib/format';
 import type { Habit, HabitLog } from '@/data/types';
-
-const DOW = ['L', 'M', 'M', 'G', 'V', 'S', 'D']; // Monday-first
 
 /** A weekly completion grid (rows = habits, columns = Mon–Sun): filled in the
  *  habit's color = done, hollow ring = scheduled-not-done, today highlighted.
  *  Tapping a cell toggles that day (past + today only). Also a 30-day heat-map. */
 export function HabitWeeklyChart({ habits, logs }: { habits: Habit[]; logs: HabitLog[] }) {
   const t = useT();
+  const DOW = weekdayInitials(); // Monday-first, localized
   const [view, setView] = useState<'week' | 'month'>('week');
   const todayIso = format(new Date(), 'yyyy-MM-dd');
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
