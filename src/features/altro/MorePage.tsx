@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Sparkles, SlidersHorizontal, Crown } from 'lucide-react';
+import { ChevronRight, Sparkles, SlidersHorizontal } from 'lucide-react';
+import { ProStar } from '@/features/pro/ProStar';
 import { useNavItems } from '@/app/nav';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
@@ -50,11 +51,7 @@ export function MorePage() {
                     <Icon size={18} />
                   </span>
                   <span className="flex-1 text-[15px] text-ink font-medium">{t(item.labelKey)}</span>
-                  {proLocked && (
-                    <span className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'color-mix(in srgb, var(--c-gold) 20%, transparent)', color: 'var(--c-gold-2)' }} aria-label="Pro">
-                      <Crown size={13} fill="currentColor" />
-                    </span>
-                  )}
+                  {proLocked && <ProStar className="!static flex-shrink-0" />}
                   <ChevronRight size={18} className="text-ink-3" />
                 </Link>
               </div>

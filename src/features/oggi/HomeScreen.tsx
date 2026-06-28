@@ -18,6 +18,7 @@ import { habitDisplayName } from '@/features/abitudini/recommended';
 import { UpdateNudge } from '@/features/update/UpdateNudge';
 import { DailyInspiration } from '@/features/luxe/DailyInspiration';
 import { ProNudge } from '@/features/pro/ProNudge';
+import { ProStar } from '@/features/pro/ProStar';
 import { computeMomentum, momentumMessageKey, type MomentumKey } from './momentum';
 import { useT, type TKey } from '@/i18n';
 import { ThemeToggle } from './ThemeToggle';
@@ -152,9 +153,12 @@ export function HomeScreen() {
         </div>
 
         {/* Progress strip: even, fully-visible stat tiles (Momentum lives in the big card below) */}
-        <div data-tour="chips" className={`grid gap-2 mt-4 ${isPro ? 'grid-cols-3' : 'grid-cols-2'}`}>
+        <div data-tour="chips" className="grid gap-2 mt-4 grid-cols-3">
           <Link to="/abitudini" className="block"><Chip emoji="🌿" label={t('nav.habits')} value={`${habitsDone}/${todays.length}`} /></Link>
-          {isPro && <Link to="/acqua" className="block"><Chip emoji="💧" label={t('nav.water')} value={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} /></Link>}
+          <Link to="/acqua" className="relative block">
+            <Chip emoji="💧" label={t('nav.water')} value={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} />
+            {!isPro && <ProStar />}
+          </Link>
           <Link to="/progressi" className="block"><Chip emoji="🔥" label={t('home.streak')} value={`${maxStreak}`} /></Link>
         </div>
 
