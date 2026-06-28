@@ -12,11 +12,13 @@ const STORAGE_KEY = 'vita.theme';
 const THEME_COLOR = { light: '#ede7da', dark: '#0b0e0c' };
 
 function loadPref(): ThemePref {
+  // First launch defaults to DARK (the brand experience). Onboarding + the whole
+  // app start dark; the user can switch to Light from the Home toggle afterwards.
   try {
     const v = localStorage.getItem(STORAGE_KEY);
-    return v === 'light' || v === 'dark' || v === 'system' ? v : 'system';
+    return v === 'light' || v === 'dark' || v === 'system' ? v : 'dark';
   } catch {
-    return 'system';
+    return 'dark';
   }
 }
 
