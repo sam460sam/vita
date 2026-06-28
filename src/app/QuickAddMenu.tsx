@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Dumbbell, BookHeart, Wallet, CalendarDays } from 'lucide-react';
+import { Droplet, BookHeart, Wallet, CalendarDays } from 'lucide-react';
 import { Sheet } from '@/ui';
 import { useT, type TKey } from '@/i18n';
 import { useIsPro } from '@/premium/premium';
@@ -13,11 +13,10 @@ const ACTIONS: { target: QuickAddTarget; labelKey: TKey; icon: typeof BookHeart;
   { target: 'journal', labelKey: 'quick.journal', icon: BookHeart, accent: 'var(--c-journal)' },
 ];
 
-// Destinations that open a full page (not a quick sheet). Workout routes to the
-// Activity page — live tracking, manual log AND Apple Health / Apple Watch sync.
-// Pro modules show the paywall when the user isn't subscribed.
+// Destinations that open a full page (not a quick sheet). Water, Finances and
+// Calendar are Pro modules — they show the paywall when the user isn't subscribed.
 const NAV_LINKS: { to: string; labelKey: TKey; icon: typeof Wallet; accent: string; pro?: boolean }[] = [
-  { to: '/attivita', labelKey: 'quick.workout', icon: Dumbbell, accent: 'var(--c-activity)' },
+  { to: '/acqua', labelKey: 'nav.water', icon: Droplet, accent: 'var(--c-water)', pro: true },
   { to: '/finanze', labelKey: 'nav.finances', icon: Wallet, accent: 'var(--c-finance)', pro: true },
   { to: '/calendario', labelKey: 'nav.calendar', icon: CalendarDays, accent: 'var(--c-calendar-chip)', pro: true },
 ];
