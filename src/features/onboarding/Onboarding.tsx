@@ -463,7 +463,10 @@ function GoalStep({ value, onToggle }: { value: Set<Goal>; onToggle: (g: Goal) =
 
 function TrialStep() {
   const { t } = useI18n();
-  const bullets: TKey[] = ['onboard.trial.b1', 'onboard.trial.b2', 'onboard.trial.b3'];
+  const bullets: TKey[] = [
+    'pro.feat.water', 'pro.feat.finances', 'pro.feat.goals', 'pro.feat.calendar',
+    'pro.feat.stats', 'pro.feat.personality', 'pro.feat.future',
+  ];
   return (
     <div className="flex flex-col items-center text-center pt-6">
       <span className="h-24 w-24 rounded-card flex items-center justify-center mb-6" style={{ background: `${GOLD}1f`, color: GOLD }}>
@@ -471,13 +474,13 @@ function TrialStep() {
       </span>
       <h1 className="text-[28px] font-extrabold text-ink tracking-tight">{t('onboard.trial.title')}</h1>
       <p className="text-[15px] text-ink-2 mt-2 max-w-sm leading-relaxed">{t('onboard.trial.desc', { n: TRIAL_DAYS })}</p>
-      <div className="w-full max-w-xs mt-7 space-y-2.5 text-left">
+      <div className="w-full max-w-sm mt-6 space-y-2 text-left">
         {bullets.map((b) => (
-          <div key={b} className="flex items-center gap-3 bg-card shadow-chip rounded-card px-4 py-3.5">
-            <span className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: GOLD }}>
-              <Check size={14} className="text-white" strokeWidth={3} />
+          <div key={b} className="flex items-center gap-3 bg-card shadow-chip rounded-card px-4 py-2.5">
+            <span className="h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: GOLD }}>
+              <Check size={12} className="text-white" strokeWidth={3} />
             </span>
-            <span className="text-[14px] font-semibold text-ink">{t(b)}</span>
+            <span className="text-[13.5px] font-semibold text-ink">{t(b)}</span>
           </div>
         ))}
       </div>

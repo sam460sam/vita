@@ -771,6 +771,16 @@ export const it = {
   'pro.activeTitle': 'Sei Vyta Pro ✨',
   'pro.activeDesc': 'Grazie per il supporto. Hai accesso a tutto.',
   'pro.manage': 'Gestisci abbonamento',
+  'pro.feat.water': 'Acqua: monitoraggio, promemoria e calcolo del fabbisogno',
+  'pro.feat.finances': 'Finanze: budget, categorie e import dalla banca',
+  'pro.feat.goals': 'Obiettivi collegati a progetti e abitudini',
+  'pro.feat.calendar': 'Calendario unico di tutta la tua vita',
+  'pro.feat.stats': 'Statistiche avanzate e insight settimanali',
+  'pro.feat.personality': 'Il tuo profilo personalità completo',
+  'pro.feat.future': 'Tutte le funzioni future, incluse',
+  'pro.nudge.title': 'Sblocca Vyta Pro',
+  'pro.nudge.desc': 'Finanze, obiettivi, calendario, acqua e statistiche avanzate — prova {n} giorni gratis.',
+  'pro.nudge.cta': 'Scopri Pro',
 
   // Dashboard tagline
   'today.tagline': 'Coltiva le tue abitudini, un giorno alla volta 🌱',

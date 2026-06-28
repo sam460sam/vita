@@ -18,6 +18,7 @@ import { isScheduled, isDone, currentStreak } from '@/features/abitudini/logic';
 import { habitDisplayName } from '@/features/abitudini/recommended';
 import { UpdateNudge } from '@/features/update/UpdateNudge';
 import { DailyInspiration } from '@/features/luxe/DailyInspiration';
+import { ProNudge } from '@/features/pro/ProNudge';
 import { computeMomentum, momentumMessageKey, type MomentumKey } from './momentum';
 import { useT, type TKey } from '@/i18n';
 import { ThemeToggle } from './ThemeToggle';
@@ -286,6 +287,9 @@ export function HomeScreen() {
           <SavedTile to="/diario" emoji="📓" color="var(--c-journal)" label={t('nav.journal')} />
           <SavedTile to="/note" emoji="📝" color="#cdb079" label={t('nav.notes')} />
         </div>
+
+        {/* Gentle Pro nudge (free users only, snoozes after dismiss) */}
+        <ProNudge className="mt-6" />
 
         {/* 6 — Daily inspiration */}
         <DailyInspiration className="mt-6" />

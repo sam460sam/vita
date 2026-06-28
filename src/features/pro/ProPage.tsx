@@ -28,7 +28,7 @@ export function ProPage() {
           <h2 className="text-[20px] font-extrabold text-ink mt-4">{t('pro.activeTitle')}</h2>
           <p className="text-[14px] text-ink-2 mt-1.5">{t('pro.activeDesc')}</p>
           <div className="mt-5 space-y-2 text-left max-w-xs mx-auto">
-            {(['paywall.feature.finances', 'paywall.feature.goals', 'paywall.feature.calendar', 'paywall.feature.stats'] as const).map((k) => (
+            {(['pro.feat.water', 'pro.feat.finances', 'pro.feat.goals', 'pro.feat.calendar', 'pro.feat.stats', 'pro.feat.personality', 'pro.feat.future'] as const).map((k) => (
               <div key={k} className="flex items-center gap-2 text-[14px] text-ink">
                 <span className="h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: GOLD }}>
                   <Check size={12} className="text-white" strokeWidth={3} />

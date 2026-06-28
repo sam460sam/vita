@@ -768,6 +768,16 @@ export const en: Record<TKey, string> = {
   'pro.activeTitle': 'You’re Vyta Pro ✨',
   'pro.activeDesc': 'Thanks for your support. You have access to everything.',
   'pro.manage': 'Manage subscription',
+  'pro.feat.water': 'Water tracking, reminders & needs calculator',
+  'pro.feat.finances': 'Finances: budget, categories & bank import',
+  'pro.feat.goals': 'Goals linked to projects & habits',
+  'pro.feat.calendar': 'Unified calendar of your whole life',
+  'pro.feat.stats': 'Advanced statistics & weekly insights',
+  'pro.feat.personality': 'Your full personality profile',
+  'pro.feat.future': 'Every future feature, included',
+  'pro.nudge.title': 'Unlock Vyta Pro',
+  'pro.nudge.desc': 'Finances, goals, calendar, water and advanced stats — try {n} days free.',
+  'pro.nudge.cta': 'Discover Pro',
 
   // Dashboard tagline
   'today.tagline': 'Grow your habits, one day at a time 🌱',

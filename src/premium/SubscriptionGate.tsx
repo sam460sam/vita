@@ -55,7 +55,10 @@ export function Paywall({ onClose }: { onClose?: () => void }) {
     if (ok) onClose?.();
   }
 
-  const benefits: TKey[] = ['paywall.benefit.all', 'paywall.benefit.unlimited', 'paywall.benefit.insights', 'paywall.benefit.exclusive'];
+  const benefits: TKey[] = [
+    'pro.feat.water', 'pro.feat.finances', 'pro.feat.goals', 'pro.feat.calendar',
+    'pro.feat.stats', 'pro.feat.personality', 'pro.feat.future',
+  ];
 
   return (
     <div className="min-h-[100dvh] bg-app relative overflow-hidden">
@@ -76,19 +79,19 @@ export function Paywall({ onClose }: { onClose?: () => void }) {
         </div>
 
         {/* Benefits */}
-        <div className="mt-6 space-y-3">
+        <div className="mt-5 space-y-2.5">
           {benefits.map((k) => (
             <div key={k} className="flex items-center gap-3">
               <span className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#4F9D55' }}>
                 <Check size={15} className="text-white" strokeWidth={3} />
               </span>
-              <span className="text-[15px] font-medium text-ink">{t(k)}</span>
+              <span className="text-[14.5px] font-medium text-ink">{t(k)}</span>
             </div>
           ))}
         </div>
 
         {/* Plans */}
-        <div className="mt-6 space-y-3">
+        <div className="mt-5 space-y-3">
           <PlanCard period="yearly" price={priceOf('yearly')} selected={period === 'yearly'} onSelect={() => setPeriod('yearly')} highlight />
           <PlanCard period="monthly" price={priceOf('monthly')} selected={period === 'monthly'} onSelect={() => setPeriod('monthly')} />
         </div>
