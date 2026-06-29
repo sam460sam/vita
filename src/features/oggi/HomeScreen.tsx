@@ -156,7 +156,7 @@ export function HomeScreen() {
         <div data-tour="chips" className="grid gap-2 mt-4 grid-cols-3">
           <Link to="/abitudini" className="block"><Chip emoji="🌿" label={t('nav.habits')} value={`${habitsDone}/${todays.length}`} /></Link>
           <Link to="/acqua" className="relative block">
-            <Chip emoji="💧" label={t('nav.water')} value={`${fmtL(ml / 1000)} / ${fmtL(goalMl / 1000)}`} />
+            <Chip emoji="💧" label={t('nav.water')} value={`${(ml / 1000).toFixed(1).replace(/\.0$/, '')}/${fmtL(goalMl / 1000)}`} />
             {!isPro && <ProStar />}
           </Link>
           <Link to="/progressi" className="block"><Chip emoji="🔥" label={t('home.streak')} value={`${maxStreak}`} /></Link>
