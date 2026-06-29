@@ -141,6 +141,12 @@ export const platform = {
     }
   },
 
+  /** Open an external URL (App Store, web links). On native iOS this hands off
+   *  to the system, so App Store links open the App Store app. */
+  openUrl(url: string) {
+    window.open(url, '_blank');
+  },
+
   /** Light haptic feedback. Native: @capacitor/haptics. Web: vibration API. */
   haptic() {
     if (isNative) {

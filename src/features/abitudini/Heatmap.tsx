@@ -22,9 +22,10 @@ export function Heatmap({
               title={c.date}
               className={cn('h-3 w-3 rounded-[3px]')}
               style={{
-                // done = full habit color; scheduled-not-done = faint tint of it;
-                // not scheduled = neutral. Works in light AND dark.
-                background: c.done ? color : c.scheduled ? `${color}33` : 'var(--c-line)',
+                // Empty by default; a cell only takes the habit color once it's
+                // actually completed. Scheduled-but-not-done stays neutral so the
+                // grid fills in over time instead of looking pre-painted.
+                background: c.done ? color : 'var(--c-line)',
               }}
             />
           ))}

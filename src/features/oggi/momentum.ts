@@ -4,17 +4,35 @@
 // a whole-life score. Stella reacts to it (gentle, non-punishing à la Finch).
 // ============================================================================
 import { startOfDay } from 'date-fns';
-import type { Habit, HabitLog, Settings, Task, WaterLog, Workout, JournalEntry } from '@/data/types';
+import type { Habit, HabitLog, Settings, Task, WaterLog, Workout, JournalEntry, DayPlan, WorkoutSession } from '@/data/types';
 import { todayISO } from '@/lib/format';
 import { isScheduled, isDone } from '@/features/abitudini/logic';
 
+// ---------------------------------------------------------------------------
+// Explicit points model — the plant grows from real behaviour across modules.
+// Tunable in one place so the gamification stays transparent and balanced.
+// ---------------------------------------------------------------------------
+export const MOMENTUM_POINTS = {
+  habit: 5, // each habit completed today
+  focus: 10, // today's focus (one important thing) done
+  todo: 5, // each quick to-do done
+  workout: 20, // a workout session finished today
+  journal: 10, // a journal entry written today
+  water: 10, // water daily goal reached
+} as const;
+
+export type MomentumKey = keyof typeof MOMENTUM_POINTS;
+export interface MomentumPart { key: MomentumKey; points: number; n: number }
+
 export interface Momentum {
-  score: number; // 0..100
-  rings: { habits: number; water: number; tasks: number; move: number; mind: number }; // each 0..1
+  score: number; // 0..100 (sum of points, capped)
+  points: number; // raw total before the cap
+  breakdown: MomentumPart[]; // only contributors with points > 0
+  rings: { habits: number; water: number; tasks: number; move: number; mind: number }; // each 0..1 (kept for legacy UIs)
   done: { habits: [number, number]; waterPct: number; tasks: number; workout: boolean; journal: boolean };
 }
 
-/** Compute today's momentum from current data. Weighted, forgiving (caps at 100). */
+/** Compute today's momentum from current data. Explicit additive points, forgiving (caps at 100). */
 export function computeMomentum(
   settings: Settings,
   habits: Habit[],
@@ -23,6 +41,7 @@ export function computeMomentum(
   workouts: Workout[],
   water: WaterLog | undefined,
   journals: JournalEntry[],
+  extra?: { dayPlan?: DayPlan; sessions?: WorkoutSession[] },
 ): Momentum {
   const today = todayISO();
   const dayStart = startOfDay(new Date()).getTime();
@@ -32,31 +51,46 @@ export function computeMomentum(
   const habitsDone = scheduled.filter((h) => isDone(logs, h.id, today)).length;
   const habitsRing = scheduled.length ? habitsDone / scheduled.length : 0;
 
+  // Today's focus + quick to-dos (from the day plan)
+  const focusDone = !!(extra?.dayPlan?.intention?.trim() && extra.dayPlan.intentionDone);
+  const todosDone = (extra?.dayPlan?.items ?? []).filter((i) => i.done).length;
+
   // Water
   const goalMl = settings.water.dailyGoalMl || 2000;
   const waterRing = Math.min(1, (water?.ml ?? 0) / goalMl);
+  const waterGoal = waterRing >= 1;
 
   // Tasks closed today (relative to a soft daily target of 3)
   const tasksClosed = tasks.filter((t) => t.status === 'done' && t.completedAt && t.completedAt >= dayStart).length;
   const tasksRing = Math.min(1, tasksClosed / 3);
 
-  // Movement: any workout today, or move-kcal goal progress
-  const todays = workouts.filter((w) => w.startedAt >= dayStart);
-  const moveKcal = todays.reduce((s, w) => s + w.activeKcal, 0);
-  const workoutDone = todays.length > 0;
+  // Movement: a finished workout session today, or an activity workout today.
+  const sessionToday = (extra?.sessions ?? []).some((w) => w.finishedAt && w.finishedAt >= dayStart);
+  const moveToday = workouts.filter((w) => w.startedAt >= dayStart);
+  const moveKcal = moveToday.reduce((s, w) => s + w.activeKcal, 0);
+  const workoutDone = sessionToday || moveToday.length > 0;
   const moveRing = Math.min(1, moveKcal / (settings.goals.moveKcal || 600));
 
   // Mind: journaled today
   const journalDone = journals.some((j) => j.date === today);
   const mindRing = journalDone ? 1 : 0;
 
-  // Weighted blend (sums to 1). Habits & movement weigh most.
-  const score = Math.round(
-    100 * (habitsRing * 0.3 + waterRing * 0.2 + tasksRing * 0.2 + moveRing * 0.2 + mindRing * 0.1),
-  );
+  // Build the breakdown from explicit points.
+  const P = MOMENTUM_POINTS;
+  const parts: MomentumPart[] = [
+    { key: 'habit', n: habitsDone, points: habitsDone * P.habit },
+    { key: 'focus', n: focusDone ? 1 : 0, points: focusDone ? P.focus : 0 },
+    { key: 'todo', n: todosDone, points: todosDone * P.todo },
+    { key: 'workout', n: workoutDone ? 1 : 0, points: workoutDone ? P.workout : 0 },
+    { key: 'journal', n: journalDone ? 1 : 0, points: journalDone ? P.journal : 0 },
+    { key: 'water', n: waterGoal ? 1 : 0, points: waterGoal ? P.water : 0 },
+  ];
+  const points = parts.reduce((s, p) => s + p.points, 0);
 
   return {
-    score: Math.min(100, score),
+    score: Math.min(100, points),
+    points,
+    breakdown: parts.filter((p) => p.points > 0),
     rings: { habits: habitsRing, water: waterRing, tasks: tasksRing, move: moveRing, mind: mindRing },
     done: {
       habits: [habitsDone, scheduled.length],

@@ -1,14 +1,14 @@
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
 import { cn } from '@/lib/cn';
 
-export function Label({ children }: { children: ReactNode }) {
-  return <label className="block text-[13px] font-semibold text-ink-2 mb-1.5">{children}</label>;
+export function Label({ children, className }: { children: ReactNode; className?: string }) {
+  return <label className={cn('block text-[13px] font-semibold text-ink-2 mb-1.5', className)}>{children}</label>;
 }
 
-export function Field({ label, children }: { label?: string; children: ReactNode }) {
+export function Field({ label, children, labelClassName }: { label?: string; children: ReactNode; labelClassName?: string }) {
   return (
     <div className="mb-4">
-      {label && <Label>{label}</Label>}
+      {label && <Label className={labelClassName}>{label}</Label>}
       {children}
     </div>
   );

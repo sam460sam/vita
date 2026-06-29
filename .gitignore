@@ -29,3 +29,7 @@ ios/App/App/capacitor.config.json
 ios/App/App/config.xml
 DerivedData
 *.xcuserstate
+
+# Dev restyle preview captures
+store/candy/
+store/cover/

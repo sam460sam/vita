@@ -76,32 +76,39 @@ Già implementate in `src/platform/notifications.ts` e collegate a Impostazioni
 
 Niente server: sono **notifiche locali**, pianificate sul dispositivo.
 
-## ❤️ Apple Salute (HealthKit) / Health Connect
-Predisposto in `src/platform/health.ts` (funzioni `connect()` /
-`importRecentWorkouts()` già chiamate dalla UI in Attività → card Salute) e
-le usage-string sono già in `ios/App/App/Info.plist`.
+## ❤️ Apple Salute (HealthKit) / Health Connect — v1.2
+**Già cablato** in `src/platform/health.ts` con il plugin **`capacitor-health`**
+(compatibile Capacitor 8, copre sia HealthKit che Health Connect):
+- `connect()` → richiede l'autorizzazione in lettura (allenamenti, calorie
+  attive, passi, distanza, frequenza cardiaca).
+- `importRecentWorkouts()` → importa gli allenamenti degli ultimi 30 giorni come
+  `Workout` di Vyta (calorie, distanza, durata, HR), con de-dup per orario.
+- `todaySummary()` + hook `useHealthSummary()` → calorie attive + passi di oggi;
+  `mergeHealthRings()` alimenta gli **anelli** (Movimento = calorie attive,
+  Allenamento = minuti, in Home e in Attività) quando l'utente è connesso.
+- Su web/non connesso tutto è un no-op: comportamento invariato.
 
-**iOS — passi:**
-1. Installa un plugin HealthKit, es.:
-   ```bash
-   npm i @perfood/capacitor-healthkit
-   npx cap sync
-   ```
-2. `npx cap open ios` → target **App** → **Signing & Capabilities** →
-   **+ Capability** → **HealthKit**.
-3. In `src/platform/health.ts` sostituisci i TODO con le chiamate reali del
-   plugin in `connect()` (requestAuthorization) e `importRecentWorkouts()`
-   (query HKWorkout → `createWorkout({ ..., source: 'healthkit' })`).
-   **La UI non cambia.**
-4. Build e prova su un **iPhone reale** (HealthKit non funziona nel simulatore).
+Già in repo: usage-string in `ios/App/App/Info.plist`
+(`NSHealthShareUsageDescription`/`NSHealthUpdateUsageDescription`), entitlement
+`ios/App/App/App.entitlements` (HealthKit) e `CODE_SIGN_ENTITLEMENTS` nel
+progetto. Versione alzata a **1.2** (`MARKETING_VERSION`) build **2**.
 
-**Android (Health Connect):**
-1. `npm i <plugin Health Connect per Capacitor>` + `npx cap sync`
-2. Aggiungi i permessi Health Connect nel manifest e la dichiarazione privacy.
-3. Implementa le stesse funzioni con `source: 'healthconnect'`.
+**iOS — passi finali sul Mac:**
+1. `npm install && npm run build && npx cap sync` (installa il pod del plugin).
+2. `npx cap open ios` → target **App** → **Signing & Capabilities**: verifica che
+   compaia **HealthKit** (l'entitlement è già nel progetto; se non appare,
+   **+ Capability → HealthKit**).
+3. Sul portale Apple Developer assicurati che l'**App ID** `app.vita.lifeos`
+   abbia HealthKit abilitato (il profilo di provisioning lo richiede).
+4. Build e prova su un **iPhone reale** (HealthKit non funziona nel simulatore):
+   Attività → card "Salute" → **Connetti** → autorizza in Salute → "Importa".
 
-Nel frattempo, da subito (anche sul web), funziona l'**import da file**
-(.tcx/.gpx/.xml) di Strava, Garmin e dell'export di Apple Salute.
+**Android (Health Connect):** lo stesso plugin lo supporta. Servirà aggiungere i
+permessi Health Connect nel manifest e la dichiarazione privacy quando vorrai
+pubblicare anche lì (la UI usa già `source: 'healthconnect'`).
+
+Funziona da subito anche l'**import da file** (.tcx/.gpx/.xml) di Strava, Garmin
+e dell'export di Apple Salute, ovunque (web + native).
 
 ## 📊 Widget schermata Home (fase 2)
 I widget sono **codice nativo separato** (non riusano la WebView), quindi sono
@@ -127,5 +134,5 @@ piccolo "bridge" che scrive un riassunto giornaliero in un percorso condiviso.
 | Funzione | Codice app | Da fare sul Mac |
 |---|---|---|
 | Notifiche locali | ✅ pronto | abilitare capability / permesso |
-| Apple Salute | ✅ predisposto | plugin + capability HealthKit, riempire i TODO |
+| Apple Salute | ✅ cablato (plugin + entitlement + anelli) | `cap sync` + verifica capability/App ID, prova su iPhone |
 | Widget Home | ⚠️ da costruire | target nativo Widget (fase 2) |

@@ -25,17 +25,26 @@ export type ModuleId =
   | 'abitudini'
   | 'finanze'
   | 'diario'
+  | 'note'
+  | 'acqua'
+  | 'personalita'
   | 'obiettivi'
   | 'calendario';
 
-/** All known modules in canonical order — single source of truth. */
+/** All known modules in canonical order — single source of truth.
+ *  The hero set (abitudini · acqua · personalita — see HERO_MODULES in nav.ts)
+ *  leads the bottom tab bar; attivita/salute, progetti, note, diario and the
+ *  rest are "set aside" in the "Altro" drawer + the home grid. */
 export const ALL_MODULES: ModuleId[] = [
   'abitudini',
   'attivita',
-  'peso',
+  'acqua',
+  'personalita',
   'progetti',
-  'obiettivi',
+  'note',
   'diario',
+  'peso',
+  'obiettivi',
   'finanze',
   'calendario',
 ];
@@ -97,6 +106,7 @@ export interface Settings {
   water: {
     dailyGoalMl: number; // daily target in ml (e.g. 2000)
     glassMl: number; // size of one "glass" in ml (default 200)
+    reminderEveryMin?: number; // drink-water reminder interval in minutes (undefined/0 = off)
   };
   // Daily reminder times (HH:mm) — empty string = off. Fire as local
   // notifications on the native app; stored regardless on web.
@@ -117,8 +127,17 @@ export interface Settings {
     goalWeightKg?: number; // target weight
     unit: 'kg' | 'lb';
   };
+  /** Gym equipment the user has available (drives the workout generator).
+   *  `undefined` = not chosen yet → treated as "everything available". */
+  equipment?: Equipment[];
+  /** Default rest-timer length between sets, in seconds (fallback 90). */
+  restSec?: number;
   /** What the user mainly wants from Vita (set in onboarding). Drives nudges. */
   focus?: 'health' | 'productivity' | 'wellbeing' | 'all';
+  /** Optional personal details from onboarding (kept on-device only). */
+  age?: number;
+  /** The user's main personal goal/motivation (onboarding). */
+  goal?: 'feel_better' | 'get_organized' | 'reduce_stress' | 'build_consistency' | 'reach_goal';
   /**
    * Personalisation — the modules the user chose as interests, and their order
    * in navigation. `undefined` means "not chosen yet" → treated as all enabled
@@ -176,6 +195,9 @@ export interface HabitFrequency {
 
 export interface Habit extends Timestamped {
   name: string;
+  /** For built-in (recommended) habits: the recommended id, so the name can be
+   *  re-localized on display. Custom habits leave this undefined. */
+  recId?: string;
   color: string;
   icon: string; // lucide icon name
   frequency: HabitFrequency;
@@ -246,6 +268,147 @@ export interface JournalEntry extends Timestamped {
 }
 
 // ----------------------------------------------------------------------------
+// Notes (native note-taking with optional checklist)
+// ----------------------------------------------------------------------------
+/** A single tickable line inside a note's checklist. */
+export interface NoteChecklistItem {
+  id: ID;
+  text: string;
+  done: boolean;
+}
+
+export interface Note extends Timestamped {
+  title: string;
+  body: string;
+  checklist: NoteChecklistItem[];
+  /** Accent color key (one of the warm note palette swatches), hex string. */
+  color: string;
+  pinned: boolean;
+}
+
+// ----------------------------------------------------------------------------
+// Subscription (Vyta Pro) — cached entitlement for offline use
+// ----------------------------------------------------------------------------
+export interface SubscriptionCache {
+  id: 'sub'; // singleton
+  isPro: boolean;
+  productId?: string;
+  /** Subscription expiry (epoch ms), if known. */
+  expiresAt?: number;
+  updatedAt: number;
+}
+
+// ----------------------------------------------------------------------------
+// Personality test — result + paid full-profile unlock (one-time purchase)
+// ----------------------------------------------------------------------------
+export interface PersonalityResult {
+  id: 'result'; // singleton (latest result)
+  /** 4-letter MBTI-style code, e.g. 'INTJ'. */
+  code: string;
+  /** Raw axis scores (sum of weighted answers) for E/I, S/N, T/F, J/P. */
+  scores: { EI: number; SN: number; TF: number; JP: number };
+  /** Whether the full profile is unlocked (one-time purchase owned). */
+  unlocked: boolean;
+  updatedAt: number;
+}
+
+// ----------------------------------------------------------------------------
+// Day plan — a light "plan your day" mix of an intention + quick to-dos,
+// stored per day (keyed by ISO date). Independent of the Tasks module.
+// ----------------------------------------------------------------------------
+export interface DayPlanItem {
+  id: ID;
+  text: string;
+  done: boolean;
+}
+
+export interface DayPlan {
+  /** yyyy-MM-dd — primary key. */
+  date: string;
+  /** The day's main focus / intention (one line). */
+  intention: string;
+  /** Whether the day's focus has been completed (feeds Momentum). */
+  intentionDone?: boolean;
+  items: DayPlanItem[];
+  /** Free-form general notes (used by the general "Notes & to-dos" screen). */
+  notes?: string;
+  updatedAt: number;
+}
+
+// ----------------------------------------------------------------------------
+// Strength training — a "serious" workout logger (sessions of exercises, each
+// with logged sets of reps × weight). Separate from the cardio `Workout` above.
+// ----------------------------------------------------------------------------
+export type MuscleGroup = 'chest' | 'back' | 'legs' | 'shoulders' | 'arms' | 'core' | 'fullbody';
+export type Equipment = 'bodyweight' | 'dumbbell' | 'barbell' | 'band' | 'kettlebell' | 'machine' | 'pullupbar';
+
+/** A bundled exercise definition (static library, not stored in the DB). */
+export interface ExerciseDef {
+  id: string;
+  name: string;   // Italian
+  nameEn: string;
+  muscle: MuscleGroup;
+  equipment: Equipment[];
+}
+
+export interface WorkoutSet {
+  reps: number;
+  weightKg: number;
+  done: boolean;
+  /** Rest actually taken after completing this set, in seconds (recorded live). */
+  restTakenSec?: number;
+}
+
+export interface WorkoutEntry {
+  id: ID;
+  /** Library exercise id, or 'custom'. */
+  exerciseId: string;
+  name: string;
+  muscle: MuscleGroup;
+  sets: WorkoutSet[];
+  /** Per-exercise rest override, in seconds (falls back to the global default). */
+  restSec?: number;
+}
+
+export interface WorkoutSession extends Timestamped {
+  date: string; // yyyy-MM-dd
+  title: string;
+  entries: WorkoutEntry[];
+  /** Epoch ms when the session was finished (undefined = still in progress). */
+  finishedAt?: number;
+}
+
+/** A saved, reusable workout plan ("scheda") kept in the archive. Independent
+ *  of sessions: start a fresh session from it any time, even after switching. */
+export interface WorkoutPlan extends Timestamped {
+  title: string;
+  entries: WorkoutEntry[];
+  /** Where the plan came from (photo scan, manual save, generator, template). */
+  source?: 'scan' | 'manual' | 'generated' | 'template';
+}
+
+// ----------------------------------------------------------------------------
+// Routines — Fabulous-style rituals: an ordered list of small steps you run
+// through with a guided player (optional per-step timer).
+// ----------------------------------------------------------------------------
+export interface RoutineStep {
+  id: ID;
+  title: string;
+  /** Optional countdown for this step, in seconds. */
+  durationSec?: number;
+}
+
+export interface Routine extends Timestamped {
+  name: string;
+  /** A simple emoji used as the routine's icon. */
+  emoji: string;
+  steps: RoutineStep[];
+  /** Optional personal notes for this routine. */
+  notes?: string;
+  order: number;
+}
+
+// ----------------------------------------------------------------------------
 // Goals
 // ----------------------------------------------------------------------------
 export type GoalLinkType = 'none' | 'project' | 'habit' | 'milestones';
@@ -283,6 +446,10 @@ export interface Transaction extends Timestamped {
   category: string;
   note?: string;
   date: string; // ISO yyyy-MM-dd
+  /** Marks a monthly recurring template; occurrences are generated from it. */
+  recurring?: boolean;
+  /** For a generated occurrence: the id of the recurring template it came from. */
+  recurOf?: string;
 }
 
 export interface Budget {
@@ -310,4 +477,5 @@ export interface VitaBackup {
   budgets: Budget[];
   waterLogs?: WaterLog[];
   weightLogs?: WeightLog[];
+  notes?: Note[];
 }

@@ -13,7 +13,7 @@ import {
   startOfWeek,
   addDays,
 } from 'date-fns';
-import { it } from 'date-fns/locale';
+import { activeDfnLocale, weekdayInitials } from '@/lib/format';
 import { db } from '@/data/db';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
@@ -65,19 +65,19 @@ export function CalendarPage() {
   const selJournal = (journal ?? []).filter((j) => j.date === selISO);
   const empty = selTasks.length === 0 && selWorkouts.length === 0 && selJournal.length === 0;
 
-  const weekLabels = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
+  const weekLabels = weekdayInitials();
 
   return (
     <>
       <PageHeader title={t('calendar.title')} back="/altro" />
       <Screen>
-        <Card className="mb-4">
+        <Card heroAccent="var(--c-project)" className="mb-4">
           <div className="flex items-center justify-between mb-3 gap-2">
-            <IconButton label="Precedente" onClick={() => setCursor((c) => (mode === 'month' ? addMonths(c, -1) : addDays(c, -7)))}>
+            <IconButton label={t('common.previous')} onClick={() => setCursor((c) => (mode === 'month' ? addMonths(c, -1) : addDays(c, -7)))}>
               <ChevronLeft size={18} />
             </IconButton>
-            <span className="text-[15px] font-semibold text-ink capitalize">{format(cursor, 'MMMM yyyy', { locale: it })}</span>
-            <IconButton label="Successivo" onClick={() => setCursor((c) => (mode === 'month' ? addMonths(c, 1) : addDays(c, 7)))}>
+            <span className="text-[15px] font-semibold text-ink capitalize">{format(cursor, 'MMMM yyyy', { locale: activeDfnLocale() })}</span>
+            <IconButton label={t('common.next')} onClick={() => setCursor((c) => (mode === 'month' ? addMonths(c, 1) : addDays(c, 7)))}>
               <ChevronRight size={18} />
             </IconButton>
           </div>
@@ -125,7 +125,7 @@ export function CalendarPage() {
         </Card>
 
         <Card>
-          <div className="text-[15px] font-semibold text-ink capitalize mb-3">{format(selected, 'EEEE d MMMM', { locale: it })}</div>
+          <div className="text-[15px] font-semibold text-ink capitalize mb-3">{format(selected, 'EEEE d MMMM', { locale: activeDfnLocale() })}</div>
           {empty ? (
             <EmptyState title={t('calendar.empty.title')} description={t('calendar.empty.desc')} />
           ) : (

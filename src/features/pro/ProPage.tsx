@@ -1,83 +1,46 @@
-import { useState } from 'react';
-import { Check, Sparkles, Wallet, Target, CalendarDays, BarChart3, Star } from 'lucide-react';
+import { Crown, Check, Settings2 } from 'lucide-react';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
-import { Card, Button, Segmented, useToast } from '@/ui';
+import { Button } from '@/ui';
 import { useT } from '@/i18n';
+import { usePremium } from '@/premium/premium';
+import { Paywall } from '@/premium/SubscriptionGate';
 
+const GOLD = '#C9A227';
+
+/** The "Vyta Pro" destination — paywall when not subscribed, status when Pro. */
 export function ProPage() {
   const t = useT();
-  const toast = useToast();
-  const [plan, setPlan] = useState<'yearly' | 'monthly'>('yearly');
+  const { isPro, manage } = usePremium();
 
-  const features = [
-    { icon: Wallet, key: 'pro.feature.finances' as const, color: 'var(--c-finance)' },
-    { icon: Target, key: 'pro.feature.goals' as const, color: 'var(--c-project)' },
-    { icon: CalendarDays, key: 'pro.feature.calendar' as const, color: 'var(--c-activity)' },
-    { icon: BarChart3, key: 'pro.feature.stats' as const, color: 'var(--c-habit)' },
-    { icon: Star, key: 'pro.feature.future' as const, color: 'var(--c-journal)' },
-  ];
+  if (!isPro) {
+    return <Paywall />;
+  }
 
   return (
     <>
       <PageHeader title={t('pro.title')} back="/altro" />
       <Screen>
-        {/* Hero */}
-        <div className="flex flex-col items-center text-center pt-2 pb-6">
-          <span className="h-16 w-16 rounded-2xl bg-primary border border-primary-border flex items-center justify-center text-on-primary mb-4">
-            <Sparkles size={30} />
+        <div className="bg-card rounded-card shadow-card border border-line/40 dark:border-transparent p-6 text-center">
+          <span className="inline-flex h-16 w-16 rounded-3xl items-center justify-center" style={{ background: `${GOLD}1f`, color: GOLD }}>
+            <Crown size={32} fill={GOLD} />
           </span>
-          <h1 className="text-2xl font-bold text-ink">{t('pro.title')}</h1>
-          <p className="text-[15px] text-ink-2 mt-1 max-w-xs">{t('pro.subtitle')}</p>
+          <h2 className="text-[20px] font-extrabold text-ink mt-4">{t('pro.activeTitle')}</h2>
+          <p className="text-[14px] text-ink-2 mt-1.5">{t('pro.activeDesc')}</p>
+          <div className="mt-5 space-y-2 text-left max-w-xs mx-auto">
+            {(['pro.feat.water', 'pro.feat.finances', 'pro.feat.goals', 'pro.feat.calendar', 'pro.feat.stats', 'pro.feat.personality', 'pro.feat.future'] as const).map((k) => (
+              <div key={k} className="flex items-center gap-2 text-[14px] text-ink">
+                <span className="h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: GOLD }}>
+                  <Check size={12} className="text-white" strokeWidth={3} />
+                </span>
+                {t(k)}
+              </div>
+            ))}
+          </div>
+          <Button variant="subtle" className="mt-6" icon={<Settings2 size={16} />} onClick={() => void manage()}>
+            {t('pro.manage')}
+          </Button>
         </div>
-
-        {/* Features */}
-        <Card className="mb-4">
-          <div className="space-y-3.5">
-            {features.map((f) => {
-              const Icon = f.icon;
-              return (
-                <div key={f.key} className="flex items-center gap-3">
-                  <span className="h-9 w-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${f.color}1a`, color: f.color }}>
-                    <Icon size={18} />
-                  </span>
-                  <span className="flex-1 text-[15px] text-ink">{t(f.key)}</span>
-                  <Check size={18} className="text-habit" />
-                </div>
-              );
-            })}
-          </div>
-        </Card>
-
-        {/* Plan selector */}
-        <Segmented
-          className="w-full mb-3"
-          value={plan}
-          onChange={setPlan}
-          options={[
-            { value: 'yearly', label: t('pro.yearly') },
-            { value: 'monthly', label: t('pro.monthly') },
-          ]}
-        />
-        {plan === 'yearly' && (
-          <div className="text-center mb-3">
-            <span className="inline-flex items-center gap-1 text-[13px] font-semibold text-habit bg-habit/10 rounded-full px-3 h-7">
-              {t('pro.yearly.badge')}
-            </span>
-          </div>
-        )}
-
-        <Button block size="lg" onClick={() => toast.show(t('pro.soon'))}>
-          {t('pro.cta')}
-        </Button>
-        <button
-          onClick={() => toast.show(t('pro.soon'))}
-          className="w-full text-center text-[13px] text-ink-2 mt-3 py-2"
-        >
-          {t('pro.restore')}
-        </button>
-
-        <p className="text-center text-[12px] text-ink-3 mt-2">{t('pro.soon')}</p>
       </Screen>
     </>
   );

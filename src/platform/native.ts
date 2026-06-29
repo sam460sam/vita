@@ -4,6 +4,21 @@
 // ============================================================================
 import { Capacitor } from '@capacitor/core';
 
+/** Sync the native status bar to the active theme. Day (light bg) → dark
+ *  icons (Style.Light); Night (dark bg) → light icons (Style.Dark). */
+export async function setStatusBarStyle(resolved: 'light' | 'dark'): Promise<void> {
+  if (!Capacitor.isNativePlatform()) return;
+  try {
+    const { StatusBar, Style } = await import('@capacitor/status-bar');
+    await StatusBar.setStyle({ style: resolved === 'dark' ? Style.Dark : Style.Light });
+    if (Capacitor.getPlatform() === 'android') {
+      await StatusBar.setBackgroundColor({ color: resolved === 'dark' ? '#0b0e0c' : '#ede7da' });
+    }
+  } catch {
+    /* status bar plugin unavailable */
+  }
+}
+
 export async function initNative(): Promise<void> {
   if (!Capacitor.isNativePlatform()) return;
 

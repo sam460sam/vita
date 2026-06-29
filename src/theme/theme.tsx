@@ -3,19 +3,22 @@
 // browser/native status-bar theme-color in sync, and persists the preference.
 // ============================================================================
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { setStatusBarStyle } from '@/platform/native';
 
 export type ThemePref = 'system' | 'light' | 'dark';
 type Resolved = 'light' | 'dark';
 
 const STORAGE_KEY = 'vita.theme';
-const THEME_COLOR = { light: '#ffffff', dark: '#0a0a0c' };
+const THEME_COLOR = { light: '#ede7da', dark: '#0b0e0c' };
 
 function loadPref(): ThemePref {
+  // First launch defaults to DARK (the brand experience). Onboarding + the whole
+  // app start dark; the user can switch to Light from the Home toggle afterwards.
   try {
     const v = localStorage.getItem(STORAGE_KEY);
-    return v === 'light' || v === 'dark' || v === 'system' ? v : 'system';
+    return v === 'light' || v === 'dark' || v === 'system' ? v : 'dark';
   } catch {
-    return 'system';
+    return 'dark';
   }
 }
 
@@ -26,6 +29,7 @@ function systemPrefersDark(): boolean {
 function apply(resolved: Resolved) {
   const root = document.documentElement;
   root.classList.toggle('dark', resolved === 'dark');
+  root.classList.toggle('light', resolved === 'light');
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', THEME_COLOR[resolved]);
 }
@@ -56,7 +60,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // Apply synchronously on every change so there's no flash.
   apply(resolved);
 
+  // Keep the native status bar in sync with the active theme.
+  useEffect(() => { void setStatusBarStyle(resolved); }, [resolved]);
+
   const setPref = useCallback((p: ThemePref) => {
+    // Smooth cross-fade during the switch (reduced-motion is honoured in CSS).
+    const root = document.documentElement;
+    root.classList.add('theme-transition');
+    window.setTimeout(() => root.classList.remove('theme-transition'), 320);
     setPrefState(p);
     try {
       localStorage.setItem(STORAGE_KEY, p);

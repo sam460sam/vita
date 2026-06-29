@@ -117,10 +117,10 @@ export function JournalForm({
       <Field label={t('journalForm.tags')}>
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-2">
-            {tags.map((t) => (
-              <span key={t} className="inline-flex items-center gap-1 bg-section rounded-full pl-2.5 pr-1 h-7 text-[13px] text-ink-2">
-                #{t}
-                <button onClick={() => setTags((p) => p.filter((x) => x !== t))} className="p-0.5" aria-label="Rimuovi tag">
+            {tags.map((tag) => (
+              <span key={tag} className="inline-flex items-center gap-1 bg-section rounded-full pl-2.5 pr-1 h-7 text-[13px] text-ink-2">
+                #{tag}
+                <button onClick={() => setTags((p) => p.filter((x) => x !== tag))} className="p-0.5" aria-label={t('common.delete')}>
                   <X size={13} />
                 </button>
               </span>

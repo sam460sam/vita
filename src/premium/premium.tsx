@@ -1,63 +1,113 @@
 // ============================================================================
-// Premium / subscription gating (BUILD-SPEC: monetization).
-// Architecture is ready for RevenueCat (or App Store / Play billing) but no
-// real payment is wired yet — everything is unlocked for now via `unlockAll`.
-// When billing is added, replace `isPremium` resolution with the entitlement
-// from the store; the rest of the app (gating, Pro page) stays the same.
+// Vyta Pro — subscription state (native StoreKit, on-device, offline-first).
+//
+//  • The entitlement is cached in Dexie, so gating works instantly and offline.
+//  • On launch and every time the app returns to the foreground, we re-check
+//    StoreKit and update the cache.
+//  • On web (or with the paywall disabled) everything degrades gracefully.
 // ============================================================================
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { App as CapApp } from '@capacitor/app';
+import {
+  isBillingConfigured,
+  getEntitlement,
+  getProPackages,
+  purchase as billingPurchase,
+  restore as billingRestore,
+  manageSubscriptions,
+  type ProPackage,
+} from './billing';
+import { PAYWALL_ENABLED } from './config';
+import { readSubscription, writeSubscription } from '@/data/repo';
 
-/** Features that can be gated behind Pro. */
-export type PremiumFeature = 'finances' | 'goals' | 'calendar' | 'stats';
-
-// While subscriptions are not live, keep the app fully usable.
-const UNLOCK_ALL_FOR_NOW = true;
-
-const STORAGE_KEY = 'vita.premium';
+const DEV_KEY = 'vita.proDev'; // web/dev override to preview Pro features
 
 interface PremiumCtx {
-  isPremium: boolean;
-  /** True if the given feature is currently accessible. */
-  can: (feature: PremiumFeature) => boolean;
-  /** Dev/local toggle until real billing exists. */
-  setPremium: (v: boolean) => void;
+  /** True when the user has full access (subscribed, or gating disabled). */
+  isPro: boolean;
+  /** Still resolving the initial entitlement. */
+  loading: boolean;
+  /** True only in the native iOS app (purchases possible). */
+  billingActive: boolean;
+  packages: ProPackage[];
+  purchase: (productId: string) => Promise<boolean>;
+  restore: () => Promise<boolean>;
+  manage: () => Promise<void>;
+  refresh: () => Promise<void>;
 }
 
 const Ctx = createContext<PremiumCtx | null>(null);
 
-function loadPremium(): boolean {
+function devUnlock(): boolean {
   try {
-    return localStorage.getItem(STORAGE_KEY) === '1';
+    return localStorage.getItem(DEV_KEY) === '1';
   } catch {
     return false;
   }
 }
 
 export function PremiumProvider({ children }: { children: ReactNode }) {
-  const [premium, setPremiumState] = useState<boolean>(loadPremium);
+  const billingActive = isBillingConfigured();
+  const [pro, setPro] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [packages, setPackages] = useState<ProPackage[]>([]);
+  const mounted = useRef(true);
 
-  const setPremium = useCallback((v: boolean) => {
-    setPremiumState(v);
-    try {
-      localStorage.setItem(STORAGE_KEY, v ? '1' : '0');
-    } catch {
-      /* ignore */
-    }
-  }, []);
+  const refresh = useCallback(async () => {
+    if (!billingActive) return;
+    const ent = await getEntitlement();
+    if (!mounted.current) return;
+    setPro(ent.isPro);
+    await writeSubscription({ isPro: ent.isPro, productId: ent.productId, expiresAt: ent.expiresAt });
+  }, [billingActive]);
 
   useEffect(() => {
-    // Placeholder for future RevenueCat entitlement check on startup.
+    mounted.current = true;
+    (async () => {
+      // 1) Offline-first: use the cached entitlement immediately.
+      const cached = await readSubscription();
+      if (mounted.current && cached) setPro(cached.isPro);
+      // 2) Refresh from StoreKit + load the products (native only).
+      if (billingActive) {
+        await refresh();
+        const pkgs = await getProPackages();
+        if (mounted.current) setPackages(pkgs);
+      }
+      if (mounted.current) setLoading(false);
+    })();
+
+    // Re-check whenever the app comes back to the foreground.
+    const sub = CapApp.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) void refresh();
+    });
+    return () => {
+      mounted.current = false;
+      void sub.then((h) => h.remove());
+    };
+  }, [billingActive, refresh]);
+
+  const purchase = useCallback(async (productId: string) => {
+    const ent = await billingPurchase(productId);
+    if (ent.isPro) {
+      setPro(true);
+      await writeSubscription({ isPro: true, productId: ent.productId, expiresAt: ent.expiresAt });
+    }
+    return ent.isPro;
   }, []);
 
-  const isPremium = UNLOCK_ALL_FOR_NOW || premium;
+  const restore = useCallback(async () => {
+    const ent = await billingRestore();
+    setPro(ent.isPro);
+    await writeSubscription({ isPro: ent.isPro, productId: ent.productId, expiresAt: ent.expiresAt });
+    return ent.isPro;
+  }, []);
+
+  // Gating disabled, or a dev/web preview override → treat as Pro.
+  const isPro = !PAYWALL_ENABLED || devUnlock() || pro;
 
   const value = useMemo<PremiumCtx>(
-    () => ({
-      isPremium,
-      can: () => isPremium, // per-feature granularity ready if needed later
-      setPremium,
-    }),
-    [isPremium, setPremium],
+    () => ({ isPro, loading, billingActive, packages, purchase, restore, manage: manageSubscriptions, refresh }),
+    [isPro, loading, billingActive, packages, purchase, restore, refresh],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
@@ -67,4 +117,9 @@ export function usePremium(): PremiumCtx {
   const ctx = useContext(Ctx);
   if (!ctx) throw new Error('usePremium must be used within PremiumProvider');
   return ctx;
+}
+
+/** Convenience hook: is the user a Vyta Pro subscriber (or unlocked)? */
+export function useIsPro(): boolean {
+  return usePremium().isPro;
 }

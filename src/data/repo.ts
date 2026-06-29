@@ -4,15 +4,26 @@
 // ============================================================================
 import { db, now, uid } from './db';
 import { defaultSettings } from './defaults';
+import { ALL_MODULES } from './types';
 import type {
   Budget,
+  DayPlan,
+  Equipment,
   Goal,
   Habit,
   HabitLog,
   HomeLayout,
   JournalEntry,
   ModuleId,
+  MuscleGroup,
+  Note,
+  NoteChecklistItem,
   Project,
+  Routine,
+  RoutineStep,
+  WorkoutEntry,
+  WorkoutSession,
+  WorkoutPlan,
   Settings,
   Subtask,
   Task,
@@ -41,10 +52,47 @@ export async function readSettings(): Promise<Settings> {
   return (await db.settings.get('app')) ?? defaultSettings();
 }
 
+/** New modules introduced after launch that should auto-enable for existing
+ *  users (so they appear without the user re-onboarding). */
+const AUTO_ENABLE_MODULES: ModuleId[] = ['note', 'attivita', 'acqua', 'personalita'];
+
+/** One-time nav reorder: bump this when the canonical tab order changes so
+ *  existing devices pick it up (their saved moduleOrder predates it). */
+const NAV_ORDER_VERSION = 'v3';
+const NAV_ORDER_KEY = 'vita.navOrder';
+
 /** Ensure singleton rows exist. Call once at app startup (outside liveQuery). */
 export async function ensureSeedRows(): Promise<void> {
   if (!(await db.settings.get('app'))) await db.settings.put(defaultSettings());
   if (!(await db.budgets.get('monthly'))) await db.budgets.put({ id: 'monthly', monthlyLimit: 0, updatedAt: now() });
+
+  // Migration: surface newly-shipped modules for users who already onboarded
+  // (their saved enabledModules predates the module, so it would stay hidden).
+  const s = await db.settings.get('app');
+  if (s?.enabledModules && AUTO_ENABLE_MODULES.some((m) => !s.enabledModules!.includes(m))) {
+    const missing = AUTO_ENABLE_MODULES.filter((m) => !s.enabledModules!.includes(m));
+    await db.settings.put({
+      ...s,
+      enabledModules: [...s.enabledModules, ...missing],
+      moduleOrder: [...(s.moduleOrder ?? s.enabledModules), ...missing],
+      updatedAt: now(),
+    });
+  }
+
+  // One-time migration: re-sort the saved moduleOrder to the new canonical
+  // order (tabs = abitudini · salute · note · progetti) on existing devices.
+  try {
+    if (localStorage.getItem(NAV_ORDER_KEY) !== NAV_ORDER_VERSION) {
+      const cur = await db.settings.get('app');
+      if (cur?.moduleOrder?.length) {
+        const sorted = [...cur.moduleOrder].sort((a, b) => ALL_MODULES.indexOf(a) - ALL_MODULES.indexOf(b));
+        await db.settings.put({ ...cur, moduleOrder: sorted, updatedAt: now() });
+      }
+      localStorage.setItem(NAV_ORDER_KEY, NAV_ORDER_VERSION);
+    }
+  } catch {
+    /* localStorage unavailable — skip */
+  }
 }
 
 export async function updateSettings(patch: Partial<Settings>): Promise<void> {
@@ -180,6 +228,7 @@ export async function createHabit(data: Partial<Habit> & { name: string }) {
   const habit: Habit = {
     id: uid('hbt_'),
     name: data.name,
+    recId: data.recId,
     color: data.color ?? 'var(--c-habit)',
     icon: data.icon ?? 'CircleCheck',
     frequency: data.frequency ?? { type: 'daily' },
@@ -281,6 +330,77 @@ export async function deleteJournalEntry(id: string) {
 }
 
 // ---------------------------------------------------------------------------
+// Notes
+// ---------------------------------------------------------------------------
+export async function createNote(data: Partial<Note> = {}) {
+  const t = now();
+  const note: Note = {
+    id: uid('not_'),
+    title: data.title ?? '',
+    body: data.body ?? '',
+    checklist: data.checklist ?? [],
+    color: data.color ?? '#e0992f',
+    pinned: data.pinned ?? false,
+    createdAt: t,
+    updatedAt: t,
+  };
+  await db.notes.put(note);
+  return note;
+}
+
+export async function updateNote(id: string, patch: Partial<Note>) {
+  const n = await db.notes.get(id);
+  if (!n) return;
+  await db.notes.put({ ...n, ...patch, updatedAt: now() });
+}
+
+export async function deleteNote(id: string) {
+  await db.notes.delete(id);
+}
+
+export async function toggleNotePin(id: string) {
+  const n = await db.notes.get(id);
+  if (!n) return;
+  await db.notes.put({ ...n, pinned: !n.pinned, updatedAt: now() });
+}
+
+export function newChecklistItem(text = ''): NoteChecklistItem {
+  return { id: uid('chk_'), text, done: false };
+}
+
+// ---------------------------------------------------------------------------
+// Subscription (Vyta Pro) — cached entitlement for offline-first gating
+// ---------------------------------------------------------------------------
+export async function readSubscription(): Promise<import('./types').SubscriptionCache | null> {
+  return (await db.subscription.get('sub')) ?? null;
+}
+
+export async function writeSubscription(data: { isPro: boolean; productId?: string; expiresAt?: number }): Promise<void> {
+  await db.subscription.put({ id: 'sub', isPro: data.isPro, productId: data.productId, expiresAt: data.expiresAt, updatedAt: now() });
+}
+
+// ---------------------------------------------------------------------------
+// Personality test — latest result + paid full-profile unlock
+// ---------------------------------------------------------------------------
+export async function readPersonalityResult(): Promise<import('./types').PersonalityResult | null> {
+  return (await db.personality.get('result')) ?? null;
+}
+
+export async function writePersonalityResult(data: {
+  code: string;
+  scores: { EI: number; SN: number; TF: number; JP: number };
+  unlocked: boolean;
+}): Promise<void> {
+  await db.personality.put({ id: 'result', code: data.code, scores: data.scores, unlocked: data.unlocked, updatedAt: now() });
+}
+
+/** Flip just the unlock flag (after a successful purchase / restore). */
+export async function setPersonalityUnlocked(unlocked: boolean): Promise<void> {
+  const cur = await db.personality.get('result');
+  if (cur) await db.personality.put({ ...cur, unlocked, updatedAt: now() });
+}
+
+// ---------------------------------------------------------------------------
 // Goals
 // ---------------------------------------------------------------------------
 export async function createGoal(data: Partial<Goal> & { title: string }) {
@@ -323,11 +443,57 @@ export async function createTransaction(data: Partial<Transaction> & { type: Tra
     category: data.category,
     note: data.note,
     date: data.date,
+    recurring: data.recurring,
+    recurOf: data.recurOf,
     createdAt: t,
     updatedAt: t,
   };
   await db.transactions.put(tx);
   return tx;
+}
+
+/**
+ * Generate missing monthly occurrences for recurring transaction templates,
+ * from the template's month up to the current month. Idempotent (deduped by
+ * template id + month). Returns how many occurrences were created.
+ */
+export async function materializeRecurring(): Promise<number> {
+  const all = await db.transactions.toArray();
+  const templates = all.filter((x) => x.recurring);
+  if (!templates.length) return 0;
+  const t = now();
+  let created = 0;
+  for (const tpl of templates) {
+    const taken = new Set(all.filter((x) => x.recurOf === tpl.id).map((x) => x.date.slice(0, 7)));
+    taken.add(tpl.date.slice(0, 7)); // the template covers its own month
+    const [ty, tm, td] = tpl.date.split('-').map(Number);
+    const cur = new Date();
+    let y = ty;
+    let m = tm; // 1-based
+    // advance one month at a time until we pass the current month
+    for (;;) {
+      m += 1;
+      if (m > 12) { m = 1; y += 1; }
+      if (y > cur.getFullYear() || (y === cur.getFullYear() && m > cur.getMonth() + 1)) break;
+      const key = `${y}-${String(m).padStart(2, '0')}`;
+      if (taken.has(key)) continue;
+      const day = Math.min(td, new Date(y, m, 0).getDate()); // clamp to month length
+      const date = `${key}-${String(day).padStart(2, '0')}`;
+      await db.transactions.put({
+        id: uid('txn_'),
+        type: tpl.type,
+        amount: tpl.amount,
+        category: tpl.category,
+        note: tpl.note,
+        date,
+        recurOf: tpl.id,
+        createdAt: t,
+        updatedAt: t,
+      });
+      created++;
+    }
+  }
+  return created;
 }
 
 export async function deleteTransaction(id: string) {
@@ -402,7 +568,7 @@ export async function deleteWeightLog(id: string) {
 // Backup — export / import full state (BUILD-SPEC §5)
 // ---------------------------------------------------------------------------
 export async function exportBackup(): Promise<VitaBackup> {
-  const [settings, projects, tasks, habits, habitLogs, workouts, journalEntries, goals, transactions, budgets, waterLogs, weightLogs] =
+  const [settings, projects, tasks, habits, habitLogs, workouts, journalEntries, goals, transactions, budgets, waterLogs, weightLogs, notes] =
     await Promise.all([
       db.settings.get('app'),
       db.projects.toArray(),
@@ -416,6 +582,7 @@ export async function exportBackup(): Promise<VitaBackup> {
       db.budgets.toArray(),
       db.waterLogs.toArray(),
       db.weightLogs.toArray(),
+      db.notes.toArray(),
     ]);
   return {
     schema: 'vita',
@@ -433,6 +600,7 @@ export async function exportBackup(): Promise<VitaBackup> {
     budgets,
     waterLogs,
     weightLogs,
+    notes,
   };
 }
 
@@ -440,7 +608,7 @@ export async function importBackup(backup: VitaBackup, mode: 'replace' | 'merge'
   if (backup.schema !== 'vita') throw new Error('File di backup non valido.');
   await db.transaction(
     'rw',
-    [db.settings, db.projects, db.tasks, db.habits, db.habitLogs, db.workouts, db.journalEntries, db.goals, db.transactions, db.budgets, db.waterLogs, db.weightLogs],
+    [db.settings, db.projects, db.tasks, db.habits, db.habitLogs, db.workouts, db.journalEntries, db.goals, db.transactions, db.budgets, db.waterLogs, db.weightLogs, db.notes],
     async () => {
       if (mode === 'replace') {
         await Promise.all([
@@ -456,6 +624,7 @@ export async function importBackup(backup: VitaBackup, mode: 'replace' | 'merge'
           db.budgets.clear(),
           db.waterLogs.clear(),
           db.weightLogs.clear(),
+          db.notes.clear(),
         ]);
       }
       if (backup.settings) await db.settings.put(backup.settings);
@@ -470,6 +639,7 @@ export async function importBackup(backup: VitaBackup, mode: 'replace' | 'merge'
       await db.budgets.bulkPut(backup.budgets ?? []);
       await db.waterLogs.bulkPut(backup.waterLogs ?? []);
       await db.weightLogs.bulkPut(backup.weightLogs ?? []);
+      await db.notes.bulkPut(backup.notes ?? []);
     },
   );
 }
@@ -488,5 +658,159 @@ export async function clearAllData() {
     db.budgets.clear(),
     db.waterLogs.clear(),
     db.weightLogs.clear(),
+    db.notes.clear(),
+    db.dayPlans.clear(),
+    db.routines.clear(),
+    db.workoutSessions.clear(),
   ]);
+}
+
+// ----------------------------------------------------------------------------
+// Day plan — "plan your day" (intention + quick to-dos), keyed by ISO date.
+// ----------------------------------------------------------------------------
+export async function readDayPlan(date: string): Promise<DayPlan> {
+  return (await db.dayPlans.get(date)) ?? { date, intention: '', items: [], updatedAt: now() };
+}
+
+async function saveDayPlan(p: DayPlan): Promise<void> {
+  await db.dayPlans.put({ ...p, updatedAt: now() });
+}
+
+export async function setDayIntention(date: string, intention: string): Promise<void> {
+  const p = await readDayPlan(date);
+  await saveDayPlan({ ...p, intention });
+}
+
+export async function toggleDayIntentionDone(date: string): Promise<void> {
+  const p = await readDayPlan(date);
+  await saveDayPlan({ ...p, intentionDone: !p.intentionDone });
+}
+
+/** Fixed key for the general (not day-bound) notes + to-do list. */
+export const GENERAL_PLAN_KEY = 'general';
+
+export async function setDayNotes(date: string, notes: string): Promise<void> {
+  const p = await readDayPlan(date);
+  await saveDayPlan({ ...p, notes });
+}
+
+export async function addDayItem(date: string, text: string): Promise<void> {
+  const value = text.trim();
+  if (!value) return;
+  const p = await readDayPlan(date);
+  await saveDayPlan({ ...p, items: [...p.items, { id: uid('day_'), text: value, done: false }] });
+}
+
+export async function toggleDayItem(date: string, id: string): Promise<void> {
+  const p = await readDayPlan(date);
+  await saveDayPlan({ ...p, items: p.items.map((it) => (it.id === id ? { ...it, done: !it.done } : it)) });
+}
+
+export async function removeDayItem(date: string, id: string): Promise<void> {
+  const p = await readDayPlan(date);
+  await saveDayPlan({ ...p, items: p.items.filter((it) => it.id !== id) });
+}
+
+// ----------------------------------------------------------------------------
+// Routines — Fabulous-style rituals (an ordered list of steps + guided player).
+// ----------------------------------------------------------------------------
+export function newRoutineStep(title: string, durationSec?: number): RoutineStep {
+  return { id: uid('rst_'), title, durationSec };
+}
+
+export async function createRoutine(data: { name: string; emoji: string; steps: RoutineStep[]; notes?: string }): Promise<Routine> {
+  const count = await db.routines.count();
+  const routine: Routine = {
+    id: uid('rtn_'),
+    name: data.name,
+    emoji: data.emoji,
+    steps: data.steps,
+    notes: data.notes,
+    order: count,
+    createdAt: now(),
+    updatedAt: now(),
+  };
+  await db.routines.put(routine);
+  return routine;
+}
+
+export async function saveRoutine(routine: Routine): Promise<void> {
+  await db.routines.put({ ...routine, updatedAt: now() });
+}
+
+export async function deleteRoutine(id: string): Promise<void> {
+  await db.routines.delete(id);
+}
+
+// ----------------------------------------------------------------------------
+// Strength workouts — sessions of exercises with logged sets (reps × weight).
+// ----------------------------------------------------------------------------
+export async function createWorkoutSession(title: string): Promise<WorkoutSession> {
+  const ts = now();
+  const d = new Date();
+  const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const session: WorkoutSession = { id: uid('wos_'), date, title, entries: [], createdAt: ts, updatedAt: ts };
+  await db.workoutSessions.put(session);
+  return session;
+}
+
+export async function saveWorkoutSession(session: WorkoutSession): Promise<void> {
+  await db.workoutSessions.put({ ...session, updatedAt: now() });
+}
+
+export async function deleteWorkoutSession(id: string): Promise<void> {
+  await db.workoutSessions.delete(id);
+}
+
+export function newWorkoutEntry(exerciseId: string, name: string, muscle: MuscleGroup): WorkoutEntry {
+  return { id: uid('woe_'), exerciseId, name, muscle, sets: [{ reps: 10, weightKg: 0, done: false }] };
+}
+
+export async function setEquipment(equipment: Equipment[]): Promise<void> {
+  const s = await readSettings();
+  await db.settings.put({ ...s, equipment, updatedAt: now() });
+}
+
+export async function setRestSec(restSec: number): Promise<void> {
+  const s = await readSettings();
+  await db.settings.put({ ...s, restSec, updatedAt: now() });
+}
+
+/** Clone a session's exercises into a fresh in-progress session (sets reset). */
+export async function duplicateWorkoutSession(src: WorkoutSession): Promise<WorkoutSession> {
+  const s = await createWorkoutSession(src.title);
+  const entries = src.entries.map((e) => ({ ...e, id: uid('woe_'), sets: e.sets.map((x) => ({ ...x, done: false })) }));
+  const next = { ...s, entries };
+  await saveWorkoutSession(next);
+  return next;
+}
+
+// ----------------------------------------------------------------------------
+// Saved workout plans ("schede") — a reusable archive, independent of sessions.
+// ----------------------------------------------------------------------------
+function cloneEntriesReset(entries: WorkoutEntry[]): WorkoutEntry[] {
+  return entries.map((e) => ({ ...e, id: uid('woe_'), sets: e.sets.map((x) => ({ ...x, done: false })) }));
+}
+
+export async function createWorkoutPlan(title: string, entries: WorkoutEntry[], source?: WorkoutPlan['source']): Promise<WorkoutPlan> {
+  const ts = now();
+  const plan: WorkoutPlan = { id: uid('wpl_'), title: title.trim() || 'Scheda', entries: cloneEntriesReset(entries), source, createdAt: ts, updatedAt: ts };
+  await db.workoutPlans.put(plan);
+  return plan;
+}
+
+export async function saveWorkoutPlan(plan: WorkoutPlan): Promise<void> {
+  await db.workoutPlans.put({ ...plan, updatedAt: now() });
+}
+
+export async function deleteWorkoutPlan(id: string): Promise<void> {
+  await db.workoutPlans.delete(id);
+}
+
+/** Start a fresh in-progress session from a saved plan (sets reset). */
+export async function startSessionFromPlan(plan: WorkoutPlan): Promise<WorkoutSession> {
+  const s = await createWorkoutSession(plan.title);
+  const next = { ...s, entries: cloneEntriesReset(plan.entries) };
+  await saveWorkoutSession(next);
+  return next;
 }

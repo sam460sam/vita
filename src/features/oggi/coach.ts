@@ -12,7 +12,7 @@ function dayIndex(d = new Date()): number {
   return Math.floor((d.getTime() - start.getTime()) / 86_400_000);
 }
 
-const AFFIRMATIONS = [
+export const AFFIRMATIONS = [
   'affirm.1',
   'affirm.2',
   'affirm.3',
@@ -23,9 +23,20 @@ const AFFIRMATIONS = [
   'affirm.8',
   'affirm.9',
   'affirm.10',
+  'affirm.11',
+  'affirm.12',
+  'affirm.13',
+  'affirm.14',
+  'affirm.15',
+  'affirm.16',
+  'affirm.17',
+  'affirm.18',
+  'affirm.19',
+  'affirm.20',
 ] as const;
 
-/** Today's affirmation key (stable for the whole day). */
+/** Today's affirmation key (stable for the whole day) — kept for any caller
+ *  that wants a single deterministic pick; the home screen rotates instead. */
 export function dailyAffirmation(): string {
   return AFFIRMATIONS[dayIndex() % AFFIRMATIONS.length];
 }

@@ -58,7 +58,7 @@ class Inner extends Component<Props, State> {
     const { title, desc, reload } = this.props.labels;
     return (
       <div className="min-h-screen flex flex-col items-center justify-center text-center px-8 bg-app">
-        <div className="text-5xl mb-4">🐼</div>
+        <div className="text-5xl mb-4">🌱</div>
         <h1 className="text-xl font-bold text-ink">{title}</h1>
         <p className="text-[15px] text-ink-2 mt-2 max-w-xs leading-relaxed">{desc}</p>
         <button

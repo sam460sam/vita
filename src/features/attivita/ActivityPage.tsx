@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Play, Plus, Trash2, Pencil, Scale, ChevronRight } from 'lucide-react';
+import { Play, Trash2, Pencil, Scale, ChevronRight, Footprints } from 'lucide-react';
 import { db } from '@/data/db';
 import { deleteWorkout, updateSettings } from '@/data/repo';
 import { readSettings } from '@/data/repo';
@@ -20,10 +20,10 @@ import {
   Field,
   Input,
 } from '@/ui';
-import { formatDistance, formatDuration } from '@/lib/format';
-import { format } from 'date-fns';
-import { it } from 'date-fns/locale';
-import { todayRings, ringsToData, summarize } from './logic';
+import { formatDistance, formatDuration, activeDfnLocale } from '@/lib/format';
+import { format, parseISO } from 'date-fns';
+import { todayRings, ringsToData, summarize, mergeHealthRings } from './logic';
+import { useHealthSummary, useWeeklySteps } from '@/platform/health';
 import { getSport, type Sport } from './sports';
 import { SportPicker } from './SportPicker';
 import { WorkoutTracker } from './WorkoutTracker';
@@ -51,7 +51,9 @@ export function ActivityPage() {
   }, [params, setParams]);
 
   const s = settings ?? defaultSettings();
-  const rings = todayRings(workouts ?? [], s);
+  const healthSummary = useHealthSummary();
+  const weekSteps = useWeeklySteps();
+  const rings = mergeHealthRings(todayRings(workouts ?? [], s), healthSummary);
   const summary = summarize(workouts ?? [], period);
 
   const weightLogs = useLiveQuery(() => db.weightLogs.orderBy('date').reverse().limit(1).toArray(), [], []);
@@ -71,8 +73,8 @@ export function ActivityPage() {
         }
       />
       <Screen>
-        {/* Rings */}
-        <Card className="flex flex-col items-center pt-6 pb-5 mb-4 relative">
+        {/* Rings hero */}
+        <div className="rounded-card shadow-card flex flex-col items-center pt-6 pb-5 px-4 mb-4 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, color-mix(in srgb, var(--c-activity) 18%, var(--c-card)), var(--c-card) 80%)' }}>
           <IconButton label={t('common.edit')} className="absolute top-2 right-2" onClick={() => setGoalsOpen(true)}>
             <Pencil size={16} />
           </IconButton>
@@ -82,12 +84,15 @@ export function ActivityPage() {
             <RingStat label={t('activity.ring.exercise')} value={rings.exercise.value} goal={rings.exercise.goal} unit={t('activity.unit.min')} color="var(--c-habit)" />
             <RingStat label={t('activity.ring.stand')} value={rings.stand.value} goal={rings.stand.goal} unit={t('activity.unit.hours')} color="var(--c-project)" />
           </div>
-        </Card>
+        </div>
+
+        {/* Steps (from Apple Health / Health Connect when connected) */}
+        {weekSteps && weekSteps.some((d) => d.value > 0) && <StepsCard data={weekSteps} />}
 
         {/* Weight tracker entry */}
         <Link to="/peso">
           <Card className="flex items-center gap-3 mb-4 active:bg-section transition-colors">
-            <span className="h-10 w-10 rounded-full bg-project/10 flex items-center justify-center text-project flex-shrink-0">
+            <span className="h-11 w-11 rounded-2xl bg-project-tint flex items-center justify-center text-project flex-shrink-0">
               <Scale size={20} />
             </span>
             <div className="flex-1 min-w-0">
@@ -134,13 +139,13 @@ export function ActivityPage() {
                 const Icon = sport.icon;
                 return (
                   <div key={w.id} className="flex items-center gap-3 py-3 group">
-                    <span className="h-10 w-10 rounded-full bg-activity/10 flex items-center justify-center text-activity flex-shrink-0">
+                    <span className="h-11 w-11 rounded-2xl bg-activity-tint flex items-center justify-center text-activity flex-shrink-0">
                       <Icon size={18} />
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="text-[15px] font-medium text-ink truncate">{sport.name}</div>
                       <div className="text-[13px] text-ink-2">
-                        {format(new Date(w.startedAt), 'd MMM · HH:mm', { locale: it })}
+                        {format(new Date(w.startedAt), 'd MMM · HH:mm', { locale: activeDfnLocale() })}
                       </div>
                     </div>
                     <div className="text-right">
@@ -158,7 +163,7 @@ export function ActivityPage() {
             </div>
           ) : (
             <EmptyState
-              icon={<Plus size={22} />}
+              mascot
               title={t('activity.empty.title')}
               description={t('activity.empty.desc')}
               action={<Button onClick={() => setPickerOpen(true)}>{t('activity.empty.cta')}</Button>}
@@ -242,6 +247,34 @@ function RingStat({ label, value, goal, unit, color }: { label: string; value: n
       </div>
       <div className="text-[11px] text-ink-3">{unit}</div>
     </div>
+  );
+}
+
+function StepsCard({ data }: { data: { date: string; value: number }[] }) {
+  const t = useT();
+  const today = data[data.length - 1]?.value ?? 0;
+  return (
+    <Card className="mb-4">
+      <CardHeader
+        title={
+          <span className="inline-flex items-center gap-1.5">
+            <Footprints size={16} className="text-activity" /> {t('activity.steps')}
+          </span>
+        }
+      />
+      <div className="flex items-end justify-between mb-3">
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-3xl font-bold tnum text-ink leading-none">{today.toLocaleString()}</span>
+          <span className="text-[13px] text-ink-3 font-medium">{t('activity.steps.today')}</span>
+        </div>
+      </div>
+      <BarChart
+        data={data.map((d) => ({ label: format(parseISO(d.date), 'EEEEE', { locale: activeDfnLocale() }), value: d.value }))}
+        color="var(--c-activity)"
+        unit={t('activity.unit.steps')}
+        height={96}
+      />
+    </Card>
   );
 }
 

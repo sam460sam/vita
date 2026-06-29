@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Trash2, Sparkles } from 'lucide-react';
+import { Trash2, Sparkles, Compass } from 'lucide-react';
+import { replayTour } from '@/features/onboarding/tour';
 import { readSettings, updateSettings, clearAllData } from '@/data/repo';
 import { seedDemoData } from '@/data/seed';
 import { defaultSettings } from '@/data/defaults';
@@ -12,6 +14,7 @@ import { useI18n, LANGS, type LangPref, type TKey } from '@/i18n';
 import { useTheme, type ThemePref } from '@/theme/theme';
 import { PersonalizationSection } from '@/features/personalizzazione/PersonalizationSection';
 import { BackupCard } from '@/features/backup';
+import { reminderBody } from '@/features/notify/copy';
 
 export function SettingsPage() {
   const { t, pref, setPref } = useI18n();
@@ -26,6 +29,7 @@ export function SettingsPage() {
   const [waterGoalL, setWaterGoalL] = useState('2');
   const [glassMl, setGlassMl] = useState('200');
   const toast = useToast();
+  const nav = useNavigate();
 
   useEffect(() => {
     if (settings) {
@@ -56,7 +60,7 @@ export function SettingsPage() {
     await notifications.setDailyReminder(
       kind,
       t(`reminder.${kind}.title` as TKey),
-      t(`reminder.${kind}.body` as TKey),
+      reminderBody(t, kind),
       time || undefined,
     );
   }
@@ -95,14 +99,14 @@ export function SettingsPage() {
           <Field label={t('settings.name')}>
             <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('settings.namePh')} />
           </Field>
-          <div className="grid grid-cols-3 gap-3">
-            <Field label={t('settings.goal.move')}>
+          <div className="grid grid-cols-3 gap-3 items-end">
+            <Field label={t('settings.goal.move')} labelClassName="text-[12px] leading-tight">
               <Input type="number" inputMode="numeric" value={move} onChange={(e) => setMove(e.target.value)} />
             </Field>
-            <Field label={t('settings.goal.exercise')}>
+            <Field label={t('settings.goal.exercise')} labelClassName="text-[12px] leading-tight">
               <Input type="number" inputMode="numeric" value={exercise} onChange={(e) => setExercise(e.target.value)} />
             </Field>
-            <Field label={t('settings.goal.stand')}>
+            <Field label={t('settings.goal.stand')} labelClassName="text-[12px] leading-tight">
               <Input type="number" inputMode="numeric" value={stand} onChange={(e) => setStand(e.target.value)} />
             </Field>
           </div>
@@ -189,6 +193,9 @@ export function SettingsPage() {
         <Card className="mb-4">
           <CardHeader title={t('settings.data')} />
           <div className="flex flex-col gap-2">
+            <Button variant="subtle" block icon={<Compass size={18} />} onClick={() => { replayTour(); nav('/oggi'); }}>
+              {t('tour.replay')}
+            </Button>
             <Button variant="subtle" block icon={<Sparkles size={18} />} onClick={doDemo}>
               {t('settings.demo')}
             </Button>

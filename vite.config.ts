@@ -41,5 +41,19 @@ export default defineConfig({
   ],
   build: {
     target: 'es2020',
+    rollupOptions: {
+      output: {
+        // Split large vendors out of the main bundle for faster first load + caching.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+          if (id.includes('react-router')) return 'router';
+          if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/scheduler/')) return 'react';
+          if (id.includes('date-fns')) return 'date-fns';
+          if (id.includes('dexie')) return 'dexie';
+          if (id.includes('lucide-react')) return 'icons';
+          return 'vendor';
+        },
+      },
+    },
   },
 });

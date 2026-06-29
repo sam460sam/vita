@@ -59,7 +59,7 @@ export function WeightPage() {
       <PageHeader title={t('weight.title')} back="/attivita" />
       <Screen>
         {/* Current weight + goal */}
-        <Card className="mb-4">
+        <Card heroAccent="var(--c-project)" heroIcon={<Scale size={92} />} className="mb-4">
           <div className="flex items-start justify-between">
             <div>
               <div className="metric-label">{t('weight.current')}</div>

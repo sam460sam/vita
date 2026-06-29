@@ -12,13 +12,12 @@ import {
   addDays,
   isToday,
 } from 'date-fns';
-import { it } from 'date-fns/locale';
 import { db } from '@/data/db';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, CardHeader, EmptyState, Button, Input, IconButton } from '@/ui';
 import { cn } from '@/lib/cn';
-import { todayISO } from '@/lib/format';
+import { todayISO, activeDfnLocale, weekdayInitials } from '@/lib/format';
 import { JournalForm } from './JournalForm';
 import { moodMeta } from './mood';
 import type { JournalEntry } from '@/data/types';
@@ -65,7 +64,7 @@ export function JournalPage() {
     setFormOpen(true);
   }
 
-  const weekLabels = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
+  const weekLabels = weekdayInitials();
 
   return (
     <>
@@ -79,13 +78,13 @@ export function JournalPage() {
       />
       <Screen>
         {/* Calendar */}
-        <Card className="mb-4">
+        <Card heroAccent="var(--c-journal)" className="mb-4">
           <div className="flex items-center justify-between mb-3">
-            <IconButton label="Mese precedente" onClick={() => setCursor((c) => addMonths(c, -1))}>
+            <IconButton label={t('common.previous')} onClick={() => setCursor((c) => addMonths(c, -1))}>
               <ChevronLeft size={18} />
             </IconButton>
-            <span className="text-[15px] font-semibold text-ink capitalize">{format(cursor, 'MMMM yyyy', { locale: it })}</span>
-            <IconButton label="Mese successivo" onClick={() => setCursor((c) => addMonths(c, 1))}>
+            <span className="text-[15px] font-semibold text-ink capitalize">{format(cursor, 'MMMM yyyy', { locale: activeDfnLocale() })}</span>
+            <IconButton label={t('common.next')} onClick={() => setCursor((c) => addMonths(c, 1))}>
               <ChevronRight size={18} />
             </IconButton>
           </div>
@@ -141,9 +140,15 @@ export function JournalPage() {
                     onClick={() => { setEditing(e); setDefaultDate(e.date); setFormOpen(true); }}
                     className="w-full flex items-start gap-3 py-3 text-left active:bg-section -mx-1 px-1 rounded-lg"
                   >
-                    <span className="text-2xl leading-none mt-0.5" title={t(`mood.${meta.value}` as TKey)}>{meta.emoji}</span>
+                    <span
+                      className="h-10 w-10 rounded-2xl flex items-center justify-center text-xl leading-none flex-shrink-0 mt-0.5"
+                      style={{ background: `${meta.color}24` }}
+                      title={t(`mood.${meta.value}` as TKey)}
+                    >
+                      {meta.emoji}
+                    </span>
                     <div className="min-w-0 flex-1">
-                      <div className="text-[13px] text-ink-2 capitalize">{format(new Date(e.date), 'EEEE d MMMM', { locale: it })}</div>
+                      <div className="text-[13px] text-ink-2 capitalize">{format(new Date(e.date), 'EEEE d MMMM', { locale: activeDfnLocale() })}</div>
                       {e.text && <div className="text-[15px] text-ink line-clamp-2 mt-0.5">{e.text}</div>}
                       {e.tags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1.5">

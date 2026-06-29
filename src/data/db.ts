@@ -7,18 +7,25 @@
 import Dexie, { type Table } from 'dexie';
 import type {
   Budget,
+  DayPlan,
   Goal,
   Habit,
   HabitLog,
   HomeLayout,
   JournalEntry,
+  Note,
+  PersonalityResult,
   Project,
+  Routine,
   Settings,
+  SubscriptionCache,
   Task,
   Transaction,
   WaterLog,
   WeightLog,
   Workout,
+  WorkoutSession,
+  WorkoutPlan,
 } from './types';
 
 export class VitaDB extends Dexie {
@@ -35,6 +42,13 @@ export class VitaDB extends Dexie {
   waterLogs!: Table<WaterLog, string>;
   weightLogs!: Table<WeightLog, string>;
   homeLayout!: Table<HomeLayout, string>;
+  notes!: Table<Note, string>;
+  subscription!: Table<SubscriptionCache, string>;
+  personality!: Table<PersonalityResult, string>;
+  dayPlans!: Table<DayPlan, string>;
+  routines!: Table<Routine, string>;
+  workoutSessions!: Table<WorkoutSession, string>;
+  workoutPlans!: Table<WorkoutPlan, string>;
 
   constructor() {
     super('vita');
@@ -62,6 +76,34 @@ export class VitaDB extends Dexie {
     // Additive only; all existing tables and data are preserved.
     this.version(4).stores({
       homeLayout: 'id',
+    });
+    // v5: native notes (with optional checklist). Additive only.
+    this.version(5).stores({
+      notes: 'id, pinned, updatedAt',
+    });
+    // v6: cached subscription entitlement (offline-first paywall).
+    this.version(6).stores({
+      subscription: 'id',
+    });
+    // v7: personality test result (singleton row).
+    this.version(7).stores({
+      personality: 'id',
+    });
+    // v8: "plan your day" — intention + quick to-dos, keyed by date. Additive only.
+    this.version(8).stores({
+      dayPlans: 'date',
+    });
+    // v9: Fabulous-style routines. Additive only.
+    this.version(9).stores({
+      routines: 'id, order',
+    });
+    // v10: strength-training workout sessions. Additive only.
+    this.version(10).stores({
+      workoutSessions: 'id, date, createdAt',
+    });
+    // v11: saved, reusable workout plans ("schede") archive. Additive only.
+    this.version(11).stores({
+      workoutPlans: 'id, createdAt',
     });
   }
 }

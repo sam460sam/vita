@@ -2,85 +2,301 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* ===== Design tokens — single source of truth (Design System §3) ===== */
-  /* Surfaces */
-  --c-app: #ffffff;
-  --c-section: #f7f8fa;
-  --c-card: #ffffff;
-  /* Text */
-  --c-ink: #0a0a0c;
-  --c-ink-2: #6b7280;
-  --c-ink-3: #9ca3af;
-  /* Lines */
-  --c-line: #e5e7eb;
-  --c-divider: #f1f2f4;
-  /* Module accents (sober, one per module) */
-  --c-activity: #ff6b57;
-  --c-habit: #10b981;
-  --c-project: #4f46e5;
-  --c-journal: #f59e0b;
-  --c-finance: #7c3aed;
+/* Signature display serif — Fraunces (OFL), subset to latin, variable weight,
+   bundled locally (offline). Gives titles the engraved feel of a fine notebook. */
+@font-face {
+  font-family: 'Fraunces';
+  src: url('/fonts/fraunces.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ===== Design tokens — SINGLE look: "Dopamine" cyber-gamified dark =====
+   Deep slate surfaces, neon/emerald green dopamine accents, coral streaks,
+   gold for premium. :root and html.dark are identical so the look is constant. */
+:root,
+html.dark {
+  /* Surfaces — soft near-black with a faint green tint (luxury matte).
+     No pure black anywhere; warm graphite greens layered by elevation. */
+  --c-app: #0b0e0c;     /* bg            */
+  --c-section: #171c18; /* surface-2 / raised, chips, pressed */
+  --c-card: #121613;    /* surface-1 / cards */
+  --c-overlay: #1b211c; /* sheets / modals */
+  /* Hero washes — deep forest → emerald */
+  --c-hero-1: #0a2a1a;
+  --c-hero-2: #0d4d32;
+  --c-glow: rgba(13, 77, 50, 0.42);
+  /* Antique gold — the single accent (hairlines, flourishes; never body text). */
+  --c-gold: #c2a05a;
+  --c-gold-deep: #a8853f;
+  --c-gold-2: #d8bd7e; /* gold-soft */
+  --c-drops: #4e93a6;  /* muted aqua (was neon cyan) */
+  /* Text — warm cream off-white (never stark pure white), desaturated greys */
+  --c-ink: #f3eee3;    /* text-primary (cream) */
+  --c-ink-2: #a7afa6;  /* text-secondary */
+  --c-ink-3: #6e756c;  /* text-tertiary / placeholder */
+  /* Hairlines / dividers — faint warm gold instead of cold white/charcoal */
+  --c-line: rgba(194, 160, 90, 0.22);
+  --c-divider: rgba(194, 160, 90, 0.14);
+  --c-hairline: rgba(194, 160, 90, 0.28);
+  --c-border-subtle: rgba(243, 238, 227, 0.08);
+  --c-scrim: rgba(11, 14, 12, 0.72); /* behind modals / tour */
+  /* Module accents — deep, muted, desaturated (luxury, never neon) */
+  --c-activity: #c2873f;     /* burnt amber  */
+  --c-habit: #3da66f;        /* emerald (signature) */
+  --c-project: #5f6aa0;      /* muted indigo */
+  --c-journal: #cfa85a;      /* antique gold */
+  --c-finance: #8a74b0;      /* aubergine/plum */
+  --c-note: #cdb079;         /* parchment    */
+  --c-water: #4e93a6;        /* muted aqua (was neon cyan) */
+  --c-personality: #a05a78;  /* dusty rose   */
+  /* Module card TINTS — dark washes of each hue */
+  --c-activity-tint: #2a1c16;
+  --c-habit-tint: #0f2a1c;
+  --c-project-tint: #1a1e33;
+  --c-journal-tint: #2c2410;
+  --c-finance-tint: #251c33;
+  --c-calendar-tint: #1b222c;
+  --c-note-tint: #2a2410;
+  --c-water-tint: #102a33;
+  --c-personality-tint: #2e1424;
+  /* Module CHIPS — muted icon containers (mirror the accents) */
+  --c-activity-chip: #c2873f;
+  --c-habit-chip: #3da66f;
+  --c-project-chip: #5f6aa0;
+  --c-journal-chip: #cfa85a;
+  --c-finance-chip: #8a74b0;
+  --c-calendar-chip: #7a88ad;
+  --c-note-chip: #cdb079;
+  --c-water-chip: #4e93a6;
+  --c-personality-chip: #a05a78;
+  /* States — muted luxury semantics (deep, not bright) */
+  --c-success: #3da66f;
+  --c-warning: #c2873f; /* antique amber */
+  --c-danger: #b0504a;  /* oxblood / burgundy */
+  /* Signature — refined emerald */
+  --c-accent: #3da66f;
+  --c-on-accent: #f3eee3;
+  --c-streak: #c97b4a; /* muted copper flame */
+  --c-check: #3da66f;
+  /* Primary action (CTA / FAB) — satin emerald with warm cream text */
+  --c-primary: #0d4d32;
+  --c-on-primary: #f3eee3;
+  --c-primary-border: rgba(194, 160, 90, 0.45);
+  color-scheme: dark;
+}
+
+/* ===== Day ("light") theme — same luxury family on warm parchment =====
+   Ink text on layered cream surfaces, deeper antique gold so it reads on the
+   light canvas. No pure white, no pure black. Same semantic token names. */
+html.light {
+  /* Surfaces — warm parchment, layered by elevation */
+  --c-app: #ede7da;     /* bg            */
+  --c-section: #fbf7ee; /* surface-2 / raised, chips, pressed */
+  --c-card: #f6f1e7;    /* surface-1 / cards */
+  --c-overlay: #fcfaf4; /* sheets / modals */
+  /* Hero washes — soft sage on parchment */
+  --c-hero-1: #d6e3d6;
+  --c-hero-2: #c3d8c6;
+  --c-glow: rgba(46, 107, 71, 0.16);
+  /* Antique gold — deeper so it reads on cream */
+  --c-gold: #a8853f;
+  --c-gold-deep: #8a6a30;
+  --c-gold-2: #c2a05a;
+  --c-drops: #2e6b6b;
+  /* Text — warm ink (never pure black), desaturated greys */
+  --c-ink: #22251f;     /* text-primary */
+  --c-ink-2: #5a5f54;   /* text-secondary */
+  --c-ink-3: #8a8f82;   /* text-tertiary / placeholder */
+  /* Hairlines / dividers — gold low-opacity tuned for light */
+  --c-line: rgba(168, 133, 63, 0.30);
+  --c-divider: rgba(168, 133, 63, 0.20);
+  --c-hairline: rgba(168, 133, 63, 0.34);
+  --c-border-subtle: rgba(34, 37, 31, 0.08);
+  --c-scrim: rgba(40, 35, 25, 0.45);
+  /* Module accents — same hue identities, deeper for AA on cream */
+  --c-activity: #a8632a;
+  --c-habit: #2e6b47;
+  --c-project: #3a4a7a;
+  --c-journal: #a8853f;
+  --c-finance: #5a3a63;
+  --c-note: #9a7b3c;
+  --c-water: #2e6b6b;
+  --c-personality: #8a4863;
+  /* Module card TINTS — pale washes of each hue */
+  --c-activity-tint: #f3e7db;
+  --c-habit-tint: #e2efe6;
+  --c-project-tint: #e4e7f0;
+  --c-journal-tint: #f4ecd9;
+  --c-finance-tint: #ece6f0;
+  --c-calendar-tint: #e6ebf2;
+  --c-note-tint: #f4eeda;
+  --c-water-tint: #e0eef0;
+  --c-personality-tint: #f1e3ea;
+  /* Module CHIPS — deeper icon containers */
+  --c-activity-chip: #a8632a;
+  --c-habit-chip: #2e6b47;
+  --c-project-chip: #3a4a7a;
+  --c-journal-chip: #a8853f;
+  --c-finance-chip: #5a3a63;
+  --c-calendar-chip: #4a5a86;
+  --c-note-chip: #9a7b3c;
+  --c-water-chip: #2e6b6b;
+  --c-personality-chip: #8a4863;
   /* States */
-  --c-success: #10b981;
-  --c-warning: #f59e0b;
-  --c-danger: #ef4444;
-  /* Primary action (buttons / FAB) — stays a dark pill with white text */
-  --c-primary: #0a0a0c;
-  --c-on-primary: #ffffff;
-  --c-primary-border: transparent;
+  --c-success: #2e6b47;
+  --c-warning: #a8632a;
+  --c-danger: #8a332f;
+  /* Signature */
+  --c-accent: #2e6b47;
+  --c-on-accent: #f3eee3;
+  --c-streak: #b05e2e;
+  --c-check: #2e6b47;
+  /* Primary action — green stays, cream text both themes */
+  --c-primary: #0d4d32;
+  --c-on-primary: #f3eee3;
+  --c-primary-border: rgba(168, 133, 63, 0.50);
   color-scheme: light;
 }
 
-/* ===== Dark theme — true black, no visible contour borders ===== */
-html.dark {
-  /* Surfaces: distinguished by fill, not by borders */
-  --c-app: #000000;
-  --c-section: #0b0b0d;
-  --c-card: #161618;
-  /* Text */
-  --c-ink: #f4f4f5;
-  --c-ink-2: #a1a1aa;
-  --c-ink-3: #71717a;
-  /* Lines: nearly invisible (no white contour look) */
-  --c-line: #1b1b1f;
-  --c-divider: #161619;
-  /* Accents stay vivid on dark; slightly brighter for contrast */
-  --c-activity: #ff7a68;
-  --c-habit: #1fd093;
-  --c-project: #7c74ff;
-  --c-journal: #fbbf24;
-  --c-finance: #a78bfa;
-  --c-success: #1fd093;
-  --c-warning: #fbbf24;
-  --c-danger: #f87171;
-  /* Primary action: a lighter pill that stands out on black by its FILL,
-     so it needs no border. */
-  --c-primary: #2a2a30;
-  --c-on-primary: #ffffff;
-  --c-primary-border: transparent;
-  color-scheme: dark;
+/* Day elevation comes from a soft warm shadow, not surface contrast. */
+html.light .shadow-card,
+html.light .shadow-card-hover {
+  background-image: linear-gradient(157deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 42%, rgba(40, 35, 25, 0.025));
+  box-shadow: inset 0 0 0 1px rgba(168, 133, 63, 0.16), 0 1px 2px rgba(40, 35, 25, 0.05), 0 14px 30px rgba(40, 35, 25, 0.08);
+}
+html.light .shadow-chip {
+  box-shadow: inset 0 0 0 1px rgba(168, 133, 63, 0.16), 0 1px 2px rgba(40, 35, 25, 0.05), 0 6px 14px rgba(40, 35, 25, 0.06);
+}
+/* Soften the engraved title shadow on parchment (light emboss, not dark deboss). */
+html.light h1,
+html.light h2:not(.metric-label):not(.uppercase),
+html.light h3:not(.uppercase),
+html.light .display-serif,
+html.light .ob-content h1 {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Smooth cross-fade when the user switches themes (only while toggling).
+   The reduced-motion block below already neutralises this to an instant swap. */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 250ms ease, color 250ms ease, border-color 250ms ease,
+    fill 250ms ease, box-shadow 250ms ease !important;
 }
 
 * {
   -webkit-tap-highlight-color: transparent;
 }
 
-html,
-body,
-#root {
+/* Lock the document; #root is the single scroll container. This kills the iOS
+   rubber-band "bounce" that made fixed/centered pages jitter up and down. */
+/* Bulletproof lock: the <body> itself is fixed to the viewport and cannot move;
+   #root is the ONLY scroll container. Kills every iOS rubber-band / jitter so
+   fixed/centered pages (paywall, home) stay perfectly still. */
+html {
   height: 100%;
+  overflow: hidden;
 }
 
 body {
   margin: 0;
-  background: var(--c-section);
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+  background: var(--c-app);
   color: var(--c-ink);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  /* Clean, neutral sans for body & UI (system fonts → SF on Apple). */
+  font-family: -apple-system, system-ui, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica,
+    Arial, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  /* Prevent overscroll bounce revealing white outside app */
+}
+
+/* ── Material & native-feel pass ─────────────────────────────────────────
+   Archival paper grain behind the UI: turns flat cream into a surface with
+   tooth, like fine stationery. Bundled SVG noise (offline), non-interactive,
+   sits under the content so it never touches text crispness. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 130px 130px;
+}
+.dark body::before { mix-blend-mode: screen; opacity: 0.05; }
+
+/* Letterpress reads as a dark deboss on the night-paper. */
+.dark h1,
+.dark h2:not(.metric-label):not(.uppercase),
+.dark h3:not(.uppercase),
+.dark .display-serif,
+.dark .ob-content h1 { text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4); }
+
+/* Native feel: no blue tap flash, no accidental selection of UI chrome. */
+button, a, [role='button'] {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* On-brand, visible keyboard focus (accessibility) — not shown on tap. */
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--c-primary) 65%, transparent);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Calm by default + honour reduced-motion everywhere. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Claude-like elegant serif for display headings. Body text, numbers, buttons
+   and small uppercase labels keep the clean sans. */
+h1,
+h2:not(.metric-label):not(.uppercase),
+h3:not(.uppercase),
+.display-serif,
+.ob-content h1 {
+  font-family: 'Fraunces', ui-serif, 'Iowan Old Style', 'Palatino Linotype', Georgia,
+    Cambria, 'Times New Roman', Times, serif;
+  /* Editorial: a touch of positive tracking reads refined at display sizes. */
+  letter-spacing: 0.005em;
+  /* Matte engrave — titles pressed into anthracite, not glowing on it. */
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
+}
+
+/* Editorial touch: serif titles read better a little lighter than the default
+   extrabold/bold utilities (these chained selectors out-rank the utility). */
+h1.font-extrabold, h1.font-bold,
+h2.font-extrabold, h2.font-bold,
+h3.font-extrabold, h3.font-bold,
+.display-serif.font-extrabold, .display-serif.font-bold,
+.ob-content h1.font-extrabold, .ob-content h1.font-bold {
+  font-weight: 600;
+}
+
+#root {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
   overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Tabular numbers everywhere metrics live */
@@ -145,6 +361,19 @@ body {
   animation: stella-float 3s ease-in-out infinite;
 }
 
+/* Vio companion — gentle breathing/bob */
+@keyframes vio-bob {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-7%) rotate(1deg); }
+}
+.vio-bob {
+  animation: vio-bob 3.4s ease-in-out infinite;
+  transform-origin: 50% 90%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vio-bob { animation: none; }
+}
+
 @keyframes confetti-fall {
   0% { transform: translateY(0) rotate(0deg); opacity: 1; }
   100% { transform: translateY(360px) rotate(540deg); opacity: 0; }
@@ -166,4 +395,95 @@ body {
 }
 .animate-wiggle {
   animation: wiggle 0.28s ease-in-out infinite;
+}
+
+/* Candy: iridescent orb spin for Stella */
+@keyframes orb-spin {
+  to { transform: rotate(360deg); }
+}
+.animate-orb-spin {
+  animation: orb-spin 8s linear infinite;
+}
+
+/* Candy: soft shimmer for skeleton loaders */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.animate-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+html.dark .animate-shimmer::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+}
+
+/* Full-screen confetti rain (premium celebration) */
+@keyframes confetti-rain {
+  0% { transform: translateY(-12vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(112vh) rotate(720deg); opacity: 0; }
+}
+
+/* Gentle rise-in for page content (premium entrance) */
+@keyframes rise {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: none; }
+}
+.animate-rise {
+  animation: rise 440ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise { animation: none; }
+}
+
+/* ===== Gamified premium polish ===== */
+/* Satin finish: a soft light-to-shadow gradient over every card to simulate a
+   matte, high-quality material with a gentle top sheen. */
+.shadow-card,
+.shadow-card-hover {
+  background-image: linear-gradient(157deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0) 36%, rgba(0, 0, 0, 0.10));
+}
+
+/* Terrarium: slow "breathing" of the plant when momentum is high */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.vio-breathe { animation: breathe 4s ease-in-out infinite; }
+
+/* Floating light specks (terrarium particles) */
+@keyframes floatspeck {
+  0% { transform: translateY(0); opacity: 0; }
+  20% { opacity: 0.95; }
+  80% { opacity: 0.95; }
+  100% { transform: translateY(-28px); opacity: 0; }
+}
+.speck { animation: floatspeck linear infinite; }
+
+/* Completion feedback: the checkmark pops in… */
+@keyframes checkpop {
+  0% { transform: scale(0.3); opacity: 0; }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.check-pop { animation: checkpop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* …and the plant does a happy little bounce when Momentum grows. */
+@keyframes viopop {
+  0% { transform: scale(1) rotate(0); }
+  30% { transform: scale(1.13) rotate(-3deg); }
+  60% { transform: scale(0.97) rotate(2deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+.vio-pop { animation: viopop 0.6s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vio-breathe, .speck, .check-pop, .vio-pop { animation: none; }
 }

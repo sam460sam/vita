@@ -59,7 +59,7 @@ export function ProjectsPage() {
               <div key={qv.id}>
                 {i > 0 && <Divider />}
                 <button onClick={() => setView(qv.id)} className="w-full flex items-center gap-3 px-4 py-3 active:bg-section transition-colors">
-                  <span className="h-8 w-8 rounded-full bg-section flex items-center justify-center text-ink-2">
+                  <span className="h-9 w-9 rounded-2xl bg-project-tint flex items-center justify-center text-project">
                     <Icon size={17} />
                   </span>
                   <span className="flex-1 text-left text-[15px] text-ink font-medium">{qv.label}</span>
@@ -105,7 +105,7 @@ export function ProjectsPage() {
         ) : (
           <Card>
             <EmptyState
-              icon={<Plus size={22} />}
+              mascot
               title={t('projects.empty.title')}
               description={t('projects.empty.desc')}
               action={<Button onClick={() => setProjForm(true)}>{t('projects.empty.cta')}</Button>}

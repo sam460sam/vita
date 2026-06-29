@@ -1,20 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ArrowDownLeft, ArrowUpRight, Plus, Wallet, Pencil, Trash2, Upload } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Plus, Wallet, Pencil, Trash2, Upload, Check, Search, Repeat } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { it } from 'date-fns/locale';
 import { db } from '@/data/db';
-import { createTransaction, deleteTransaction, readBudget, setBudget, readSettings } from '@/data/repo';
+import { createTransaction, deleteTransaction, readBudget, setBudget, readSettings, materializeRecurring } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
 import { platform } from '@/platform/platform';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
 import { Card, CardHeader, EmptyState, Button, Sheet, Field, Input, Select, Segmented, IconButton, Sankey, useToast } from '@/ui';
-import { formatMoney, todayISO, currentMonthKey, monthKey } from '@/lib/format';
+import { formatMoney, todayISO, currentMonthKey, monthKey, activeDfnLocale } from '@/lib/format';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, categoryColor, categoryLabelKey } from './categories';
-import { parseBankCsv } from './importCsv';
+import { parseBankCsv, type ParsedTx } from './importCsv';
 import { useT } from '@/i18n';
 import type { TxType } from '@/data/types';
+
+const dupeKey = (x: { date: string; type: string; amount: number; note?: string }) =>
+  `${x.date}|${x.type}|${x.amount}|${(x.note ?? '').toLowerCase()}`;
 
 export function FinancesPage() {
   const t = useT();
@@ -23,7 +25,15 @@ export function FinancesPage() {
   const settings = useLiveQuery(() => readSettings(), [], undefined);
   const [formOpen, setFormOpen] = useState(false);
   const [budgetOpen, setBudgetOpen] = useState(false);
+  const [preview, setPreview] = useState<ParsedTx[] | null>(null);
+  const [dupes, setDupes] = useState<Set<number>>(new Set());
+  const [skip, setSkip] = useState<Set<number>>(new Set());
+  const [query, setQuery] = useState('');
+  const [filterType, setFilterType] = useState<'all' | TxType>('all');
   const toast = useToast();
+
+  // Generate any due recurring occurrences when the page opens.
+  useEffect(() => { void materializeRecurring(); }, []);
 
   async function importCsv() {
     const text = await platform.pickTextFile('.csv,text/csv,text/plain');
@@ -33,8 +43,29 @@ export function FinancesPage() {
       toast.show(t('finances.importNone'));
       return;
     }
-    for (const tx of parsed) await createTransaction(tx);
-    toast.show(`${parsed.length} ${t('finances.imported')}`);
+    // Detect rows already in the ledger; pre-exclude them.
+    const existing = new Set((txs ?? []).map(dupeKey));
+    const dup = new Set<number>();
+    parsed.forEach((p, i) => { if (existing.has(dupeKey(p))) dup.add(i); });
+    setDupes(dup);
+    setSkip(new Set(dup));
+    setPreview(parsed);
+  }
+
+  function toggleSkip(i: number) {
+    setSkip((s) => {
+      const n = new Set(s);
+      n.has(i) ? n.delete(i) : n.add(i);
+      return n;
+    });
+  }
+
+  async function confirmImport() {
+    if (!preview) return;
+    const toAdd = preview.filter((_, i) => !skip.has(i));
+    for (const tx of toAdd) await createTransaction(tx);
+    setPreview(null);
+    toast.show(`${toAdd.length} ${t('finances.imported')}`);
   }
 
   const currency = (settings ?? defaultSettings()).currency;
@@ -45,6 +76,16 @@ export function FinancesPage() {
   const expense = monthTxs.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
   const balance = income - expense;
   const limit = budget?.monthlyLimit ?? 0;
+
+  const filteredTxs = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return (txs ?? []).filter((tx) => {
+      if (filterType !== 'all' && tx.type !== filterType) return false;
+      if (!q) return true;
+      const cat = t(categoryLabelKey(tx.category)).toLowerCase();
+      return cat.includes(q) || (tx.note ?? '').toLowerCase().includes(q);
+    });
+  }, [txs, query, filterType, t]);
 
   const byCategory = useMemo(() => {
     const m = new Map<string, number>();
@@ -72,10 +113,13 @@ export function FinancesPage() {
         }
       />
       <Screen>
-        {/* Balance */}
-        <Card className="mb-4">
-          <div className="text-center py-2">
-            <div className="metric-label capitalize">{format(new Date(), 'MMMM yyyy', { locale: it })}</div>
+        {/* Balance hero */}
+        <div
+          className="rounded-card shadow-card mb-4 relative overflow-hidden"
+          style={{ background: `linear-gradient(150deg, color-mix(in srgb, ${balance < 0 ? 'var(--c-danger)' : 'var(--c-habit)'} 20%, var(--c-card)), var(--c-card) 80%)` }}
+        >
+          <div className="text-center py-5 px-4 relative">
+            <div className="metric-label capitalize">{format(new Date(), 'MMMM yyyy', { locale: activeDfnLocale() })}</div>
             <div className="text-4xl font-semibold tnum text-ink mt-1" style={{ color: balance < 0 ? 'var(--c-danger)' : undefined }}>
               {formatMoney(balance, currency)}
             </div>
@@ -94,12 +138,13 @@ export function FinancesPage() {
               </div>
             </div>
           </div>
-        </Card>
+          <Wallet size={92} className="absolute -right-4 -bottom-5 opacity-[0.08]" style={{ color: balance < 0 ? 'var(--c-danger)' : 'var(--c-habit)' }} />
+        </div>
 
         {/* Budget */}
         <Card className="mb-4" onClick={() => setBudgetOpen(true)}>
           <div className="flex items-center gap-3 cursor-pointer">
-            <span className="h-9 w-9 rounded-full bg-finance/10 flex items-center justify-center text-finance">
+            <span className="h-10 w-10 rounded-2xl bg-finance-tint flex items-center justify-center text-finance">
               <Wallet size={18} />
             </span>
             <div className="flex-1">
@@ -172,25 +217,45 @@ export function FinancesPage() {
           <CardHeader title={t('finances.movements')} />
           {(txs ?? []).length === 0 ? (
             <EmptyState
-              icon={<Wallet size={22} />}
+              mascot
               title={t('finances.empty.title')}
               description={t('finances.empty.desc')}
               action={<Button onClick={() => setFormOpen(true)}>{t('finances.empty.cta')}</Button>}
             />
           ) : (
-            <div className="divide-y divide-divider">
-              {(txs ?? []).slice(0, 50).map((tx) => (
+            <>
+              <div className="relative mb-2">
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-3 pointer-events-none" />
+                <Input className="!pl-9" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('finances.searchPh')} />
+              </div>
+              <Segmented
+                className="w-full mb-1"
+                value={filterType}
+                onChange={(v) => setFilterType(v as 'all' | TxType)}
+                options={[
+                  { value: 'all', label: t('finances.all') },
+                  { value: 'income', label: t('finances.income') },
+                  { value: 'expense', label: t('finances.expense') },
+                ]}
+              />
+              <div className="divide-y divide-divider">
+              {filteredTxs.length === 0 ? (
+                <p className="text-[13px] text-ink-3 text-center py-6">{t('finances.noResults')}</p>
+              ) : filteredTxs.slice(0, 80).map((tx) => (
                 <div key={tx.id} className="flex items-center gap-3 py-2.5 group">
                   <span
-                    className="h-9 w-9 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: `${categoryColor(tx.category)}1a`, color: categoryColor(tx.category) }}
+                    className="h-10 w-10 rounded-2xl flex items-center justify-center flex-shrink-0"
+                    style={{ background: `${categoryColor(tx.category)}24`, color: categoryColor(tx.category) }}
                   >
                     {tx.type === 'income' ? <ArrowDownLeft size={17} /> : <ArrowUpRight size={17} />}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[15px] text-ink truncate">{t(categoryLabelKey(tx.category))}</div>
+                    <div className="text-[15px] text-ink truncate flex items-center gap-1.5">
+                      {t(categoryLabelKey(tx.category))}
+                      {(tx.recurring || tx.recurOf) && <Repeat size={12} className="text-ink-3 flex-shrink-0" />}
+                    </div>
                     <div className="text-[12px] text-ink-2 truncate">
-                      {format(parseISO(tx.date), 'd MMM', { locale: it })}
+                      {format(parseISO(tx.date), 'd MMM', { locale: activeDfnLocale() })}
                       {tx.note ? ` · ${tx.note}` : ''}
                     </div>
                   </div>
@@ -203,13 +268,61 @@ export function FinancesPage() {
                   </IconButton>
                 </div>
               ))}
-            </div>
+              </div>
+            </>
           )}
         </Card>
       </Screen>
 
       <TransactionForm open={formOpen} onClose={() => setFormOpen(false)} />
       <BudgetForm open={budgetOpen} onClose={() => setBudgetOpen(false)} current={limit} />
+
+      {preview && (
+        <Sheet
+          open
+          onClose={() => setPreview(null)}
+          title={t('finances.import.title')}
+          footer={
+            <Button block size="lg" disabled={preview.length - skip.size === 0} onClick={confirmImport}>
+              {t('finances.import.confirm', { n: preview.length - skip.size })}
+            </Button>
+          }
+        >
+          <p className="text-[13px] text-ink-2 mb-3">
+            {t('finances.import.found', { n: preview.length })}
+            {dupes.size > 0 && ` · ${t('finances.import.dupes', { n: dupes.size })}`}
+          </p>
+          <div className="space-y-1.5">
+            {preview.map((p, i) => {
+              const excluded = skip.has(i);
+              return (
+                <button
+                  key={i}
+                  onClick={() => toggleSkip(i)}
+                  className={`flex items-center gap-3 w-full rounded-2xl px-3 py-2.5 transition-all ${excluded ? 'opacity-45' : 'bg-section'}`}
+                >
+                  <span
+                    className="h-5 w-5 rounded-md flex items-center justify-center flex-shrink-0"
+                    style={{ background: excluded ? 'transparent' : 'var(--c-primary)', border: excluded ? '2px solid var(--c-line)' : 'none' }}
+                  >
+                    {!excluded && <Check size={13} className="text-white" strokeWidth={3} />}
+                  </span>
+                  <div className="min-w-0 flex-1 text-left">
+                    <div className="text-[13px] font-semibold text-ink truncate">{p.note || t(categoryLabelKey(p.category))}</div>
+                    <div className="text-[11px] text-ink-3">
+                      {p.date} · {t(categoryLabelKey(p.category))}
+                      {dupes.has(i) && <span className="ml-1.5 text-warning font-bold">· {t('finances.import.duplicate')}</span>}
+                    </div>
+                  </div>
+                  <span className="text-[13px] font-bold tnum flex-shrink-0" style={{ color: p.type === 'income' ? 'var(--c-habit)' : 'var(--c-ink)' }}>
+                    {p.type === 'income' ? '+' : '−'}{formatMoney(p.amount, currency)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </Sheet>
+      )}
     </>
   );
 }
@@ -220,6 +333,7 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
   const [category, setCategory] = useState<string>(EXPENSE_CATEGORIES[0]);
   const [date, setDate] = useState(todayISO());
   const [note, setNote] = useState('');
+  const [recurring, setRecurring] = useState(false);
   const toast = useToast();
   const t = useT();
 
@@ -232,6 +346,7 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
       setCategory(EXPENSE_CATEGORIES[0]);
       setDate(todayISO());
       setNote('');
+      setRecurring(false);
     }
   }, [open]);
 
@@ -242,7 +357,8 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
   async function save() {
     const amt = parseFloat(amount);
     if (!amt || amt <= 0) return;
-    await createTransaction({ type, amount: amt, category, date, note: note.trim() || undefined });
+    await createTransaction({ type, amount: amt, category, date, note: note.trim() || undefined, recurring: recurring || undefined });
+    if (recurring) await materializeRecurring();
     toast.show(t('txForm.saved'));
     onClose();
   }
@@ -286,6 +402,16 @@ function TransactionForm({ open, onClose }: { open: boolean; onClose: () => void
       <Field label={t('txForm.note')}>
         <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder={t('txForm.notePh')} />
       </Field>
+      <button
+        onClick={() => setRecurring((v) => !v)}
+        className="w-full flex items-center gap-3 rounded-btn bg-section px-4 py-3 mt-1 active:scale-[0.99] transition-transform"
+      >
+        <span className="flex-1 text-left text-[14px] font-semibold text-ink">{t('txForm.recurring')}</span>
+        <span className="h-6 w-11 rounded-full relative transition-colors flex-shrink-0" style={{ background: recurring ? 'var(--c-primary)' : 'var(--c-line)' }}>
+          <span className="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all" style={{ left: recurring ? '22px' : '2px' }} />
+        </span>
+      </button>
+      <p className="text-[12px] text-ink-3 mt-1.5">{t('txForm.recurringHint')}</p>
     </Sheet>
   );
 }

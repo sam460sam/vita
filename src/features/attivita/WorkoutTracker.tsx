@@ -60,7 +60,7 @@ export function WorkoutTracker({
   return (
     <Sheet open={open} onClose={onClose} title={sport.name} size="full">
       <div className="flex flex-col items-center justify-center text-center py-6">
-        <span className="h-16 w-16 rounded-full bg-activity/10 flex items-center justify-center text-activity mb-6">
+        <span className="h-16 w-16 rounded-3xl bg-activity-tint flex items-center justify-center text-activity mb-6">
           <Icon size={30} />
         </span>
         <div className="text-6xl font-semibold tnum text-ink tracking-tight">{formatDuration(elapsed)}</div>

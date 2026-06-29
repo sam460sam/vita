@@ -12,6 +12,11 @@ import { ALL_MODULES, type ModuleId, type Settings, type WidgetInstance } from '
 import { MODULE_LIST } from './modules';
 import { defaultWidgets } from './defaultLayout';
 
+/** Core pages that are always available. The three hero pages (Habits · Water ·
+ *  Test) lead the tab bar; Activity (Apple Watch/Health) is always reachable too
+ *  (e.g. from the "+" menu) even though it lives in "More". */
+const HERO_MODULES: ModuleId[] = ['abitudini', 'acqua', 'personalita', 'attivita'];
+
 /**
  * Resolve the enabled modules from settings. `undefined` (legacy users who
  * onboarded before personalisation existed) means "everything enabled" so we
@@ -19,7 +24,10 @@ import { defaultWidgets } from './defaultLayout';
  */
 export function resolveEnabledModules(s: Settings): ModuleId[] {
   if (!s.enabledModules) return [...ALL_MODULES];
-  return s.enabledModules.filter((m): m is ModuleId => ALL_MODULES.includes(m));
+  const set = s.enabledModules.filter((m): m is ModuleId => ALL_MODULES.includes(m));
+  // Always keep the hero pages available (Habits · Water · Test).
+  for (const h of HERO_MODULES) if (!set.includes(h)) set.push(h);
+  return set;
 }
 
 /** Enabled modules in the user's chosen order. */

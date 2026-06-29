@@ -1,0 +1,28 @@
+diff --git a/node_modules/@squareetlabs/capacitor-subscriptions/Package.swift b/node_modules/@squareetlabs/capacitor-subscriptions/Package.swift
+index ae48933..8c5184f 100644
+--- a/node_modules/@squareetlabs/capacitor-subscriptions/Package.swift
++++ b/node_modules/@squareetlabs/capacitor-subscriptions/Package.swift
+@@ -10,7 +10,7 @@ let package = Package(
+             targets: ["SubscriptionsPlugin"])
+     ],
+     dependencies: [
+-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "7.0.0")
++        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", "7.0.0"..<"9.0.0")
+     ],
+     targets: [
+         .target(
+diff --git a/node_modules/@squareetlabs/capacitor-subscriptions/ios/Sources/SubscriptionsPlugin/Subscriptions.swift b/node_modules/@squareetlabs/capacitor-subscriptions/ios/Sources/SubscriptionsPlugin/Subscriptions.swift
+index bf5ea87..f744e44 100644
+--- a/node_modules/@squareetlabs/capacitor-subscriptions/ios/Sources/SubscriptionsPlugin/Subscriptions.swift
++++ b/node_modules/@squareetlabs/capacitor-subscriptions/ios/Sources/SubscriptionsPlugin/Subscriptions.swift
+@@ -176,7 +176,9 @@ import UIKit
+                         "originalStartDate": transaction!.originalPurchaseDate,
+                         "originalId": transaction!.originalID,
+                         "transactionId": transaction!.id,
+-                        "expiryDate": transaction!.expirationDate!,
++                        // Non-consumables have no expirationDate (nil) — guard the
++                        // force-unwrap that would otherwise crash. Emit epoch ms (or 0).
++                        "expiryDate": transaction!.expirationDate.map { $0.timeIntervalSince1970 * 1000 } ?? 0,
+                         "purchaseToken": ""
+                     ]
+                     

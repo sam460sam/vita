@@ -12,16 +12,16 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-primary text-on-primary border border-primary-border hover:opacity-90 active:opacity-80',
+  primary: 'bg-[linear-gradient(180deg,#125A3B,#0B3925)] text-on-primary shadow-glow hover:brightness-[1.06] active:scale-[0.985] active:brightness-90',
   ghost: 'bg-transparent text-ink hover:bg-section active:bg-divider',
   subtle: 'bg-section text-ink hover:bg-divider active:bg-line',
-  danger: 'bg-danger text-white hover:opacity-90 active:opacity-80',
+  danger: 'bg-danger text-on-primary hover:opacity-90 active:scale-[0.97]',
 };
 
 const sizes: Record<Size, string> = {
-  sm: 'h-9 px-3 text-sm gap-1.5',
-  md: 'h-11 px-4 text-[15px] gap-2',
-  lg: 'h-12 px-5 text-base gap-2',
+  sm: 'h-9 px-3.5 text-sm gap-1.5',
+  md: 'h-11 px-5 text-[15px] gap-2',
+  lg: 'h-[52px] px-6 text-[16px] gap-2',
 };
 
 export function Button({
@@ -36,7 +36,7 @@ export function Button({
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center rounded-btn font-semibold transition-all duration-150 disabled:opacity-40 disabled:pointer-events-none select-none',
+        'inline-flex items-center justify-center rounded-full font-bold transition-all duration-200 ease-out disabled:opacity-40 disabled:pointer-events-none select-none',
         variants[variant],
         sizes[size],
         block && 'w-full',

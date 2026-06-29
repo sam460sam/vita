@@ -1,13 +1,29 @@
 import { useEffect, useState } from 'react';
+import { format, addDays } from 'date-fns';
 import { Sheet, Button, Field, Input, Segmented, useToast } from '@/ui';
 import { cn } from '@/lib/cn';
 import { createHabit, updateHabit, deleteHabit } from '@/data/repo';
 import { notifications } from '@/platform/notifications';
 import type { Habit, HabitFrequencyType } from '@/data/types';
+import { habitDisplayName } from './recommended';
 import { useT } from '@/i18n';
+import { activeDfnLocale } from '@/lib/format';
 
-const COLORS = ['#10B981', '#FF6B57', '#4F46E5', '#F59E0B', '#7C3AED', '#0EA5E9', '#EC4899', '#0A0A0C'];
-const DAYS = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+// Luxury habit/category palette — desaturated, deep, mutually distinguishable
+// with AA contrast on the near-black surfaces. (Emerald · clay · indigo · amber
+// · plum · deep teal · dusty rose · graphite.)
+const COLORS = ['#2E6B47', '#9B4A3C', '#3A4A7A', '#C2873F', '#6A4673', '#357A7A', '#A05A78', '#2A302C'];
+
+/** Short weekday labels (Sunday-first, index 0 = Sunday) in the active UI
+ *  language — fixes English showing Italian abbreviations. */
+function weekdayLabels(): string[] {
+  const loc = activeDfnLocale();
+  const sunday = new Date(2024, 0, 7); // a known Sunday
+  return Array.from({ length: 7 }, (_, i) => {
+    const s = format(addDays(sunday, i), 'EEE', { locale: loc });
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  });
+}
 
 export function HabitForm({
   open,
@@ -30,7 +46,7 @@ export function HabitForm({
 
   useEffect(() => {
     if (open) {
-      setName(habit?.name ?? '');
+      setName(habit ? habitDisplayName(habit, t) : '');
       setColor(habit?.color ?? COLORS[0]);
       setFreqType(habit?.frequency.type ?? 'daily');
       setTimesPerWeek(String(habit?.frequency.timesPerWeek ?? 3));
@@ -48,7 +64,10 @@ export function HabitForm({
     };
     let habitId: string;
     if (editing && habit) {
-      await updateHabit(habit.id, { name: name.trim(), color, frequency, reminder: reminder || undefined });
+      // If the user renamed a built-in habit, it becomes a custom one (drop recId
+      // so the typed name sticks instead of re-localizing).
+      const recId = habit.recId && name.trim() !== habitDisplayName(habit, t) ? undefined : habit.recId;
+      await updateHabit(habit.id, { name: name.trim(), recId, color, frequency, reminder: reminder || undefined });
       habitId = habit.id;
       toast.show(t('habitForm.updated'));
     } else {
@@ -100,7 +119,7 @@ export function HabitForm({
               key={c}
               onClick={() => setColor(c)}
               aria-label={`Colore ${c}`}
-              className={cn('h-8 w-8 rounded-full transition-transform', color === c && 'ring-2 ring-offset-2 ring-ink scale-110')}
+              className={cn('h-8 w-8 rounded-full transition-transform', color === c && 'ring-2 ring-gold scale-110')}
               style={{ background: c }}
             />
           ))}
@@ -128,7 +147,7 @@ export function HabitForm({
       {freqType === 'specific_days' && (
         <Field label={t('habitForm.days')}>
           <div className="flex gap-1.5">
-            {DAYS.map((d, i) => (
+            {weekdayLabels().map((d, i) => (
               <button
                 key={i}
                 onClick={() => setDays((prev) => (prev.includes(i) ? prev.filter((x) => x !== i) : [...prev, i]))}

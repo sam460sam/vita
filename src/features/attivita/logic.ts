@@ -1,8 +1,7 @@
 import { startOfWeek, startOfMonth, format } from 'date-fns';
-import { it } from 'date-fns/locale';
 import type { Settings, Workout } from '@/data/types';
 import type { RingData } from '@/ui';
-import { todayISO } from '@/lib/format';
+import { todayISO, activeDfnLocale } from '@/lib/format';
 
 export interface RingsSummary {
   move: { value: number; goal: number };
@@ -28,6 +27,24 @@ export function todayRings(workouts: Workout[], settings: Settings): RingsSummar
     move: { value: Math.round(move), goal: settings.goals.moveKcal },
     exercise: { value: exercise, goal: settings.goals.exerciseMin },
     stand: { value: standHours, goal: settings.goals.standHours },
+  };
+}
+
+/**
+ * Overlay real Apple Health / Health Connect daily data onto the rings when
+ * available: Movimento ← active energy burned, Allenamento ← max(logged, health
+ * exercise minutes). Goals and the Stand ring stay as computed. No-op if `hk` is
+ * null (web, or not connected), so behaviour is unchanged for everyone else.
+ */
+export function mergeHealthRings(
+  base: RingsSummary,
+  hk: { activeKcal: number; exerciseMin: number } | null,
+): RingsSummary {
+  if (!hk) return base;
+  return {
+    move: { value: Math.round(hk.activeKcal), goal: base.move.goal },
+    exercise: { value: Math.max(base.exercise.value, hk.exerciseMin), goal: base.exercise.goal },
+    stand: base.stand,
   };
 }
 
@@ -62,7 +79,7 @@ export function summarize(workouts: Workout[], period: 'week' | 'month'): Period
     const min = inRange
       .filter((w) => format(new Date(w.startedAt), 'yyyy-MM-dd') === key)
       .reduce((s, w) => s + w.durationSec / 60, 0);
-    buckets.push({ label: period === 'week' ? format(d, 'EEEEE', { locale: it }) : format(d, 'd'), min: Math.round(min) });
+    buckets.push({ label: period === 'week' ? format(d, 'EEEEE', { locale: activeDfnLocale() }) : format(d, 'd'), min: Math.round(min) });
   }
 
   return {

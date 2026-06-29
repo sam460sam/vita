@@ -3,15 +3,30 @@ import { cn } from '@/lib/cn';
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   inset?: boolean;
+  /** Turn the card into a warm premium "hero": a soft gradient of this color. */
+  heroAccent?: string;
+  /** Optional large faded icon in the corner of a hero card. */
+  heroIcon?: ReactNode;
 }
 
-export function Card({ inset = true, className, children, ...rest }: CardProps) {
+export function Card({ inset = true, className, heroAccent, heroIcon, style, children, ...rest }: CardProps) {
   return (
     <div
-      className={cn('bg-card rounded-card shadow-card border border-line/60 dark:border-transparent', inset && 'p-4', className)}
+      className={cn(
+        'rounded-card shadow-card border border-line/40 dark:border-transparent',
+        heroAccent ? 'relative overflow-hidden' : 'bg-card',
+        inset && 'p-4',
+        className,
+      )}
+      style={heroAccent ? { background: `linear-gradient(150deg, color-mix(in srgb, ${heroAccent} 18%, var(--c-card)), var(--c-card) 80%)`, ...style } : style}
       {...rest}
     >
       {children}
+      {heroAccent && heroIcon && (
+        <span className="pointer-events-none absolute -right-4 -bottom-5 opacity-[0.08]" style={{ color: heroAccent }} aria-hidden>
+          {heroIcon}
+        </span>
+      )}
     </div>
   );
 }
@@ -43,7 +58,7 @@ interface StatTileProps {
 
 export function StatTile({ label, value, unit, accent, icon }: StatTileProps) {
   return (
-    <div className="bg-card rounded-card shadow-card border border-line/60 dark:border-transparent p-3.5 flex flex-col gap-1">
+    <div className="bg-card rounded-card shadow-card border border-line/40 dark:border-transparent p-3.5 flex flex-col gap-1">
       <div className="flex items-center gap-1.5">
         {icon && <span style={{ color: accent }}>{icon}</span>}
         <span className="metric-label">{label}</span>

@@ -1,10 +1,42 @@
 import { createContext, useContext, useState, useRef, useEffect, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Send } from 'lucide-react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { Send, Sparkles } from 'lucide-react';
 import { Sheet, Button } from '@/ui';
-import { StarMascot } from '@/ui/StarMascot';
 import { useT, type TKey } from '@/i18n';
+import { readSettings } from '@/data/repo';
+import type { Settings } from '@/data/types';
 import { matchTopic, STELLA_TOPICS } from './knowledge';
+
+/** Stella's opening line — personalized by the user's name + onboarding goal. */
+function stellaOpener(s: Settings | undefined, t: (k: TKey, v?: Record<string, string | number>) => string): string {
+  const name = s?.name?.trim();
+  const hello = name ? t('stella.helloName', { name }) : t('stella.hello');
+  const tone = s?.goal ? t(`stella.tone.${s.goal}` as TKey) : t('stella.subtitle');
+  return `${hello} ${tone}`;
+}
+
+/** Iridescent gradient orb — Stella's avatar (candy assistant style). */
+function StellaOrb({ size = 64 }: { size?: number }) {
+  return (
+    <div className="relative" style={{ width: size, height: size }} aria-hidden>
+      <div
+        className="absolute inset-0 rounded-full blur-[2px] animate-orb-spin"
+        style={{
+          background:
+            'conic-gradient(from 0deg, #ff9ec4, #a78bfa, #7cc4ff, #5bc98c, #ffd479, #ff8a7a, #ff9ec4)',
+        }}
+      />
+      <div
+        className="absolute rounded-full"
+        style={{
+          inset: size * 0.16,
+          background: 'radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.15) 60%, transparent)',
+        }}
+      />
+    </div>
+  );
+}
 
 interface StellaCtx {
   open: () => void;
@@ -41,13 +73,15 @@ function StellaSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const settings = useLiveQuery(() => readSettings(), [], undefined);
+  const opener = stellaOpener(settings, t);
 
   useEffect(() => {
     if (open) {
-      setMessages([{ from: 'stella', text: t('stella.subtitle') }]);
+      setMessages([{ from: 'stella', text: opener }]);
       setInput('');
     }
-  }, [open, t]);
+  }, [open, opener]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
@@ -72,15 +106,20 @@ function StellaSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
       <div className="flex flex-col h-full">
         <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-3 pb-3">
           {messages.length === 1 && (
-            <div className="flex flex-col items-center py-4">
-              <StarMascot size={90} animated />
+            <div className="flex flex-col items-center py-6 gap-4">
+              <div className="animate-stella-float">
+                <StellaOrb size={84} />
+              </div>
+              <div className="rounded-2xl rounded-tl-md bg-section px-4 py-3 text-[15px] font-semibold text-ink shadow-chip">
+                {opener}
+              </div>
             </div>
           )}
-          {messages.map((m, i) => (
+          {messages.length > 1 && messages.map((m, i) => (
             <div key={i} className={m.from === 'user' ? 'flex justify-end' : 'flex items-start gap-2'}>
               {m.from === 'stella' && (
                 <div className="flex-shrink-0 mt-0.5">
-                  <StarMascot size={30} />
+                  <StellaOrb size={30} />
                 </div>
               )}
               <div
@@ -103,16 +142,19 @@ function StellaSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
             </div>
           ))}
 
-          {/* Suggested questions */}
-          <div className="pt-2">
-            <div className="metric-label mb-2">{t('stella.suggested')}</div>
-            <div className="flex flex-wrap gap-2">
+          {/* Suggested actions — horizontally scrollable candy chips (all offline) */}
+          <div className="pt-2 -mx-4">
+            <div className="metric-label mb-2 px-4">{t('stella.suggested')}</div>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar px-4 pb-1">
               {STELLA_TOPICS.map((topic) => (
                 <button
                   key={topic.id}
                   onClick={() => askTopic(topic.questionKey, topic.answerKey, topic.route)}
-                  className="text-[13px] bg-section hover:bg-divider text-ink rounded-full px-3 h-8 transition-colors"
+                  className="flex-shrink-0 inline-flex items-center gap-1.5 text-[13px] font-semibold bg-card border border-line/60 dark:border-white/5 hover:bg-section text-ink rounded-full pl-2.5 pr-3.5 h-9 shadow-chip transition-colors"
                 >
+                  <span className="flex items-center justify-center h-6 w-6 rounded-full bg-accent/12 text-accent">
+                    <Sparkles size={13} />
+                  </span>
                   {t(topic.questionKey)}
                 </button>
               ))}

@@ -48,7 +48,7 @@ export function Sheet({ open, onClose, title, children, footer, size = 'auto' }:
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-center">
-      <div className="absolute inset-0 bg-black/30 animate-fade-in" onClick={onClose} aria-hidden />
+      <div className="absolute inset-0 animate-fade-in" onClick={onClose} aria-hidden style={{ background: 'var(--c-scrim)' }} />
       <div
         role="dialog"
         aria-modal="true"
