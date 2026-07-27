@@ -12,7 +12,6 @@ import {
   addDays,
   isToday,
 } from 'date-fns';
-import { it } from 'date-fns/locale';
 import { db } from '@/data/db';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
@@ -22,10 +21,10 @@ import { todayISO } from '@/lib/format';
 import { JournalForm } from './JournalForm';
 import { moodMeta } from './mood';
 import type { JournalEntry } from '@/data/types';
-import { useT, type TKey } from '@/i18n';
+import { useI18n, type TKey } from '@/i18n';
 
 export function JournalPage() {
-  const t = useT();
+  const { t, dfnLocale } = useI18n();
   const entries = useLiveQuery(() => db.journalEntries.orderBy('date').reverse().toArray(), [], []);
   const [cursor, setCursor] = useState(new Date());
   const [formOpen, setFormOpen] = useState(false);
@@ -65,7 +64,8 @@ export function JournalPage() {
     setFormOpen(true);
   }
 
-  const weekLabels = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
+  const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+  const weekLabels = Array.from({ length: 7 }, (_, i) => format(addDays(weekStart, i), 'EEEEE', { locale: dfnLocale }));
 
   return (
     <>
@@ -84,7 +84,7 @@ export function JournalPage() {
             <IconButton label="Mese precedente" onClick={() => setCursor((c) => addMonths(c, -1))}>
               <ChevronLeft size={18} />
             </IconButton>
-            <span className="text-[15px] font-semibold text-ink capitalize">{format(cursor, 'MMMM yyyy', { locale: it })}</span>
+            <span className="text-[15px] font-semibold text-ink capitalize">{format(cursor, 'MMMM yyyy', { locale: dfnLocale })}</span>
             <IconButton label="Mese successivo" onClick={() => setCursor((c) => addMonths(c, 1))}>
               <ChevronRight size={18} />
             </IconButton>
@@ -143,7 +143,7 @@ export function JournalPage() {
                   >
                     <span className="text-2xl leading-none mt-0.5" title={t(`mood.${meta.value}` as TKey)}>{meta.emoji}</span>
                     <div className="min-w-0 flex-1">
-                      <div className="text-[13px] text-ink-2 capitalize">{format(new Date(e.date), 'EEEE d MMMM', { locale: it })}</div>
+                      <div className="text-[13px] text-ink-2 capitalize">{format(new Date(e.date), 'EEEE d MMMM', { locale: dfnLocale })}</div>
                       {e.text && <div className="text-[15px] text-ink line-clamp-2 mt-0.5">{e.text}</div>}
                       {e.tags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1.5">

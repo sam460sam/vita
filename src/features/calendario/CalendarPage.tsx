@@ -13,7 +13,6 @@ import {
   startOfWeek,
   addDays,
 } from 'date-fns';
-import { it } from 'date-fns/locale';
 import { db } from '@/data/db';
 import { PageHeader } from '@/app/PageHeader';
 import { Screen } from '@/app/Screen';
@@ -21,12 +20,12 @@ import { Card, Segmented, IconButton, EmptyState } from '@/ui';
 import { cn } from '@/lib/cn';
 import { getSport } from '@/features/attivita/sports';
 import { moodMeta } from '@/features/diario/mood';
-import { useT } from '@/i18n';
+import { useI18n } from '@/i18n';
 
 type DayItems = { tasks: number; workouts: number; journal: boolean };
 
 export function CalendarPage() {
-  const t = useT();
+  const { t, dfnLocale } = useI18n();
   const tasks = useLiveQuery(() => db.tasks.toArray(), [], []);
   const workouts = useLiveQuery(() => db.workouts.toArray(), [], []);
   const journal = useLiveQuery(() => db.journalEntries.toArray(), [], []);
@@ -65,7 +64,8 @@ export function CalendarPage() {
   const selJournal = (journal ?? []).filter((j) => j.date === selISO);
   const empty = selTasks.length === 0 && selWorkouts.length === 0 && selJournal.length === 0;
 
-  const weekLabels = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
+  const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+  const weekLabels = Array.from({ length: 7 }, (_, i) => format(addDays(weekStart, i), 'EEEEE', { locale: dfnLocale }));
 
   return (
     <>
@@ -76,7 +76,7 @@ export function CalendarPage() {
             <IconButton label="Precedente" onClick={() => setCursor((c) => (mode === 'month' ? addMonths(c, -1) : addDays(c, -7)))}>
               <ChevronLeft size={18} />
             </IconButton>
-            <span className="text-[15px] font-semibold text-ink capitalize">{format(cursor, 'MMMM yyyy', { locale: it })}</span>
+            <span className="text-[15px] font-semibold text-ink capitalize">{format(cursor, 'MMMM yyyy', { locale: dfnLocale })}</span>
             <IconButton label="Successivo" onClick={() => setCursor((c) => (mode === 'month' ? addMonths(c, 1) : addDays(c, 7)))}>
               <ChevronRight size={18} />
             </IconButton>
@@ -125,7 +125,7 @@ export function CalendarPage() {
         </Card>
 
         <Card>
-          <div className="text-[15px] font-semibold text-ink capitalize mb-3">{format(selected, 'EEEE d MMMM', { locale: it })}</div>
+          <div className="text-[15px] font-semibold text-ink capitalize mb-3">{format(selected, 'EEEE d MMMM', { locale: dfnLocale })}</div>
           {empty ? (
             <EmptyState title={t('calendar.empty.title')} description={t('calendar.empty.desc')} />
           ) : (

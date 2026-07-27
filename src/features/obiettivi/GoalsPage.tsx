@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Target, Plus, Check, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { it } from 'date-fns/locale';
 import { db, uid } from '@/data/db';
 import { createGoal, updateGoal, deleteGoal } from '@/data/repo';
 import { PageHeader } from '@/app/PageHeader';
@@ -11,6 +10,7 @@ import { Card, ProgressRing, EmptyState, Button, Sheet, Field, Input, Textarea, 
 import { projectProgress } from '@/features/progetti/logic';
 import { completionRate } from '@/features/abitudini/logic';
 import { useT } from '@/i18n';
+import { activeDfnLocale } from '@/lib/format';
 import type { TKey } from '@/i18n';
 import type { Goal, GoalLinkType, Milestone } from '@/data/types';
 
@@ -85,7 +85,7 @@ export function GoalsPage() {
                           : g.link.type !== 'none'
                             ? linkLabel(t, g.link.type)
                             : t('goals.manual')}
-                        {g.targetDate && ` · ${format(parseISO(g.targetDate), 'd MMM yyyy', { locale: it })}`}
+                        {g.targetDate && ` · ${format(parseISO(g.targetDate), 'd MMM yyyy', { locale: activeDfnLocale() })}`}
                       </div>
                       {!g.done && <div className="text-[12px] text-project font-medium mt-0.5">{t('goals.remaining', { pct: pctLeft })}</div>}
                     </div>

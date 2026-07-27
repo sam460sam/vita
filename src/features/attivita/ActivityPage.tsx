@@ -20,9 +20,8 @@ import {
   Field,
   Input,
 } from '@/ui';
-import { formatDistance, formatDuration } from '@/lib/format';
+import { activeDfnLocale, formatDistance, formatDuration } from '@/lib/format';
 import { format } from 'date-fns';
-import { it } from 'date-fns/locale';
 import { todayRings, ringsToData, summarize } from './logic';
 import { getSport, type Sport } from './sports';
 import { SportPicker } from './SportPicker';
@@ -140,7 +139,7 @@ export function ActivityPage() {
                     <div className="min-w-0 flex-1">
                       <div className="text-[15px] font-medium text-ink truncate">{sport.name}</div>
                       <div className="text-[13px] text-ink-2">
-                        {format(new Date(w.startedAt), 'd MMM · HH:mm', { locale: it })}
+                        {format(new Date(w.startedAt), 'd MMM · HH:mm', { locale: activeDfnLocale() })}
                       </div>
                     </div>
                     <div className="text-right">

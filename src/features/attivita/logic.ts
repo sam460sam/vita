@@ -1,8 +1,7 @@
 import { startOfWeek, startOfMonth, format } from 'date-fns';
-import { it } from 'date-fns/locale';
 import type { Settings, Workout } from '@/data/types';
 import type { RingData } from '@/ui';
-import { todayISO } from '@/lib/format';
+import { activeDfnLocale, todayISO } from '@/lib/format';
 
 export interface RingsSummary {
   move: { value: number; goal: number };
@@ -62,7 +61,7 @@ export function summarize(workouts: Workout[], period: 'week' | 'month'): Period
     const min = inRange
       .filter((w) => format(new Date(w.startedAt), 'yyyy-MM-dd') === key)
       .reduce((s, w) => s + w.durationSec / 60, 0);
-    buckets.push({ label: period === 'week' ? format(d, 'EEEEE', { locale: it }) : format(d, 'd'), min: Math.round(min) });
+    buckets.push({ label: period === 'week' ? format(d, 'EEEEE', { locale: activeDfnLocale() }) : format(d, 'd'), min: Math.round(min) });
   }
 
   return {

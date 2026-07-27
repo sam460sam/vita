@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { ArrowDownLeft, ArrowUpRight, Plus, Wallet, Pencil, Trash2, Upload } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { it } from 'date-fns/locale';
 import { db } from '@/data/db';
 import { createTransaction, deleteTransaction, readBudget, setBudget, readSettings } from '@/data/repo';
 import { defaultSettings } from '@/data/defaults';
@@ -13,11 +12,11 @@ import { Card, CardHeader, EmptyState, Button, Sheet, Field, Input, Select, Segm
 import { formatMoney, todayISO, currentMonthKey, monthKey } from '@/lib/format';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, categoryColor, categoryLabelKey } from './categories';
 import { parseBankCsv } from './importCsv';
-import { useT } from '@/i18n';
+import { useI18n, useT } from '@/i18n';
 import type { TxType } from '@/data/types';
 
 export function FinancesPage() {
-  const t = useT();
+  const { t, dfnLocale } = useI18n();
   const txs = useLiveQuery(() => db.transactions.orderBy('date').reverse().toArray(), [], []);
   const budget = useLiveQuery(() => readBudget(), [], undefined);
   const settings = useLiveQuery(() => readSettings(), [], undefined);
@@ -75,7 +74,7 @@ export function FinancesPage() {
         {/* Balance */}
         <Card className="mb-4">
           <div className="text-center py-2">
-            <div className="metric-label capitalize">{format(new Date(), 'MMMM yyyy', { locale: it })}</div>
+            <div className="metric-label capitalize">{format(new Date(), 'MMMM yyyy', { locale: dfnLocale })}</div>
             <div className="text-4xl font-semibold tnum text-ink mt-1" style={{ color: balance < 0 ? 'var(--c-danger)' : undefined }}>
               {formatMoney(balance, currency)}
             </div>
@@ -190,7 +189,7 @@ export function FinancesPage() {
                   <div className="min-w-0 flex-1">
                     <div className="text-[15px] text-ink truncate">{t(categoryLabelKey(tx.category))}</div>
                     <div className="text-[12px] text-ink-2 truncate">
-                      {format(parseISO(tx.date), 'd MMM', { locale: it })}
+                      {format(parseISO(tx.date), 'd MMM', { locale: dfnLocale })}
                       {tx.note ? ` · ${tx.note}` : ''}
                     </div>
                   </div>
