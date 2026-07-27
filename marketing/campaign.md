@@ -31,10 +31,30 @@ request.
 **Closer** — `And everything stays on your phone — nothing leaves it. Get
 Vyta on the App Store.` (creator picks up her phone, screen turned away)
 
-## Deliverable
+## Deliverables
 
-- `final_captioned.mp4` — hosted URL in the session notes; ready to upload
-  as-is to TikTok and YouTube Shorts.
+Video 1 — woman on the couch, "I deleted six apps in one day":
+
+- Captioned (use this): <https://d2ol7oe51mr4n9.cloudfront.net/user_39Lwt6X1Vr38xQE9u9m8aQd3ui0/ef5aac44-aa98-47a1-93fa-7dcf587ac259.mp4>
+- Clean (no subtitles): <https://d2ol7oe51mr4n9.cloudfront.net/user_39Lwt6X1Vr38xQE9u9m8aQd3ui0/1bde65e2-7e2f-4831-9440-a4616bba52a6.mp4>
+
+## Video 2 — athletic man, "better than 200 apps combined" (86 words ≈ 30 s)
+
+**Hook** — `I tested two hundred apps this year.`
+
+| Beat | Card | Line |
+|---|---|---|
+| rant | — (no card) | Habit trackers, budget apps, workout logs, meal planners — my home screen was pure chaos. |
+| 1 | `app_today.png` | Then I found Vyta — one app for my entire life. |
+| 2 | `app_activity.png` | It closes my three rings after every workout. |
+| 3 | `app_habits.png` | Habit streaks, heatmaps — my water's at day twenty-one. |
+| 4 | `app_projects.png` | Projects and tasks live on one board. |
+| 5 | `app_finances.png` | Even budgets — it maps where money goes. |
+| 6 | `app_journal.png` | Plus a mood journal for your month. |
+
+**Closer** — `Honestly? Better than two hundred apps combined. And it's free
+on the App Store — link in bio.` (creator picks up his phone, screen away,
+points down on "link in bio")
 
 ## Suggested captions
 
