@@ -56,6 +56,11 @@ Video 1 — woman on the couch, "I deleted six apps in one day":
 on the App Store — link in bio.` (creator picks up his phone, screen away,
 points down on "link in bio")
 
+Video 2 deliverables ("Vyta" pronounced VEE-ta, Italian style):
+
+- Captioned (use this): <https://d2ol7oe51mr4n9.cloudfront.net/user_39Lwt6X1Vr38xQE9u9m8aQd3ui0/058a0272-a348-45e9-bdae-d4270aadede7.mp4>
+- Clean (no subtitles): <https://d2ol7oe51mr4n9.cloudfront.net/user_39Lwt6X1Vr38xQE9u9m8aQd3ui0/d7d0823e-79b4-4e11-891f-6cc87c18ebb1.mp4>
+
 ## Suggested captions
 
 - TikTok: *I replaced six apps with one — Vyta: Life OS 📱 #lifeos
