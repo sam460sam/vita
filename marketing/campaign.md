@@ -56,6 +56,34 @@ Video 1 — woman on the couch, "I deleted six apps in one day":
 on the App Store — link in bio.` (creator picks up his phone, screen away,
 points down on "link in bio")
 
+## Video 3 — first class flight, dark mode (READY TO GENERATE, needs credits)
+
+Attractive creator in a first-class window seat. **Dark-mode** captures
+(`marketing/captures/dark/`) as overlay cards. Spoken-prompt spelling is
+"Vita" so the voice says VEE-ta; captions come from the script and always
+spell "Vyta". Cost at current rates: 2 clips x 15 s = 270 credits (1080p)
+or 135 credits (720p).
+
+**Hook** — `A thousand apps couldn't run my life.`
+
+| Beat | Card (dark) | Line |
+|---|---|---|
+| intro | — | Every flight, I'd juggle six of them. |
+| 1 | `dark/app_today.png` | Then I found Vyta — one app, my whole life inside. Dark mode included. |
+| 2 | `dark/app_activity.png` | Workouts close three rings, straight off my watch. |
+| 3 | `dark/app_habits.png` | Habits build streaks — I'm twenty-one days into water. |
+| 4 | `dark/app_projects.png` | Projects sit on a kanban board. |
+| 5 | `dark/app_finances.png` | Budgets show where the money goes. |
+| 6 | `dark/app_journal.png` | Plus a mood journal that maps my month. |
+
+**Closer** — `And Pro? Whole other level. It takes a week to master — then
+your time just clicks. Free on the App Store — link in bio.`
+
+Unique strengths to rotate into future variants: the 0–100 cross-life
+Momentum score (no single-purpose app can do it), Stella the panda
+companion, 100% offline/private data, Apple-style widget home you can
+rearrange, Strava/Garmin/Apple Health import, weekly recap and rewards.
+
 Video 2 deliverables ("Vyta" pronounced VEE-ta, Italian style):
 
 - Captioned (use this): <https://d2ol7oe51mr4n9.cloudfront.net/user_39Lwt6X1Vr38xQE9u9m8aQd3ui0/058a0272-a348-45e9-bdae-d4270aadede7.mp4>
