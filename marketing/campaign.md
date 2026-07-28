@@ -56,7 +56,17 @@ Video 1 — woman on the couch, "I deleted six apps in one day":
 on the App Store — link in bio.` (creator picks up his phone, screen away,
 points down on "link in bio")
 
-## Video 3 — first class flight, dark mode (READY TO GENERATE, needs credits)
+## Teaser — first class flight, dark mode (10 s, 720p, DONE — 45 credits)
+
+Condensed version of video 3, single clip: hook "A thousand apps couldn't
+run my life" → "Vyta is one app for everything — dark mode included" →
+rings/streaks/budgets/mood with 3 dark cards → "And it's free — link in
+bio" (finger point down). Pronunciation VEE-ta confirmed by transcript.
+
+- Captioned (use this): <https://d2ol7oe51mr4n9.cloudfront.net/user_39Lwt6X1Vr38xQE9u9m8aQd3ui0/492421f4-de60-4112-9372-09827055f2e1.mp4>
+- Clean: <https://d2ol7oe51mr4n9.cloudfront.net/user_39Lwt6X1Vr38xQE9u9m8aQd3ui0/28711cac-58ac-4f98-b55d-e600023b1d3d.mp4>
+
+## Video 3 — first class flight, dark mode, FULL 30 s (READY TO GENERATE, needs credits)
 
 Attractive creator in a first-class window seat. **Dark-mode** captures
 (`marketing/captures/dark/`) as overlay cards. Spoken-prompt spelling is
