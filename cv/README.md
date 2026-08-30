@@ -49,10 +49,10 @@ cropped, nothing split across a page break.
 - Typography falls back through Inter → Geist → system sans. Both layouts were measured
   in headless Chromium against the widest fallback font available, so they cannot
   overflow on a machine that has none of them installed. Verified headroom at the
-  bottom of the sheet: ~11 mm on the one-pager, ~29 mm and ~46 mm on the two full pages.
+  bottom of the sheet: ~15 mm on the one-pager, ~29 mm and ~46 mm on the two full pages.
   With Inter actually installed there is more room, not less.
-- Email and GitHub are real link annotations in the exported PDF, verified present in
-  both files.
+- The Vyta App Store page, GitHub and the email address are real link annotations in the
+  exported PDF, verified present in both files.
 - Page breaks are explicit: each `<section class="sheet">` is one A4 page. That is why
   `@page { size: A4; margin: 0 }` still yields correct margins on the second page of
   `cv-full.html` — free-flowing content would only have margined the first page.
@@ -70,20 +70,16 @@ cropped, nothing split across a page break.
 - List markers are a real en-dash glyph with `line-height: inherit`, so they sit on the
   first line of the bullet rather than floating above it.
 
-## Still to fill in
+## Nothing left to fill in
 
-Placeholders are marked in the HTML with `class="todo"` (accent colour, dashed underline)
-and in the text version with `[TO FILL IN: ...]`. Search for either and replace:
+Every field is populated. The `.todo` / `--flag` scaffolding that marked unfilled
+values has been removed from both stylesheets, so no editorial markup ships with the
+document.
 
-- **Vyta App Store URL.** In the HTML the marker is the app name itself: replace
-  `<dt><span class="todo">Vyta</span></dt>` with `<dt><a href="URL">Vyta</a></dt>`.
-  In `cv-ats.txt` replace `[TO FILL IN: App Store URL]` in the parentheses after the name.
-- **Real Estate Agent (Verde Casa) months.** Shown as `month 2023 — month 2024`. Any
-  start from **May 2023** and any end up to **March 2024** is consistent with the rest of
-  the history; outside that window the entry collides with a neighbour (see below).
-
-Fourth Night has no link by design — it is described as currently in development, not as
-published. LinkedIn is not in the header: no URL was supplied.
+Links are live in the exported PDF — the Vyta App Store page, the GitHub profile and the
+email address are real link annotations, verified present in both PDFs. They are styled
+to inherit the body colour with no underline, so they read as ordinary text on the page
+and stay clickable on screen.
 
 ### Date audit
 
@@ -94,15 +90,29 @@ alongside it by design:
 | --- | --- |
 | Industrial Flooring Operative, AD Nooren (NL) | Aug 2025 – Jul 2026 |
 | Warehouse Assistant, Venice (IT) | Apr 2024 – Aug 2025 |
-| Real Estate Agent, Verde Casa (IT) | *month* 2023 – *month* 2024 |
-| Timber Structure Labourer → Site Coordinator, Altar Decks (AU) | Sep 2022 – Apr 2023 |
+| Real Estate Agent, Verde Casa (IT) | Nov 2023 – Mar 2024 |
+| Site Coordinator & Trainer, Altar Decks (AU) | Sep 2022 – Apr 2023 |
 | Interior Painter, Bonin Pitture Srl (IT) | Jan 2022 – Aug 2022 |
 
-No gaps. One touching pair — Warehouse ends and AD Nooren starts in the same month,
-August 2025 — which is normal and needs no change. The only unverifiable pair is Verde
-Casa against its two neighbours, because its months are still blank: a start before
-April 2023 would overlap Altar Decks *in another country*, and an end after April 2024
-would overlap the warehouse job.
+Fully verified, no ambiguity left. Two clean handovers of a single month or less
+(Aug 2022 → Sep 2022, and Warehouse ending as AD Nooren begins in Aug 2025), one
+seven-month gap between Altar Decks and Verde Casa (Apr–Nov 2023) which spans the return
+from Australia to Italy, and no overlaps anywhere.
 
-Once everything is filled in, delete the `.todo` rule from the stylesheet so no trace of
-it remains.
+## Wording that differs between versions
+
+The one-pager compresses a few strings that the full version and the ATS text keep at
+length, so it can hold one page without shrinking type:
+
+| | One-pager | Full / ATS |
+| --- | --- | --- |
+| Altar Decks location | Altar Decks, Australia | Altar Decks, Gold Coast, Australia |
+| Honor Studio | Web design for Groningen (NL) businesses — acquisition, delivery, support. | Web design service for local businesses in Groningen (NL) — client acquisition, delivery and support, end to end. |
+| Walkbid | Field-operations tool for hardscape/paving contractors, from site experience. | Field-operations tool for hardscape and paving contractors, specified from direct experience on site. |
+
+No fact appears in one version and not another. `cv-full.html` sets entry titles at 9.9pt
+against the one-pager's 9.5pt, which is why the Altar Decks title still takes two lines
+there even after the trim; with 28.7mm of clear space on that page it costs nothing.
+
+The header no longer carries "Available for remote work worldwide" — the Mobility line at
+the foot of the document states it, and saying it twice on one page read as padding.

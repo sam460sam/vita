@@ -2,7 +2,6 @@ SAMUELE GUBERT
 Frontend and AI Developer - React / TypeScript / LLM Automation
 
 Castelfranco Veneto (TV), Italy
-Available for remote work worldwide
 Phone: +39 351 338 2549
 Email: gubertsamuele31@gmail.com
 GitHub: github.com/sam460sam
@@ -34,7 +33,7 @@ Indie Software Developer and Founder
 Self-employed, Remote
 2024 - Present
 - Design, build and publish iOS applications single-handedly: architecture, interface, local data layer, App Store review and release.
-- Vyta ([TO FILL IN: App Store URL]): "Life OS" productivity app, published on the App Store. Built with React, TypeScript and Capacitor, with a local-first data layer on Dexie.js.
+- Vyta (https://apps.apple.com/app/id6776238780): "Life OS" productivity app, published on the App Store. Built with React, TypeScript and Capacitor, with a local-first data layer on Dexie.js.
 - Fourth Night: privacy-first skincare routine app, currently in development. Runs fully offline, with no user data leaving the device.
 - Walkbid: field-operations tool for hardscape and paving contractors, specified from direct experience on site.
 - Honor Studio: web design service for local businesses in Groningen, Netherlands. Client acquisition, delivery and support handled end to end.
@@ -53,11 +52,11 @@ April 2024 - August 2025
 
 Real Estate Agent
 Verde Casa, Asolo, Italy
-[TO FILL IN: month] 2023 - [TO FILL IN: month] 2024
+November 2023 - March 2024
 - Ran client viewings and property presentations, and followed leads through to close.
 - Negotiated directly between buyers and sellers, owning the client relationship from first contact to signature.
 
-Timber Structure Labourer, promoted to Site Coordinator and Trainer
+Site Coordinator and Trainer (promoted from Labourer)
 Altar Decks, Gold Coast, Australia
 September 2022 - April 2023
 - Built and installed decking, pergolas and fencing from technical drawings, operating power tools independently and to schedule.

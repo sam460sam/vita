@@ -22,8 +22,6 @@
   --rule-soft:#ececec;
   /* one accent, used only on the name and the divider rules */
   --accent:   #22314e;
-  /* editorial marker for fields still to fill in; delete the .todo rule when done */
-  --flag:     #b23c17;
   --paper:    #ffffff;
 
   --pad-x: 16mm;
@@ -283,13 +281,6 @@ ul.points li::before{
   border-top: 0.6pt solid var(--rule);
 }
 
-/* fill-in placeholders — remove before sending */
-.todo{
-  color: var(--flag);
-  font-weight: 500;
-  border-bottom: 0.8pt dashed var(--flag);
-  padding-bottom: 0.3mm;
-}
 
 /* ---------- print ---------- */
 @page{ size: A4; margin: 0; }
@@ -312,7 +303,8 @@ ul.points li::before{
   a{ color: inherit; text-decoration: none; }
 }
 
-.meta a{ color: inherit; text-decoration: none; }
+/* links stay typographically invisible; they are still live in the exported PDF */
+.sheet a{ color: inherit; text-decoration: none; }
 
 @media screen{
   .sheet{ box-shadow: 0 1px 3px rgba(0,0,0,.10), 0 12px 40px rgba(0,0,0,.10); }
@@ -334,7 +326,6 @@ ul.points li::before{
 <p class="screen-note">
   <b>Print to PDF:</b> Cmd/Ctrl + P → Destination “Save as PDF” → Paper size <b>A4</b> →
   Margins <b>None</b> → <b>Background graphics ON</b> → Scale 100%. Two pages, no cropping.
-  Fields marked in blue with a dashed underline still need filling in.
 </p>
 
 <!-- ==================== PAGE 1 ==================== -->
@@ -344,7 +335,7 @@ ul.points li::before{
     <h1 class="name">Samuele Gubert</h1>
     <p class="role">Frontend &amp; AI Developer — React / TypeScript / LLM Automation</p>
     <p class="meta">
-      <span class="it">Castelfranco Veneto (TV), Italy</span><span class="it">Available for remote work worldwide</span>
+      <span class="it">Castelfranco Veneto (TV), Italy</span>
     </p>
     <p class="meta">
       <span class="it">+39 351 338 2549</span><span class="it"><a href="mailto:gubertsamuele31@gmail.com">gubertsamuele31@gmail.com</a></span><span class="it"><a href="https://github.com/sam460sam">github.com/sam460sam</a></span>
@@ -407,8 +398,7 @@ ul.points li::before{
           <li>Build and sell digital productivity templates (Notion, Google Sheets) to customers internationally.</li>
         </ul>
         <dl class="work">
-          <!-- App Store URL: replace the line below with  <dt><a href="URL">Vyta</a></dt>  -->
-          <dt><span class="todo">Vyta</span></dt>
+          <dt><a href="https://apps.apple.com/app/id6776238780">Vyta</a></dt>
           <dd>“Life OS” productivity app, published on the App Store — React, TypeScript and Capacitor with a local-first data layer on Dexie.js.</dd>
 
           <dt>Fourth Night</dt>
@@ -448,7 +438,7 @@ ul.points li::before{
       <article class="entry">
         <div class="entry-head">
           <h3 class="entry-title">Real Estate Agent <span class="entry-org">— Verde Casa, Asolo, Italy</span></h3>
-          <div class="period"><span class="todo">month</span> 2023 — <span class="todo">month</span> 2024</div>
+          <div class="period">Nov 2023 — Mar 2024</div>
         </div>
         <ul class="points">
           <li>Ran client viewings and property presentations, and followed leads through to close.</li>
@@ -458,7 +448,7 @@ ul.points li::before{
 
       <article class="entry">
         <div class="entry-head">
-          <h3 class="entry-title">Timber Structure Labourer → Site Coordinator &amp; Trainer <span class="entry-org">— Altar Decks, Gold Coast, Australia</span></h3>
+          <h3 class="entry-title">Site Coordinator &amp; Trainer (promoted from Labourer) <span class="entry-org">— Altar Decks, Gold Coast, Australia</span></h3>
           <div class="period">Sep 2022 — Apr 2023</div>
         </div>
         <ul class="points">
