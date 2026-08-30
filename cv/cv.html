@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Samuele Gubert — Frontend &amp; AI Developer — CV</title>
+<style>
+/* ============================================================
+   Samuele Gubert — CV
+   Single self-contained file. No runtime dependencies.
+   Print to PDF: Cmd/Ctrl+P -> A4 -> margins "None" -> Background graphics ON
+   ============================================================ */
+
+:root{
+  --ink:      #111111;
+  --mid:      #4a4a4a;
+  --faint:    #8b8b8b;
+  --rule:     #dcdcdc;
+  --rule-soft:#ececec;
+  --accent:   #1a3ca8;
+  --paper:    #ffffff;
+
+  --pad-x: 16mm;
+  --pad-t: 15mm;
+  --pad-b: 13mm;
+
+  --label-col: 27mm;
+  --gutter: 7mm;
+}
+
+*{ box-sizing: border-box; }
+
+html,body{ margin:0; padding:0; background:#eceded; }
+
+body{
+  font-family: "Inter", "Inter Variable", "Geist", -apple-system, BlinkMacSystemFont,
+               "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 9.4pt;
+  line-height: 1.45;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "kern" 1, "liga" 1, "tnum" 1;
+}
+
+/* ---------- sheet ---------- */
+.sheet{
+  width: 210mm;
+  height: 297mm;
+  padding: var(--pad-t) var(--pad-x) var(--pad-b);
+  margin: 0 auto;
+  background: var(--paper);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.sheet + .sheet{ margin-top: 10mm; }
+
+/* ---------- header ---------- */
+.name{
+  font-size: 26pt;
+  font-weight: 700;
+  letter-spacing: -0.028em;
+  line-height: 1.02;
+  color: var(--accent);
+  margin: 0;
+}
+.role{
+  margin: 2.4mm 0 0;
+  font-size: 10.4pt;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+}
+.meta{
+  margin: 3.4mm 0 0;
+  font-size: 8.7pt;
+  line-height: 1.5;
+  color: var(--mid);
+}
+.meta + .meta{ margin-top: 0.8mm; }
+.meta span{ white-space: nowrap; }
+.meta .sep{ color: var(--rule); padding: 0 1.5mm; }
+.masthead{
+  padding-bottom: 5mm;
+  border-bottom: 1.4pt solid var(--accent);
+}
+
+/* running header on page 2 */
+.runhead{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 3mm;
+  border-bottom: 1.4pt solid var(--accent);
+  font-size: 8.6pt;
+  color: var(--mid);
+}
+.runhead b{ color: var(--ink); font-weight: 600; letter-spacing:-0.01em; font-size: 10pt; }
+
+/* ---------- section grid ---------- */
+.section{
+  display: grid;
+  grid-template-columns: var(--label-col) 1fr;
+  column-gap: var(--gutter);
+  padding-top: 6mm;
+  margin-top: 6mm;
+  border-top: 0.6pt solid var(--rule);
+  break-inside: avoid;
+}
+.section:first-of-type{ border-top: 0; }
+.section > h2{
+  margin: 0;
+  font-size: 7.6pt;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  color: var(--accent);
+  line-height: 1.5;
+}
+.section > .body{ min-width: 0; }
+
+/* ---------- profile ---------- */
+.profile{
+  margin: 0;
+  font-size: 9.6pt;
+  line-height: 1.55;
+  color: var(--ink);
+  max-width: 152mm;
+}
+
+/* ---------- skills ---------- */
+.skills{
+  display: grid;
+  grid-template-columns: 24mm 1fr;
+  column-gap: 5mm;
+  row-gap: 1.9mm;
+}
+.skills dt{
+  font-size: 8.4pt;
+  font-weight: 600;
+  color: var(--mid);
+  line-height: 1.5;
+}
+.skills dd{
+  margin: 0;
+  font-size: 9pt;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.skills dd .dot{ color: var(--rule); padding: 0 0.6mm; }
+
+/* ---------- experience ---------- */
+.entry{ break-inside: avoid; }
+.entry + .entry{ margin-top: 4.2mm; }
+.entry-head{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 6mm;
+  align-items: baseline;
+}
+.entry-title{
+  margin: 0;
+  font-size: 9.9pt;
+  font-weight: 650;
+  letter-spacing: -0.008em;
+  line-height: 1.35;
+}
+.entry-org{
+  font-weight: 400;
+  color: var(--mid);
+}
+.period{
+  font-size: 8.1pt;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  white-space: nowrap;
+  text-align: right;
+}
+ul.points{
+  margin: 1.4mm 0 0;
+  padding: 0;
+  list-style: none;
+}
+ul.points li{
+  position: relative;
+  padding-left: 3.6mm;
+  margin-top: 0.9mm;
+  font-size: 9pt;
+  line-height: 1.45;
+  max-width: 152mm;
+}
+ul.points li::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1.78mm;
+  width: 1.5mm;
+  height: 0.55pt;
+  background: var(--faint);
+}
+
+/* selected work sub-block */
+.work{
+  margin-top: 2.2mm;
+  padding-top: 2.2mm;
+  border-top: 0.6pt solid var(--rule-soft);
+  display: grid;
+  grid-template-columns: 27mm 1fr;
+  column-gap: 5mm;
+  row-gap: 1.5mm;
+}
+.work dt{
+  font-size: 9pt;
+  font-weight: 600;
+  line-height: 1.42;
+}
+.work dd{
+  margin: 0;
+  font-size: 8.8pt;
+  line-height: 1.42;
+  color: var(--mid);
+}
+
+/* compressed earlier roles */
+.compact{ display: grid; row-gap: 2.6mm; }
+.compact .entry-title{ font-size: 9.2pt; font-weight: 600; }
+.compact p{
+  margin: 0.5mm 0 0;
+  font-size: 8.7pt;
+  line-height: 1.42;
+  color: var(--mid);
+  max-width: 152mm;
+}
+
+/* ---------- languages ---------- */
+.langs{
+  display: grid;
+  grid-template-columns: 0.72fr 1.66fr 0.72fr;
+  column-gap: 7mm;
+}
+.langs .lang b{
+  display: block;
+  font-size: 9pt;
+  font-weight: 600;
+}
+.langs .lang span{
+  display: block;
+  font-size: 8.5pt;
+  color: var(--mid);
+  line-height: 1.42;
+}
+
+/* ---------- misc ---------- */
+.plain{ margin: 0; font-size: 9pt; line-height: 1.5; max-width: 152mm; }
+.plain + .plain{ margin-top: 1.4mm; }
+.plain .k{ font-weight: 600; }
+
+.foot{
+  margin-top: auto;
+  padding-top: 5mm;
+  display: flex;
+  justify-content: space-between;
+  font-size: 7.4pt;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--faint);
+  border-top: 0.6pt solid var(--rule);
+}
+
+/* fill-in placeholders — remove before sending */
+.todo{
+  color: var(--accent);
+  font-weight: 500;
+  border-bottom: 0.8pt dashed var(--accent);
+  padding-bottom: 0.3mm;
+}
+
+/* ---------- print ---------- */
+@page{ size: A4; margin: 0; }
+
+@media print{
+  html,body{ background: #fff; }
+  body{
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .sheet{
+    margin: 0;
+    box-shadow: none;
+    break-after: page;
+    page-break-after: always;
+  }
+  .sheet:last-of-type{ break-after: auto; page-break-after: auto; }
+  .sheet + .sheet{ margin-top: 0; }
+  .screen-note{ display: none !important; }
+  a{ color: inherit; text-decoration: none; }
+}
+
+@media screen{
+  .sheet{ box-shadow: 0 1px 3px rgba(0,0,0,.10), 0 12px 40px rgba(0,0,0,.10); }
+  .screen-note{
+    max-width: 210mm;
+    margin: 8mm auto 6mm;
+    font-size: 8.6pt;
+    color: #5b5b5b;
+    padding: 3mm 4mm;
+    background: #fff;
+    border-left: 2pt solid var(--accent);
+  }
+  body{ padding-bottom: 12mm; }
+}
+</style>
+</head>
+<body>
+
+<p class="screen-note">
+  <b>Print to PDF:</b> Cmd/Ctrl + P → Destination “Save as PDF” → Paper size <b>A4</b> →
+  Margins <b>None</b> → <b>Background graphics ON</b> → Scale 100%. Two pages, no cropping.
+  Fields marked in blue with a dashed underline still need filling in.
+</p>
+
+<!-- ==================== PAGE 1 ==================== -->
+<section class="sheet">
+
+  <header class="masthead">
+    <h1 class="name">Samuele Gubert</h1>
+    <p class="role">Frontend &amp; AI Developer — React / TypeScript / LLM Automation</p>
+    <p class="meta">
+      <span>Castelfranco Veneto (TV), Italy</span><span class="sep">·</span><span>Available for remote work worldwide</span>
+    </p>
+    <p class="meta">
+      <span>+39 351 338 2549</span><span class="sep">·</span><span>gubertsamuele31@gmail.com</span><span class="sep">·</span><span class="todo">GitHub / X / portfolio — to fill in</span>
+    </p>
+  </header>
+
+  <!-- Profile -->
+  <div class="section">
+    <h2>Profile</h2>
+    <div class="body">
+      <p class="profile">
+        Self-taught developer who designs, builds and ships his own iOS apps solo — from architecture
+        to App Store release. Works day to day in React, TypeScript and Capacitor, with LLM tooling
+        (Claude Code, AI app builders) as a standard part of the workflow rather than an experiment.
+        Comes from hands-on trades and crew coordination across Australia, the Netherlands and Italy,
+        so owning a task end to end without supervision is the norm. Trilingual, fully remote-ready,
+        and used to working across CET and AEST.
+      </p>
+    </div>
+  </div>
+
+  <!-- Technical skills -->
+  <div class="section">
+    <h2>Technical Skills</h2>
+    <div class="body">
+      <dl class="skills">
+        <dt>Frontend</dt>
+        <dd>React <span class="dot">·</span> TypeScript <span class="dot">·</span> Vite <span class="dot">·</span> Tailwind CSS <span class="dot">·</span> Dexie.js / IndexedDB</dd>
+
+        <dt>Mobile</dt>
+        <dd>Capacitor <span class="dot">·</span> iOS builds <span class="dot">·</span> App Store Connect <span class="dot">·</span> TestFlight <span class="dot">·</span> App Store publishing</dd>
+
+        <dt>AI &amp; Automation</dt>
+        <dd>Prompt engineering <span class="dot">·</span> Claude Code <span class="dot">·</span> LLM-assisted development <span class="dot">·</span> AI app builders (Base44, Lovable) <span class="dot">·</span> Workflow automation (n8n, Make, Zapier)</dd>
+
+        <dt>Tools</dt>
+        <dd>Git <span class="dot">·</span> GitHub <span class="dot">·</span> Notion <span class="dot">·</span> Google Workspace <span class="dot">·</span> Google Sheets (advanced)</dd>
+
+        <dt>Practice</dt>
+        <dd>Offline-first and privacy-first architecture <span class="dot">·</span> Solo product ownership <span class="dot">·</span> Shipping under tight time constraints</dd>
+      </dl>
+    </div>
+  </div>
+
+  <!-- Experience (part 1) -->
+  <div class="section">
+    <h2>Experience</h2>
+    <div class="body">
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3 class="entry-title">Indie Software Developer &amp; Founder <span class="entry-org">— Self-employed, Remote</span></h3>
+          <div class="period">2024 — Present</div>
+        </div>
+        <ul class="points">
+          <li>Design, build and publish iOS applications single-handedly: architecture, interface, local data layer, App Store review and release.</li>
+          <li>Build and sell digital productivity templates (Notion, Google Sheets) to customers internationally.</li>
+        </ul>
+        <dl class="work">
+          <dt>Vyta</dt>
+          <dd>“Life OS” productivity app, published on the App Store — React, TypeScript and Capacitor with a local-first data layer on Dexie.js.</dd>
+
+          <dt>Fourth Night</dt>
+          <dd>Privacy-first skincare routine app that runs fully offline; no user data ever leaves the device.</dd>
+
+          <dt>Walkbid</dt>
+          <dd>Field-operations tool for hardscape and paving contractors, specified from direct experience on site.</dd>
+
+          <dt>Honor Studio</dt>
+          <dd>Web design service for local businesses in Groningen (NL) — client acquisition, delivery and support handled end to end.</dd>
+        </dl>
+      </article>
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3 class="entry-title">Industrial Flooring Operative <span class="entry-org">— AD Nooren, Garnwerd, Netherlands</span></h3>
+          <div class="period">Aug 2025 — Jul 2026</div>
+        </div>
+        <ul class="points">
+          <li>Laid and finished industrial concrete floors on commercial sites, working to fixed handover dates.</li>
+          <li>Operated inside an English- and Dutch-speaking international crew, coordinating with other trades on shared deadlines.</li>
+        </ul>
+      </article>
+
+
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Samuele Gubert — Curriculum Vitae</span>
+    <span>Page 1 of 2</span>
+  </div>
+</section>
+
+<!-- ==================== PAGE 2 ==================== -->
+<section class="sheet">
+
+  <div class="runhead">
+    <b>Samuele Gubert</b>
+    <span>Frontend &amp; AI Developer <span style="color:var(--rule)">·</span> gubertsamuele31@gmail.com <span style="color:var(--rule)">·</span> +39 351 338 2549</span>
+  </div>
+
+  <!-- Experience (part 2) -->
+  <div class="section">
+    <h2>Experience<br>continued</h2>
+    <div class="body">
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3 class="entry-title">Warehouse Assistant <span class="entry-org">— Venice, Italy</span></h3>
+          <div class="period">Apr 2024 — Aug 2025</div>
+        </div>
+        <ul class="points">
+          <li>Picked, packed, sorted and quality-checked orders using handheld scanners and pallet jacks, hitting daily productivity targets under standard safety procedures.</li>
+        </ul>
+      </article>
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3 class="entry-title">Site Coordinator &amp; Trainer <span class="entry-org">— Australia</span></h3>
+          <div class="period"><span class="todo">dates — to fill in</span></div>
+        </div>
+        <ul class="points">
+          <li>Coordinated a small on-site crew and allocated the day-to-day workload.</li>
+          <li>Trained new workers on tools, method and safety, and signed off the quality checks on finished work.</li>
+        </ul>
+      </article>
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3 class="entry-title">Real Estate Agent <span class="entry-org">— <span class="todo">company — to fill in</span>, Italy</span></h3>
+          <div class="period"><span class="todo">dates — to fill in</span></div>
+        </div>
+        <ul class="points">
+          <li>Ran client viewings and property presentations, and followed leads through to close.</li>
+          <li>Negotiated directly between buyers and sellers, owning the client relationship from first contact to signature.</li>
+        </ul>
+      </article>
+
+    </div>
+  </div>
+
+  <!-- Earlier hands-on experience -->
+  <div class="section">
+    <h2>Earlier<br>hands-on work</h2>
+    <div class="body compact">
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3 class="entry-title">Construction Labourer / Concreter <span class="entry-org">— Evolution Floor Slrs (IT) &amp; Lanzarin Concrete Pty (AU)</span></h3>
+          <div class="period">2023 — 2024</div>
+        </div>
+        <p>Concrete pouring, levelling and surface finishing; formwork and site preparation.</p>
+      </article>
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3 class="entry-title">Timber Structure Labourer <span class="entry-org">— Altar Decks, Gold Coast, Australia</span></h3>
+          <div class="period">Sep 2022 — Mar 2023</div>
+        </div>
+        <p>Built and installed decking, pergolas and fencing from technical drawings; operated power tools independently and to schedule.</p>
+      </article>
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3 class="entry-title">Interior Painter <span class="entry-org">— Bonin Pitture Srl, Italy</span></h3>
+          <div class="period">Jan 2022 — Aug 2022</div>
+        </div>
+        <p>Surface preparation and finishing for residential and commercial properties.</p>
+      </article>
+
+    </div>
+  </div>
+
+  <!-- Languages -->
+  <div class="section">
+    <h2>Languages</h2>
+    <div class="body">
+      <div class="langs">
+        <div class="lang"><b>Italian</b><span>Native</span></div>
+        <div class="lang"><b>English</b><span>Full professional working proficiency (C1) — lived and worked in Australia and the Netherlands</span></div>
+        <div class="lang"><b>Spanish</b><span>Intermediate (B2)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Education -->
+  <div class="section">
+    <h2>Education</h2>
+    <div class="body">
+      <div class="entry-head">
+        <h3 class="entry-title">Five-year vocational secondary diploma <span class="entry-org">— Business Economics, Italy</span></h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional -->
+  <div class="section">
+    <h2>Additional</h2>
+    <div class="body">
+      <p class="plain"><span class="k">Mobility.</span> Currently relocating to Australia on a Working Holiday visa (417) — available for remote work throughout. Full driving licence (B).</p>
+      <p class="plain"><span class="k">International experience.</span> Lived and worked in Australia, the Netherlands and Italy.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Samuele Gubert — Curriculum Vitae</span>
+    <span>Page 2 of 2</span>
+  </div>
+</section>
+
+</body>
+</html>

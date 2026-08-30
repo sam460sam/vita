@@ -1,0 +1,100 @@
+SAMUELE GUBERT
+Frontend and AI Developer - React / TypeScript / LLM Automation
+
+Castelfranco Veneto (TV), Italy
+Available for remote work worldwide
+Phone: +39 351 338 2549
+Email: gubertsamuele31@gmail.com
+[TO FILL IN: GitHub / X / portfolio URL]
+
+
+PROFESSIONAL SUMMARY
+
+Self-taught developer who designs, builds and ships his own iOS apps solo, from
+architecture to App Store release. Works day to day in React, TypeScript and
+Capacitor, with LLM tooling (Claude Code, AI app builders) as a standard part of
+the workflow rather than an experiment. Comes from hands-on trades and crew
+coordination across Australia, the Netherlands and Italy, so owning a task end to
+end without supervision is the norm. Trilingual, fully remote-ready, and used to
+working across CET and AEST time zones.
+
+
+TECHNICAL SKILLS
+
+Frontend: React, TypeScript, Vite, Tailwind CSS, Dexie.js, IndexedDB
+Mobile: Capacitor, iOS builds, App Store Connect, TestFlight, App Store publishing
+AI and Automation: Prompt engineering, Claude Code, LLM-assisted development, AI app builders (Base44, Lovable), workflow automation (n8n, Make, Zapier)
+Tools: Git, GitHub, Notion, Google Workspace, Google Sheets (advanced)
+Practice: Offline-first and privacy-first architecture, solo product ownership, shipping under tight time constraints
+
+
+PROFESSIONAL EXPERIENCE
+
+Indie Software Developer and Founder
+Self-employed, Remote
+2024 - Present
+- Design, build and publish iOS applications single-handedly: architecture, interface, local data layer, App Store review and release.
+- Vyta: "Life OS" productivity app, published on the App Store. Built with React, TypeScript and Capacitor, with a local-first data layer on Dexie.js.
+- Fourth Night: privacy-first skincare routine app that runs fully offline; no user data ever leaves the device.
+- Walkbid: field-operations tool for hardscape and paving contractors, specified from direct experience on site.
+- Honor Studio: web design service for local businesses in Groningen, Netherlands. Client acquisition, delivery and support handled end to end.
+- Build and sell digital productivity templates (Notion, Google Sheets) to customers internationally.
+
+Industrial Flooring Operative
+AD Nooren, Garnwerd, Netherlands
+August 2025 - July 2026
+- Laid and finished industrial concrete floors on commercial sites, working to fixed handover dates.
+- Operated inside an English- and Dutch-speaking international crew, coordinating with other trades on shared deadlines.
+
+Warehouse Assistant
+Venice, Italy
+April 2024 - August 2025
+- Picked, packed, sorted and quality-checked orders using handheld scanners and pallet jacks, hitting daily productivity targets under standard safety procedures.
+
+Site Coordinator and Trainer
+Australia
+[TO FILL IN: start date] - [TO FILL IN: end date]
+- Coordinated a small on-site crew and allocated the day-to-day workload.
+- Trained new workers on tools, method and safety, and signed off the quality checks on finished work.
+
+Real Estate Agent
+[TO FILL IN: company name], Italy
+[TO FILL IN: start date] - [TO FILL IN: end date]
+- Ran client viewings and property presentations, and followed leads through to close.
+- Negotiated directly between buyers and sellers, owning the client relationship from first contact to signature.
+
+Construction Labourer and Concreter
+Evolution Floor Slrs, Italy and Lanzarin Concrete Pty, Australia
+2023 - 2024
+- Concrete pouring, levelling and surface finishing; formwork and site preparation.
+
+Timber Structure Labourer
+Altar Decks, Gold Coast, Australia
+September 2022 - March 2023
+- Built and installed decking, pergolas and fencing from technical drawings.
+- Operated power tools independently and to schedule.
+
+Interior Painter
+Bonin Pitture Srl, Italy
+January 2022 - August 2022
+- Surface preparation and finishing for residential and commercial properties.
+
+
+EDUCATION
+
+Five-year vocational secondary diploma, Business Economics
+Italy
+
+
+LANGUAGES
+
+Italian: Native
+English: Full professional working proficiency (C1). Lived and worked in Australia and the Netherlands.
+Spanish: Intermediate (B2)
+
+
+ADDITIONAL INFORMATION
+
+Currently relocating to Australia on a Working Holiday visa (417). Available for remote work throughout.
+International work experience in Australia, the Netherlands and Italy.
+Full driving licence (B).
