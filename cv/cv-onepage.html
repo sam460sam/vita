@@ -184,7 +184,6 @@ ul.points{
   list-style: none;
 }
 ul.points li{
-  position: relative;
   padding-left: 3.4mm;
   margin-top: 0.8mm;
   font-size: 8.7pt;
@@ -193,10 +192,9 @@ ul.points li{
 }
 ul.points li::before{
   content: "\2013";          /* en dash: one marker glyph for the whole document */
-  position: absolute;
-  left: 0;
-  top: 0;
-  line-height: inherit;      /* sits on the first text line, not above it */
+  display: inline-block;     /* in normal flow, so it keeps its place in the text order */
+  width: 3.4mm;
+  margin-left: -3.4mm;          /* hangs into the padding; wrapped lines stay aligned */
   color: var(--faint);
 }
 

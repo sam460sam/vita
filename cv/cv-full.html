@@ -197,7 +197,6 @@ ul.points{
   list-style: none;
 }
 ul.points li{
-  position: relative;
   padding-left: 3.6mm;
   margin-top: 0.9mm;
   font-size: 9pt;
@@ -206,10 +205,9 @@ ul.points li{
 }
 ul.points li::before{
   content: "\2013";          /* en dash: one marker glyph for the whole document */
-  position: absolute;
-  left: 0;
-  top: 0;
-  line-height: inherit;      /* sits on the first text line, not above it */
+  display: inline-block;     /* in normal flow, so it keeps its place in the text order */
+  width: 3.6mm;
+  margin-left: -3.6mm;          /* hangs into the padding; wrapped lines stay aligned */
   color: var(--faint);
 }
 
@@ -371,8 +369,8 @@ ul.points li::before{
         <dt>AI</dt>
         <dd><span class="it">Prompt engineering</span><span class="it">Claude Code</span><span class="it">LLM-assisted development</span><span class="it">AI app builders (Base44, Lovable)</span></dd>
 
-        <dt>Automation</dt>
-        <dd><span class="it">n8n</span><span class="it">Make</span><span class="it">Zapier</span><span class="it">Workflow design</span></dd>
+        <dt>Workflow automation</dt>
+        <dd><span class="it">n8n</span><span class="it">Make</span><span class="it">Zapier</span></dd>
 
         <dt>Tools</dt>
         <dd><span class="it">Git</span><span class="it">GitHub</span><span class="it">Notion</span><span class="it">Google Workspace</span><span class="it">Google Sheets (advanced)</span></dd>
