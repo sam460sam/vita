@@ -10,13 +10,19 @@ Three deliverables, one set of content.
 
 ## What differs between the one-page and full versions
 
-The one-pager keeps everything that sells the tech profile and compresses the rest:
+Both versions group work into two blocks: `Experience` (indie work, plus the two roles
+that say something for a tech application) and `Other Experience` (the manual roles).
+Each block is in reverse chronological order. The blocks are not one continuous
+timeline — `Other Experience` opens with the most recent job of all, AD Nooren — which
+is why it is labelled "Other" rather than "Earlier": grouping by relevance keeps the
+indie work at the top of page one, where it does its job.
 
-- Indie experience is intact — it is the part that matters. Walkbid and the digital
-  templates share one line.
-- Site Coordinator & Trainer and Real Estate Agent keep one bullet each: leadership
-  and client ownership are the two non-tech things worth saying.
-- The five manual roles collapse into `Earlier Roles` — one line each, no bullets.
+The one-pager compresses rather than cuts:
+
+- Indie experience is intact, with both summary bullets and all four projects.
+- Real Estate Agent keeps one bullet, Altar Decks two: client ownership and the
+  promotion to crew coordination are the two non-tech things worth saying.
+- The three remaining manual roles are one line each in `Other Experience`, no bullets.
 - Skills are four grouped rows; Education, Languages and Mobility share one section.
 
 Nothing is invented in either version, and no fact is present in one that is absent
@@ -56,12 +62,19 @@ cropped, nothing split across a page break.
 Placeholders are marked in the HTML with `class="todo"` (accent colour, dashed underline)
 and in the text version with `[TO FILL IN: ...]`. Search for either and replace:
 
-- App Store URL for **Vyta** and for **Fourth Night**
-- **Site Coordinator & Trainer** (Australia) — start and end dates
-- **Real Estate Agent** — company name, start and end dates
+- App Store URL for **Vyta**. In the HTML the marker sits on the app name: replace
+  `<dt>Vyta <span class="todo">link</span></dt>` with `<dt><a href="URL">Vyta</a></dt>`.
+  In `cv-ats.txt` replace `[TO FILL IN: App Store URL]` with the plain URL.
 
-Until the two undated roles are filled in, they sit above `Earlier Roles` in date order
-by assumption, not by fact — check the ordering once you add the dates.
+Fourth Night has no link by design — it is described as currently in development, not
+as published.
+
+One date to tighten, not a placeholder: **Real Estate Agent (Verde Casa)** is recorded
+as `2023 - 2024`, year granularity only. Read literally it can overlap Altar Decks
+(ends April 2023, in Australia) at one end and Warehouse Assistant (starts April 2024)
+at the other. Month granularity — say `May 2023 - Mar 2024` — removes both ambiguities.
+Every other date in the CV is month-precise and free of overlap, apart from the indie
+work, which runs alongside employment by nature.
 
 Once everything is filled in, delete the `.todo` rule from the stylesheet so no trace of
 it remains.
