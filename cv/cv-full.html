@@ -14,10 +14,16 @@
 :root{
   --ink:      #111111;
   --mid:      #4a4a4a;
+  --label:    #3a3a3a;
+  --date:     #575757;
   --faint:    #8b8b8b;
+  --sep:      #bcbcbc;
   --rule:     #dcdcdc;
   --rule-soft:#ececec;
-  --accent:   #1a3ca8;
+  /* one accent, used only on the name and the divider rules */
+  --accent:   #22314e;
+  /* editorial marker for fields still to fill in; delete the .todo rule when done */
+  --flag:     #b23c17;
   --paper:    #ffffff;
 
   --pad-x: 16mm;
@@ -79,8 +85,6 @@ body{
   color: var(--mid);
 }
 .meta + .meta{ margin-top: 0.8mm; }
-.meta span{ white-space: nowrap; }
-.meta .sep{ color: var(--rule); padding: 0 1.5mm; }
 .masthead{
   padding-bottom: 5mm;
   border-bottom: 1.4pt solid var(--accent);
@@ -97,6 +101,18 @@ body{
   color: var(--mid);
 }
 .runhead b{ color: var(--ink); font-weight: 600; letter-spacing:-0.01em; font-size: 10pt; }
+
+/* ---------- inline separator ----------
+   The middot is generated on the FOLLOWING item and is preceded by a zero-width
+   space, which is the only wrap opportunity between items. A line can therefore
+   only ever break BEFORE a separator, never after one, so no separator can be
+   stranded at the end of a line. */
+.it + .it::before{
+  content: "\200B\00B7";
+  color: var(--sep);
+  padding: 0 1.8mm;
+  font-weight: 400;
+}
 
 /* ---------- section grid ---------- */
 .section{
@@ -115,7 +131,7 @@ body{
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.11em;
-  color: var(--accent);
+  color: var(--label);
   line-height: 1.5;
 }
 .section > .body{ min-width: 0; }
@@ -148,7 +164,6 @@ body{
   line-height: 1.5;
   color: var(--ink);
 }
-.skills dd .dot{ color: var(--rule); padding: 0 0.6mm; }
 
 /* ---------- experience ---------- */
 .entry{ break-inside: avoid; }
@@ -174,7 +189,7 @@ body{
   font-size: 8.1pt;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: var(--accent);
+  color: var(--date);
   white-space: nowrap;
   text-align: right;
 }
@@ -192,13 +207,12 @@ ul.points li{
   max-width: 152mm;
 }
 ul.points li::before{
-  content: "";
+  content: "\2013";          /* en dash: one marker glyph for the whole document */
   position: absolute;
   left: 0;
-  top: 1.78mm;
-  width: 1.5mm;
-  height: 0.55pt;
-  background: var(--faint);
+  top: 0;
+  line-height: inherit;      /* sits on the first text line, not above it */
+  color: var(--faint);
 }
 
 /* selected work sub-block */
@@ -271,9 +285,9 @@ ul.points li::before{
 
 /* fill-in placeholders — remove before sending */
 .todo{
-  color: var(--accent);
+  color: var(--flag);
   font-weight: 500;
-  border-bottom: 0.8pt dashed var(--accent);
+  border-bottom: 0.8pt dashed var(--flag);
   padding-bottom: 0.3mm;
 }
 
@@ -330,10 +344,10 @@ ul.points li::before{
     <h1 class="name">Samuele Gubert</h1>
     <p class="role">Frontend &amp; AI Developer — React / TypeScript / LLM Automation</p>
     <p class="meta">
-      <span>Castelfranco Veneto (TV), Italy</span><span class="sep">·</span><span>Available for remote work worldwide</span>
+      <span class="it">Castelfranco Veneto (TV), Italy</span><span class="it">Available for remote work worldwide</span>
     </p>
     <p class="meta">
-      <span>+39 351 338 2549</span><span class="sep">·</span><span><a href="mailto:gubertsamuele31@gmail.com">gubertsamuele31@gmail.com</a></span><span class="sep">·</span><span><a href="https://github.com/sam460sam">github.com/sam460sam</a></span>
+      <span class="it">+39 351 338 2549</span><span class="it"><a href="mailto:gubertsamuele31@gmail.com">gubertsamuele31@gmail.com</a></span><span class="it"><a href="https://github.com/sam460sam">github.com/sam460sam</a></span>
     </p>
   </header>
 
@@ -358,19 +372,22 @@ ul.points li::before{
     <div class="body">
       <dl class="skills">
         <dt>Frontend</dt>
-        <dd>React <span class="dot">·</span> TypeScript <span class="dot">·</span> Vite <span class="dot">·</span> Tailwind CSS <span class="dot">·</span> Dexie.js / IndexedDB</dd>
+        <dd><span class="it">React</span><span class="it">TypeScript</span><span class="it">Vite</span><span class="it">Tailwind CSS</span><span class="it">Dexie.js / IndexedDB</span></dd>
 
         <dt>Mobile</dt>
-        <dd>Capacitor <span class="dot">·</span> iOS builds <span class="dot">·</span> App Store Connect <span class="dot">·</span> TestFlight <span class="dot">·</span> App Store publishing</dd>
+        <dd><span class="it">Capacitor</span><span class="it">iOS builds</span><span class="it">App Store Connect</span><span class="it">TestFlight</span><span class="it">App Store publishing</span></dd>
 
-        <dt>AI &amp; Automation</dt>
-        <dd>Prompt engineering <span class="dot">·</span> Claude Code <span class="dot">·</span> LLM-assisted development <span class="dot">·</span> AI app builders (Base44, Lovable) <span class="dot">·</span> Workflow automation (n8n, Make, Zapier)</dd>
+        <dt>AI</dt>
+        <dd><span class="it">Prompt engineering</span><span class="it">Claude Code</span><span class="it">LLM-assisted development</span><span class="it">AI app builders (Base44, Lovable)</span></dd>
+
+        <dt>Automation</dt>
+        <dd><span class="it">n8n</span><span class="it">Make</span><span class="it">Zapier</span><span class="it">Workflow design</span></dd>
 
         <dt>Tools</dt>
-        <dd>Git <span class="dot">·</span> GitHub <span class="dot">·</span> Notion <span class="dot">·</span> Google Workspace <span class="dot">·</span> Google Sheets (advanced)</dd>
+        <dd><span class="it">Git</span><span class="it">GitHub</span><span class="it">Notion</span><span class="it">Google Workspace</span><span class="it">Google Sheets (advanced)</span></dd>
 
         <dt>Practice</dt>
-        <dd>Offline-first and privacy-first architecture <span class="dot">·</span> Solo product ownership <span class="dot">·</span> Shipping under tight time constraints</dd>
+        <dd><span class="it">Offline-first and privacy-first architecture</span><span class="it">Solo product ownership</span><span class="it">Shipping under tight time constraints</span></dd>
       </dl>
     </div>
   </div>
@@ -390,8 +407,8 @@ ul.points li::before{
           <li>Build and sell digital productivity templates (Notion, Google Sheets) to customers internationally.</li>
         </ul>
         <dl class="work">
-          <!-- App Store URL: replace the whole dt with <dt><a href="URL">Vyta</a></dt> and delete the .todo span -->
-          <dt>Vyta <span class="todo">link</span></dt>
+          <!-- App Store URL: replace the line below with  <dt><a href="URL">Vyta</a></dt>  -->
+          <dt><span class="todo">Vyta</span></dt>
           <dd>“Life OS” productivity app, published on the App Store — React, TypeScript and Capacitor with a local-first data layer on Dexie.js.</dd>
 
           <dt>Fourth Night</dt>
@@ -431,7 +448,7 @@ ul.points li::before{
       <article class="entry">
         <div class="entry-head">
           <h3 class="entry-title">Real Estate Agent <span class="entry-org">— Verde Casa, Asolo, Italy</span></h3>
-          <div class="period">2023 — 2024</div>
+          <div class="period"><span class="todo">month</span> 2023 — <span class="todo">month</span> 2024</div>
         </div>
         <ul class="points">
           <li>Ran client viewings and property presentations, and followed leads through to close.</li>

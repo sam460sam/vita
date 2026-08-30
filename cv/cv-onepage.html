@@ -14,15 +14,21 @@
 :root{
   --ink:      #111111;
   --mid:      #4a4a4a;
+  --label:    #3a3a3a;
+  --date:     #575757;
   --faint:    #8b8b8b;
+  --sep:      #bcbcbc;
   --rule:     #dcdcdc;
   --rule-soft:#ececec;
-  --accent:   #1a3ca8;
+  /* one accent, used only on the name and the divider rules */
+  --accent:   #22314e;
+  /* editorial marker for fields still to fill in; delete the .todo rule when done */
+  --flag:     #b23c17;
   --paper:    #ffffff;
 
-  --pad-x: 15mm;
+  --pad-x: 14mm;
   --pad-t: 12mm;
-  --pad-b: 9mm;
+  --pad-b: 8mm;
 
   --label-col: 21mm;
   --gutter: 5mm;
@@ -78,11 +84,21 @@ body{
   color: var(--mid);
 }
 .meta + .meta{ margin-top: 0.6mm; }
-.meta span{ white-space: nowrap; }
-.meta .sep{ color: var(--rule); padding: 0 1.4mm; }
 .masthead{
-  padding-bottom: 3.4mm;
+  padding-bottom: 3.1mm;
   border-bottom: 1.4pt solid var(--accent);
+}
+
+/* ---------- inline separator ----------
+   The middot is generated on the FOLLOWING item and is preceded by a zero-width
+   space, which is the only wrap opportunity between items. A line can therefore
+   only ever break BEFORE a separator, never after one, so no separator can be
+   stranded at the end of a line. */
+.it + .it::before{
+  content: "\200B\00B7";
+  color: var(--sep);
+  padding: 0 1.4mm;
+  font-weight: 400;
 }
 
 /* ---------- section grid ---------- */
@@ -90,8 +106,8 @@ body{
   display: grid;
   grid-template-columns: var(--label-col) 1fr;
   column-gap: var(--gutter);
-  padding-top: 3.1mm;
-  margin-top: 3.1mm;
+  padding-top: 2.9mm;
+  margin-top: 2.9mm;
   border-top: 0.6pt solid var(--rule);
   break-inside: avoid;
 }
@@ -102,7 +118,7 @@ body{
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.11em;
-  color: var(--accent);
+  color: var(--label);
   line-height: 1.5;
 }
 .section > .body{ min-width: 0; }
@@ -135,7 +151,6 @@ body{
   line-height: 1.38;
   color: var(--ink);
 }
-.kv dd .dot{ color: var(--rule); padding: 0 0.5mm; }
 
 /* ---------- experience ---------- */
 .entry{ break-inside: avoid; }
@@ -161,7 +176,7 @@ body{
   font-size: 7.9pt;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: var(--accent);
+  color: var(--date);
   white-space: nowrap;
   text-align: right;
 }
@@ -179,19 +194,18 @@ ul.points li{
   max-width: 156mm;
 }
 ul.points li::before{
-  content: "";
+  content: "\2013";          /* en dash: one marker glyph for the whole document */
   position: absolute;
   left: 0;
-  top: 1.68mm;
-  width: 1.4mm;
-  height: 0.55pt;
-  background: var(--faint);
+  top: 0;
+  line-height: inherit;      /* sits on the first text line, not above it */
+  color: var(--faint);
 }
 
 /* selected work sub-block */
 .work{
-  margin-top: 1.9mm;
-  padding-top: 1.9mm;
+  margin-top: 1.6mm;
+  padding-top: 1.6mm;
   border-top: 0.6pt solid var(--rule-soft);
   display: grid;
   grid-template-columns: 23mm 1fr;
@@ -211,16 +225,23 @@ ul.points li::before{
 }
 
 /* one-line earlier roles: no bullets */
-.oneline{ display: grid; row-gap: 1.4mm; }
-.oneline .entry + .entry{ margin-top: 0; }  /* row-gap owns the spacing here */
-.oneline .entry-title{ font-size: 8.5pt; font-weight: 600; }
-.oneline .period{ font-size: 7.7pt; }
+.compact{ display: grid; row-gap: 1.75mm; }
+.compact .entry + .entry{ margin-top: 0; }  /* row-gap owns the spacing here */
+.compact .entry-title{ font-size: 8.8pt; font-weight: 600; }
+.compact .period{ font-size: 7.9pt; }
+.compact p{
+  margin: 0.6mm 0 0;
+  font-size: 8.5pt;
+  line-height: 1.42;
+  color: var(--mid);
+  max-width: 156mm;
+}
 
 /* fill-in placeholders — remove before sending */
 .todo{
-  color: var(--accent);
+  color: var(--flag);
   font-weight: 500;
-  border-bottom: 0.8pt dashed var(--accent);
+  border-bottom: 0.8pt dashed var(--flag);
   padding-bottom: 0.3mm;
   white-space: nowrap;
 }
@@ -270,10 +291,10 @@ ul.points li::before{
     <h1 class="name">Samuele Gubert</h1>
     <p class="role">Frontend &amp; AI Developer — React / TypeScript / LLM Automation</p>
     <p class="meta">
-      <span>Castelfranco Veneto (TV), Italy</span><span class="sep">·</span><span>Available for remote work worldwide</span>
+      <span class="it">Castelfranco Veneto (TV), Italy</span><span class="it">Available for remote work worldwide</span>
     </p>
     <p class="meta">
-      <span>+39 351 338 2549</span><span class="sep">·</span><span><a href="mailto:gubertsamuele31@gmail.com">gubertsamuele31@gmail.com</a></span><span class="sep">·</span><span><a href="https://github.com/sam460sam">github.com/sam460sam</a></span>
+      <span class="it">+39 351 338 2549</span><span class="it"><a href="mailto:gubertsamuele31@gmail.com">gubertsamuele31@gmail.com</a></span><span class="it"><a href="https://github.com/sam460sam">github.com/sam460sam</a></span>
     </p>
   </header>
 
@@ -296,16 +317,16 @@ ul.points li::before{
     <div class="body">
       <dl class="kv">
         <dt>Frontend</dt>
-        <dd>React <span class="dot">·</span> TypeScript <span class="dot">·</span> Vite <span class="dot">·</span> Tailwind CSS <span class="dot">·</span> Dexie.js / IndexedDB</dd>
+        <dd><span class="it">React</span><span class="it">TypeScript</span><span class="it">Vite</span><span class="it">Tailwind CSS</span><span class="it">Dexie.js / IndexedDB</span></dd>
 
         <dt>Mobile</dt>
-        <dd>Capacitor <span class="dot">·</span> iOS builds <span class="dot">·</span> App Store Connect <span class="dot">·</span> TestFlight <span class="dot">·</span> App Store publishing</dd>
+        <dd><span class="it">Capacitor</span><span class="it">iOS builds</span><span class="it">App Store Connect</span><span class="it">TestFlight</span><span class="it">App Store publishing</span></dd>
 
         <dt>AI &amp; Automation</dt>
-        <dd>Prompt engineering <span class="dot">·</span> Claude Code <span class="dot">·</span> LLM-assisted development <span class="dot">·</span> AI app builders (Base44, Lovable) <span class="dot">·</span> Workflow automation (n8n, Make, Zapier)</dd>
+        <dd><span class="it">Prompt engineering</span><span class="it">Claude Code</span><span class="it">LLM-assisted development</span><span class="it">AI app builders (Base44, Lovable)</span><span class="it">Workflow automation (n8n, Make, Zapier)</span></dd>
 
         <dt>Tools &amp; Practice</dt>
-        <dd>Git <span class="dot">·</span> GitHub <span class="dot">·</span> Notion <span class="dot">·</span> Google Workspace <span class="dot">·</span> Google Sheets (advanced) <span class="dot">·</span> Offline-first and privacy-first architecture <span class="dot">·</span> Solo product ownership</dd>
+        <dd><span class="it">Git</span><span class="it">GitHub</span><span class="it">Notion</span><span class="it">Google Workspace</span><span class="it">Google Sheets (advanced)</span><span class="it">Offline-first and privacy-first architecture</span><span class="it">Solo product ownership</span></dd>
       </dl>
     </div>
   </div>
@@ -325,25 +346,25 @@ ul.points li::before{
           <li>Build and sell digital productivity templates (Notion, Google Sheets) to customers internationally.</li>
         </ul>
         <dl class="work">
-          <!-- App Store URL: replace the whole dt with <dt><a href="URL">Vyta</a></dt> and delete the .todo span -->
-          <dt>Vyta <span class="todo">link</span></dt>
+          <!-- App Store URL: replace the line below with  <dt><a href="URL">Vyta</a></dt>  -->
+          <dt><span class="todo">Vyta</span></dt>
           <dd>“Life OS” productivity app, published on the App Store — React, TypeScript and Capacitor with a local-first data layer on Dexie.js.</dd>
 
           <dt>Fourth Night</dt>
           <dd>Privacy-first skincare routine app, currently in development — runs fully offline, with no user data leaving the device.</dd>
 
           <dt>Honor Studio</dt>
-          <dd>Web design service for local businesses in Groningen (NL) — client acquisition, delivery and support, end to end.</dd>
+          <dd>Web design for Groningen (NL) businesses — acquisition, delivery, support.</dd>
 
           <dt>Walkbid</dt>
-          <dd>Field-operations tool for hardscape and paving contractors, specified from direct experience on site.</dd>
+          <dd>Field-operations tool for hardscape/paving contractors, from site experience.</dd>
         </dl>
       </article>
 
       <article class="entry">
         <div class="entry-head">
           <h3 class="entry-title">Real Estate Agent <span class="entry-org">— Verde Casa, Asolo, Italy</span></h3>
-          <div class="period">2023 — 2024</div>
+          <div class="period"><span class="todo">month</span> 2023 — <span class="todo">month</span> 2024</div>
         </div>
         <ul class="points">
           <li>Ran client viewings and negotiated directly between buyers and sellers, owning the client relationship from first contact to signature.</li>
@@ -367,13 +388,14 @@ ul.points li::before{
   <!-- Earlier experience -->
   <div class="section">
     <h2>Other Experience</h2>
-    <div class="body oneline">
+    <div class="body compact">
 
       <article class="entry">
         <div class="entry-head">
           <h3 class="entry-title">Industrial Flooring Operative <span class="entry-org">— AD Nooren, Garnwerd, Netherlands</span></h3>
           <div class="period">Aug 2025 — Jul 2026</div>
         </div>
+        <p>Industrial concrete flooring on commercial sites, in an English- and Dutch-speaking crew.</p>
       </article>
 
       <article class="entry">
@@ -381,6 +403,7 @@ ul.points li::before{
           <h3 class="entry-title">Warehouse Assistant <span class="entry-org">— Venice, Italy</span></h3>
           <div class="period">Apr 2024 — Aug 2025</div>
         </div>
+        <p>Pick and pack, sorting and quality control; met daily productivity targets.</p>
       </article>
 
       <article class="entry">
@@ -388,6 +411,7 @@ ul.points li::before{
           <h3 class="entry-title">Interior Painter <span class="entry-org">— Bonin Pitture Srl, Italy</span></h3>
           <div class="period">Jan 2022 — Aug 2022</div>
         </div>
+        <p>Surface preparation and finishing for residential and commercial properties.</p>
       </article>
 
     </div>
@@ -402,7 +426,7 @@ ul.points li::before{
         <dd>Five-year vocational secondary diploma — Business Economics, Italy</dd>
 
         <dt>Languages</dt>
-        <dd>Italian — Native <span class="dot">·</span> English — Full professional proficiency (C1), lived and worked in Australia and the Netherlands <span class="dot">·</span> Spanish — Intermediate (B2)</dd>
+        <dd><span class="it">Italian — Native</span><span class="it">English — Full professional proficiency (C1), lived and worked in Australia and the Netherlands</span><span class="it">Spanish — Intermediate (B2)</span></dd>
 
         <dt>Mobility</dt>
         <dd>Currently relocating to Australia on a Working Holiday visa (417) — available for remote work throughout. Full driving licence (B).</dd>
