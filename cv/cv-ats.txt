@@ -5,7 +5,7 @@ Castelfranco Veneto (TV), Italy
 Available for remote work worldwide
 Phone: +39 351 338 2549
 Email: gubertsamuele31@gmail.com
-[TO FILL IN: GitHub / X / portfolio URL]
+GitHub: github.com/sam460sam
 
 
 PROFESSIONAL SUMMARY
@@ -34,8 +34,8 @@ Indie Software Developer and Founder
 Self-employed, Remote
 2024 - Present
 - Design, build and publish iOS applications single-handedly: architecture, interface, local data layer, App Store review and release.
-- Vyta: "Life OS" productivity app, published on the App Store. Built with React, TypeScript and Capacitor, with a local-first data layer on Dexie.js.
-- Fourth Night: privacy-first skincare routine app that runs fully offline; no user data ever leaves the device.
+- Vyta: "Life OS" productivity app, published on the App Store. Built with React, TypeScript and Capacitor, with a local-first data layer on Dexie.js. [TO FILL IN: App Store URL]
+- Fourth Night: privacy-first skincare routine app that runs fully offline; no user data ever leaves the device. [TO FILL IN: App Store URL]
 - Walkbid: field-operations tool for hardscape and paving contractors, specified from direct experience on site.
 - Honor Studio: web design service for local businesses in Groningen, Netherlands. Client acquisition, delivery and support handled end to end.
 - Build and sell digital productivity templates (Notion, Google Sheets) to customers internationally.
